@@ -18,3 +18,11 @@
 2. 기존 `.env` 값을 복사하지 않는다.
 3. 실제 Neon `DATABASE_URL`을 문서에 남기지 않는다.
 4. 네이버 지도 API를 사용자 조작마다 호출하는 구조를 만들지 않는다.
+
+## 현재 배포 기준
+
+```txt
+Cloudflare Workers URL: https://v3.dlarbqja1998.workers.dev
+```
+
+초기 OAuth, 지도 API 허용 도메인, 분석 도구 설정은 이 URL을 기준으로 잡는다.

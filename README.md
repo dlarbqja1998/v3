@@ -36,6 +36,14 @@ Deploy command: npx wrangler deploy
 
 Workers 설정은 `wrangler.jsonc`에 둡니다.
 
+현재 v3 베타 배포 URL:
+
+```txt
+https://v3.dlarbqja1998.workers.dev
+```
+
+카카오 로그인 redirect URI, 네이버 지도 허용 도메인, `AUTH_URL`은 이 URL을 기준으로 먼저 설정합니다.
+
 ## 운영 리소스 연결 전제
 
 사용자가 새 Cloudflare 프로젝트와 새 Neon 프로젝트를 만든 뒤, 다음 단계에서 실제 환경변수와 Drizzle 스키마를 연결합니다.

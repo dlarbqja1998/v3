@@ -13,6 +13,7 @@
 9. 비밀값 없이 키 이름만 담은 `.env.example`을 추가했다.
 10. Cloudflare Workers 배포용 `wrangler.jsonc`와 `deploy` 스크립트를 추가했다.
 11. Drizzle, Neon serverless, Drizzle Kit, seed 스크립트 구성을 추가했다.
+12. Cloudflare Workers 공개 URL을 `https://v3.dlarbqja1998.workers.dev`로 확인했다.
 
 ## 다음에 이어서 할 일
 
