@@ -24,6 +24,18 @@ npm run check
 npm run build
 ```
 
+## Cloudflare Workers 배포
+
+Cloudflare Workers & Pages에서 GitHub 저장소를 연결할 때는 다음 값을 사용합니다.
+
+```txt
+Project name: v3
+Build command: npm run build
+Deploy command: npx wrangler deploy
+```
+
+Workers 설정은 `wrangler.jsonc`에 둡니다.
+
 ## 운영 리소스 연결 전제
 
 사용자가 새 Cloudflare 프로젝트와 새 Neon 프로젝트를 만든 뒤, 다음 단계에서 실제 환경변수와 Drizzle 스키마를 연결합니다.

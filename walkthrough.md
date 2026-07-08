@@ -11,6 +11,7 @@
 7. PostHog 이벤트 이름을 정리했다.
 8. Cloudflare Workers 배포를 전제로 `@sveltejs/adapter-cloudflare`를 연결했다.
 9. 비밀값 없이 키 이름만 담은 `.env.example`을 추가했다.
+10. Cloudflare Workers 배포용 `wrangler.jsonc`와 `deploy` 스크립트를 추가했다.
 
 ## 다음에 이어서 할 일
 
