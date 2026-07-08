@@ -1,6 +1,8 @@
 import { json } from '@sveltejs/kit';
-import { todayCafeteria } from '$lib/domain/seed';
+import { env } from '$env/dynamic/private';
+import { getHomeData } from '$lib/server/db/queries';
 
-export function GET() {
-	return json({ cafeteria: todayCafeteria });
+export async function GET() {
+	const data = await getHomeData(env.DATABASE_URL);
+	return json({ cafeteria: data.todayCafeteria });
 }

@@ -41,3 +41,14 @@ Workers 설정은 `wrangler.jsonc`에 둡니다.
 사용자가 새 Cloudflare 프로젝트와 새 Neon 프로젝트를 만든 뒤, 다음 단계에서 실제 환경변수와 Drizzle 스키마를 연결합니다.
 
 값 자체는 문서에 적지 않고, `.env.example`에는 키 이름과 설명만 둡니다.
+
+## Neon DB 작업
+
+로컬 `.env`에 `DATABASE_URL`을 넣은 뒤 실행합니다.
+
+```sh
+npm run db:push
+npm run db:seed
+```
+
+Cloudflare에는 같은 값을 Workers 환경변수 `DATABASE_URL`로 등록합니다.

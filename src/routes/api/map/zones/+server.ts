@@ -1,6 +1,8 @@
 import { json } from '@sveltejs/kit';
-import { zones } from '$lib/domain/seed';
+import { env } from '$env/dynamic/private';
+import { getHomeData } from '$lib/server/db/queries';
 
-export function GET() {
-	return json({ zones });
+export async function GET() {
+	const data = await getHomeData(env.DATABASE_URL);
+	return json({ zones: data.zones });
 }

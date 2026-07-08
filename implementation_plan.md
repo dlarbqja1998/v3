@@ -25,10 +25,10 @@
 
 ## 4단계: DB 연결
 
-- Drizzle 설치
-- `places` 중심 스키마 작성
-- Neon 연결
-- seed 데이터를 migration 또는 seed script로 이동
+- Drizzle 설치 완료
+- `places` 중심 스키마 작성 완료
+- Neon 연결은 `DATABASE_URL` 환경변수 기준
+- seed 데이터는 `scripts/seed.ts`에서 입력
 
 ## 5단계: 지도 연결
 

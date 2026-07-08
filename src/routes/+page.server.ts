@@ -1,11 +1,6 @@
-import { categories, places, todayCafeteria, nextShuttle, zones } from '$lib/domain/seed';
+import { env } from '$env/dynamic/private';
+import { getHomeData } from '$lib/server/db/queries';
 
-export function load() {
-	return {
-		categories,
-		places,
-		todayCafeteria,
-		nextShuttle,
-		zones
-	};
+export async function load() {
+	return getHomeData(env.DATABASE_URL);
 }
