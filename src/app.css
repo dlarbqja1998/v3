@@ -1,4 +1,6 @@
 @import 'tailwindcss';
+@source './routes/**/*.{svelte,ts}';
+@source './lib/**/*.{svelte,ts}';
 
 @theme {
 	--color-brand-bg: #f7eef1;

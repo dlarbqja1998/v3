@@ -1,5 +1,14 @@
 <script lang="ts">
-	import { Bus, LogIn, MapPin, Search, Utensils, Users } from '@lucide/svelte';
+	import {
+		Bus,
+		Coffee,
+		GraduationCap,
+		LogIn,
+		MapPin,
+		Search,
+		Utensils,
+		Users
+	} from '@lucide/svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -23,13 +32,15 @@
 	function markerStyle(latitude: number, longitude: number) {
 		const left = 50 + (longitude - 127.2872) * 4200;
 		const top = 50 - (latitude - 36.6109) * 5200;
-		return `left: ${Math.max(8, Math.min(92, left))}%; top: ${Math.max(10, Math.min(86, top))}%;`;
+		return `left: ${Math.max(10, Math.min(90, left))}%; top: ${Math.max(20, Math.min(76, top))}%;`;
 	}
 
-	const categoryButtonBase =
-		'rounded-full border px-3 py-2 text-sm font-extrabold whitespace-nowrap transition';
-	const categoryButtonIdle = 'border-brand-border-strong bg-white text-brand-muted';
-	const categoryButtonActive = 'border-brand bg-brand text-white shadow-[0_10px_24px_rgba(138,21,56,0.22)]';
+	function categoryButtonClass(isActive: boolean) {
+		const base = 'rounded-full border px-3 py-2 text-sm font-extrabold whitespace-nowrap transition';
+		return isActive
+			? `${base} border-brand bg-brand text-white shadow-[0_10px_24px_rgba(138,21,56,0.22)]`
+			: `${base} border-brand-border-strong bg-white/95 text-brand-muted`;
+	}
 </script>
 
 <svelte:head>
@@ -45,6 +56,55 @@
 		class="relative min-h-screen w-full overflow-hidden bg-brand-surface shadow-[0_24px_60px_rgba(103,16,43,0.18)] md:min-h-[min(860px,calc(100vh-48px))] md:w-[min(100%,430px)] md:rounded-[28px] md:border md:border-brand-border-strong"
 		aria-label="골라바우 v3 지도 홈"
 	>
+		<div
+			class="absolute inset-0 bg-brand-map"
+			style="background: linear-gradient(135deg, rgba(138, 21, 56, 0.14), transparent 36%), linear-gradient(45deg, transparent 0 48%, rgba(255, 255, 255, 0.85) 48% 52%, transparent 52%), #f4e4e8;"
+			role="img"
+			aria-label="고려대 세종 주변 장소 지도 미리보기"
+		>
+			<div
+				class="absolute left-[-12%] top-[42%] h-6 w-[128%] rotate-[-18deg] rounded-full bg-white/90 shadow-[0_0_0_1px_rgba(215,181,191,0.72)]"
+			></div>
+			<div
+				class="absolute left-[42%] top-[8%] h-[78%] w-[22px] rotate-[24deg] rounded-full bg-white/90 shadow-[0_0_0_1px_rgba(215,181,191,0.72)]"
+			></div>
+
+			<div class="absolute left-[36%] top-[39%] rounded-full bg-white/80 px-2.5 py-1.5 text-xs font-black text-[#6c3546]">
+				고려대 세종
+			</div>
+			<div class="absolute left-[12%] top-[27%] rounded-full bg-white/80 px-2.5 py-1.5 text-xs font-black text-[#6c3546]">
+				조치원역
+			</div>
+			<div class="absolute left-[62%] top-[34%] rounded-full bg-white/80 px-2.5 py-1.5 text-xs font-black text-[#6c3546]">
+				정문
+			</div>
+			<div class="absolute left-[50%] top-[57%] rounded-full bg-white/80 px-2.5 py-1.5 text-xs font-black text-[#6c3546]">
+				학생회관
+			</div>
+
+			{#each filteredPlaces as place}
+				<button
+					class={`absolute z-[2] grid h-[42px] w-[42px] translate-x-[-50%] translate-y-[-50%] rotate-[-45deg] place-items-center rounded-[50%_50%_50%_12px] border-2 border-white shadow-[0_10px_24px_rgba(103,16,43,0.28)] transition ${activePlace?.id === place.id ? 'bg-brand-dark outline-4 outline-brand-marker/25' : 'bg-brand-marker'}`}
+					style={markerStyle(place.latitude, place.longitude)}
+					type="button"
+					aria-label={`${place.name} 열기`}
+					onclick={() => (activePlaceId = place.id)}
+				>
+					<span class="grid rotate-45 place-items-center text-white">
+						{#if place.categorySlug === 'cafe'}
+							<Coffee size={18} strokeWidth={2.7} />
+						{:else if place.categorySlug === 'cafeteria'}
+							<GraduationCap size={18} strokeWidth={2.7} />
+						{:else if place.categorySlug === 'shuttle'}
+							<Bus size={18} strokeWidth={2.7} />
+						{:else}
+							<Utensils size={18} strokeWidth={2.7} />
+						{/if}
+					</span>
+				</button>
+			{/each}
+		</div>
+
 		<header class="relative z-10 flex items-start justify-between gap-4 px-5 pb-3 pt-6">
 			<div>
 				<p class="mb-1.5 text-xs font-black uppercase tracking-[0.08em] text-brand">
@@ -94,7 +154,7 @@
 			aria-label="장소 카테고리"
 		>
 			<button
-				class={`${categoryButtonBase} ${selectedCategory === 'all' ? categoryButtonActive : categoryButtonIdle}`}
+				class={categoryButtonClass(selectedCategory === 'all')}
 				type="button"
 				onclick={() => (selectedCategory = 'all')}
 			>
@@ -102,7 +162,7 @@
 			</button>
 			{#each data.categories as category}
 				<button
-					class={`${categoryButtonBase} ${selectedCategory === category.slug ? categoryButtonActive : categoryButtonIdle}`}
+					class={categoryButtonClass(selectedCategory === category.slug)}
 					type="button"
 					onclick={() => (selectedCategory = category.slug)}
 				>
@@ -110,45 +170,6 @@
 				</button>
 			{/each}
 		</nav>
-
-		<div
-			class="absolute inset-0 bg-brand-map"
-			style="background: linear-gradient(135deg, rgba(138, 21, 56, 0.14), transparent 36%), linear-gradient(45deg, transparent 0 48%, rgba(255, 255, 255, 0.85) 48% 52%, transparent 52%), #f4e4e8;"
-			role="img"
-			aria-label="고려대 세종 주변 장소 지도 미리보기"
-		>
-			<div
-				class="absolute left-[-12%] top-[42%] h-6 w-[128%] rotate-[-18deg] rounded-full bg-white/90 shadow-[0_0_0_1px_rgba(215,181,191,0.72)]"
-			></div>
-			<div
-				class="absolute left-[42%] top-[8%] h-[78%] w-[22px] rotate-[24deg] rounded-full bg-white/90 shadow-[0_0_0_1px_rgba(215,181,191,0.72)]"
-			></div>
-
-			<div class="absolute left-[38%] top-[38%] rounded-full bg-white/80 px-2.5 py-1.5 text-xs font-black text-[#6c3546]">
-				고려대 세종
-			</div>
-			<div class="absolute left-[12%] top-[26%] rounded-full bg-white/80 px-2.5 py-1.5 text-xs font-black text-[#6c3546]">
-				조치원역
-			</div>
-			<div class="absolute left-[62%] top-[34%] rounded-full bg-white/80 px-2.5 py-1.5 text-xs font-black text-[#6c3546]">
-				정문
-			</div>
-			<div class="absolute left-[50%] top-[56%] rounded-full bg-white/80 px-2.5 py-1.5 text-xs font-black text-[#6c3546]">
-				학생회관
-			</div>
-
-			{#each filteredPlaces as place}
-				<button
-					class={`absolute z-[2] grid h-[42px] w-[42px] translate-x-[-50%] translate-y-[-50%] rotate-[-45deg] place-items-center rounded-[50%_50%_50%_12px] border-2 border-white shadow-[0_10px_24px_rgba(103,16,43,0.28)] transition ${activePlace?.id === place.id ? 'bg-brand-dark outline-4 outline-brand-marker/25' : 'bg-brand-marker'}`}
-					style={markerStyle(place.latitude, place.longitude)}
-					type="button"
-					aria-label={`${place.name} 열기`}
-					onclick={() => (activePlaceId = place.id)}
-				>
-					<span class="rotate-45 text-lg">{place.icon}</span>
-				</button>
-			{/each}
-		</div>
 
 		<section
 			class="absolute inset-x-0 bottom-0 z-20 rounded-t-[26px] bg-brand-surface/95 px-[18px] pb-5 pt-2.5 shadow-[0_-18px_40px_rgba(103,16,43,0.16)] backdrop-blur"

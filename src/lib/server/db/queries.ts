@@ -92,8 +92,18 @@ export async function getHomeData(databaseUrl?: string): Promise<HomeData> {
 				displayOrder: category.displayOrder
 			})),
 			places: dbPlaces as Place[],
-			todayCafeteria: dbCafeteria[0] ?? todayCafeteria,
-			nextShuttle: dbShuttle[0] ?? nextShuttle,
+			todayCafeteria: dbCafeteria[0]
+				? {
+						...dbCafeteria[0],
+						summary: formatMenuSummary(dbCafeteria[0].summary)
+					}
+				: todayCafeteria,
+			nextShuttle: dbShuttle[0]
+				? {
+						...dbShuttle[0],
+						departureTime: formatDepartureTime(dbShuttle[0].departureTime)
+					}
+				: nextShuttle,
 			zones: dbZones.map((zone) => ({
 				id: zone.slug,
 				name: zone.name,
@@ -106,6 +116,23 @@ export async function getHomeData(databaseUrl?: string): Promise<HomeData> {
 		console.error('Neon 데이터를 불러오지 못해 seed 데이터로 대체합니다.', error);
 		return getSeedHomeData();
 	}
+}
+
+function formatMenuSummary(summary: string) {
+	try {
+		const parsed = JSON.parse(summary);
+		if (Array.isArray(parsed)) {
+			return parsed.filter((item) => typeof item === 'string').join(', ');
+		}
+	} catch {
+		// DB에는 텍스트 요약과 JSON 배열이 모두 들어올 수 있다.
+	}
+
+	return summary;
+}
+
+function formatDepartureTime(departureTime: string) {
+	return departureTime.replace(/:00$/, '');
 }
 
 function getSeedHomeData(): HomeData {
