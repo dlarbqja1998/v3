@@ -53,11 +53,8 @@
 
 		<header class="pointer-events-auto relative z-20 flex items-start justify-between gap-4 px-5 pb-3 pt-6">
 			<div>
-				<p class="mb-1.5 text-xs font-black uppercase tracking-[0.08em] text-brand">
-					Golabau v3
-				</p>
-				<h1 class="max-w-[250px] text-2xl font-black leading-[1.18] tracking-[-0.01em]">
-					고려대 세종캠퍼스 생활 지도
+				<h1 class="max-w-[250px] text-3xl font-black leading-[1.08] tracking-[-0.01em]">
+					골라바유
 				</h1>
 			</div>
 			<a
