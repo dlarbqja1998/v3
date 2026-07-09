@@ -30,7 +30,7 @@ export const categories: PlaceCategory[] = [
 		name: '한식',
 		slug: 'korean',
 		icon: '밥',
-		color: '#2f6e47',
+		color: '#a51c45',
 		displayOrder: 1
 	},
 	{

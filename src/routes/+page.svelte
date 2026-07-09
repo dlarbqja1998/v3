@@ -138,8 +138,8 @@
 <style>
 	:global(body) {
 		margin: 0;
-		background: #eef3ef;
-		color: #162018;
+		background: #f7eef1;
+		color: #241116;
 		font-family:
 			Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 	}
@@ -163,8 +163,8 @@
 		overflow: hidden;
 		border: 1px solid #ccd8cf;
 		border-radius: 28px;
-		background: #f8fbf8;
-		box-shadow: 0 24px 60px rgba(29, 55, 39, 0.18);
+		background: #fff8fa;
+		box-shadow: 0 24px 60px rgba(103, 16, 43, 0.18);
 	}
 
 	.top-bar {
@@ -179,7 +179,7 @@
 
 	.eyebrow {
 		margin: 0 0 6px;
-		color: #4d7b5c;
+		color: #8a1538;
 		font-size: 12px;
 		font-weight: 800;
 		letter-spacing: 0.08em;
@@ -214,7 +214,7 @@
 	label {
 		display: grid;
 		gap: 5px;
-		color: #617166;
+		color: #7b5a63;
 		font-size: 11px;
 		font-weight: 700;
 	}
@@ -227,7 +227,7 @@
 		border-radius: 12px;
 		background: white;
 		padding: 11px 12px;
-		color: #18231b;
+		color: #241116;
 		font: inherit;
 	}
 
@@ -247,13 +247,13 @@
 		background: white;
 		padding: 8px 12px;
 		white-space: nowrap;
-		color: #4d5d52;
+		color: #6f4c56;
 		font-weight: 800;
 	}
 
 	.category-tabs button.active {
-		border-color: #214f36;
-		background: #214f36;
+		border-color: #8a1538;
+		background: #8a1538;
 		color: white;
 	}
 
@@ -261,16 +261,16 @@
 		position: absolute;
 		inset: 0;
 		background:
-			linear-gradient(135deg, rgba(133, 188, 127, 0.2), transparent 36%),
+			linear-gradient(135deg, rgba(138, 21, 56, 0.14), transparent 36%),
 			linear-gradient(45deg, transparent 0 48%, rgba(255, 255, 255, 0.85) 48% 52%, transparent 52%),
-			#dfece1;
+			#f4e4e8;
 	}
 
 	.road {
 		position: absolute;
 		border-radius: 999px;
 		background: rgba(255, 255, 255, 0.92);
-		box-shadow: 0 0 0 1px rgba(173, 190, 178, 0.6);
+		box-shadow: 0 0 0 1px rgba(215, 181, 191, 0.72);
 	}
 
 	.road-main {
@@ -295,7 +295,7 @@
 		border-radius: 999px;
 		background: rgba(255, 255, 255, 0.78);
 		padding: 6px 10px;
-		color: #405346;
+		color: #6c3546;
 		font-size: 12px;
 		font-weight: 800;
 	}
@@ -329,8 +329,8 @@
 		place-items: center;
 		border: 2px solid white;
 		border-radius: 50% 50% 50% 12px;
-		background: #2f6e47;
-		box-shadow: 0 10px 24px rgba(25, 55, 35, 0.28);
+		background: #a51c45;
+		box-shadow: 0 10px 24px rgba(103, 16, 43, 0.28);
 		transform: translate(-50%, -50%) rotate(-45deg);
 		cursor: pointer;
 	}
@@ -341,8 +341,8 @@
 	}
 
 	.marker.active {
-		background: #0f3321;
-		outline: 4px solid rgba(47, 110, 71, 0.22);
+		background: #5f0f2d;
+		outline: 4px solid rgba(165, 28, 69, 0.22);
 	}
 
 	.bottom-sheet {
@@ -352,9 +352,9 @@
 		right: 0;
 		bottom: 0;
 		border-radius: 26px 26px 0 0;
-		background: rgba(248, 251, 248, 0.96);
+		background: rgba(255, 248, 250, 0.96);
 		padding: 10px 18px 20px;
-		box-shadow: 0 -18px 40px rgba(21, 42, 29, 0.16);
+		box-shadow: 0 -18px 40px rgba(103, 16, 43, 0.16);
 		backdrop-filter: blur(14px);
 	}
 
@@ -363,7 +363,7 @@
 		height: 4px;
 		margin: 0 auto 14px;
 		border-radius: 999px;
-		background: #c7d5cb;
+		background: #dcc3ca;
 	}
 
 	.quick-grid {
@@ -378,7 +378,7 @@
 		gap: 4px;
 		min-height: 64px;
 		align-content: center;
-		border: 1px solid #dbe5dd;
+		border: 1px solid #ead4db;
 		border-radius: 14px;
 		background: white;
 		padding: 10px;
@@ -389,7 +389,7 @@
 	}
 
 	.quick-grid span {
-		color: #637168;
+		color: #7b5a63;
 		font-size: 12px;
 		line-height: 1.35;
 	}
@@ -400,7 +400,7 @@
 		justify-content: space-between;
 		gap: 16px;
 		border-radius: 18px;
-		background: #183824;
+		background: #5f0f2d;
 		padding: 16px;
 		color: white;
 	}
@@ -411,7 +411,7 @@
 	}
 
 	.place-preview p {
-		color: #a8d1b4;
+		color: #f4c7d4;
 		font-size: 12px;
 		font-weight: 800;
 	}
@@ -424,7 +424,7 @@
 	.place-preview span {
 		display: block;
 		margin-top: 6px;
-		color: #d4e5d9;
+		color: #f7dfe6;
 		font-size: 13px;
 		line-height: 1.45;
 	}
@@ -434,14 +434,14 @@
 		border-radius: 999px;
 		background: white;
 		padding: 10px 12px;
-		color: #183824;
+		color: #5f0f2d;
 		font-size: 13px;
 		font-weight: 900;
 	}
 
 	.empty-state {
 		margin: 12px 0 0;
-		color: #68766d;
+		color: #7b5a63;
 		text-align: center;
 	}
 
