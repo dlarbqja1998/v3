@@ -35,6 +35,7 @@
 	"dependencies": {
 		"@lucide/svelte": "^1.23.0",
 		"@neondatabase/serverless": "^1.1.0",
+		"cheerio": "^1.2.0",
 		"drizzle-orm": "^0.45.2"
 	}
 }

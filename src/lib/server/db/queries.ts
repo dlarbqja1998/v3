@@ -1,5 +1,6 @@
 import { asc, eq, sql } from 'drizzle-orm';
-import type { CafeteriaSummary, Place, PlaceCategory, ShuttleSummary, Zone } from '$lib/domain/places';
+import type { CafeteriaPanelItem, CafeteriaSummary, Place, PlaceCategory, ShuttleSummary, WeeklyMenu, Zone } from '$lib/domain/places';
+import { cafeteriaPlaces, staticFoodCourtVendors } from '$lib/domain/cafeterias';
 import { categories, nextShuttle, places as seedPlaces, todayCafeteria, zones as seedZones } from '$lib/domain/seed';
 import { createDb } from './index';
 import {
@@ -13,6 +14,7 @@ import {
 } from './schema';
 
 export type HomeData = {
+	cafeterias: CafeteriaPanelItem[];
 	categories: PlaceCategory[];
 	places: Place[];
 	todayCafeteria: CafeteriaSummary;
@@ -20,9 +22,9 @@ export type HomeData = {
 	zones: Zone[];
 };
 
-export async function getHomeData(databaseUrl?: string): Promise<HomeData> {
+export async function getHomeData(databaseUrl?: string, weeklyMenu: WeeklyMenu | null = null): Promise<HomeData> {
 	if (!databaseUrl) {
-		return getSeedHomeData();
+		return getSeedHomeData(weeklyMenu);
 	}
 
 	try {
@@ -83,6 +85,7 @@ export async function getHomeData(databaseUrl?: string): Promise<HomeData> {
 		]);
 
 		return {
+			cafeterias: buildCafeteriaPanelItems(weeklyMenu),
 			categories: dbCategories.map((category) => ({
 				id: category.id,
 				name: category.name,
@@ -91,7 +94,7 @@ export async function getHomeData(databaseUrl?: string): Promise<HomeData> {
 				color: category.color,
 				displayOrder: category.displayOrder
 			})),
-			places: dbPlaces as Place[],
+			places: appendCafeteriaPlaces(dbPlaces as Place[]),
 			todayCafeteria: dbCafeteria[0]
 				? {
 						...dbCafeteria[0],
@@ -114,7 +117,7 @@ export async function getHomeData(databaseUrl?: string): Promise<HomeData> {
 		};
 	} catch (error) {
 		console.error('Neon 데이터를 불러오지 못해 seed 데이터로 대체합니다.', error);
-		return getSeedHomeData();
+		return getSeedHomeData(weeklyMenu);
 	}
 }
 
@@ -135,12 +138,47 @@ function formatDepartureTime(departureTime: string) {
 	return departureTime.replace(/:00$/, '');
 }
 
-function getSeedHomeData(): HomeData {
+function getSeedHomeData(weeklyMenu: WeeklyMenu | null): HomeData {
 	return {
+		cafeterias: buildCafeteriaPanelItems(weeklyMenu),
 		categories,
-		places: seedPlaces,
+		places: appendCafeteriaPlaces(seedPlaces.filter((place) => place.id !== 'place-3')),
 		todayCafeteria,
 		nextShuttle,
 		zones: seedZones
 	};
+}
+
+function appendCafeteriaPlaces(basePlaces: Place[]) {
+	const existingIds = new Set(basePlaces.map((place) => place.id));
+	const missingCafeterias = cafeteriaPlaces.filter((place) => !existingIds.has(place.id));
+	return [...basePlaces, ...missingCafeterias].sort((a, b) => a.displayPriority - b.displayPriority);
+}
+
+function buildCafeteriaPanelItems(weeklyMenu: WeeklyMenu | null): CafeteriaPanelItem[] {
+	return cafeteriaPlaces.map((place) => {
+		if (place.id === 'cafeteria-foodcourt') {
+			return {
+				id: 'foodcourt',
+				placeId: place.id,
+				name: place.name,
+				description: place.description,
+				source: 'static',
+				latitude: place.latitude,
+				longitude: place.longitude,
+				staticVendors: staticFoodCourtVendors
+			};
+		}
+
+		return {
+			id: place.id === 'cafeteria-faculty' ? 'faculty' : 'jinri',
+			placeId: place.id,
+			name: place.name,
+			description: place.description,
+			source: 'crawler',
+			latitude: place.latitude,
+			longitude: place.longitude,
+			weeklyMenu
+		};
+	});
 }
