@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import {
 		Bus,
 		ChevronDown,
@@ -11,6 +12,13 @@
 	} from '@lucide/svelte';
 	import NaverMap from '$lib/map/NaverMap.svelte';
 	import type { CafeteriaPanelItem, DailyMenu, MenuDayKey } from '$lib/domain/places';
+	import {
+		formatMinutesLeft,
+		getUpcomingShuttles,
+		shuttleSchedules,
+		shuttleStops,
+		type ShuttleStopId
+	} from '$lib/domain/shuttle';
 	import type { PageData } from './$types';
 
 	type MealSection = {
@@ -19,19 +27,27 @@
 		items: string[];
 	};
 
+	type SheetMode = 'home' | 'cafeteria' | 'shuttle';
+
 	let { data }: { data: PageData } = $props();
 
 	let selectedZone = $state('all');
 	let selectedCategory = $state('all');
+	let hasSelectedPinFilter = $state(false);
 	let activePlaceId = $state('');
-	let sheetMode = $state<'home' | 'cafeteria'>('home');
+	let sheetMode = $state<SheetMode>('home');
 	let activeCafeteriaIndex = $state(0);
 	let activeDayKey = $state<MenuDayKey>('mon');
 	let expandedMealId = $state('');
 	let cafeteriaScroller = $state<HTMLDivElement>();
+	let activeShuttleStopId = $state<ShuttleStopId>('campus');
+	let currentTime = $state(new Date());
 
 	const filteredPlaces = $derived(
 		data.places.filter((place) => {
+			if (!hasSelectedPinFilter) return false;
+			if (place.type === 'shuttle_stop') return false;
+
 			const zoneMatched = selectedZone === 'all' || place.zoneId === selectedZone;
 			const categoryMatched = selectedCategory === 'all' || place.categorySlug === selectedCategory;
 			return zoneMatched && categoryMatched;
@@ -43,16 +59,26 @@
 	);
 
 	const activePlace = $derived(
-		filteredPlaces.find((place) => place.id === activePlaceId) ??
-			filteredPlaces.find((place) => place.id === activeCafeteria?.placeId) ??
-			filteredPlaces[0] ??
-			null
+		!hasSelectedPinFilter
+			? null
+			: (filteredPlaces.find((place) => place.id === activePlaceId) ??
+					filteredPlaces.find((place) => place.id === activeCafeteria?.placeId) ??
+					filteredPlaces[0] ??
+					null)
 	);
 
 	const mapPlaces = $derived(
-		sheetMode === 'cafeteria' && activeCafeteria
+		sheetMode === 'shuttle'
+			? shuttleStops
+			: sheetMode === 'cafeteria' && activeCafeteria
 			? data.places.filter((place) => place.id === activeCafeteria.placeId)
 			: filteredPlaces
+	);
+
+	const activeMapPlaceId = $derived(
+		sheetMode === 'shuttle'
+			? (shuttleStops.find((stop) => stop.stopId === activeShuttleStopId)?.id ?? '')
+			: (activePlace?.id ?? '')
 	);
 
 	const activeWeeklyMenu = $derived(activeCafeteria?.weeklyMenu ?? null);
@@ -66,6 +92,16 @@
 
 	const cafeteriaSummary = $derived(createCafeteriaSummary(data.cafeterias));
 	const activeMealSections = $derived(buildMealSections(activeCafeteria, selectedMenuDay));
+	const upcomingShuttles = $derived(getUpcomingShuttles(currentTime, activeShuttleStopId, 5));
+	const nextShuttle = $derived(getUpcomingShuttles(currentTime, undefined, 1)[0] ?? null);
+
+	onMount(() => {
+		const timer = window.setInterval(() => {
+			currentTime = new Date();
+		}, 30000);
+
+		return () => window.clearInterval(timer);
+	});
 
 	$effect(() => {
 		if (sheetMode !== 'cafeteria' || !activeCafeteria) return;
@@ -82,6 +118,7 @@
 
 	function openCafeteriaPanel() {
 		sheetMode = 'cafeteria';
+		hasSelectedPinFilter = true;
 		activeCafeteriaIndex = 0;
 		const firstMenu = data.cafeterias[0]?.weeklyMenu;
 		activeDayKey = firstMenu?.todayKey ?? 'mon';
@@ -89,8 +126,47 @@
 		requestAnimationFrame(() => cafeteriaScroller?.scrollTo({ left: 0, behavior: 'smooth' }));
 	}
 
-	function closeCafeteriaPanel() {
+	function openShuttlePanel() {
+		sheetMode = 'shuttle';
+		selectedCategory = 'all';
+		activeShuttleStopId = nextShuttle?.from ?? 'campus';
+	}
+
+	function closePanel() {
 		sheetMode = 'home';
+	}
+
+	function selectShuttleStop(stopId: ShuttleStopId) {
+		activeShuttleStopId = stopId;
+	}
+
+	function handleMarkerClick(placeId: string) {
+		if (sheetMode === 'shuttle') {
+			const stop = shuttleStops.find((item) => item.id === placeId);
+			if (stop) activeShuttleStopId = stop.stopId;
+			return;
+		}
+
+		activePlaceId = placeId;
+	}
+
+	function selectZoneFilter(zoneId: string) {
+		selectedZone = zoneId;
+		hasSelectedPinFilter = true;
+		activePlaceId = '';
+	}
+
+	function selectCategoryFilter(categorySlug: string) {
+		if (hasSelectedPinFilter && selectedCategory === categorySlug) {
+			selectedCategory = 'all';
+			hasSelectedPinFilter = false;
+			activePlaceId = '';
+			return;
+		}
+
+		selectedCategory = categorySlug;
+		hasSelectedPinFilter = true;
+		activePlaceId = '';
 	}
 
 	function selectCafeteria(index: number) {
@@ -122,6 +198,12 @@
 
 	function toggleMeal(mealId: string) {
 		expandedMealId = expandedMealId === mealId ? '' : mealId;
+	}
+
+	function getSheetHeightClass(mode: SheetMode) {
+		if (mode === 'cafeteria') return 'h-[80dvh]';
+		if (mode === 'shuttle') return 'h-[72dvh]';
+		return 'h-auto';
 	}
 
 	function formatShortDate(dateStr?: string) {
@@ -211,9 +293,9 @@
 		<NaverMap
 			clientId={data.naverMapClientId}
 			places={mapPlaces}
-			activePlaceId={activePlace?.id ?? ''}
-			focusMode={sheetMode === 'cafeteria' ? 'top-band' : 'default'}
-			onMarkerClick={(placeId) => (activePlaceId = placeId)}
+			activePlaceId={activeMapPlaceId}
+			focusMode={sheetMode === 'cafeteria' || sheetMode === 'shuttle' ? 'top-band' : 'default'}
+			onMarkerClick={handleMarkerClick}
 		/>
 
 		{#if sheetMode === 'home'}
@@ -237,7 +319,8 @@
 					<span>구역</span>
 					<select
 						class="w-full rounded-xl border border-brand-border-strong bg-white px-3 py-2.5 text-brand-text shadow-[0_8px_18px_rgba(103,16,43,0.08)] outline-none focus:border-brand focus:ring-4 focus:ring-brand/15"
-						bind:value={selectedZone}
+						value={selectedZone}
+						onchange={(event) => selectZoneFilter(event.currentTarget.value)}
 					>
 						<option value="all">전체</option>
 						{#each data.zones as zone}
@@ -263,17 +346,17 @@
 				aria-label="장소 카테고리"
 			>
 				<button
-					class={categoryButtonClass(selectedCategory === 'all')}
+					class={categoryButtonClass(hasSelectedPinFilter && selectedCategory === 'all')}
 					type="button"
-					onclick={() => (selectedCategory = 'all')}
+					onclick={() => selectCategoryFilter('all')}
 				>
 					전체
 				</button>
 				{#each data.categories as category}
 					<button
-						class={categoryButtonClass(selectedCategory === category.slug)}
+						class={categoryButtonClass(hasSelectedPinFilter && selectedCategory === category.slug)}
 						type="button"
-						onclick={() => (selectedCategory = category.slug)}
+						onclick={() => selectCategoryFilter(category.slug)}
 					>
 						{category.name}
 					</button>
@@ -283,7 +366,7 @@
 
 		<section
 			class={`pointer-events-auto absolute inset-x-0 bottom-0 z-20 rounded-t-[26px] bg-brand-surface/95 px-[18px] pb-5 pt-2.5 shadow-[0_-18px_40px_rgba(103,16,43,0.16)] backdrop-blur transition-[height] duration-300 ${
-				sheetMode === 'cafeteria' ? 'h-[80dvh]' : 'h-auto'
+				getSheetHeightClass(sheetMode)
 			}`}
 			aria-label="오늘의 생활 정보"
 		>
@@ -302,18 +385,23 @@
 						</span>
 						<span class="text-xs leading-snug text-brand-muted">{cafeteriaSummary}</span>
 					</button>
-					<a
-						class="grid min-h-16 content-center gap-1 rounded-[14px] border border-brand-border bg-white p-2.5"
-						href="/shuttle"
+					<button
+						class="grid min-h-16 content-center gap-1 rounded-[14px] border border-brand-border bg-white p-2.5 text-left"
+						type="button"
+						onclick={openShuttlePanel}
 					>
 						<span class="flex items-center gap-1.5 text-[13px] font-black">
 							<Bus size={15} strokeWidth={2.8} />
 							다음 셔틀
 						</span>
 						<span class="text-xs leading-snug text-brand-muted">
-							{data.nextShuttle.departureTime} {data.nextShuttle.stopName}
+							{#if nextShuttle}
+								{formatMinutesLeft(nextShuttle.minutesLeft)} · {nextShuttle.departureTime}
+							{:else}
+								오늘 운행 종료
+							{/if}
 						</span>
-					</a>
+					</button>
 					<a
 						class="grid min-h-16 content-center gap-1 rounded-[14px] border border-brand-border bg-white p-2.5"
 						href="/meetups"
@@ -345,10 +433,12 @@
 					</article>
 				{:else}
 					<p class="m-0 pt-3 text-center text-sm text-brand-muted">
-						선택한 조건에 맞는 장소가 아직 없습니다.
+						{hasSelectedPinFilter
+							? '선택한 조건에 맞는 장소가 아직 없습니다.'
+							: '카테고리를 선택하면 지도에 핀이 표시됩니다.'}
 					</p>
 				{/if}
-			{:else}
+			{:else if sheetMode === 'cafeteria'}
 				<div class="flex h-[calc(80dvh-38px)] flex-col">
 					<div class="mb-3 flex items-center justify-between gap-3">
 						<div>
@@ -358,7 +448,7 @@
 						<button
 							class="rounded-full border border-brand-border bg-white px-3 py-2 text-xs font-black text-brand-muted"
 							type="button"
-							onclick={closeCafeteriaPanel}
+							onclick={closePanel}
 						>
 							닫기
 						</button>
@@ -451,6 +541,115 @@
 							<div class="rounded-[18px] border border-brand-border bg-white px-5 py-8 text-center">
 								<p class="m-0 text-sm font-bold text-brand-muted">
 									이번 주 학식 정보를 아직 불러오지 못했습니다.
+								</p>
+							</div>
+						{/if}
+					</div>
+				</div>
+			{:else}
+				<div class="flex h-[calc(72dvh-38px)] flex-col">
+					<div class="mb-3 flex items-center justify-between gap-3">
+						<div>
+							<p class="m-0 text-xs font-black text-brand-muted">학교-조치원역 셔틀</p>
+							<h2 class="m-0 mt-0.5 text-xl font-black">다음 셔틀</h2>
+						</div>
+						<button
+							class="rounded-full border border-brand-border bg-white px-3 py-2 text-xs font-black text-brand-muted"
+							type="button"
+							onclick={closePanel}
+						>
+							닫기
+						</button>
+					</div>
+
+					<section class="mb-3 rounded-[18px] bg-brand-dark p-4 text-white">
+						{#if nextShuttle}
+							<div class="flex items-start justify-between gap-3">
+								<div>
+									<p class="m-0 text-xs font-black text-[#f4c7d4]">
+										{nextShuttle.fromName} 출발
+									</p>
+									<h3 class="m-0 mt-1 text-[34px] font-black leading-none">
+										{formatMinutesLeft(nextShuttle.minutesLeft)}
+									</h3>
+								</div>
+								<span class="rounded-full bg-white px-3 py-1.5 text-sm font-black text-brand-dark">
+									{nextShuttle.departureTime}
+								</span>
+							</div>
+							<p class="m-0 mt-3 text-sm font-bold text-[#f7dfe6]">
+								{nextShuttle.toName} 방향
+							</p>
+						{:else}
+							<p class="m-0 text-xs font-black text-[#f4c7d4]">오늘의 셔틀</p>
+							<h3 class="m-0 mt-1 text-[30px] font-black leading-tight">운행 종료</h3>
+							<p class="m-0 mt-3 text-sm font-bold text-[#f7dfe6]">
+								내일 첫 출발 시간표를 확인해 주세요.
+							</p>
+						{/if}
+					</section>
+
+					<div class="mb-3 grid grid-cols-2 gap-2">
+						{#each shuttleStops as stop}
+							<button
+								class={`rounded-[14px] border px-3 py-3 text-left transition ${
+									activeShuttleStopId === stop.stopId
+										? 'border-brand bg-brand text-white shadow-[0_10px_24px_rgba(138,21,56,0.2)]'
+										: 'border-brand-border bg-white text-brand-text'
+								}`}
+								type="button"
+								onclick={() => selectShuttleStop(stop.stopId)}
+							>
+								<span class="block text-[13px] font-black">{stop.name}</span>
+								<span
+									class={`mt-1 block text-xs ${
+										activeShuttleStopId === stop.stopId ? 'text-white/80' : 'text-brand-muted'
+									}`}
+								>
+									{stop.stopId === 'campus' ? '조치원역 방향' : '학교 방향'}
+								</span>
+							</button>
+						{/each}
+					</div>
+
+					<div class="min-h-0 flex-1 overflow-y-auto pb-2">
+						<div class="mb-2 flex items-center justify-between px-1">
+							<h3 class="m-0 text-sm font-black">이후 출발</h3>
+							<span class="text-xs font-bold text-brand-muted">평일 기준 · {shuttleSchedules.length}회</span>
+						</div>
+
+						{#if upcomingShuttles.length > 0}
+							<div class="grid gap-2">
+								{#each upcomingShuttles as shuttle}
+									<div class="rounded-[14px] border border-brand-border bg-white px-4 py-3">
+										<div class="flex items-center justify-between gap-3">
+											<div>
+												<p class="m-0 text-sm font-black">
+													{shuttle.departureTime}
+													<span class="text-brand-muted"> · {shuttle.toName} 방향</span>
+												</p>
+												<p class="m-0 mt-1 text-xs font-bold text-brand-muted">
+													{shuttle.fromName} 출발
+												</p>
+											</div>
+											<div class="flex shrink-0 items-center gap-1.5">
+												{#if shuttle.tag}
+													<span class="rounded-full bg-brand-map px-2 py-1 text-[11px] font-black text-brand">
+														{shuttle.tag === 'first' ? '첫차' : '막차'}
+													</span>
+												{/if}
+												<span class="rounded-full bg-brand-dark px-2.5 py-1 text-xs font-black text-white">
+													{formatMinutesLeft(shuttle.minutesLeft)}
+												</span>
+											</div>
+										</div>
+									</div>
+								{/each}
+							</div>
+						{:else}
+							<div class="rounded-[18px] border border-brand-border bg-white px-5 py-8 text-center">
+								<p class="m-0 text-sm font-bold text-brand-muted">
+									오늘 남은 셔틀이 없습니다.
 								</p>
 							</div>
 						{/if}

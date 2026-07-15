@@ -218,8 +218,10 @@
 	}
 
 	function markerHtml(categorySlug: string, isActive: boolean) {
-		const background = isActive ? '#5f0f2d' : '#a51c45';
+		const isShuttle = categorySlug === 'shuttle';
+		const background = isActive ? '#5f0f2d' : isShuttle ? '#1f6f78' : '#a51c45';
 		const outline = isActive ? '0 0 0 5px rgba(165, 28, 69, 0.24),' : '';
+		const content = isShuttle ? 'BUS' : '';
 
 		return `
 			<div style="
@@ -231,9 +233,14 @@
 				border-radius: 50% 50% 50% 8px;
 				background: ${background};
 				color: white;
+				font-size: 8px;
+				font-weight: 900;
+				letter-spacing: 0;
 				box-shadow: ${outline}0 8px 18px rgba(103, 16, 43, 0.24);
 				transform: rotate(-45deg);
-			"></div>
+			">
+				<span style="transform: rotate(45deg);">${content}</span>
+			</div>
 		`;
 	}
 
