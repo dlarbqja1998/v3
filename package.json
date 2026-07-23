@@ -13,6 +13,7 @@
 		"naver:local": "tsx scripts/naver-local-search.ts",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
+		"test": "vitest run",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
 	},
@@ -30,6 +31,7 @@
 		"tsx": "^4.23.0",
 		"typescript": "^6.0.3",
 		"vite": "^8.0.16",
+		"vitest": "^4.1.10",
 		"wrangler": "^4.108.0"
 	},
 	"dependencies": {
