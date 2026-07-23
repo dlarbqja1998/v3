@@ -1,5 +1,6 @@
 import {
 	boolean,
+	date,
 	doublePrecision,
 	integer,
 	jsonb,
@@ -7,6 +8,7 @@ import {
 	text,
 	time,
 	timestamp,
+	uniqueIndex,
 	uuid,
 	varchar
 } from 'drizzle-orm/pg-core';
@@ -124,3 +126,62 @@ export const cafeteriaMenus = pgTable('cafeteria_menus', {
 	source: varchar('source', { length: 80 }).notNull().default('manual'),
 	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
 });
+
+export const cafeteriaMenuItems = pgTable(
+	'cafeteria_menu_items',
+	{
+		id: uuid('id').defaultRandom().primaryKey(),
+		cafeteriaCode: varchar('cafeteria_code', { length: 40 }).notNull(),
+		normalizedName: varchar('normalized_name', { length: 160 }).notNull(),
+		displayName: varchar('display_name', { length: 160 }).notNull(),
+		createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
+	},
+	(table) => [
+		uniqueIndex('cafeteria_menu_items_code_name_unique').on(
+			table.cafeteriaCode,
+			table.normalizedName
+		)
+	]
+);
+
+export const cafeteriaMenuOfferings = pgTable(
+	'cafeteria_menu_offerings',
+	{
+		id: uuid('id').defaultRandom().primaryKey(),
+		menuItemId: uuid('menu_item_id')
+			.notNull()
+			.references(() => cafeteriaMenuItems.id),
+		cafeteriaCode: varchar('cafeteria_code', { length: 40 }).notNull(),
+		menuDate: date('menu_date').notNull(),
+		mealSlot: varchar('meal_slot', { length: 20 }).notNull(),
+		menuSection: varchar('menu_section', { length: 40 }).notNull(),
+		displayName: varchar('display_name', { length: 160 }).notNull(),
+		isVotable: boolean('is_votable').notNull().default(false),
+		source: varchar('source', { length: 20 }).notNull(),
+		createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+		updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
+	},
+	(table) => [
+		uniqueIndex('cafeteria_menu_offerings_unique').on(
+			table.menuItemId,
+			table.menuDate,
+			table.mealSlot,
+			table.menuSection
+		)
+	]
+);
+
+export const cafeteriaMenuVotes = pgTable(
+	'cafeteria_menu_votes',
+	{
+		id: uuid('id').defaultRandom().primaryKey(),
+		offeringId: uuid('offering_id')
+			.notNull()
+			.references(() => cafeteriaMenuOfferings.id),
+		voterHash: varchar('voter_hash', { length: 64 }).notNull(),
+		reaction: varchar('reaction', { length: 10 }).notNull(),
+		createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+		updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
+	},
+	(table) => [uniqueIndex('cafeteria_menu_votes_offering_voter_unique').on(table.offeringId, table.voterHash)]
+);
