@@ -20,6 +20,7 @@ type CachePlatform = {
 
 type RefreshMenuOptions = {
 	force?: boolean;
+	onUpdated?: (menu: WeeklyMenu) => Promise<unknown>;
 };
 
 type MenuRefreshResult =
@@ -144,8 +145,9 @@ async function readCachedWeeklyMenu(
 
 export async function refreshTodayMenuCache(
 	platform: CachePlatform | undefined,
-	{ force = false }: RefreshMenuOptions = {}
+	options: RefreshMenuOptions = {}
 ): Promise<MenuRefreshResult> {
+	const { force = false } = options;
 	const kv = getMenuCache(platform);
 	if (!kv) {
 		return { status: 'skipped', reason: 'missing_kv' };
@@ -196,6 +198,14 @@ export async function refreshTodayMenuCache(
 			)
 		]);
 
+		if (options.onUpdated) {
+			try {
+				await options.onUpdated(menuResult);
+			} catch (error) {
+				console.error('cafeteria menu database sync failed:', error);
+			}
+		}
+
 		return { status: 'updated', menu: withCurrentTodayFields(menuResult) };
 	} catch (error) {
 		await writeJson(
@@ -217,7 +227,8 @@ export async function refreshTodayMenuCache(
 }
 
 export async function getTodayMenuWithRefresh(
-	platform: CachePlatform | undefined
+	platform: CachePlatform | undefined,
+	options: RefreshMenuOptions = {}
 ): Promise<WeeklyMenu | null> {
 	if (shouldHideMenuUntilMondayLunch()) {
 		return null;
@@ -228,15 +239,23 @@ export async function getTodayMenuWithRefresh(
 
 	const staleMenu = await readCachedWeeklyMenu(platform, { allowStale: true });
 	if (staleMenu && platform?.context?.waitUntil) {
-		platform.context.waitUntil(refreshTodayMenuCache(platform));
+		platform.context.waitUntil(refreshTodayMenuCache(platform, options));
 		return staleMenu;
 	}
 
 	if (getMenuCache(platform)) {
-		const refreshed = await refreshTodayMenuCache(platform);
+		const refreshed = await refreshTodayMenuCache(platform, options);
 		return refreshed.status === 'updated' ? withCurrentTodayFields(refreshed.menu) : staleMenu;
 	}
 
 	const directMenu = await getCafeteriaMenu();
-	return typeof directMenu === 'object' && directMenu !== null ? withCurrentTodayFields(directMenu) : null;
+	if (typeof directMenu !== 'object' || directMenu === null) return null;
+
+	try {
+		await options.onUpdated?.(directMenu);
+	} catch (error) {
+		console.error('cafeteria menu database sync failed:', error);
+	}
+
+	return withCurrentTodayFields(directMenu);
 }

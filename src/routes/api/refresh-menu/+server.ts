@@ -1,6 +1,8 @@
 import { json } from '@sveltejs/kit';
+import { env } from '$env/dynamic/private';
 import type { RequestHandler } from './$types';
 import { refreshTodayMenuCache } from '$lib/server/cafeteria-cache';
+import { syncWeeklyCafeteriaMenu } from '$lib/server/cafeteria-sync';
 
 export const POST: RequestHandler = async ({ platform, request }) => {
 	const adminSecret = platform?.env?.CACHE_CLEAR_SECRET || platform?.env?.ADMIN_SECRET_KEY || '';
@@ -17,7 +19,10 @@ export const POST: RequestHandler = async ({ platform, request }) => {
 		);
 	}
 
-	const result = await refreshTodayMenuCache(platform, { force: true });
+	const result = await refreshTodayMenuCache(platform, {
+		force: true,
+		onUpdated: (menu) => syncWeeklyCafeteriaMenu(env.DATABASE_URL, menu)
+	});
 
 	if (result.status === 'updated') {
 		return json({
