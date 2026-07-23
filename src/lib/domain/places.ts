@@ -94,6 +94,10 @@ export type CafeteriaPanelItem = {
 	staticVendors?: {
 		id: string;
 		name: string;
-		menus: string[];
+		menus: {
+			id: string;
+			name: string;
+			price: number;
+		}[];
 	}[];
 };

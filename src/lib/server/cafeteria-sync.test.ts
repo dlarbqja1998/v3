@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { flattenWeeklyMenu } from './cafeteria-sync';
+import { flattenFoodCourtMenu, flattenWeeklyMenu } from './cafeteria-sync';
 
 describe('주간 학식 메뉴 동기화 입력', () => {
 	it('진리관 중식의 메인 메뉴와 국을 각각 제공 회차로 만든다', () => {
@@ -38,6 +38,21 @@ describe('주간 학식 메뉴 동기화 입력', () => {
 				expect.objectContaining({ displayName: '된장국', isVotable: true }),
 				expect.objectContaining({ displayName: '쌀밥', isVotable: false })
 			])
+		);
+	});
+});
+
+describe('푸드코트 메뉴 동기화 입력', () => {
+	it('정적 메뉴를 오늘의 평가 제공 회차로 만든다', () => {
+		const offerings = flattenFoodCourtMenu('2026-07-23');
+
+		expect(offerings[0]).toEqual(
+			expect.objectContaining({
+				cafeteriaCode: 'foodcourt',
+				menuDate: '2026-07-23',
+				mealSlot: 'all_day',
+				isVotable: true
+			})
 		);
 	});
 });

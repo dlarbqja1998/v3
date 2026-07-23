@@ -7,6 +7,8 @@
 		LogIn,
 		MapPin,
 		Search,
+		ThumbsDown,
+		ThumbsUp,
 		Utensils,
 		Users
 	} from '@lucide/svelte';
@@ -19,12 +21,26 @@
 		shuttleStops,
 		type ShuttleStopId
 	} from '$lib/domain/shuttle';
+	import { createOfferingKey, getVoteWindow, type OfferingFeedbackSummary } from '$lib/domain/cafeteria-feedback';
 	import type { PageData } from './$types';
+
+type MealItem = {
+		name: string;
+		feedbackKey: string;
+		feedback: (OfferingFeedbackSummary & { offeringId: string; isVotable: boolean }) | undefined;
+		mealSlot: 'breakfast' | 'lunch' | 'dinner' | 'all_day';
+		menuDate: string;
+};
+
+type CafeteriaFeedbackMap = Record<
+	string,
+	OfferingFeedbackSummary & { offeringId: string; isVotable: boolean }
+>;
 
 	type MealSection = {
 		id: string;
 		name: string;
-		items: string[];
+		items: MealItem[];
 	};
 
 	type SheetMode = 'home' | 'cafeteria' | 'shuttle';
@@ -42,6 +58,11 @@
 	let cafeteriaScroller = $state<HTMLDivElement>();
 	let activeShuttleStopId = $state<ShuttleStopId>('campus');
 	let currentTime = $state(new Date());
+	let cafeteriaFeedback = $state<CafeteriaFeedbackMap>({});
+
+	$effect(() => {
+		cafeteriaFeedback = { ...data.cafeteriaFeedback } as CafeteriaFeedbackMap;
+	});
 
 	const filteredPlaces = $derived(
 		data.places.filter((place) => {
@@ -82,6 +103,9 @@
 	);
 
 	const activeWeeklyMenu = $derived(activeCafeteria?.weeklyMenu ?? null);
+	const currentCafeteriaDate = $derived(
+		data.cafeterias.find((cafeteria) => cafeteria.id === 'jinri')?.weeklyMenu?.todayDate?.replaceAll('.', '-') ?? ''
+	);
 
 	const selectedMenuDay = $derived(
 		activeWeeklyMenu?.days?.find((day) => day.key === activeDayKey) ??
@@ -223,7 +247,7 @@
 		return '주간 식단 확인';
 	}
 
-	function buildMealSections(cafeteria: CafeteriaPanelItem | null, day: DailyMenu | null): MealSection[] {
+	function buildLegacyMealSections(cafeteria: CafeteriaPanelItem | null, day: DailyMenu | null): unknown[] {
 		if (!cafeteria || !day || cafeteria.source !== 'crawler') return [];
 
 		if (cafeteria.id === 'faculty') {
@@ -240,6 +264,77 @@
 			{ id: 'student-snack', name: '분식', items: day.student.snack },
 			{ id: 'student-dinner', name: '석식', items: day.student.dinner }
 		];
+	}
+
+	function buildMealSections(cafeteria: CafeteriaPanelItem | null, day: DailyMenu | null): MealSection[] {
+		if (!cafeteria || !day || cafeteria.source !== 'crawler') return [];
+		const cafeteriaCode = cafeteria.id === 'faculty' ? 'faculty' : 'jinri';
+		const menuDate = day.date.replaceAll('.', '-');
+		const createItems = (
+			mealSlot: 'breakfast' | 'lunch' | 'dinner',
+			menuSection: string,
+			items: string[]
+		): MealItem[] =>
+			items.map((name) => {
+				const feedbackKey = createOfferingKey(cafeteriaCode, menuDate, mealSlot, menuSection, name);
+				return { name, feedbackKey, feedback: cafeteriaFeedback[feedbackKey], mealSlot, menuDate };
+			});
+
+		if (cafeteria.id === 'faculty') {
+			return [
+				{ id: 'faculty-lunch', name: '중식', items: createItems('lunch', 'lunch', day.faculty.lunch) },
+				{ id: 'faculty-dinner', name: '석식', items: createItems('dinner', 'dinner', day.faculty.dinner) }
+			];
+		}
+
+		return [
+			{ id: 'student-breakfast', name: '조식', items: createItems('breakfast', 'breakfast', day.student.breakfast) },
+			{ id: 'student-korean', name: '한식', items: createItems('lunch', 'korean', day.student.korean) },
+			{ id: 'student-special', name: '특식', items: createItems('lunch', 'special', day.student.special) },
+			{ id: 'student-snack', name: '분식', items: createItems('lunch', 'snack', day.student.snack) },
+			{ id: 'student-dinner', name: '석식', items: createItems('dinner', 'dinner', day.student.dinner) }
+		];
+	}
+
+	function isVoteOpen(item: MealItem) {
+		const window = getVoteWindow(item.menuDate, item.mealSlot);
+		return currentTime >= window.opensAt && currentTime < window.closesAt;
+	}
+
+	function getVoteText(likes: number, dislikes: number) {
+		const total = likes + dislikes;
+		if (total < 3) return `평가 ${total}개`;
+		return `호감 ${Math.round((likes / total) * 100)}% · ${total}개`;
+	}
+
+	async function voteForMenu(item: MealItem, reaction: 'like' | 'dislike') {
+		if (!item.feedback || !item.feedback.isVotable || !isVoteOpen(item)) return;
+		const response = await fetch('/api/cafeteria/votes', {
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify({ offeringId: item.feedback.offeringId, reaction })
+		});
+		if (!response.ok) return;
+
+		const previousReaction = item.feedback.myReaction;
+		const next = { ...item.feedback, myReaction: reaction };
+		if (previousReaction !== reaction) {
+			if (previousReaction === 'like') {
+				next.todayLikes -= 1;
+				next.historicalLikes -= 1;
+			} else if (previousReaction === 'dislike') {
+				next.todayDislikes -= 1;
+				next.historicalDislikes -= 1;
+			}
+			if (reaction === 'like') {
+				next.todayLikes += 1;
+				next.historicalLikes += 1;
+			} else {
+				next.todayDislikes += 1;
+				next.historicalDislikes += 1;
+			}
+		}
+		cafeteriaFeedback = { ...cafeteriaFeedback, [item.feedbackKey]: next };
 	}
 </script>
 
@@ -274,7 +369,43 @@
 				{#if meal.items.length > 0}
 					<ul class="grid gap-1.5">
 						{#each meal.items as item}
-							<li class="text-[13px] leading-relaxed text-brand-muted">{item}</li>
+							<li class="rounded-[10px] py-1.5 text-[13px] leading-relaxed text-brand-muted">
+								<div class="flex items-center justify-between gap-3">
+									<span>{item.name}</span>
+									{#if item.feedback?.isVotable}
+										<span class="shrink-0 text-[11px] font-bold text-brand-muted">
+											오늘 {getVoteText(item.feedback.todayLikes, item.feedback.todayDislikes)}
+										</span>
+									{/if}
+								</div>
+								{#if item.feedback?.isVotable}
+									<div class="mt-1 flex items-center justify-between gap-2">
+										<span class="text-[11px] font-bold text-brand-muted">
+											역대 {getVoteText(item.feedback.historicalLikes, item.feedback.historicalDislikes)}
+										</span>
+										<div class="flex gap-1">
+											<button
+												class={`grid h-7 w-7 place-items-center rounded-full border ${item.feedback.myReaction === 'like' ? 'border-brand bg-brand text-white' : 'border-brand-border bg-white text-brand-muted'} disabled:cursor-not-allowed disabled:opacity-45`}
+												type="button"
+												aria-label={`${item.name} 좋았어요`}
+												disabled={!isVoteOpen(item)}
+												onclick={() => voteForMenu(item, 'like')}
+											>
+												<ThumbsUp size={14} strokeWidth={2.8} />
+											</button>
+											<button
+												class={`grid h-7 w-7 place-items-center rounded-full border ${item.feedback.myReaction === 'dislike' ? 'border-brand bg-brand text-white' : 'border-brand-border bg-white text-brand-muted'} disabled:cursor-not-allowed disabled:opacity-45`}
+												type="button"
+												aria-label={`${item.name} 아쉬웠어요`}
+												disabled={!isVoteOpen(item)}
+												onclick={() => voteForMenu(item, 'dislike')}
+											>
+												<ThumbsDown size={14} strokeWidth={2.8} />
+											</button>
+										</div>
+									</div>
+								{/if}
+							</li>
 						{/each}
 					</ul>
 				{:else}
@@ -530,6 +661,28 @@
 											<span class="rounded-full bg-brand-map px-2.5 py-1 text-[11px] font-black text-brand-muted">
 												준비 중
 											</span>
+										</div>
+										<div class="mt-3 grid gap-2">
+											{#each vendor.menus as menu}
+												{@const feedbackKey = createOfferingKey('foodcourt', currentCafeteriaDate, 'all_day', vendor.id, menu.name)}
+												{@const feedback = cafeteriaFeedback[feedbackKey]}
+												{@const item: MealItem = { name: menu.name, feedbackKey, feedback, mealSlot: 'all_day', menuDate: currentCafeteriaDate }}
+												<div class="rounded-[10px] bg-brand-map px-3 py-2">
+													<div class="flex items-center justify-between gap-3">
+														<span class="text-[13px] font-black text-brand-text">{menu.name}</span>
+														<span class="text-xs font-bold text-brand-muted">{menu.price.toLocaleString()}원</span>
+													</div>
+													{#if feedback?.isVotable}
+														<div class="mt-1 flex items-center justify-between gap-2">
+															<span class="text-[11px] font-bold text-brand-muted">오늘 {getVoteText(feedback.todayLikes, feedback.todayDislikes)} · 역대 {getVoteText(feedback.historicalLikes, feedback.historicalDislikes)}</span>
+															<div class="flex gap-1">
+																<button class={`grid h-7 w-7 place-items-center rounded-full border ${feedback.myReaction === 'like' ? 'border-brand bg-brand text-white' : 'border-brand-border bg-white text-brand-muted'} disabled:opacity-45`} type="button" aria-label={`${menu.name} 좋았어요`} disabled={!isVoteOpen(item)} onclick={() => voteForMenu(item, 'like')}><ThumbsUp size={14} strokeWidth={2.8} /></button>
+																<button class={`grid h-7 w-7 place-items-center rounded-full border ${feedback.myReaction === 'dislike' ? 'border-brand bg-brand text-white' : 'border-brand-border bg-white text-brand-muted'} disabled:opacity-45`} type="button" aria-label={`${menu.name} 아쉬웠어요`} disabled={!isVoteOpen(item)} onclick={() => voteForMenu(item, 'dislike')}><ThumbsDown size={14} strokeWidth={2.8} /></button>
+															</div>
+														</div>
+													{/if}
+												</div>
+											{/each}
 										</div>
 										<p class="m-0 mt-2 text-[13px] text-brand-muted">
 											고정 메뉴 정보는 아직 비워두었습니다.

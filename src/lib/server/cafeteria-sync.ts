@@ -1,5 +1,6 @@
 import { createDb } from '$lib/server/db';
 import { cafeteriaMenuItems, cafeteriaMenuOfferings } from '$lib/server/db/schema';
+import { staticFoodCourtVendors } from '$lib/domain/cafeterias';
 import {
 	isVotableMenu,
 	normalizeMenuName,
@@ -8,7 +9,7 @@ import {
 import type { WeeklyMenu } from '$lib/domain/places';
 
 export type CafeteriaOfferingInput = {
-	cafeteriaCode: 'jinri' | 'faculty';
+	cafeteriaCode: 'jinri' | 'faculty' | 'foodcourt';
 	menuDate: string;
 	mealSlot: CafeteriaMealSlot;
 	menuSection: string;
@@ -75,11 +76,35 @@ export function flattenWeeklyMenu(weeklyMenu: WeeklyMenu): CafeteriaOfferingInpu
 	return offerings;
 }
 
+export function flattenFoodCourtMenu(menuDate: string): CafeteriaOfferingInput[] {
+	return staticFoodCourtVendors.flatMap((vendor) =>
+		vendor.menus.map((menu) => ({
+			cafeteriaCode: 'foodcourt' as const,
+			menuDate,
+			mealSlot: 'all_day' as const,
+			menuSection: vendor.id,
+			displayName: menu.name,
+			normalizedName: normalizeMenuName(menu.name),
+			isVotable: true
+		}))
+	);
+}
+
 export async function syncWeeklyCafeteriaMenu(databaseUrl: string | undefined, weeklyMenu: WeeklyMenu) {
+	return syncCafeteriaOfferings(databaseUrl, flattenWeeklyMenu(weeklyMenu));
+}
+
+export async function syncFoodCourtMenu(databaseUrl: string | undefined, menuDate: string) {
+	return syncCafeteriaOfferings(databaseUrl, flattenFoodCourtMenu(menuDate));
+}
+
+async function syncCafeteriaOfferings(
+	databaseUrl: string | undefined,
+	offerings: CafeteriaOfferingInput[]
+) {
 	if (!databaseUrl) return 0;
 
 	const db = createDb(databaseUrl);
-	const offerings = flattenWeeklyMenu(weeklyMenu);
 
 	for (const offering of offerings) {
 		const [menuItem] = await db
