@@ -4,6 +4,12 @@ import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
+	server: {
+		allowedHosts: [
+			'softball-shows-selecting-doors.trycloudflare.com',
+			'dating-head-routes-beer.trycloudflare.com'
+		]
+	},
 	plugins: [
 		tailwindcss(),
 		sveltekit({
