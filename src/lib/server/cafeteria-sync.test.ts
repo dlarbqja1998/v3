@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { flattenFoodCourtMenu, flattenWeeklyMenu } from './cafeteria-sync';
+import { flattenFoodCourtMenu, flattenWeeklyMenu, shouldSyncWeeklyMenu } from './cafeteria-sync';
 
 describe('주간 학식 메뉴 동기화 입력', () => {
 	it('진리관 중식의 메인 메뉴와 국을 각각 제공 회차로 만든다', () => {
@@ -54,5 +54,13 @@ describe('푸드코트 메뉴 동기화 입력', () => {
 				isVotable: true
 			})
 		);
+	});
+});
+
+describe('주간 메뉴 동기화 필요 여부', () => {
+	it('DB 제공 회차가 크롤링 메뉴보다 적으면 동기화한다', () => {
+		expect(shouldSyncWeeklyMenu(12, 0)).toBe(true);
+		expect(shouldSyncWeeklyMenu(12, 11)).toBe(true);
+		expect(shouldSyncWeeklyMenu(12, 12)).toBe(false);
 	});
 });

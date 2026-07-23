@@ -2,7 +2,11 @@ import { env } from '$env/dynamic/private';
 import { dev } from '$app/environment';
 import { getHomeData } from '$lib/server/db/queries';
 import { getTodayMenuWithRefresh } from '$lib/server/cafeteria-cache';
-import { syncFoodCourtMenu, syncWeeklyCafeteriaMenu } from '$lib/server/cafeteria-sync';
+import {
+	ensureWeeklyCafeteriaMenu,
+	syncFoodCourtMenu,
+	syncWeeklyCafeteriaMenu
+} from '$lib/server/cafeteria-sync';
 import { getOrCreateVoterHash, getWeeklyCafeteriaFeedback } from '$lib/server/cafeteria-feedback';
 
 export async function load({ platform, cookies }) {
@@ -22,6 +26,7 @@ export async function load({ platform, cookies }) {
 	});
 	if (weeklyMenu) {
 		try {
+			await ensureWeeklyCafeteriaMenu(env.DATABASE_URL, weeklyMenu);
 			await syncFoodCourtMenu(env.DATABASE_URL, weeklyMenu.todayDate.replaceAll('.', '-'));
 		} catch (error) {
 			console.error('food court menu database sync failed:', error);

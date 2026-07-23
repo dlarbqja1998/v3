@@ -1,5 +1,6 @@
 import { createDb } from '$lib/server/db';
 import { cafeteriaMenuItems, cafeteriaMenuOfferings } from '$lib/server/db/schema';
+import { and, gte, inArray, lte } from 'drizzle-orm';
 import { staticFoodCourtVendors } from '$lib/domain/cafeterias';
 import {
 	isVotableMenu,
@@ -90,8 +91,37 @@ export function flattenFoodCourtMenu(menuDate: string): CafeteriaOfferingInput[]
 	);
 }
 
+export function shouldSyncWeeklyMenu(expectedOfferingCount: number, persistedOfferingCount: number) {
+	return persistedOfferingCount < expectedOfferingCount;
+}
+
 export async function syncWeeklyCafeteriaMenu(databaseUrl: string | undefined, weeklyMenu: WeeklyMenu) {
 	return syncCafeteriaOfferings(databaseUrl, flattenWeeklyMenu(weeklyMenu));
+}
+
+export async function ensureWeeklyCafeteriaMenu(databaseUrl: string | undefined, weeklyMenu: WeeklyMenu) {
+	if (!databaseUrl) return 0;
+
+	const expectedOfferings = flattenWeeklyMenu(weeklyMenu);
+	const dates = weeklyMenu.days.map((day) => toDatabaseDate(day.date));
+	const firstDate = dates[0];
+	const lastDate = dates.at(-1);
+	if (!firstDate || !lastDate) return 0;
+
+	const db = createDb(databaseUrl);
+	const persistedOfferings = await db
+		.select({ id: cafeteriaMenuOfferings.id })
+		.from(cafeteriaMenuOfferings)
+		.where(
+			and(
+				inArray(cafeteriaMenuOfferings.cafeteriaCode, ['jinri', 'faculty']),
+				gte(cafeteriaMenuOfferings.menuDate, firstDate),
+				lte(cafeteriaMenuOfferings.menuDate, lastDate)
+			)
+		);
+
+	if (!shouldSyncWeeklyMenu(expectedOfferings.length, persistedOfferings.length)) return 0;
+	return syncCafeteriaOfferings(databaseUrl, expectedOfferings);
 }
 
 export async function syncFoodCourtMenu(databaseUrl: string | undefined, menuDate: string) {
