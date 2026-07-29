@@ -9,7 +9,7 @@ import {
 } from '$lib/server/cafeteria-sync';
 import { getOrCreateVoterHash, getWeeklyCafeteriaFeedback } from '$lib/server/cafeteria-feedback';
 
-export async function load({ platform, cookies }) {
+export async function load({ platform, cookies, locals }) {
 	const voter = await getOrCreateVoterHash(cookies.get('cafeteria_voter'));
 	if (!cookies.get('cafeteria_voter')) {
 		cookies.set('cafeteria_voter', voter.voterId, {
@@ -47,6 +47,12 @@ export async function load({ platform, cookies }) {
 	return {
 		...homeData,
 		cafeteriaFeedback,
-		naverMapClientId: env.NAVER_MAP_CLIENT_ID ?? ''
+		naverMapClientId: env.NAVER_MAP_CLIENT_ID ?? '',
+		user: locals.user
+			? {
+					nickname: locals.user.nickname,
+					role: locals.user.role
+				}
+			: null
 	};
 }

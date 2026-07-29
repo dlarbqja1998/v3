@@ -29,7 +29,20 @@ declare global {
 
 	namespace App {
 		// interface Error {}
-		// interface Locals {}
+		interface Locals {
+			user: {
+				id: number;
+				email: string;
+				nickname: string | null;
+				profileImg: string | null;
+				isOnboarded: boolean;
+				role: string;
+				college: string | null;
+				department: string | null;
+				grade: string | null;
+				gender: string | null;
+			} | null;
+		}
 		// interface PageData {}
 		// interface PageState {}
 		interface Platform {

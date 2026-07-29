@@ -5,6 +5,7 @@ import {
 	integer,
 	jsonb,
 	pgTable,
+	serial,
 	text,
 	time,
 	timestamp,
@@ -12,6 +13,34 @@ import {
 	uuid,
 	varchar
 } from 'drizzle-orm/pg-core';
+
+export const users = pgTable(
+	'users',
+	{
+		id: serial('id').primaryKey(),
+		email: text('email').notNull(),
+		password: text('password'),
+		nickname: varchar('nickname', { length: 10 }),
+		profileImg: text('profile_img'),
+		provider: varchar('provider', { length: 40 }).notNull().default('local'),
+		providerId: text('provider_id'),
+		college: text('college'),
+		department: text('department'),
+		grade: varchar('grade', { length: 40 }),
+		gender: varchar('gender', { length: 20 }),
+		isOnboarded: boolean('is_onboarded').notNull().default(false),
+		role: varchar('role', { length: 20 }).notNull().default('user'),
+		isBanned: boolean('is_banned').notNull().default(false),
+		status: varchar('status', { length: 20 }).notNull().default('ACTIVE'),
+		createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+		updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
+	},
+	(table) => [
+		uniqueIndex('users_email_unique').on(table.email),
+		uniqueIndex('users_provider_id_unique').on(table.provider, table.providerId),
+		uniqueIndex('users_nickname_unique').on(table.nickname)
+	]
+);
 
 export const zones = pgTable('zones', {
 	id: uuid('id').defaultRandom().primaryKey(),

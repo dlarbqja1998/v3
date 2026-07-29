@@ -436,13 +436,23 @@ type CafeteriaFeedbackMap = Record<
 				<div>
 					<h1 class="max-w-[250px] text-3xl font-black leading-[1.08]">골라바유</h1>
 				</div>
-				<a
-					class="flex shrink-0 items-center gap-1.5 rounded-full bg-[#fee500] px-3 py-2.5 text-[13px] font-black text-[#251900] shadow-[0_10px_24px_rgba(103,16,43,0.16)]"
-					href="/login"
-				>
-					<LogIn size={15} strokeWidth={3} />
-					로그인
-				</a>
+				{#if data.user}
+					<a
+						class="flex shrink-0 items-center gap-1.5 rounded-full bg-white px-3 py-2.5 text-[13px] font-black text-brand shadow-[0_10px_24px_rgba(103,16,43,0.16)]"
+						href="/"
+					>
+						<LogIn size={15} strokeWidth={3} />
+						{data.user.role === 'admin' ? '관리자' : data.user.nickname}
+					</a>
+				{:else}
+					<a
+						class="flex shrink-0 items-center gap-1.5 rounded-full bg-[#fee500] px-3 py-2.5 text-[13px] font-black text-[#251900] shadow-[0_10px_24px_rgba(103,16,43,0.16)]"
+						href="/login"
+					>
+						<LogIn size={15} strokeWidth={3} />
+						로그인
+					</a>
+				{/if}
 			</header>
 
 			<div class="pointer-events-auto relative z-20 grid grid-cols-[116px_1fr] gap-2.5 px-5 pb-3">
