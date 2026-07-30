@@ -12,6 +12,8 @@
 		Utensils,
 		Users
 	} from '@lucide/svelte';
+	import BottomNavigation from '$lib/navigation/BottomNavigation.svelte';
+	import type { BottomNavigationKey } from '$lib/domain/bottom-navigation';
 	import NaverMap from '$lib/map/NaverMap.svelte';
 	import type { CafeteriaPanelItem, DailyMenu, MenuDayKey } from '$lib/domain/places';
 	import {
@@ -43,7 +45,7 @@ type CafeteriaFeedbackMap = Record<
 		items: MealItem[];
 	};
 
-	type SheetMode = 'home' | 'cafeteria' | 'shuttle';
+	type SheetMode = 'home' | 'cafeteria' | 'shuttle' | 'pin';
 
 	let { data }: { data: PageData } = $props();
 
@@ -120,6 +122,14 @@ type CafeteriaFeedbackMap = Record<
 	const nextShuttle = $derived(getUpcomingShuttles(currentTime, undefined, 1)[0] ?? null);
 
 	onMount(() => {
+		if (data.initialPanel === 'cafeteria') {
+			openCafeteriaPanel();
+		} else if (data.initialPanel === 'shuttle') {
+			openShuttlePanel();
+		} else if (data.initialPanel === 'pin') {
+			openPinPanel();
+		}
+
 		const timer = window.setInterval(() => {
 			currentTime = new Date();
 		}, 30000);
@@ -154,6 +164,13 @@ type CafeteriaFeedbackMap = Record<
 		sheetMode = 'shuttle';
 		selectedCategory = 'all';
 		activeShuttleStopId = nextShuttle?.from ?? 'campus';
+	}
+
+	function openPinPanel() {
+		sheetMode = 'pin';
+		hasSelectedPinFilter = true;
+		selectedCategory = 'all';
+		activePlaceId = '';
 	}
 
 	function closePanel() {
@@ -225,9 +242,23 @@ type CafeteriaFeedbackMap = Record<
 	}
 
 	function getSheetHeightClass(mode: SheetMode) {
-		if (mode === 'cafeteria') return 'h-[80dvh]';
-		if (mode === 'shuttle') return 'h-[72dvh]';
+		if (mode === 'cafeteria') return 'h-[calc(83.333dvh_-_76px_-_env(safe-area-inset-bottom))]';
+		if (mode === 'shuttle') return 'h-[calc(83.333dvh_-_76px_-_env(safe-area-inset-bottom))]';
+		if (mode === 'pin') return 'h-auto';
 		return 'h-auto';
+	}
+
+	function getActiveNavigationKey(): BottomNavigationKey {
+		if (sheetMode === 'shuttle') return 'shuttle';
+		if (sheetMode === 'pin') return 'pin';
+		if (sheetMode === 'cafeteria') return 'cafeteria';
+		return 'cafeteria';
+	}
+
+	function handleBottomNavigation(key: BottomNavigationKey) {
+		if (key === 'cafeteria') openCafeteriaPanel();
+		if (key === 'shuttle') openShuttlePanel();
+		if (key === 'pin') openPinPanel();
 	}
 
 	function formatShortDate(dateStr?: string) {
@@ -437,13 +468,12 @@ type CafeteriaFeedbackMap = Record<
 					<h1 class="max-w-[250px] text-3xl font-black leading-[1.08]">골라바유</h1>
 				</div>
 				{#if data.user}
-					<a
-						class="flex shrink-0 items-center gap-1.5 rounded-full bg-white px-3 py-2.5 text-[13px] font-black text-brand shadow-[0_10px_24px_rgba(103,16,43,0.16)]"
-						href="/"
+					<div
+						class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white text-brand shadow-[0_10px_24px_rgba(103,16,43,0.16)]"
+						aria-label={data.user.role === 'admin' ? '관리자로 로그인됨' : '로그인됨'}
 					>
-						<LogIn size={15} strokeWidth={3} />
-						{data.user.role === 'admin' ? '관리자' : data.user.nickname}
-					</a>
+						<LogIn size={16} strokeWidth={3} />
+					</div>
 				{:else}
 					<a
 						class="flex shrink-0 items-center gap-1.5 rounded-full bg-[#fee500] px-3 py-2.5 text-[13px] font-black text-[#251900] shadow-[0_10px_24px_rgba(103,16,43,0.16)]"
@@ -506,7 +536,7 @@ type CafeteriaFeedbackMap = Record<
 		{/if}
 
 		<section
-			class={`pointer-events-auto absolute inset-x-0 bottom-0 z-20 rounded-t-[26px] bg-brand-surface/95 px-[18px] pb-5 pt-2.5 shadow-[0_-18px_40px_rgba(103,16,43,0.16)] backdrop-blur transition-[height] duration-300 ${
+			class={`pointer-events-auto absolute inset-x-0 bottom-[calc(76px+env(safe-area-inset-bottom))] z-20 rounded-t-[26px] bg-brand-surface/95 px-[18px] pb-5 pt-2.5 shadow-[0_-18px_40px_rgba(103,16,43,0.16)] backdrop-blur transition-[height] duration-300 ${
 				getSheetHeightClass(sheetMode)
 			}`}
 			aria-label="오늘의 생활 정보"
@@ -580,7 +610,7 @@ type CafeteriaFeedbackMap = Record<
 					</p>
 				{/if}
 			{:else if sheetMode === 'cafeteria'}
-				<div class="flex h-[calc(80dvh-38px)] flex-col">
+				<div class="flex h-[calc(83.333dvh_-_114px_-_env(safe-area-inset-bottom))] flex-col">
 					<div class="mb-3 flex items-center justify-between gap-3">
 						<div>
 							<p class="m-0 text-xs font-black text-brand-muted">오늘의 학식</p>
@@ -709,8 +739,33 @@ type CafeteriaFeedbackMap = Record<
 						{/if}
 					</div>
 				</div>
+			{:else if sheetMode === 'pin'}
+				<div class="grid gap-3">
+					<div class="flex items-center justify-between gap-3">
+						<div>
+							<p class="m-0 text-xs font-black text-brand-muted">내가 고르는 지도</p>
+							<h2 class="m-0 mt-0.5 text-xl font-black">핀 기능 준비 중</h2>
+						</div>
+						<button
+							class="rounded-full border border-brand-border bg-white px-3 py-2 text-xs font-black text-brand-muted"
+							type="button"
+							onclick={closePanel}
+						>
+							닫기
+						</button>
+					</div>
+					<div class="rounded-[18px] border border-brand-border bg-white px-5 py-5">
+						<div class="grid h-12 w-12 place-items-center rounded-[16px] bg-brand-map text-brand">
+							<MapPin size={24} strokeWidth={2.8} />
+						</div>
+						<p class="m-0 mt-4 text-base font-black text-brand-text">원하는 핀을 고르는 기능을 넣을 예정입니다.</p>
+						<p class="m-0 mt-2 text-sm font-bold leading-6 text-brand-muted">
+							맛집, 카페, 교내 장소처럼 학생이 직접 보고 싶은 핀을 선택하는 흐름으로 확장합니다.
+						</p>
+					</div>
+				</div>
 			{:else}
-				<div class="flex h-[calc(72dvh-38px)] flex-col">
+				<div class="flex h-[calc(83.333dvh_-_114px_-_env(safe-area-inset-bottom))] flex-col">
 					<div class="mb-3 flex items-center justify-between gap-3">
 						<div>
 							<p class="m-0 text-xs font-black text-brand-muted">학교-조치원역 셔틀</p>
@@ -820,5 +875,11 @@ type CafeteriaFeedbackMap = Record<
 				</div>
 			{/if}
 		</section>
+
+		<BottomNavigation
+			activeKey={getActiveNavigationKey()}
+			containerClass="absolute inset-x-0 bottom-0 z-30"
+			onNavigate={handleBottomNavigation}
+		/>
 	</section>
 </main>

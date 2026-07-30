@@ -8,8 +8,10 @@ import {
 	syncWeeklyCafeteriaMenu
 } from '$lib/server/cafeteria-sync';
 import { getOrCreateVoterHash, getWeeklyCafeteriaFeedback } from '$lib/server/cafeteria-feedback';
+import { getHomeLoadPolicy } from '$lib/server/home-load-policy';
 
-export async function load({ platform, cookies, locals }) {
+export async function load({ platform, cookies, locals, url }) {
+	const loadPolicy = getHomeLoadPolicy(url.searchParams.get('panel'));
 	const voter = await getOrCreateVoterHash(cookies.get('cafeteria_voter'));
 	if (!cookies.get('cafeteria_voter')) {
 		cookies.set('cafeteria_voter', voter.voterId, {
@@ -21,32 +23,35 @@ export async function load({ platform, cookies, locals }) {
 		});
 	}
 
-	const weeklyMenu = await getTodayMenuWithRefresh(platform, {
-		onUpdated: (menu) => syncWeeklyCafeteriaMenu(env.DATABASE_URL, menu)
-	});
-	if (weeklyMenu) {
-		try {
-			await ensureWeeklyCafeteriaMenu(env.DATABASE_URL, weeklyMenu);
-			await syncFoodCourtMenu(env.DATABASE_URL, weeklyMenu.todayDate.replaceAll('.', '-'));
-		} catch (error) {
-			console.error('food court menu database sync failed:', error);
-		}
+	const weeklyMenu = loadPolicy.needsCafeteriaMenu
+		? await getTodayMenuWithRefresh(platform, {
+				onUpdated: async (menu) => {
+					scheduleBackgroundTask(platform, syncWeeklyCafeteriaMenu(env.DATABASE_URL, menu));
+				}
+			})
+		: null;
+	if (weeklyMenu && loadPolicy.shouldSyncCafeteriaMenu) {
+		scheduleBackgroundTask(platform, syncVisibleCafeteriaData(weeklyMenu));
 	}
+
 	const homeData = await getHomeData(env.DATABASE_URL, weeklyMenu);
 	let cafeteriaFeedback = {};
-	try {
-		cafeteriaFeedback = await getWeeklyCafeteriaFeedback(
-			env.DATABASE_URL,
-			weeklyMenu,
-			voter.voterHash
-		);
-	} catch (error) {
-		console.error('cafeteria feedback load failed:', error);
+	if (loadPolicy.needsCafeteriaFeedback) {
+		try {
+			cafeteriaFeedback = await getWeeklyCafeteriaFeedback(
+				env.DATABASE_URL,
+				weeklyMenu,
+				voter.voterHash
+			);
+		} catch (error) {
+			console.error('cafeteria feedback load failed:', error);
+		}
 	}
 
 	return {
 		...homeData,
 		cafeteriaFeedback,
+		initialPanel: loadPolicy.initialPanel,
 		naverMapClientId: env.NAVER_MAP_CLIENT_ID ?? '',
 		user: locals.user
 			? {
@@ -55,4 +60,24 @@ export async function load({ platform, cookies, locals }) {
 				}
 			: null
 	};
+}
+
+async function syncVisibleCafeteriaData(weeklyMenu: NonNullable<Awaited<ReturnType<typeof getTodayMenuWithRefresh>>>) {
+	try {
+		await ensureWeeklyCafeteriaMenu(env.DATABASE_URL, weeklyMenu);
+		await syncFoodCourtMenu(env.DATABASE_URL, weeklyMenu.todayDate.replaceAll('.', '-'));
+	} catch (error) {
+		console.error('cafeteria menu database sync failed:', error);
+	}
+}
+
+function scheduleBackgroundTask(platform: { context?: { waitUntil?: (promise: Promise<unknown>) => void } } | undefined, task: Promise<unknown>) {
+	if (platform?.context?.waitUntil) {
+		platform.context.waitUntil(task);
+		return;
+	}
+
+	void task.catch((error) => {
+		console.error('background home task failed:', error);
+	});
 }

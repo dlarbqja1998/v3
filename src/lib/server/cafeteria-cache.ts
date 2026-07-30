@@ -36,6 +36,9 @@ type MenuCacheMeta = {
 	lastFailureReason?: string;
 };
 
+let inMemoryWeeklyMenu: WeeklyMenu | null = null;
+let inMemoryRefreshPromise: Promise<WeeklyMenu | null> | null = null;
+
 function getMenuCache(platform: CachePlatform | undefined) {
 	return platform?.env?.GOLABAU_CACHE ?? null;
 }
@@ -248,14 +251,31 @@ export async function getTodayMenuWithRefresh(
 		return refreshed.status === 'updated' ? withCurrentTodayFields(refreshed.menu) : staleMenu;
 	}
 
-	const directMenu = await getCafeteriaMenu();
-	if (typeof directMenu !== 'object' || directMenu === null) return null;
-
-	try {
-		await options.onUpdated?.(directMenu);
-	} catch (error) {
-		console.error('cafeteria menu database sync failed:', error);
+	if (inMemoryWeeklyMenu && isFreshWeeklyMenu(inMemoryWeeklyMenu)) {
+		return withCurrentTodayFields(inMemoryWeeklyMenu);
 	}
 
-	return withCurrentTodayFields(directMenu);
+	if (inMemoryWeeklyMenu && inMemoryRefreshPromise) {
+		return withCurrentTodayFields(inMemoryWeeklyMenu);
+	}
+
+	if (inMemoryWeeklyMenu) {
+		inMemoryRefreshPromise = refreshDirectMenu(options);
+		return withCurrentTodayFields(inMemoryWeeklyMenu);
+	}
+
+	return refreshDirectMenu(options);
+}
+
+async function refreshDirectMenu(options: RefreshMenuOptions) {
+	try {
+		const directMenu = await getCafeteriaMenu();
+		if (typeof directMenu !== 'object' || directMenu === null) return null;
+
+		await options.onUpdated?.(directMenu);
+		inMemoryWeeklyMenu = directMenu;
+		return withCurrentTodayFields(directMenu);
+	} finally {
+		inMemoryRefreshPromise = null;
+	}
 }

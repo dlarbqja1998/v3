@@ -1,12 +1,17 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
 	import type { Place } from '$lib/domain/places';
+	import {
+		getMapCenterBounds,
+		getSheetAwareLatitudeOffset,
+		type MapFocusMode
+	} from '$lib/map/focus';
 
 	type Props = {
 		clientId: string;
 		places: Place[];
 		activePlaceId: string;
-		focusMode?: 'default' | 'top-band';
+		focusMode?: MapFocusMode;
 		onMarkerClick: (placeId: string) => void;
 	};
 
@@ -27,12 +32,7 @@
 	const minZoom = 15;
 	const maxZoom = 19;
 	const fivePixelLatitudeOffset = 0.000086;
-	const serviceBounds = {
-		south: 36.5965,
-		west: 127.2765,
-		north: 36.6215,
-		east: 127.3065
-	};
+	const serviceBounds = getMapCenterBounds();
 
 	const initialCenter = {
 		latitude: initialTarget.latitude + fivePixelLatitudeOffset,
@@ -152,7 +152,7 @@
 	function focusActivePlace(
 		nextPlaces: Place[],
 		nextActivePlaceId: string,
-		nextFocusMode: 'default' | 'top-band'
+		nextFocusMode: MapFocusMode
 	) {
 		const naver = window.naver;
 		if (!naver || !map || !nextActivePlaceId) return;
@@ -160,11 +160,12 @@
 		const activePlace = nextPlaces.find((place) => place.id === nextActivePlaceId);
 		if (!activePlace) return;
 
-		const sheetAwareLatitudeOffset = getFocusLatitudeOffset(
-			activePlace.latitude,
-			map.getZoom(),
-			nextFocusMode
-		);
+		const sheetAwareLatitudeOffset = getSheetAwareLatitudeOffset({
+			latitude: activePlace.latitude,
+			zoom: map.getZoom(),
+			mapHeight: mapElement?.clientHeight || window.innerHeight || 800,
+			focusMode: nextFocusMode
+		});
 		const center = new naver.maps.LatLng(
 			activePlace.latitude - sheetAwareLatitudeOffset,
 			activePlace.longitude
@@ -176,26 +177,6 @@
 		}
 
 		map.setCenter(center);
-	}
-
-	function getFocusLatitudeOffset(
-		latitude: number,
-		zoom: number,
-		nextFocusMode: 'default' | 'top-band'
-	) {
-		if (nextFocusMode === 'default') {
-			return 0.00115;
-		}
-
-		const mapHeight = mapElement?.clientHeight || window.innerHeight || 800;
-		const markerTargetRatio = 0.1;
-		const markerCenterRatio = 0.5;
-		const verticalShiftPixels = mapHeight * (markerCenterRatio - markerTargetRatio);
-		const metersPerPixel =
-			(156543.03392 * Math.cos((latitude * Math.PI) / 180)) / Math.pow(2, zoom);
-		const latitudeDegreesPerMeter = 1 / 111320;
-
-		return verticalShiftPixels * metersPerPixel * latitudeDegreesPerMeter;
 	}
 
 	function clearMarkers() {
