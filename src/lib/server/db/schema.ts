@@ -55,6 +55,19 @@ export const zones = pgTable('zones', {
 	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
 });
 
+export const campusSpots = pgTable('campus_spots', {
+	id: varchar('id', { length: 120 }).primaryKey(),
+	name: varchar('name', { length: 120 }).notNull(),
+	type: varchar('type', { length: 20 }).notNull(),
+	centerLatitude: doublePrecision('center_latitude').notNull(),
+	centerLongitude: doublePrecision('center_longitude').notNull(),
+	boundary: jsonb('boundary').notNull(),
+	source: varchar('source', { length: 20 }).notNull(),
+	osmId: varchar('osm_id', { length: 120 }),
+	description: text('description').notNull().default(''),
+	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
+});
+
 export const placeCategories = pgTable('place_categories', {
 	id: uuid('id').defaultRandom().primaryKey(),
 	name: varchar('name', { length: 80 }).notNull(),

@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
+	import type { CampusSpot } from '$lib/domain/campus-spots';
 	import type { Place } from '$lib/domain/places';
+	import { getCampusPolygonStyle } from '$lib/map/campus-polygon';
 	import {
 		getMapCenterBounds,
 		getSheetAwareLatitudeOffset,
@@ -12,14 +14,30 @@
 		places: Place[];
 		activePlaceId: string;
 		focusMode?: MapFocusMode;
+		campusSpots?: CampusSpot[];
+		activeCampusSpotId?: string;
+		showCampusBoundaries?: boolean;
 		onMarkerClick: (placeId: string) => void;
+		onCampusSpotClick?: (spotId: string) => void;
 	};
 
-	let { clientId, places, activePlaceId, focusMode = 'default', onMarkerClick }: Props = $props();
+	let {
+		clientId,
+		places,
+		activePlaceId,
+		focusMode = 'default',
+		campusSpots = [],
+		activeCampusSpotId = '',
+		showCampusBoundaries = false,
+		onMarkerClick,
+		onCampusSpotClick
+	}: Props = $props();
 
 	let mapElement: HTMLDivElement;
 	let map: any = null;
 	let markers: any[] = [];
+	let campusMarkers: any[] = [];
+	let campusPolygons: any[] = [];
 	let mapListeners: any[] = [];
 	let isReady = $state(false);
 	let loadError = $state('');
@@ -46,13 +64,16 @@
 	onDestroy(() => {
 		clearMapListeners();
 		clearMarkers();
+		clearCampusSpots();
 		map = null;
 	});
 
 	$effect(() => {
 		if (!isReady || !map) return;
 		syncMarkers(places, activePlaceId);
+		syncCampusSpots(campusSpots, activeCampusSpotId, showCampusBoundaries);
 		focusActivePlace(places, activePlaceId, focusMode);
+		focusActiveCampusSpot(campusSpots, activeCampusSpotId, focusMode);
 	});
 
 	async function initMap() {
@@ -149,27 +170,82 @@
 		}
 	}
 
+	function syncCampusSpots(
+		nextCampusSpots: CampusSpot[],
+		nextActiveCampusSpotId: string,
+		shouldShowCampusBoundaries: boolean
+	) {
+		clearCampusSpots();
+		if (!shouldShowCampusBoundaries) return;
+
+		const naver = window.naver;
+		if (!naver) return;
+		const maps = naver.maps as any;
+
+		for (const spot of nextCampusSpots) {
+			const isActive = spot.id === nextActiveCampusSpotId;
+			const polygon = new maps.Polygon({
+				map,
+				paths: spot.boundary.map(
+					({ latitude, longitude }) => new naver.maps.LatLng(latitude, longitude)
+				),
+				...getCampusPolygonStyle(isActive)
+			});
+			const marker = new naver.maps.Marker({
+				position: new naver.maps.LatLng(spot.center.latitude, spot.center.longitude),
+				map,
+				title: spot.name,
+				icon: {
+					content: campusMarkerHtml(isActive),
+					size: new naver.maps.Size(24, 24),
+					anchor: new naver.maps.Point(12, 12)
+				}
+			});
+
+			naver.maps.Event.addListener(polygon, 'click', () => onCampusSpotClick?.(spot.id));
+			naver.maps.Event.addListener(marker, 'click', () => onCampusSpotClick?.(spot.id));
+			campusPolygons.push(polygon);
+			campusMarkers.push(marker);
+		}
+	}
+
 	function focusActivePlace(
 		nextPlaces: Place[],
 		nextActivePlaceId: string,
 		nextFocusMode: MapFocusMode
 	) {
-		const naver = window.naver;
-		if (!naver || !map || !nextActivePlaceId) return;
+		if (!map || !nextActivePlaceId) return;
 
 		const activePlace = nextPlaces.find((place) => place.id === nextActivePlaceId);
 		if (!activePlace) return;
 
+		focusCoordinate(activePlace.latitude, activePlace.longitude, nextFocusMode);
+	}
+
+	function focusActiveCampusSpot(
+		nextCampusSpots: CampusSpot[],
+		nextActiveCampusSpotId: string,
+		nextFocusMode: MapFocusMode
+	) {
+		if (!nextActiveCampusSpotId) return;
+
+		const activeCampusSpot = nextCampusSpots.find((spot) => spot.id === nextActiveCampusSpotId);
+		if (!activeCampusSpot) return;
+
+		focusCoordinate(activeCampusSpot.center.latitude, activeCampusSpot.center.longitude, nextFocusMode);
+	}
+
+	function focusCoordinate(latitude: number, longitude: number, nextFocusMode: MapFocusMode) {
+		const naver = window.naver;
+		if (!naver || !map) return;
+
 		const sheetAwareLatitudeOffset = getSheetAwareLatitudeOffset({
-			latitude: activePlace.latitude,
+			latitude,
 			zoom: map.getZoom(),
 			mapHeight: mapElement?.clientHeight || window.innerHeight || 800,
 			focusMode: nextFocusMode
 		});
-		const center = new naver.maps.LatLng(
-			activePlace.latitude - sheetAwareLatitudeOffset,
-			activePlace.longitude
-		);
+		const center = new naver.maps.LatLng(latitude - sheetAwareLatitudeOffset, longitude);
 
 		if (typeof map.panTo === 'function') {
 			map.panTo(center);
@@ -184,6 +260,17 @@
 			marker.setMap(null);
 		}
 		markers = [];
+	}
+
+	function clearCampusSpots() {
+		for (const polygon of campusPolygons) {
+			polygon.setMap(null);
+		}
+		for (const marker of campusMarkers) {
+			marker.setMap(null);
+		}
+		campusPolygons = [];
+		campusMarkers = [];
 	}
 
 	function clearMapListeners() {
@@ -222,6 +309,22 @@
 			">
 				<span style="transform: rotate(45deg);">${content}</span>
 			</div>
+		`;
+	}
+
+	function campusMarkerHtml(isActive: boolean) {
+		const background = isActive ? '#5f0f2d' : '#a51c45';
+		const outline = isActive ? '0 0 0 5px rgba(165, 28, 69, 0.24),' : '';
+
+		return `
+			<div style="
+				width: 18px;
+				height: 18px;
+				border: 3px solid rgba(255, 255, 255, 0.96);
+				border-radius: 50%;
+				background: ${background};
+				box-shadow: ${outline}0 5px 12px rgba(103, 16, 43, 0.24);
+			"></div>
 		`;
 	}
 

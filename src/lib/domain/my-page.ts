@@ -14,6 +14,10 @@ export type MyPageRow = {
 	value: string;
 };
 
+export function canManageCampusBoundaries(role: string) {
+	return role === 'admin';
+}
+
 function displayValue(value: string | null) {
 	return value?.trim() || '미입력';
 }

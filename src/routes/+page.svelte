@@ -14,6 +14,7 @@
 	} from '@lucide/svelte';
 	import BottomNavigation from '$lib/navigation/BottomNavigation.svelte';
 	import type { BottomNavigationKey } from '$lib/domain/bottom-navigation';
+	import type { CampusSpot } from '$lib/domain/campus-spots';
 	import NaverMap from '$lib/map/NaverMap.svelte';
 	import type { CafeteriaPanelItem, DailyMenu, MenuDayKey } from '$lib/domain/places';
 	import {
@@ -53,6 +54,11 @@ type CafeteriaFeedbackMap = Record<
 	let selectedCategory = $state('all');
 	let hasSelectedPinFilter = $state(false);
 	let activePlaceId = $state('');
+	let activeCampusSpotId = $state('');
+	let showCampusBoundaries = $state(false);
+	let campusSpots = $state<CampusSpot[]>([]);
+	let campusSpotsLoading = $state(false);
+	let campusSpotsError = $state('');
 	let sheetMode = $state<SheetMode>('home');
 	let activeCafeteriaIndex = $state(0);
 	let activeDayKey = $state<MenuDayKey>('mon');
@@ -90,8 +96,14 @@ type CafeteriaFeedbackMap = Record<
 					null)
 	);
 
+	const activeCampusSpot = $derived<CampusSpot | null>(
+		campusSpots.find((spot) => spot.id === activeCampusSpotId) ?? null
+	);
+
 	const mapPlaces = $derived(
-		sheetMode === 'shuttle'
+		sheetMode === 'pin'
+			? []
+			: sheetMode === 'shuttle'
 			? shuttleStops
 			: sheetMode === 'cafeteria' && activeCafeteria
 			? data.places.filter((place) => place.id === activeCafeteria.placeId)
@@ -99,7 +111,9 @@ type CafeteriaFeedbackMap = Record<
 	);
 
 	const activeMapPlaceId = $derived(
-		sheetMode === 'shuttle'
+		sheetMode === 'pin'
+			? ''
+			: sheetMode === 'shuttle'
 			? (shuttleStops.find((stop) => stop.stopId === activeShuttleStopId)?.id ?? '')
 			: (activePlace?.id ?? '')
 	);
@@ -169,8 +183,29 @@ type CafeteriaFeedbackMap = Record<
 	function openPinPanel() {
 		sheetMode = 'pin';
 		hasSelectedPinFilter = true;
+		selectedZone = 'all';
 		selectedCategory = 'all';
 		activePlaceId = '';
+		showCampusBoundaries = true;
+		activeCampusSpotId = '';
+		void loadCampusSpots();
+	}
+
+	async function loadCampusSpots() {
+		if (campusSpotsLoading || campusSpots.length > 0) return;
+		campusSpotsLoading = true;
+		campusSpotsError = '';
+		try {
+			const response = await fetch('/api/map/campus-spots');
+			if (!response.ok) throw new Error('campus spots request failed');
+			const payload = (await response.json()) as { spots?: CampusSpot[] };
+			campusSpots = Array.isArray(payload.spots) ? payload.spots : [];
+			if (campusSpots.length === 0) throw new Error('empty campus spots');
+		} catch {
+			campusSpotsError = '캠퍼스 구역 정보를 불러오지 못했습니다.';
+		} finally {
+			campusSpotsLoading = false;
+		}
 	}
 
 	function closePanel() {
@@ -189,6 +224,16 @@ type CafeteriaFeedbackMap = Record<
 		}
 
 		activePlaceId = placeId;
+	}
+
+	function selectCampusSpot(spotId: string) {
+		activeCampusSpotId = spotId;
+		showCampusBoundaries = true;
+	}
+
+	function toggleCampusBoundaries() {
+		showCampusBoundaries = !showCampusBoundaries;
+		if (!showCampusBoundaries) activeCampusSpotId = '';
 	}
 
 	function selectZoneFilter(zoneId: string) {
@@ -456,8 +501,16 @@ type CafeteriaFeedbackMap = Record<
 			clientId={data.naverMapClientId}
 			places={mapPlaces}
 			activePlaceId={activeMapPlaceId}
-			focusMode={sheetMode === 'cafeteria' || sheetMode === 'shuttle' ? 'top-band' : 'default'}
+			focusMode={
+				sheetMode === 'cafeteria' || sheetMode === 'shuttle' || sheetMode === 'pin'
+					? 'top-band'
+					: 'default'
+			}
+			campusSpots={campusSpots}
+			activeCampusSpotId={activeCampusSpotId}
+			showCampusBoundaries={sheetMode === 'pin' && showCampusBoundaries}
 			onMarkerClick={handleMarkerClick}
+			onCampusSpotClick={selectCampusSpot}
 		/>
 
 		{#if sheetMode === 'home'}
@@ -744,7 +797,7 @@ type CafeteriaFeedbackMap = Record<
 					<div class="flex items-center justify-between gap-3">
 						<div>
 							<p class="m-0 text-xs font-black text-brand-muted">내가 고르는 지도</p>
-							<h2 class="m-0 mt-0.5 text-xl font-black">핀 기능 준비 중</h2>
+							<h2 class="m-0 mt-0.5 text-xl font-black">캠퍼스 구역</h2>
 						</div>
 						<button
 							class="rounded-full border border-brand-border bg-white px-3 py-2 text-xs font-black text-brand-muted"
@@ -754,15 +807,68 @@ type CafeteriaFeedbackMap = Record<
 							닫기
 						</button>
 					</div>
-					<div class="rounded-[18px] border border-brand-border bg-white px-5 py-5">
-						<div class="grid h-12 w-12 place-items-center rounded-[16px] bg-brand-map text-brand">
-							<MapPin size={24} strokeWidth={2.8} />
+					<div class="flex items-center justify-between gap-3 rounded-[8px] border border-brand-border bg-white px-4 py-3">
+						<div class="flex items-center gap-2.5">
+							<div class="grid h-9 w-9 place-items-center rounded-[8px] bg-brand-map text-brand">
+								<MapPin size={19} strokeWidth={2.8} />
+							</div>
+							<div>
+								<p class="m-0 text-sm font-black">구역 표시</p>
+								<p class="m-0 mt-0.5 text-xs font-bold text-brand-muted">건물 · 광장 · 주요 지점</p>
+							</div>
 						</div>
-						<p class="m-0 mt-4 text-base font-black text-brand-text">원하는 핀을 고르는 기능을 넣을 예정입니다.</p>
-						<p class="m-0 mt-2 text-sm font-bold leading-6 text-brand-muted">
-							맛집, 카페, 교내 장소처럼 학생이 직접 보고 싶은 핀을 선택하는 흐름으로 확장합니다.
-						</p>
+						<button
+							class={`relative h-7 w-12 shrink-0 rounded-full transition-colors ${
+								showCampusBoundaries ? 'bg-brand' : 'bg-brand-border-strong'
+							}`}
+							type="button"
+							role="switch"
+							aria-checked={showCampusBoundaries}
+							aria-label="캠퍼스 구역 표시"
+							onclick={toggleCampusBoundaries}
+						>
+							<span
+								class={`absolute top-1 grid h-5 w-5 place-items-center rounded-full bg-white shadow-sm transition-transform ${
+									showCampusBoundaries ? 'translate-x-6' : 'translate-x-1'
+								}`}
+							></span>
+						</button>
 					</div>
+
+					{#if activeCampusSpot}
+						<div class="-mx-[18px] flex snap-x snap-mandatory overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+							<section class="w-full shrink-0 snap-center px-[18px]" aria-label={`${activeCampusSpot.name} 안내`}>
+								<div class="rounded-[8px] border border-brand-border bg-white p-4">
+									<p class="m-0 text-xs font-black text-brand-muted">선택한 구역</p>
+									<h3 class="m-0 mt-1 text-[20px] font-black">{activeCampusSpot.name}</h3>
+									<p class="m-0 mt-2 text-sm font-bold leading-6 text-brand-muted">
+										{activeCampusSpot.description}
+									</p>
+								</div>
+							</section>
+							<section class="w-full shrink-0 snap-center px-[18px]" aria-label="구역 상세 정보">
+								<div class="rounded-[8px] border border-brand-border bg-white p-4">
+									<p class="m-0 text-xs font-black text-brand-muted">구역 정보</p>
+									<h3 class="m-0 mt-1 text-[18px] font-black">준비 중</h3>
+									<p class="m-0 mt-2 text-sm font-bold leading-6 text-brand-muted">
+										운영 정보와 연결 기능은 이후 확정합니다.
+									</p>
+								</div>
+							</section>
+						</div>
+					{:else if campusSpotsLoading}
+						<p class="m-0 px-1 pt-1 text-sm font-bold leading-6 text-brand-muted">
+							캠퍼스 구역을 불러오는 중입니다.
+						</p>
+					{:else if campusSpotsError}
+						<p class="m-0 px-1 pt-1 text-sm font-bold leading-6 text-brand-muted">
+							{campusSpotsError}
+						</p>
+					{:else}
+						<p class="m-0 px-1 pt-1 text-sm font-bold leading-6 text-brand-muted">
+							구역을 켜고 지도 위 건물이나 광장을 눌러보세요.
+						</p>
+					{/if}
 				</div>
 			{:else}
 				<div class="flex h-[calc(83.333dvh_-_114px_-_env(safe-area-inset-bottom))] flex-col">

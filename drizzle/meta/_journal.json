@@ -22,6 +22,13 @@
       "when": 1784880631519,
       "tag": "0002_wide_puma",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1786078419953,
+      "tag": "0003_tan_scarecrow",
+      "breakpoints": true
     }
   ]
 }

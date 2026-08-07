@@ -1,6 +1,7 @@
 <script lang="ts">
-	import { LogOut, Pencil, UserRound } from '@lucide/svelte';
+	import { LogOut, MapPin, Pencil, UserRound } from '@lucide/svelte';
 	import BottomNavigation from '$lib/navigation/BottomNavigation.svelte';
+	import { canManageCampusBoundaries } from '$lib/domain/my-page';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -55,6 +56,15 @@
 					<Pencil size={18} strokeWidth={2.8} />
 					내 정보 수정하기
 				</a>
+				{#if canManageCampusBoundaries(data.user.role)}
+					<a
+						class="flex h-14 items-center justify-center gap-2 rounded-[16px] border border-brand-border-strong bg-white text-base font-black text-brand"
+						href="/admin/boundary-editor"
+					>
+						<MapPin size={18} strokeWidth={2.8} />
+						핀 수정하기
+					</a>
+				{/if}
 				<form method="POST" action="?/logout">
 					<button
 						class="flex h-14 w-full items-center justify-center gap-2 rounded-[16px] border border-brand-border-strong bg-white text-base font-black text-brand"
