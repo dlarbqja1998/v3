@@ -6,6 +6,8 @@ describe('캠퍼스 바운더리 스타일', () => {
 		const inactive = getCampusPolygonStyle(false);
 		const active = getCampusPolygonStyle(true);
 
+		expect(inactive.clickable).toBe(true);
+		expect(active.clickable).toBe(true);
 		expect(active.fillOpacity).toBeGreaterThan(inactive.fillOpacity);
 		expect(active.strokeWeight).toBeGreaterThan(inactive.strokeWeight);
 	});

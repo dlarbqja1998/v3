@@ -17,17 +17,17 @@
 }
 
 @theme {
-	--color-brand-bg: #f7eef1;
-	--color-brand-surface: #fff8fa;
-	--color-brand-map: #f4e4e8;
-	--color-brand: #8a1538;
-	--color-brand-marker: #a51c45;
-	--color-brand-dark: #5f0f2d;
-	--color-brand-deep: #3f071c;
-	--color-brand-text: #241116;
-	--color-brand-muted: #7b5a63;
-	--color-brand-border: #ead4db;
-	--color-brand-border-strong: #d9b7c1;
+	--color-brand-bg: #f6f6f4;
+	--color-brand-surface: #ffffff;
+	--color-brand-map: #f4f2f2;
+	--color-brand: #a61942;
+	--color-brand-marker: #c51c4b;
+	--color-brand-dark: #74112f;
+	--color-brand-deep: #51091f;
+	--color-brand-text: #241318;
+	--color-brand-muted: #75666a;
+	--color-brand-border: #e7e1e3;
+	--color-brand-border-strong: #d7cdd0;
 }
 
 :root {

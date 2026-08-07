@@ -5,6 +5,7 @@
 		ChevronDown,
 		ChevronUp,
 		LogIn,
+		Map,
 		MapPin,
 		Search,
 		ThumbsDown,
@@ -13,6 +14,11 @@
 		Users
 	} from '@lucide/svelte';
 	import BottomNavigation from '$lib/navigation/BottomNavigation.svelte';
+	import {
+		DEFAULT_CAMPUS_BOUNDARIES_VISIBLE,
+		DEFAULT_HOME_CAMPUS_SPOT_ID,
+		DEFAULT_HOME_MAP_ZOOM
+	} from '$lib/domain/campus-boundary-visibility';
 	import type { BottomNavigationKey } from '$lib/domain/bottom-navigation';
 	import type { CampusSpot } from '$lib/domain/campus-spots';
 	import NaverMap from '$lib/map/NaverMap.svelte';
@@ -55,7 +61,9 @@ type CafeteriaFeedbackMap = Record<
 	let hasSelectedPinFilter = $state(false);
 	let activePlaceId = $state('');
 	let activeCampusSpotId = $state('');
-	let showCampusBoundaries = $state(false);
+	let focusCampusSpotId = $state(DEFAULT_HOME_CAMPUS_SPOT_ID);
+	let homeFocusRequestId = $state(0);
+	let showCampusBoundaries = $state(DEFAULT_CAMPUS_BOUNDARIES_VISIBLE);
 	let campusSpots = $state<CampusSpot[]>([]);
 	let campusSpotsLoading = $state(false);
 	let campusSpotsError = $state('');
@@ -136,6 +144,8 @@ type CafeteriaFeedbackMap = Record<
 	const nextShuttle = $derived(getUpcomingShuttles(currentTime, undefined, 1)[0] ?? null);
 
 	onMount(() => {
+		if (showCampusBoundaries) void loadCampusSpots();
+
 		if (data.initialPanel === 'cafeteria') {
 			openCafeteriaPanel();
 		} else if (data.initialPanel === 'shuttle') {
@@ -166,6 +176,8 @@ type CafeteriaFeedbackMap = Record<
 
 	function openCafeteriaPanel() {
 		sheetMode = 'cafeteria';
+		activeCampusSpotId = '';
+		focusCampusSpotId = '';
 		hasSelectedPinFilter = true;
 		activeCafeteriaIndex = 0;
 		const firstMenu = data.cafeterias[0]?.weeklyMenu;
@@ -176,6 +188,8 @@ type CafeteriaFeedbackMap = Record<
 
 	function openShuttlePanel() {
 		sheetMode = 'shuttle';
+		activeCampusSpotId = '';
+		focusCampusSpotId = '';
 		selectedCategory = 'all';
 		activeShuttleStopId = nextShuttle?.from ?? 'campus';
 	}
@@ -188,6 +202,7 @@ type CafeteriaFeedbackMap = Record<
 		activePlaceId = '';
 		showCampusBoundaries = true;
 		activeCampusSpotId = '';
+		focusCampusSpotId = '';
 		void loadCampusSpots();
 	}
 
@@ -210,6 +225,13 @@ type CafeteriaFeedbackMap = Record<
 
 	function closePanel() {
 		sheetMode = 'home';
+		homeFocusRequestId += 1;
+		hasSelectedPinFilter = false;
+		selectedZone = 'all';
+		selectedCategory = 'all';
+		activePlaceId = '';
+		activeCampusSpotId = '';
+		focusCampusSpotId = DEFAULT_HOME_CAMPUS_SPOT_ID;
 	}
 
 	function selectShuttleStop(stopId: ShuttleStopId) {
@@ -228,12 +250,15 @@ type CafeteriaFeedbackMap = Record<
 
 	function selectCampusSpot(spotId: string) {
 		activeCampusSpotId = spotId;
+		focusCampusSpotId = spotId;
+		sheetMode = 'pin';
 		showCampusBoundaries = true;
 	}
 
 	function toggleCampusBoundaries() {
 		showCampusBoundaries = !showCampusBoundaries;
-		if (!showCampusBoundaries) activeCampusSpotId = '';
+		activeCampusSpotId = '';
+		focusCampusSpotId = showCampusBoundaries ? DEFAULT_HOME_CAMPUS_SPOT_ID : '';
 	}
 
 	function selectZoneFilter(zoneId: string) {
@@ -295,15 +320,14 @@ type CafeteriaFeedbackMap = Record<
 
 	function getActiveNavigationKey(): BottomNavigationKey {
 		if (sheetMode === 'shuttle') return 'shuttle';
-		if (sheetMode === 'pin') return 'pin';
 		if (sheetMode === 'cafeteria') return 'cafeteria';
-		return 'cafeteria';
+		return 'home';
 	}
 
 	function handleBottomNavigation(key: BottomNavigationKey) {
+		if (key === 'home') closePanel();
 		if (key === 'cafeteria') openCafeteriaPanel();
 		if (key === 'shuttle') openShuttlePanel();
-		if (key === 'pin') openPinPanel();
 	}
 
 	function formatShortDate(dateStr?: string) {
@@ -506,21 +530,51 @@ type CafeteriaFeedbackMap = Record<
 					? 'top-band'
 					: 'default'
 			}
+			focusRequestId={homeFocusRequestId}
+			focusZoom={DEFAULT_HOME_MAP_ZOOM}
 			campusSpots={campusSpots}
 			activeCampusSpotId={activeCampusSpotId}
-			showCampusBoundaries={sheetMode === 'pin' && showCampusBoundaries}
+			focusCampusSpotId={focusCampusSpotId}
+			showCampusBoundaries={showCampusBoundaries}
 			onMarkerClick={handleMarkerClick}
 			onCampusSpotClick={selectCampusSpot}
 		/>
 
 		{#if sheetMode === 'home'}
-			<div class="pointer-events-none absolute inset-x-0 top-0 z-10 h-56 bg-gradient-to-b from-brand-surface/95 via-brand-surface/70 to-transparent"></div>
-
 			<header class="pointer-events-auto relative z-20 flex items-start justify-between gap-4 px-5 pb-3 pt-6">
-				<div>
+				<div class="flex items-center gap-3">
+					<div
+						class="grid h-11 w-11 shrink-0 place-items-center rounded-[8px] bg-brand text-white shadow-[0_10px_24px_rgba(116,17,47,0.2)]"
+						aria-label="골라바유 아이콘 자리"
+					>
+						<Map size={22} strokeWidth={2.7} />
+					</div>
 					<h1 class="max-w-[250px] text-3xl font-black leading-[1.08]">골라바유</h1>
 				</div>
-				{#if data.user}
+				<div class="flex shrink-0 items-center gap-2">
+					{#if false}
+						<button
+						class={`relative h-8 w-14 rounded-full border transition-colors ${
+							showCampusBoundaries
+								? 'border-brand bg-brand'
+								: 'border-brand-border-strong bg-white'
+						}`}
+						type="button"
+						role="switch"
+						aria-checked={showCampusBoundaries}
+						aria-label="캠퍼스 구역 표시"
+						onclick={toggleCampusBoundaries}
+					>
+						<span
+							class={`absolute top-1 grid h-6 w-6 place-items-center rounded-full bg-white shadow-sm transition-transform ${
+								showCampusBoundaries ? 'translate-x-7' : 'translate-x-1'
+							}`}
+						>
+							<MapPin size={14} strokeWidth={2.8} class="text-brand" />
+						</span>
+						</button>
+					{/if}
+					{#if data.user}
 					<div
 						class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white text-brand shadow-[0_10px_24px_rgba(103,16,43,0.16)]"
 						aria-label={data.user.role === 'admin' ? '관리자로 로그인됨' : '로그인됨'}
@@ -535,10 +589,12 @@ type CafeteriaFeedbackMap = Record<
 						<LogIn size={15} strokeWidth={3} />
 						로그인
 					</a>
-				{/if}
+					{/if}
+				</div>
 			</header>
 
-			<div class="pointer-events-auto relative z-20 grid grid-cols-[116px_1fr] gap-2.5 px-5 pb-3">
+			{#if false}
+				<div class="pointer-events-auto relative z-20 grid grid-cols-[116px_1fr] gap-2.5 px-5 pb-3">
 				<label class="grid gap-1.5 text-[11px] font-bold text-brand-muted">
 					<span>구역</span>
 					<select
@@ -585,7 +641,8 @@ type CafeteriaFeedbackMap = Record<
 						{category.name}
 					</button>
 				{/each}
-			</nav>
+				</nav>
+			{/if}
 		{/if}
 
 		<section
@@ -807,7 +864,8 @@ type CafeteriaFeedbackMap = Record<
 							닫기
 						</button>
 					</div>
-					<div class="flex items-center justify-between gap-3 rounded-[8px] border border-brand-border bg-white px-4 py-3">
+					{#if false}
+						<div class="flex items-center justify-between gap-3 rounded-[8px] border border-brand-border bg-white px-4 py-3">
 						<div class="flex items-center gap-2.5">
 							<div class="grid h-9 w-9 place-items-center rounded-[8px] bg-brand-map text-brand">
 								<MapPin size={19} strokeWidth={2.8} />
@@ -833,7 +891,8 @@ type CafeteriaFeedbackMap = Record<
 								}`}
 							></span>
 						</button>
-					</div>
+						</div>
+					{/if}
 
 					{#if activeCampusSpot}
 						<div class="-mx-[18px] flex snap-x snap-mandatory overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">

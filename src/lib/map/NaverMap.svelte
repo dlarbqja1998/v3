@@ -1,8 +1,10 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
 	import type { CampusSpot } from '$lib/domain/campus-spots';
+	import { shouldShowCampusCenterMarker } from '$lib/domain/campus-boundary-visibility';
 	import type { Place } from '$lib/domain/places';
 	import { getCampusPolygonStyle } from '$lib/map/campus-polygon';
+	import { cancelMapMotion } from '$lib/map/map-motion';
 	import {
 		getMapCenterBounds,
 		getSheetAwareLatitudeOffset,
@@ -14,8 +16,11 @@
 		places: Place[];
 		activePlaceId: string;
 		focusMode?: MapFocusMode;
+		focusRequestId?: number;
+		focusZoom?: number;
 		campusSpots?: CampusSpot[];
 		activeCampusSpotId?: string;
+		focusCampusSpotId?: string;
 		showCampusBoundaries?: boolean;
 		onMarkerClick: (placeId: string) => void;
 		onCampusSpotClick?: (spotId: string) => void;
@@ -26,8 +31,11 @@
 		places,
 		activePlaceId,
 		focusMode = 'default',
+		focusRequestId = 0,
+		focusZoom,
 		campusSpots = [],
 		activeCampusSpotId = '',
+		focusCampusSpotId = '',
 		showCampusBoundaries = false,
 		onMarkerClick,
 		onCampusSpotClick
@@ -41,6 +49,7 @@
 	let mapListeners: any[] = [];
 	let isReady = $state(false);
 	let loadError = $state('');
+	let lastFocusRequestId = -1;
 
 	const initialTarget = {
 		latitude: 36.608634852584125,
@@ -70,10 +79,14 @@
 
 	$effect(() => {
 		if (!isReady || !map) return;
+		if (focusRequestId !== lastFocusRequestId) {
+			lastFocusRequestId = focusRequestId;
+			if (focusZoom !== undefined) map.setZoom(focusZoom);
+		}
 		syncMarkers(places, activePlaceId);
 		syncCampusSpots(campusSpots, activeCampusSpotId, showCampusBoundaries);
 		focusActivePlace(places, activePlaceId, focusMode);
-		focusActiveCampusSpot(campusSpots, activeCampusSpotId, focusMode);
+		focusActiveCampusSpot(campusSpots, focusCampusSpotId, focusMode);
 	});
 
 	async function initMap() {
@@ -115,6 +128,9 @@
 
 		mapListeners = [
 			naver.maps.Event.addListener(map, 'idle', keepMapInServiceArea),
+			naver.maps.Event.addListener(map, 'mousedown', () => cancelMapMotion(map)),
+			naver.maps.Event.addListener(map, 'touchstart', () => cancelMapMotion(map)),
+			naver.maps.Event.addListener(map, 'dragstart', () => cancelMapMotion(map)),
 			naver.maps.Event.addListener(map, 'dragend', keepMapInServiceArea),
 			naver.maps.Event.addListener(map, 'zoom_changed', keepZoomInServiceArea)
 		];
@@ -183,7 +199,7 @@
 		const maps = naver.maps as any;
 
 		for (const spot of nextCampusSpots) {
-			const isActive = spot.id === nextActiveCampusSpotId;
+			const isActive = shouldShowCampusCenterMarker(nextActiveCampusSpotId, spot.id);
 			const polygon = new maps.Polygon({
 				map,
 				paths: spot.boundary.map(
@@ -191,21 +207,23 @@
 				),
 				...getCampusPolygonStyle(isActive)
 			});
-			const marker = new naver.maps.Marker({
-				position: new naver.maps.LatLng(spot.center.latitude, spot.center.longitude),
-				map,
-				title: spot.name,
-				icon: {
-					content: campusMarkerHtml(isActive),
-					size: new naver.maps.Size(24, 24),
-					anchor: new naver.maps.Point(12, 12)
-				}
-			});
-
 			naver.maps.Event.addListener(polygon, 'click', () => onCampusSpotClick?.(spot.id));
-			naver.maps.Event.addListener(marker, 'click', () => onCampusSpotClick?.(spot.id));
 			campusPolygons.push(polygon);
-			campusMarkers.push(marker);
+
+			if (isActive) {
+				const marker = new naver.maps.Marker({
+					position: new naver.maps.LatLng(spot.center.latitude, spot.center.longitude),
+					map,
+					title: spot.name,
+					icon: {
+						content: campusMarkerHtml(true),
+						size: new naver.maps.Size(24, 24),
+						anchor: new naver.maps.Point(12, 12)
+					}
+				});
+				naver.maps.Event.addListener(marker, 'click', () => onCampusSpotClick?.(spot.id));
+				campusMarkers.push(marker);
+			}
 		}
 	}
 

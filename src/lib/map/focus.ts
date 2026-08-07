@@ -1,6 +1,6 @@
 export type MapFocusMode = 'default' | 'top-band';
 
-const defaultLatitudeOffset = 0.00115;
+const defaultLatitudeOffset = 0;
 const topBandMarkerTargetRatio = 1 / 12;
 const mapCenterBounds = {
 	south: 36.5938,
