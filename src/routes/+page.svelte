@@ -27,7 +27,7 @@
 		resolveBottomSheetDetent,
 		type BottomSheetDetent
 	} from '$lib/domain/bottom-sheet';
-	import type { CampusSpot } from '$lib/domain/campus-spots';
+	import { getCampusSpotPanelPresentation, type CampusSpot } from '$lib/domain/campus-spots';
 	import NaverMap from '$lib/map/NaverMap.svelte';
 	import type { CafeteriaPanelItem, DailyMenu, MenuDayKey } from '$lib/domain/places';
 	import {
@@ -125,6 +125,7 @@ type CafeteriaFeedbackMap = Record<
 	const activeCampusSpot = $derived<CampusSpot | null>(
 		campusSpots.find((spot) => spot.id === activeCampusSpotId) ?? null
 	);
+	const activeCampusSpotPanel = $derived(getCampusSpotPanelPresentation(activeCampusSpot));
 
 	const mapPlaces = $derived(
 		sheetMode === 'pin'
@@ -280,10 +281,13 @@ type CafeteriaFeedbackMap = Record<
 	}
 
 	function selectCampusSpot(spotId: string) {
+		const selectedSpot = campusSpots.find((spot) => spot.id === spotId);
+		if (!selectedSpot) return;
+
 		activeCampusSpotId = spotId;
 		focusCampusSpotId = spotId;
 		sheetMode = 'pin';
-		setSheetDetent('collapsed');
+		setSheetDetent(getCampusSpotPanelPresentation(selectedSpot).detent);
 		showCampusBoundaries = true;
 	}
 
@@ -1012,10 +1016,7 @@ type CafeteriaFeedbackMap = Record<
 			{:else if sheetMode === 'pin'}
 				<div class="grid min-h-0 flex-1 content-start gap-3 overflow-y-auto pb-2">
 					<div class="flex items-center justify-between gap-3">
-						<div>
-							<p class="m-0 text-xs font-black text-brand-muted">내가 고르는 지도</p>
-							<h2 class="m-0 mt-0.5 text-xl font-black">캠퍼스 구역</h2>
-						</div>
+						<h2 class="m-0 text-xl font-black">{activeCampusSpotPanel.title}</h2>
 						<button
 							class="rounded-full border border-brand-border bg-white px-3 py-2 text-xs font-black text-brand-muted"
 							type="button"
@@ -1054,36 +1055,15 @@ type CafeteriaFeedbackMap = Record<
 						</div>
 					{/if}
 
-					{#if activeCampusSpot}
-						<div class="-mx-[18px] flex snap-x snap-mandatory overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-							<section class="w-full shrink-0 snap-center px-[18px]" aria-label={`${activeCampusSpot.name} 안내`}>
-								<div class="rounded-[8px] border border-brand-border bg-white p-4">
-									<p class="m-0 text-xs font-black text-brand-muted">선택한 구역</p>
-									<h3 class="m-0 mt-1 text-[20px] font-black">{activeCampusSpot.name}</h3>
-									<p class="m-0 mt-2 text-sm font-bold leading-6 text-brand-muted">
-										{activeCampusSpot.description}
-									</p>
-								</div>
-							</section>
-							<section class="w-full shrink-0 snap-center px-[18px]" aria-label="구역 상세 정보">
-								<div class="rounded-[8px] border border-brand-border bg-white p-4">
-									<p class="m-0 text-xs font-black text-brand-muted">구역 정보</p>
-									<h3 class="m-0 mt-1 text-[18px] font-black">준비 중</h3>
-									<p class="m-0 mt-2 text-sm font-bold leading-6 text-brand-muted">
-										운영 정보와 연결 기능은 이후 확정합니다.
-									</p>
-								</div>
-							</section>
-						</div>
-					{:else if campusSpotsLoading}
+					{#if !activeCampusSpot && campusSpotsLoading}
 						<p class="m-0 px-1 pt-1 text-sm font-bold leading-6 text-brand-muted">
 							캠퍼스 구역을 불러오는 중입니다.
 						</p>
-					{:else if campusSpotsError}
+					{:else if !activeCampusSpot && campusSpotsError}
 						<p class="m-0 px-1 pt-1 text-sm font-bold leading-6 text-brand-muted">
 							{campusSpotsError}
 						</p>
-					{:else}
+					{:else if !activeCampusSpot}
 						<p class="m-0 px-1 pt-1 text-sm font-bold leading-6 text-brand-muted">
 							구역을 켜고 지도 위 건물이나 광장을 눌러보세요.
 						</p>

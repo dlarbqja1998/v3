@@ -1300,6 +1300,12 @@ export function getCampusSpotById(id: string) {
 	return campusSpots.find((spot) => spot.id === id);
 }
 
+export function getCampusSpotPanelPresentation(spot: Pick<CampusSpot, 'name'> | null) {
+	return spot
+		? { title: `지금, ${spot.name}`, detent: 'expanded' as const }
+		: { title: '캠퍼스 구역', detent: 'collapsed' as const };
+}
+
 export function isValidCampusSpotBoundary(spot: CampusSpot) {
 	return (
 		spot.boundary.length >= 4 &&

@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { campusSpots, getCampusSpotById, isValidCampusSpotBoundary } from './campus-spots';
+import {
+	campusSpots,
+	getCampusSpotById,
+	getCampusSpotPanelPresentation,
+	isValidCampusSpotBoundary
+} from './campus-spots';
 
 describe('캠퍼스 스팟 데이터', () => {
 	it('건물 20개와 수동 스팟 5개를 지도 선택 대상으로 제공한다', () => {
@@ -33,5 +38,16 @@ describe('캠퍼스 스팟 데이터', () => {
 			expect(isValidCampusSpotBoundary(spot)).toBe(true);
 			expect(spot.description.length).toBeGreaterThan(0);
 		}
+	});
+
+	it('선택한 장소는 장소명이 포함된 제목과 최대 바텀시트로 연다', () => {
+		expect(getCampusSpotPanelPresentation({ name: '공공정책관' })).toEqual({
+			title: '지금, 공공정책관',
+			detent: 'expanded'
+		});
+		expect(getCampusSpotPanelPresentation({ name: '잔디광장' })).toEqual({
+			title: '지금, 잔디광장',
+			detent: 'expanded'
+		});
 	});
 });
