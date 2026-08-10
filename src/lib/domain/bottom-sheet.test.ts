@@ -1,0 +1,56 @@
+import { describe, expect, it } from 'vitest';
+import {
+	clampBottomSheetHeight,
+	getBottomSheetHeights,
+	getNextBottomSheetDetent,
+	resolveBottomSheetDetent
+} from './bottom-sheet';
+
+describe('바텀시트 높이', () => {
+	it('화면과 하단 내비게이션 높이로 최소·중간·최대 단계를 계산한다', () => {
+		expect(getBottomSheetHeights(844, 73)).toEqual({
+			collapsed: 160,
+			medium: 385.5,
+			expanded: 630.3333333333334
+		});
+	});
+
+	it('작은 화면에서는 세 단계가 사용 가능한 높이를 넘지 않는다', () => {
+		expect(getBottomSheetHeights(200, 73)).toEqual({
+			collapsed: 127,
+			medium: 127,
+			expanded: 127
+		});
+	});
+
+	it('드래그 높이를 최소와 최대 단계 사이로 제한한다', () => {
+		const heights = getBottomSheetHeights(844, 73);
+
+		expect(clampBottomSheetHeight(80, heights)).toBe(160);
+		expect(clampBottomSheetHeight(420, heights)).toBe(420);
+		expect(clampBottomSheetHeight(700, heights)).toBe(630.3333333333334);
+	});
+});
+
+describe('바텀시트 스냅', () => {
+	it('천천히 놓으면 가장 가까운 단계에 스냅한다', () => {
+		const heights = getBottomSheetHeights(844, 73);
+
+		expect(resolveBottomSheetDetent(430, 0.1, 'medium', heights)).toBe('medium');
+		expect(resolveBottomSheetDetent(560, -0.1, 'medium', heights)).toBe('expanded');
+	});
+
+	it('빠른 스와이프는 현재 단계에서 해당 방향의 다음 단계로 이동한다', () => {
+		const heights = getBottomSheetHeights(844, 73);
+
+		expect(resolveBottomSheetDetent(300, -0.6, 'collapsed', heights)).toBe('medium');
+		expect(resolveBottomSheetDetent(500, 0.6, 'expanded', heights)).toBe('medium');
+	});
+
+	it('최소와 최대 단계 밖으로 이동하지 않는다', () => {
+		expect(getNextBottomSheetDetent('collapsed', 'down')).toBe('collapsed');
+		expect(getNextBottomSheetDetent('collapsed', 'up')).toBe('medium');
+		expect(getNextBottomSheetDetent('medium', 'up')).toBe('expanded');
+		expect(getNextBottomSheetDetent('expanded', 'up')).toBe('expanded');
+	});
+});

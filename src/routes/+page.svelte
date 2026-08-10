@@ -20,6 +20,13 @@
 		DEFAULT_HOME_MAP_ZOOM
 	} from '$lib/domain/campus-boundary-visibility';
 	import type { BottomNavigationKey } from '$lib/domain/bottom-navigation';
+	import {
+		clampBottomSheetHeight,
+		getBottomSheetHeights,
+		getNextBottomSheetDetent,
+		resolveBottomSheetDetent,
+		type BottomSheetDetent
+	} from '$lib/domain/bottom-sheet';
 	import type { CampusSpot } from '$lib/domain/campus-spots';
 	import NaverMap from '$lib/map/NaverMap.svelte';
 	import type { CafeteriaPanelItem, DailyMenu, MenuDayKey } from '$lib/domain/places';
@@ -75,6 +82,17 @@ type CafeteriaFeedbackMap = Record<
 	let activeShuttleStopId = $state<ShuttleStopId>('campus');
 	let currentTime = $state(new Date());
 	let cafeteriaFeedback = $state<CafeteriaFeedbackMap>({});
+	let appShellElement = $state<HTMLElement>();
+	let sheetElement = $state<HTMLElement>();
+	let sheetDetent = $state<BottomSheetDetent>('collapsed');
+	let sheetHeight = $state(160);
+	let isSheetDragging = $state(false);
+	let activeSheetPointerId: number | null = null;
+	let dragStartY = 0;
+	let dragStartHeight = 0;
+	let lastPointerY = 0;
+	let lastPointerTime = 0;
+	let dragVelocityY = 0;
 
 	$effect(() => {
 		cafeteriaFeedback = { ...data.cafeteriaFeedback } as CafeteriaFeedbackMap;
@@ -157,8 +175,17 @@ type CafeteriaFeedbackMap = Record<
 		const timer = window.setInterval(() => {
 			currentTime = new Date();
 		}, 30000);
+		const handleViewportResize = () => syncSheetHeight();
 
-		return () => window.clearInterval(timer);
+		window.addEventListener('resize', handleViewportResize);
+		window.visualViewport?.addEventListener('resize', handleViewportResize);
+		requestAnimationFrame(syncSheetHeight);
+
+		return () => {
+			window.clearInterval(timer);
+			window.removeEventListener('resize', handleViewportResize);
+			window.visualViewport?.removeEventListener('resize', handleViewportResize);
+		};
 	});
 
 	$effect(() => {
@@ -176,6 +203,7 @@ type CafeteriaFeedbackMap = Record<
 
 	function openCafeteriaPanel() {
 		sheetMode = 'cafeteria';
+		setSheetDetent('expanded');
 		activeCampusSpotId = '';
 		focusCampusSpotId = '';
 		hasSelectedPinFilter = true;
@@ -188,6 +216,7 @@ type CafeteriaFeedbackMap = Record<
 
 	function openShuttlePanel() {
 		sheetMode = 'shuttle';
+		setSheetDetent('expanded');
 		activeCampusSpotId = '';
 		focusCampusSpotId = '';
 		selectedCategory = 'all';
@@ -196,6 +225,7 @@ type CafeteriaFeedbackMap = Record<
 
 	function openPinPanel() {
 		sheetMode = 'pin';
+		setSheetDetent('collapsed');
 		hasSelectedPinFilter = true;
 		selectedZone = 'all';
 		selectedCategory = 'all';
@@ -225,6 +255,7 @@ type CafeteriaFeedbackMap = Record<
 
 	function closePanel() {
 		sheetMode = 'home';
+		setSheetDetent('collapsed');
 		homeFocusRequestId += 1;
 		hasSelectedPinFilter = false;
 		selectedZone = 'all';
@@ -252,6 +283,7 @@ type CafeteriaFeedbackMap = Record<
 		activeCampusSpotId = spotId;
 		focusCampusSpotId = spotId;
 		sheetMode = 'pin';
+		setSheetDetent('collapsed');
 		showCampusBoundaries = true;
 	}
 
@@ -311,11 +343,118 @@ type CafeteriaFeedbackMap = Record<
 		expandedMealId = expandedMealId === mealId ? '' : mealId;
 	}
 
-	function getSheetHeightClass(mode: SheetMode) {
-		if (mode === 'cafeteria') return 'h-[calc(83.333dvh_-_76px_-_env(safe-area-inset-bottom))]';
-		if (mode === 'shuttle') return 'h-[calc(83.333dvh_-_76px_-_env(safe-area-inset-bottom))]';
-		if (mode === 'pin') return 'h-auto';
-		return 'h-auto';
+	function getCurrentSheetHeights() {
+		const viewportHeight = appShellElement?.getBoundingClientRect().height ?? window.innerHeight;
+		const navigationHeight =
+			document.querySelector<HTMLElement>('[data-bottom-navigation]')?.getBoundingClientRect().height ?? 73;
+
+		return getBottomSheetHeights(viewportHeight, navigationHeight);
+	}
+
+	function syncSheetHeight() {
+		if (typeof window === 'undefined') return;
+		sheetHeight = getCurrentSheetHeights()[sheetDetent];
+	}
+
+	function setSheetDetent(detent: BottomSheetDetent) {
+		sheetDetent = detent;
+		if (typeof window !== 'undefined') syncSheetHeight();
+	}
+
+	function cycleSheetDetent() {
+		setSheetDetent(
+			sheetDetent === 'expanded' ? 'collapsed' : getNextBottomSheetDetent(sheetDetent, 'up')
+		);
+	}
+
+	function handleSheetPointerDown(event: PointerEvent) {
+		if (event.button !== 0 || !sheetElement) return;
+
+		activeSheetPointerId = event.pointerId;
+		isSheetDragging = true;
+		dragStartY = event.clientY;
+		dragStartHeight = sheetElement.getBoundingClientRect().height;
+		lastPointerY = event.clientY;
+		lastPointerTime = performance.now();
+		dragVelocityY = 0;
+		(event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
+	}
+
+	function handleSheetPointerMove(event: PointerEvent) {
+		if (!isSheetDragging || event.pointerId !== activeSheetPointerId) return;
+
+		const now = performance.now();
+		const elapsed = now - lastPointerTime;
+		if (elapsed > 0) dragVelocityY = (event.clientY - lastPointerY) / elapsed;
+
+		lastPointerY = event.clientY;
+		lastPointerTime = now;
+		sheetHeight = clampBottomSheetHeight(
+			dragStartHeight + dragStartY - event.clientY,
+			getCurrentSheetHeights()
+		);
+	}
+
+	function finishSheetPointer(event: PointerEvent, cancelled = false) {
+		if (!isSheetDragging || event.pointerId !== activeSheetPointerId) return;
+
+		const handle = event.currentTarget as HTMLElement;
+		if (handle.hasPointerCapture(event.pointerId)) handle.releasePointerCapture(event.pointerId);
+
+		const draggedDistance = Math.abs(event.clientY - dragStartY);
+		isSheetDragging = false;
+		activeSheetPointerId = null;
+
+		if (cancelled) {
+			syncSheetHeight();
+			return;
+		}
+
+		if (draggedDistance < 6) {
+			cycleSheetDetent();
+			return;
+		}
+
+		setSheetDetent(
+			resolveBottomSheetDetent(
+				sheetHeight,
+				dragVelocityY,
+				sheetDetent,
+				getCurrentSheetHeights()
+			)
+		);
+	}
+
+	function handleSheetHandleClick(event: MouseEvent) {
+		if (event.detail === 0) cycleSheetDetent();
+	}
+
+	function handleSheetHandleKeydown(event: KeyboardEvent) {
+		if (event.key === 'ArrowUp') {
+			event.preventDefault();
+			setSheetDetent(getNextBottomSheetDetent(sheetDetent, 'up'));
+		} else if (event.key === 'ArrowDown') {
+			event.preventDefault();
+			setSheetDetent(getNextBottomSheetDetent(sheetDetent, 'down'));
+		} else if (event.key === 'Home') {
+			event.preventDefault();
+			setSheetDetent('collapsed');
+		} else if (event.key === 'End') {
+			event.preventDefault();
+			setSheetDetent('expanded');
+		}
+	}
+
+	function getSheetDetentValue() {
+		if (sheetDetent === 'collapsed') return 1;
+		if (sheetDetent === 'medium') return 2;
+		return 3;
+	}
+
+	function getSheetDetentLabel() {
+		if (sheetDetent === 'collapsed') return '최소 높이';
+		if (sheetDetent === 'medium') return '중간 높이';
+		return '최대 높이';
 	}
 
 	function getActiveNavigationKey(): BottomNavigationKey {
@@ -518,6 +657,7 @@ type CafeteriaFeedbackMap = Record<
 
 <main class="min-h-screen bg-brand-bg text-brand-text md:grid md:place-items-center md:p-6">
 	<section
+		bind:this={appShellElement}
 		class="relative min-h-screen w-full overflow-hidden bg-brand-surface shadow-[0_24px_60px_rgba(103,16,43,0.18)] md:min-h-[min(860px,calc(100vh-48px))] md:w-[min(100%,430px)] md:rounded-[28px] md:border md:border-brand-border-strong"
 		aria-label="골라바유 v3 지도 홈"
 	>
@@ -646,12 +786,32 @@ type CafeteriaFeedbackMap = Record<
 		{/if}
 
 		<section
-			class={`pointer-events-auto absolute inset-x-0 bottom-[calc(76px+env(safe-area-inset-bottom))] z-20 rounded-t-[26px] bg-brand-surface/95 px-[18px] pb-5 pt-2.5 shadow-[0_-18px_40px_rgba(103,16,43,0.16)] backdrop-blur transition-[height] duration-300 ${
-				getSheetHeightClass(sheetMode)
+			bind:this={sheetElement}
+			class={`pointer-events-auto absolute inset-x-0 z-20 flex overflow-hidden rounded-t-[26px] bg-brand-surface/95 px-[18px] pb-5 shadow-[0_-18px_40px_rgba(103,16,43,0.16)] backdrop-blur ${
+				isSheetDragging ? '' : 'transition-[height] duration-300 ease-out'
 			}`}
+			style={`bottom: var(--bottom-navigation-height); height: ${sheetHeight}px;`}
 			aria-label="오늘의 생활 정보"
 		>
-			<div class="mx-auto mb-3.5 h-1 w-[42px] rounded-full bg-[#dcc3ca]"></div>
+			<div class="flex min-h-0 w-full flex-col">
+				<button
+					class="group -mx-1 flex h-9 shrink-0 touch-none cursor-grab items-center justify-center rounded-full active:cursor-grabbing focus-visible:outline-none"
+					type="button"
+					role="slider"
+					aria-label="바텀시트 높이 조절"
+					aria-valuemin="1"
+					aria-valuemax="3"
+					aria-valuenow={getSheetDetentValue()}
+					aria-valuetext={getSheetDetentLabel()}
+					onpointerdown={handleSheetPointerDown}
+					onpointermove={handleSheetPointerMove}
+					onpointerup={(event) => finishSheetPointer(event)}
+					onpointercancel={(event) => finishSheetPointer(event, true)}
+					onclick={handleSheetHandleClick}
+					onkeydown={handleSheetHandleKeydown}
+				>
+					<span class="h-1 w-[42px] rounded-full bg-[#dcc3ca] outline-offset-4 group-focus-visible:outline-2 group-focus-visible:outline-brand"></span>
+				</button>
 
 			{#if sheetMode === 'home'}
 				<div class="mb-3 grid grid-cols-3 gap-2">
@@ -720,7 +880,7 @@ type CafeteriaFeedbackMap = Record<
 					</p>
 				{/if}
 			{:else if sheetMode === 'cafeteria'}
-				<div class="flex h-[calc(83.333dvh_-_114px_-_env(safe-area-inset-bottom))] flex-col">
+				<div class="flex min-h-0 flex-1 flex-col">
 					<div class="mb-3 flex items-center justify-between gap-3">
 						<div>
 							<p class="m-0 text-xs font-black text-brand-muted">오늘의 학식</p>
@@ -850,7 +1010,7 @@ type CafeteriaFeedbackMap = Record<
 					</div>
 				</div>
 			{:else if sheetMode === 'pin'}
-				<div class="grid gap-3">
+				<div class="grid min-h-0 flex-1 content-start gap-3 overflow-y-auto pb-2">
 					<div class="flex items-center justify-between gap-3">
 						<div>
 							<p class="m-0 text-xs font-black text-brand-muted">내가 고르는 지도</p>
@@ -930,7 +1090,7 @@ type CafeteriaFeedbackMap = Record<
 					{/if}
 				</div>
 			{:else}
-				<div class="flex h-[calc(83.333dvh_-_114px_-_env(safe-area-inset-bottom))] flex-col">
+				<div class="flex min-h-0 flex-1 flex-col">
 					<div class="mb-3 flex items-center justify-between gap-3">
 						<div>
 							<p class="m-0 text-xs font-black text-brand-muted">학교-조치원역 셔틀</p>
@@ -1039,6 +1199,7 @@ type CafeteriaFeedbackMap = Record<
 					</div>
 				</div>
 			{/if}
+			</div>
 		</section>
 
 		<BottomNavigation

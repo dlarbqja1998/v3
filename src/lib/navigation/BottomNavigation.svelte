@@ -22,8 +22,9 @@
 </script>
 
 <nav
-	class={`border-t border-brand-border bg-white/98 px-2 pb-[max(8px,env(safe-area-inset-bottom))] pt-1.5 shadow-[0_-8px_24px_rgba(72,12,31,0.1)] backdrop-blur ${containerClass}`}
+	class={`h-[var(--bottom-navigation-height)] border-t border-brand-border bg-white/98 px-2 pb-[max(8px,env(safe-area-inset-bottom))] pt-1.5 shadow-[0_-8px_24px_rgba(72,12,31,0.1)] backdrop-blur ${containerClass}`}
 	aria-label="하단 내비게이션"
+	data-bottom-navigation
 >
 	<div class="grid grid-cols-5 gap-0.5">
 		{#each items as item}

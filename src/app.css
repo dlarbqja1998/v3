@@ -35,6 +35,7 @@
 		'LineSeed', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif;
 	color: var(--color-brand-text);
 	background: var(--color-brand-bg);
+	--bottom-navigation-height: calc(65px + max(8px, env(safe-area-inset-bottom)));
 }
 
 body {
@@ -43,9 +44,10 @@ body {
 	background: var(--color-brand-bg);
 }
 
-a {
-	color: inherit;
-	text-decoration: none;
+@layer base {
+	a {
+		text-decoration: none;
+	}
 }
 
 button,
