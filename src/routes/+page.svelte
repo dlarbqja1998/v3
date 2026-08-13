@@ -6,7 +6,6 @@
 		ChevronDown,
 		ChevronUp,
 		LogIn,
-		Map,
 		MapPin,
 		Search,
 		ThumbsDown,
@@ -14,6 +13,7 @@
 		Utensils,
 		Users
 	} from '@lucide/svelte';
+	import MainBrandIcon from '$lib/brand/MainBrandIcon.svelte';
 	import BottomNavigation from '$lib/navigation/BottomNavigation.svelte';
 	import {
 		DEFAULT_CAMPUS_BOUNDARIES_VISIBLE,
@@ -738,12 +738,7 @@ type CafeteriaFeedbackMap = Record<
 		{#if sheetMode === 'home'}
 			<header class="pointer-events-auto relative z-20 flex items-start justify-between gap-4 px-5 pb-3 pt-6">
 				<div class="flex items-center gap-3">
-					<div
-						class="grid h-11 w-11 shrink-0 place-items-center rounded-[8px] bg-brand text-white shadow-[0_10px_24px_rgba(116,17,47,0.2)]"
-						aria-label="골라바유 아이콘 자리"
-					>
-						<Map size={22} strokeWidth={2.7} />
-					</div>
+					<MainBrandIcon />
 					<h1 class="max-w-[250px] text-3xl font-black leading-[1.08]">골라바유</h1>
 				</div>
 				<div class="flex shrink-0 items-center gap-2">

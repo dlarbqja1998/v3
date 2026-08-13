@@ -5,6 +5,7 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
 	server: {
+		host: '0.0.0.0',
 		allowedHosts: [
 			'softball-shows-selecting-doors.trycloudflare.com',
 			'dating-head-routes-beer.trycloudflare.com'
