@@ -3,6 +3,7 @@ import {
 	clampBottomSheetHeight,
 	getBottomSheetHeights,
 	getNextBottomSheetDetent,
+	getWeatherWidgetBottomOffset,
 	resolveBottomSheetDetent
 } from './bottom-sheet';
 
@@ -21,6 +22,10 @@ describe('바텀시트 높이', () => {
 			medium: 127,
 			expanded: 127
 		});
+	});
+
+	it('날씨 위젯은 활성 단계와 무관하게 최소 단계 바로 위에 고정한다', () => {
+		expect(getWeatherWidgetBottomOffset(844, 73, 12)).toBe(245);
 	});
 
 	it('드래그 높이를 최소와 최대 단계 사이로 제한한다', () => {

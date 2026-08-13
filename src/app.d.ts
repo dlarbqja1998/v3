@@ -53,6 +53,7 @@ declare global {
 				};
 				CACHE_CLEAR_SECRET?: string;
 				ADMIN_SECRET_KEY?: string;
+				KMA_SERVICE_KEY?: string;
 			};
 			context?: {
 				waitUntil(promise: Promise<unknown>): void;

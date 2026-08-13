@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { env as publicEnv } from '$env/dynamic/public';
 	import {
 		Bus,
 		ChevronDown,
@@ -24,11 +25,15 @@
 		clampBottomSheetHeight,
 		getBottomSheetHeights,
 		getNextBottomSheetDetent,
+		getWeatherWidgetBottomOffset,
 		resolveBottomSheetDetent,
 		type BottomSheetDetent
 	} from '$lib/domain/bottom-sheet';
+	import { resolveApiUrl } from '$lib/api/base-url';
+	import { isWeatherSnapshot, type WeatherSnapshot } from '$lib/domain/weather';
 	import { getCampusSpotPanelPresentation, type CampusSpot } from '$lib/domain/campus-spots';
 	import NaverMap from '$lib/map/NaverMap.svelte';
+	import WeatherWidget from '$lib/weather/WeatherWidget.svelte';
 	import type { CafeteriaPanelItem, DailyMenu, MenuDayKey } from '$lib/domain/places';
 	import {
 		formatMinutesLeft,
@@ -60,6 +65,7 @@ type CafeteriaFeedbackMap = Record<
 	};
 
 	type SheetMode = 'home' | 'cafeteria' | 'shuttle' | 'pin';
+	const WEATHER_WIDGET_GAP = 12;
 
 	let { data }: { data: PageData } = $props();
 
@@ -86,6 +92,10 @@ type CafeteriaFeedbackMap = Record<
 	let sheetElement = $state<HTMLElement>();
 	let sheetDetent = $state<BottomSheetDetent>('collapsed');
 	let sheetHeight = $state(160);
+	let weatherWidgetBottom = $state(getWeatherWidgetBottomOffset(844, 73, WEATHER_WIDGET_GAP));
+	let weather = $state<WeatherSnapshot | null>(null);
+	let weatherLoading = $state(true);
+	let weatherError = $state(false);
 	let isSheetDragging = $state(false);
 	let activeSheetPointerId: number | null = null;
 	let dragStartY = 0;
@@ -163,6 +173,9 @@ type CafeteriaFeedbackMap = Record<
 	const nextShuttle = $derived(getUpcomingShuttles(currentTime, undefined, 1)[0] ?? null);
 
 	onMount(() => {
+		const weatherAbortController = new AbortController();
+		void loadWeather(weatherAbortController.signal);
+
 		if (showCampusBoundaries) void loadCampusSpots();
 
 		if (data.initialPanel === 'cafeteria') {
@@ -183,11 +196,35 @@ type CafeteriaFeedbackMap = Record<
 		requestAnimationFrame(syncSheetHeight);
 
 		return () => {
+			weatherAbortController.abort();
 			window.clearInterval(timer);
 			window.removeEventListener('resize', handleViewportResize);
 			window.visualViewport?.removeEventListener('resize', handleViewportResize);
 		};
 	});
+
+	async function loadWeather(signal: AbortSignal) {
+		weatherLoading = true;
+		weatherError = false;
+
+		try {
+			const url = resolveApiUrl(
+				'/api/weather/current',
+				publicEnv.PUBLIC_API_BASE_URL ?? ''
+			);
+			const response = await fetch(url, { signal });
+			if (!response.ok) throw new Error('날씨 요청 실패');
+
+			const payload: unknown = await response.json();
+			if (!isWeatherSnapshot(payload)) throw new Error('날씨 응답 형식 오류');
+			weather = payload;
+		} catch {
+			if (signal.aborted) return;
+			weatherError = true;
+		} finally {
+			if (!signal.aborted) weatherLoading = false;
+		}
+	}
 
 	$effect(() => {
 		if (sheetMode !== 'cafeteria' || !activeCafeteria) return;
@@ -347,17 +384,31 @@ type CafeteriaFeedbackMap = Record<
 		expandedMealId = expandedMealId === mealId ? '' : mealId;
 	}
 
-	function getCurrentSheetHeights() {
+	function getCurrentLayoutMetrics() {
 		const viewportHeight = appShellElement?.getBoundingClientRect().height ?? window.innerHeight;
 		const navigationHeight =
 			document.querySelector<HTMLElement>('[data-bottom-navigation]')?.getBoundingClientRect().height ?? 73;
 
-		return getBottomSheetHeights(viewportHeight, navigationHeight);
+		return {
+			viewportHeight,
+			navigationHeight,
+			sheetHeights: getBottomSheetHeights(viewportHeight, navigationHeight)
+		};
+	}
+
+	function getCurrentSheetHeights() {
+		return getCurrentLayoutMetrics().sheetHeights;
 	}
 
 	function syncSheetHeight() {
 		if (typeof window === 'undefined') return;
-		sheetHeight = getCurrentSheetHeights()[sheetDetent];
+		const { viewportHeight, navigationHeight, sheetHeights } = getCurrentLayoutMetrics();
+		sheetHeight = sheetHeights[sheetDetent];
+		weatherWidgetBottom = getWeatherWidgetBottomOffset(
+			viewportHeight,
+			navigationHeight,
+			WEATHER_WIDGET_GAP
+		);
 	}
 
 	function setSheetDetent(detent: BottomSheetDetent) {
@@ -788,6 +839,13 @@ type CafeteriaFeedbackMap = Record<
 				</nav>
 			{/if}
 		{/if}
+
+		<WeatherWidget
+			{weather}
+			loading={weatherLoading}
+			error={weatherError}
+			bottom={weatherWidgetBottom}
+		/>
 
 		<section
 			bind:this={sheetElement}

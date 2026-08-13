@@ -24,6 +24,18 @@ export function getBottomSheetHeights(
 	return { collapsed, medium, expanded };
 }
 
+export function getWeatherWidgetBottomOffset(
+	viewportHeight: number,
+	navigationHeight: number,
+	gap: number
+): number {
+	const safeNavigationHeight = Math.max(0, navigationHeight);
+	const safeGap = Math.max(0, gap);
+	const collapsedHeight = getBottomSheetHeights(viewportHeight, safeNavigationHeight).collapsed;
+
+	return safeNavigationHeight + collapsedHeight + safeGap;
+}
+
 export function clampBottomSheetHeight(height: number, heights: BottomSheetHeights): number {
 	return Math.min(heights.expanded, Math.max(heights.collapsed, height));
 }
