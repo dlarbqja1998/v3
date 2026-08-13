@@ -1,5 +1,13 @@
 import type { CampusCoordinate } from '$lib/domain/campus-spots';
 
+export function addBoundaryPoint(
+	boundary: CampusCoordinate[],
+	point: CampusCoordinate
+): CampusCoordinate[] {
+	if (boundary.length < 3) return [...boundary, point];
+	return insertBoundaryPointOnNearestEdge(boundary, point);
+}
+
 export function insertBoundaryPointOnNearestEdge(
 	boundary: CampusCoordinate[],
 	point: CampusCoordinate
