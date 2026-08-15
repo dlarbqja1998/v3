@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { CalendarDays } from '@lucide/svelte';
 	import BottomNavigation from '$lib/navigation/BottomNavigation.svelte';
+	import type { PageData } from './$types';
+
+	let { data }: { data: PageData } = $props();
 </script>
 
 <svelte:head>
@@ -32,6 +35,10 @@
 			</section>
 		</div>
 
-		<BottomNavigation activeKey="today" containerClass="absolute inset-x-0 bottom-0 z-30" />
+		<BottomNavigation
+			activeKey="today"
+			containerClass="absolute inset-x-0 bottom-0 z-30"
+			isAuthenticated={Boolean(data.user)}
+		/>
 	</section>
 </main>

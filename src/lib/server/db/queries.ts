@@ -1,6 +1,7 @@
 import { asc, eq, sql } from 'drizzle-orm';
 import type { CafeteriaPanelItem, CafeteriaSummary, Place, PlaceCategory, ShuttleSummary, WeeklyMenu, Zone } from '$lib/domain/places';
 import { cafeteriaPlaces, staticFoodCourtVendors } from '$lib/domain/cafeterias';
+import type { CommercialCoordinate, CommercialZone } from '$lib/domain/commercial-zones';
 import { categories, nextShuttle, places as seedPlaces, todayCafeteria, zones as seedZones } from '$lib/domain/seed';
 import { createDb } from './index';
 import {
@@ -20,6 +21,7 @@ export type HomeData = {
 	todayCafeteria: CafeteriaSummary;
 	nextShuttle: ShuttleSummary;
 	zones: Zone[];
+	commercialZones: CommercialZone[];
 };
 
 export async function getHomeData(databaseUrl?: string, weeklyMenu: WeeklyMenu | null = null): Promise<HomeData> {
@@ -113,7 +115,8 @@ export async function getHomeData(databaseUrl?: string, weeklyMenu: WeeklyMenu |
 				slug: zone.slug,
 				centerLatitude: zone.centerLatitude,
 				centerLongitude: zone.centerLongitude
-			}))
+			})),
+			commercialZones: dbZones.map(toCommercialZone)
 		};
 	} catch (error) {
 		console.error('Neon 데이터를 불러오지 못해 seed 데이터로 대체합니다.', error);
@@ -145,8 +148,42 @@ function getSeedHomeData(weeklyMenu: WeeklyMenu | null): HomeData {
 		places: appendCafeteriaPlaces(seedPlaces.filter((place) => place.id !== 'place-3')),
 		todayCafeteria,
 		nextShuttle,
-		zones: seedZones
+		zones: seedZones,
+		commercialZones: []
 	};
+}
+
+export function toCommercialZone(row: {
+	slug: string;
+	name: string;
+	centerLatitude: number;
+	centerLongitude: number;
+	polygon: unknown;
+}): CommercialZone {
+	return {
+		id: row.slug,
+		name: row.name,
+		center: {
+			latitude: row.centerLatitude,
+			longitude: row.centerLongitude
+		},
+		boundary: normalizeCommercialBoundary(row.polygon)
+	};
+}
+
+function normalizeCommercialBoundary(polygon: unknown): CommercialCoordinate[] {
+	if (!Array.isArray(polygon)) return [];
+
+	return polygon.filter((point): point is CommercialCoordinate => {
+		if (!point || typeof point !== 'object') return false;
+		const coordinate = point as Record<string, unknown>;
+		return (
+			typeof coordinate.latitude === 'number' &&
+			Number.isFinite(coordinate.latitude) &&
+			typeof coordinate.longitude === 'number' &&
+			Number.isFinite(coordinate.longitude)
+		);
+	});
 }
 
 function appendCafeteriaPlaces(basePlaces: Place[]) {

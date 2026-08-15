@@ -1,10 +1,16 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
 	import type { CampusSpot } from '$lib/domain/campus-spots';
+	import {
+		getCommercialZoneBounds,
+		type CommercialZone,
+		type MapAreaMode
+	} from '$lib/domain/commercial-zones';
 	import { shouldShowCampusCenterMarker } from '$lib/domain/campus-boundary-visibility';
 	import type { Place } from '$lib/domain/places';
 	import { getCampusPolygonStyle } from '$lib/map/campus-polygon';
 	import { cancelMapMotion } from '$lib/map/map-motion';
+	import { getCommercialPolygonStyle } from '$lib/map/commercial-polygon';
 	import {
 		getMapCenterBounds,
 		getSheetAwareLatitudeOffset,
@@ -24,6 +30,9 @@
 		showCampusBoundaries?: boolean;
 		onMarkerClick: (placeId: string) => void;
 		onCampusSpotClick?: (spotId: string) => void;
+		areaMode?: MapAreaMode;
+		commercialZones?: CommercialZone[];
+		selectedCommercialZoneId?: string;
 	};
 
 	let {
@@ -38,7 +47,10 @@
 		focusCampusSpotId = '',
 		showCampusBoundaries = false,
 		onMarkerClick,
-		onCampusSpotClick
+		onCampusSpotClick,
+		areaMode = 'campus',
+		commercialZones = [],
+		selectedCommercialZoneId = 'all'
 	}: Props = $props();
 
 	let mapElement: HTMLDivElement;
@@ -46,6 +58,7 @@
 	let markers: any[] = [];
 	let campusMarkers: any[] = [];
 	let campusPolygons: any[] = [];
+	let commercialPolygons: any[] = [];
 	let mapListeners: any[] = [];
 	let isReady = $state(false);
 	let loadError = $state('');
@@ -57,6 +70,7 @@
 	};
 	const initialZoom = 16;
 	const minZoom = 15;
+	const outsideMinZoom = 11;
 	const maxZoom = 19;
 	const fivePixelLatitudeOffset = 0.000086;
 	const serviceBounds = getMapCenterBounds();
@@ -74,6 +88,7 @@
 		clearMapListeners();
 		clearMarkers();
 		clearCampusSpots();
+		clearCommercialZones();
 		map = null;
 	});
 
@@ -87,6 +102,12 @@
 		syncCampusSpots(campusSpots, activeCampusSpotId, showCampusBoundaries);
 		focusActivePlace(places, activePlaceId, focusMode);
 		focusActiveCampusSpot(campusSpots, focusCampusSpotId, focusMode);
+	});
+
+	$effect(() => {
+		if (!isReady || !map) return;
+		syncCommercialZones(areaMode, commercialZones, selectedCommercialZoneId);
+		focusMapArea(areaMode, commercialZones, selectedCommercialZoneId);
 	});
 
 	async function initMap() {
@@ -104,7 +125,7 @@
 			map = new naver.maps.Map(mapElement, {
 				center: new naver.maps.LatLng(initialCenter.latitude, initialCenter.longitude),
 				zoom: initialZoom,
-				minZoom,
+				minZoom: outsideMinZoom,
 				maxZoom,
 				mapDataControl: false,
 				scaleControl: false,
@@ -140,12 +161,14 @@
 		if (!map) return;
 
 		const zoom = map.getZoom();
-		if (zoom < minZoom) map.setZoom(minZoom);
+		const activeMinZoom = areaMode === 'outside' ? outsideMinZoom : minZoom;
+		if (zoom < activeMinZoom) map.setZoom(activeMinZoom);
 		if (zoom > maxZoom) map.setZoom(maxZoom);
 		keepMapInServiceArea();
 	}
 
 	function keepMapInServiceArea() {
+		if (areaMode === 'outside') return;
 		const naver = window.naver;
 		if (!naver || !map) return;
 
@@ -184,6 +207,66 @@
 			naver.maps.Event.addListener(marker, 'click', () => onMarkerClick(place.id));
 			markers.push(marker);
 		}
+	}
+
+	function syncCommercialZones(
+		nextAreaMode: MapAreaMode,
+		nextZones: CommercialZone[],
+		nextSelectedZoneId: string
+	) {
+		clearCommercialZones();
+		if (nextAreaMode !== 'outside' || !map) return;
+
+		const naver = window.naver;
+		if (!naver) return;
+
+		for (const zone of nextZones) {
+			if (zone.boundary.length < 3) continue;
+			const polygon = new naver.maps.Polygon({
+				map,
+				paths: zone.boundary.map(
+					({ latitude, longitude }) => new naver.maps.LatLng(latitude, longitude)
+				),
+				...getCommercialPolygonStyle(nextSelectedZoneId === zone.id)
+			});
+			commercialPolygons.push(polygon);
+		}
+	}
+
+	function focusMapArea(
+		nextAreaMode: MapAreaMode,
+		nextZones: CommercialZone[],
+		nextSelectedZoneId: string
+	) {
+		const naver = window.naver;
+		if (!naver || !map) return;
+
+		if (nextAreaMode === 'campus') {
+			map.setCenter(new naver.maps.LatLng(initialCenter.latitude, initialCenter.longitude));
+			map.setZoom(initialZoom);
+			return;
+		}
+
+		const bounds = getCommercialZoneBounds(nextZones, nextSelectedZoneId);
+		if (!bounds) return;
+
+		if (bounds.north === bounds.south && bounds.east === bounds.west) {
+			map.setCenter(new naver.maps.LatLng(bounds.north, bounds.east));
+			map.setZoom(16);
+			return;
+		}
+
+		const mapBounds = new naver.maps.LatLngBounds(
+			new naver.maps.LatLng(bounds.south, bounds.west),
+			new naver.maps.LatLng(bounds.north, bounds.east)
+		);
+		map.fitBounds(mapBounds, {
+			top: 170,
+			right: 28,
+			bottom: 250,
+			left: 28,
+			maxZoom: 17
+		});
 	}
 
 	function syncCampusSpots(
@@ -289,6 +372,13 @@
 		}
 		campusPolygons = [];
 		campusMarkers = [];
+	}
+
+	function clearCommercialZones() {
+		for (const polygon of commercialPolygons) {
+			polygon.setMap(null);
+		}
+		commercialPolygons = [];
 	}
 
 	function clearMapListeners() {

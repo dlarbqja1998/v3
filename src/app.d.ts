@@ -14,8 +14,13 @@ declare global {
 					panTo?: (center: unknown) => void;
 					setCenter: (center: unknown) => void;
 					setZoom: (zoom: number) => void;
+					fitBounds: (bounds: unknown, options?: Record<string, number>) => void;
 				};
+				LatLngBounds: new (southWest: unknown, northEast: unknown) => unknown;
 				Marker: new (options: Record<string, unknown>) => {
+					setMap: (map: unknown | null) => void;
+				};
+				Polygon: new (options: Record<string, unknown>) => {
 					setMap: (map: unknown | null) => void;
 				};
 				Point: new (x: number, y: number) => unknown;

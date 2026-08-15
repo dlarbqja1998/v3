@@ -77,6 +77,10 @@
 			</section>
 		</div>
 
-		<BottomNavigation activeKey="my" containerClass="absolute inset-x-0 bottom-0 z-30" />
+		<BottomNavigation
+			activeKey="my"
+			containerClass="absolute inset-x-0 bottom-0 z-30"
+			isAuthenticated={true}
+		/>
 	</section>
 </main>

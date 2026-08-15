@@ -5,7 +5,6 @@
 		Bus,
 		ChevronDown,
 		ChevronUp,
-		LogIn,
 		MapPin,
 		Search,
 		ThumbsDown,
@@ -13,8 +12,9 @@
 		Utensils,
 		Users
 	} from '@lucide/svelte';
-	import MainBrandIcon from '$lib/brand/MainBrandIcon.svelte';
 	import BottomNavigation from '$lib/navigation/BottomNavigation.svelte';
+	import HomeMapHeader from '$lib/home/HomeMapHeader.svelte';
+	import { changeMapAreaMode, type MapAreaMode } from '$lib/domain/commercial-zones';
 	import {
 		DEFAULT_CAMPUS_BOUNDARIES_VISIBLE,
 		DEFAULT_HOME_CAMPUS_SPOT_ID,
@@ -70,6 +70,8 @@ type CafeteriaFeedbackMap = Record<
 	let { data }: { data: PageData } = $props();
 
 	let selectedZone = $state('all');
+	let areaMode = $state<MapAreaMode>('campus');
+	let selectedCommercialZoneId = $state('all');
 	let selectedCategory = $state('all');
 	let hasSelectedPinFilter = $state(false);
 	let activePlaceId = $state('');
@@ -138,7 +140,9 @@ type CafeteriaFeedbackMap = Record<
 	const activeCampusSpotPanel = $derived(getCampusSpotPanelPresentation(activeCampusSpot));
 
 	const mapPlaces = $derived(
-		sheetMode === 'pin'
+		areaMode === 'outside'
+			? []
+			: sheetMode === 'pin'
 			? []
 			: sheetMode === 'shuttle'
 			? shuttleStops
@@ -338,6 +342,16 @@ type CafeteriaFeedbackMap = Record<
 		selectedZone = zoneId;
 		hasSelectedPinFilter = true;
 		activePlaceId = '';
+	}
+
+	function selectMapAreaMode(nextMode: MapAreaMode) {
+		const nextState = changeMapAreaMode(nextMode);
+		areaMode = nextState.mode;
+		selectedCommercialZoneId = nextState.selectedZoneId;
+	}
+
+	function selectCommercialZone(zoneId: string) {
+		selectedCommercialZoneId = zoneId;
 	}
 
 	function selectCategoryFilter(categorySlug: string) {
@@ -731,57 +745,21 @@ type CafeteriaFeedbackMap = Record<
 			activeCampusSpotId={activeCampusSpotId}
 			focusCampusSpotId={focusCampusSpotId}
 			showCampusBoundaries={showCampusBoundaries}
+			{areaMode}
+			commercialZones={data.commercialZones}
+			{selectedCommercialZoneId}
 			onMarkerClick={handleMarkerClick}
 			onCampusSpotClick={selectCampusSpot}
 		/>
 
 		{#if sheetMode === 'home'}
-			<header class="pointer-events-auto relative z-20 flex items-start justify-between gap-4 px-5 pb-3 pt-6">
-				<div class="flex items-center gap-3">
-					<MainBrandIcon />
-					<h1 class="max-w-[250px] text-3xl font-black leading-[1.08]">골라바유</h1>
-				</div>
-				<div class="flex shrink-0 items-center gap-2">
-					{#if false}
-						<button
-						class={`relative h-8 w-14 rounded-full border transition-colors ${
-							showCampusBoundaries
-								? 'border-brand bg-brand'
-								: 'border-brand-border-strong bg-white'
-						}`}
-						type="button"
-						role="switch"
-						aria-checked={showCampusBoundaries}
-						aria-label="캠퍼스 구역 표시"
-						onclick={toggleCampusBoundaries}
-					>
-						<span
-							class={`absolute top-1 grid h-6 w-6 place-items-center rounded-full bg-white shadow-sm transition-transform ${
-								showCampusBoundaries ? 'translate-x-7' : 'translate-x-1'
-							}`}
-						>
-							<MapPin size={14} strokeWidth={2.8} class="text-brand" />
-						</span>
-						</button>
-					{/if}
-					{#if data.user}
-					<div
-						class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white text-brand shadow-[0_10px_24px_rgba(103,16,43,0.16)]"
-						aria-label={data.user.role === 'admin' ? '관리자로 로그인됨' : '로그인됨'}
-					>
-						<LogIn size={16} strokeWidth={3} />
-					</div>
-				{:else}
-					<a
-						class="flex shrink-0 items-center gap-1.5 rounded-full bg-[#fee500] px-3 py-2.5 text-[13px] font-black text-[#251900] shadow-[0_10px_24px_rgba(103,16,43,0.16)]"
-						href="/login"
-					>
-						<LogIn size={15} strokeWidth={3} />
-						로그인
-					</a>
-					{/if}
-				</div>
-			</header>
+			<HomeMapHeader
+				{areaMode}
+				zones={data.commercialZones}
+				selectedZoneId={selectedCommercialZoneId}
+				onAreaModeChange={selectMapAreaMode}
+				onZoneChange={selectCommercialZone}
+			/>
 
 			{#if false}
 				<div class="pointer-events-auto relative z-20 grid grid-cols-[116px_1fr] gap-2.5 px-5 pb-3">
@@ -1238,6 +1216,7 @@ type CafeteriaFeedbackMap = Record<
 		<BottomNavigation
 			activeKey={getActiveNavigationKey()}
 			containerClass="absolute inset-x-0 bottom-0 z-30"
+			isAuthenticated={Boolean(data.user)}
 			onNavigate={handleBottomNavigation}
 		/>
 	</section>
