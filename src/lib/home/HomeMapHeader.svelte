@@ -2,6 +2,8 @@
 	import MainBrandIcon from '$lib/brand/MainBrandIcon.svelte';
 	import type { CommercialZone, MapAreaMode } from '$lib/domain/commercial-zones';
 	import AppIcon from '$lib/icon/AppIcon.svelte';
+	import { onMount, tick } from 'svelte';
+	import { fly } from 'svelte/transition';
 
 	let {
 		areaMode,
@@ -17,9 +19,106 @@
 		onZoneChange: (zoneId: string) => void;
 	} = $props();
 
-	function handleAreaModeChange(event: Event) {
-		onAreaModeChange((event.currentTarget as HTMLSelectElement).value as MapAreaMode);
+	const areaModes: { value: MapAreaMode; label: string }[] = [
+		{ value: 'campus', label: '학교안' },
+		{ value: 'outside', label: '학교밖' }
+	];
+
+	let menuOpen = $state(false);
+	let dropdownElement: HTMLDivElement;
+	let triggerElement: HTMLButtonElement;
+
+	const selectedAreaLabel = $derived(
+		areaModes.find((mode) => mode.value === areaMode)?.label ?? '학교안'
+	);
+
+	function getOptionElements() {
+		return Array.from(
+			dropdownElement?.querySelectorAll<HTMLButtonElement>('[role="option"]') ?? []
+		);
 	}
+
+	async function openMenu(focus: 'selected' | 'first' | 'last' = 'selected') {
+		menuOpen = true;
+		await tick();
+
+		const options = getOptionElements();
+		const focusTarget =
+			focus === 'first'
+				? options[0]
+				: focus === 'last'
+					? options.at(-1)
+					: options.find((option) => option.getAttribute('aria-selected') === 'true');
+
+		focusTarget?.focus();
+	}
+
+	function closeMenu(restoreFocus = false) {
+		menuOpen = false;
+		if (restoreFocus) triggerElement?.focus();
+	}
+
+	function toggleMenu() {
+		if (menuOpen) {
+			closeMenu();
+			return;
+		}
+
+		void openMenu();
+	}
+
+	function selectAreaMode(mode: MapAreaMode) {
+		if (mode !== areaMode) onAreaModeChange(mode);
+		closeMenu(true);
+	}
+
+	function handleTriggerKeydown(event: KeyboardEvent) {
+		if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
+
+		event.preventDefault();
+		void openMenu(event.key === 'ArrowDown' ? 'first' : 'last');
+	}
+
+	function handleMenuKeydown(event: KeyboardEvent) {
+		const options = getOptionElements();
+		const currentIndex = options.indexOf(document.activeElement as HTMLButtonElement);
+
+		if (event.key === 'Tab') {
+			closeMenu();
+			return;
+		}
+
+		let nextIndex: number | null = null;
+		if (event.key === 'ArrowDown') nextIndex = (currentIndex + 1) % options.length;
+		if (event.key === 'ArrowUp') nextIndex = (currentIndex - 1 + options.length) % options.length;
+		if (event.key === 'Home') nextIndex = 0;
+		if (event.key === 'End') nextIndex = options.length - 1;
+
+		if (nextIndex === null) return;
+		event.preventDefault();
+		options[nextIndex]?.focus();
+	}
+
+	onMount(() => {
+		function handlePointerDown(event: PointerEvent) {
+			if (menuOpen && !dropdownElement.contains(event.target as Node)) closeMenu();
+		}
+
+		function handleDocumentKeydown(event: KeyboardEvent) {
+			if (menuOpen && event.key === 'Escape') {
+				event.preventDefault();
+				closeMenu(true);
+			}
+		}
+
+		document.addEventListener('pointerdown', handlePointerDown);
+		document.addEventListener('keydown', handleDocumentKeydown);
+
+		return () => {
+			document.removeEventListener('pointerdown', handlePointerDown);
+			document.removeEventListener('keydown', handleDocumentKeydown);
+		};
+	});
 
 	function zoneButtonClass(zoneId: string) {
 		return selectedZoneId === zoneId
@@ -35,23 +134,54 @@
 		<div class="flex min-w-0 items-center gap-2.5">
 			<MainBrandIcon />
 
-			<label class="relative min-w-0 flex-1">
-				<span class="sr-only">지도 생활권</span>
-				<select
-					class="h-11 w-full appearance-none rounded-[14px] border border-brand-border-strong bg-brand-surface px-4 pr-10 text-base font-black text-brand-text outline-none focus:border-brand focus:ring-4 focus:ring-brand/15"
+			<div class="relative min-w-0 flex-1" bind:this={dropdownElement}>
+				<button
+					bind:this={triggerElement}
+					type="button"
+					class="relative flex h-11 w-full items-center justify-center rounded-[16px] border border-brand-border-strong bg-brand-surface px-10 text-center text-[15px] font-extrabold tracking-[-0.015em] text-brand-text outline-none transition-[border-color,background-color,box-shadow] duration-150 hover:bg-brand-soft/55 focus-visible:border-brand focus-visible:ring-4 focus-visible:ring-brand/15"
 					aria-label="지도 생활권"
-					value={areaMode}
-					onchange={handleAreaModeChange}
+					aria-haspopup="listbox"
+					aria-expanded={menuOpen}
+					aria-controls="home-area-mode-listbox"
+					onclick={toggleMenu}
+					onkeydown={handleTriggerKeydown}
 				>
-					<option value="campus">학교안</option>
-					<option value="outside">학교밖</option>
-				</select>
+					<span class="block w-full truncate text-center">{selectedAreaLabel}</span>
+				</button>
 				<AppIcon
 					name="chevron"
 					size={24}
-					class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 -rotate-90 text-brand"
+					class={`pointer-events-none absolute right-3 top-[22px] -translate-y-1/2 text-brand transition-transform duration-150 ${menuOpen ? 'rotate-90' : '-rotate-90'}`}
 				/>
-			</label>
+
+				{#if menuOpen}
+					<div
+						id="home-area-mode-listbox"
+						class="absolute left-0 right-0 top-[calc(100%+8px)] z-50 overflow-hidden rounded-[20px] border border-brand-border-strong bg-white/95 p-1.5 shadow-[0_16px_36px_rgba(72,12,31,0.18)] backdrop-blur-xl"
+						role="listbox"
+						tabindex="-1"
+						aria-label="지도 생활권 선택"
+						onkeydown={handleMenuKeydown}
+						transition:fly={{ y: -6, duration: 140 }}
+					>
+						{#each areaModes as mode}
+							<button
+								type="button"
+								class={`flex h-11 w-full items-center justify-center rounded-[14px] px-4 text-center text-[15px] font-extrabold tracking-[-0.015em] outline-none transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-brand/25 ${
+									areaMode === mode.value
+										? 'bg-brand-soft text-brand'
+										: 'text-brand-text hover:bg-brand-surface'
+								}`}
+								role="option"
+								aria-selected={areaMode === mode.value}
+								onclick={() => selectAreaMode(mode.value)}
+							>
+								{mode.label}
+							</button>
+						{/each}
+					</div>
+				{/if}
+			</div>
 
 			<a
 				class="grid h-11 w-11 shrink-0 place-items-center rounded-[14px] border border-brand-border-strong bg-white text-brand transition-colors hover:bg-brand-soft"

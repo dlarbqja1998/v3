@@ -40,6 +40,21 @@ describe('메인 지도 헤더', () => {
 		expect(body).not.toContain('고대앞');
 	});
 
+	it('생활권 선택을 기본 select가 아닌 접근 가능한 커스텀 버튼으로 제공한다', () => {
+		const { body } = render(HomeMapHeader, {
+			props: {
+				areaMode: 'campus',
+				zones,
+				selectedZoneId: 'all',
+				...handlers
+			}
+		});
+
+		expect(body).toContain('aria-haspopup="listbox"');
+		expect(body).toContain('aria-expanded="false"');
+		expect(body).not.toContain('<select');
+	});
+
 	it('학교밖에서는 전체와 DB 상권을 구역 선택지로 표시한다', () => {
 		const { body } = render(HomeMapHeader, {
 			props: {
