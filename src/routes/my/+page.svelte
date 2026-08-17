@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { LogOut, MapPin, Pencil, UserRound } from '@lucide/svelte';
+	import { Eye, LogOut, MapPin, Pencil, UserRound } from '@lucide/svelte';
 	import BottomNavigation from '$lib/navigation/BottomNavigation.svelte';
 	import { canManageCampusBoundaries } from '$lib/domain/my-page';
 	import type { PageData } from './$types';
@@ -63,6 +63,13 @@
 					>
 						<MapPin size={18} strokeWidth={2.8} />
 						핀 수정하기
+					</a>
+					<a
+						class="flex h-14 items-center justify-center gap-2 rounded-[16px] border border-brand-border-strong bg-white text-base font-black text-brand"
+						href="/admin/onboarding-preview"
+					>
+						<Eye size={18} strokeWidth={2.8} />
+						온보딩 미리보기
 					</a>
 				{/if}
 				<form method="POST" action="?/logout">
