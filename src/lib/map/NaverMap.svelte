@@ -3,6 +3,7 @@
 	import type { CampusSpot } from '$lib/domain/campus-spots';
 	import {
 		getCommercialZoneBounds,
+		getVisibleCommercialZones,
 		type CommercialZone,
 		type MapAreaMode
 	} from '$lib/domain/commercial-zones';
@@ -220,7 +221,7 @@
 		const naver = window.naver;
 		if (!naver) return;
 
-		for (const zone of nextZones) {
+		for (const zone of getVisibleCommercialZones(nextZones, nextSelectedZoneId)) {
 			if (zone.boundary.length < 3) continue;
 			const polygon = new naver.maps.Polygon({
 				map,
@@ -247,7 +248,8 @@
 			return;
 		}
 
-		const bounds = getCommercialZoneBounds(nextZones, nextSelectedZoneId);
+		const visibleZones = getVisibleCommercialZones(nextZones, nextSelectedZoneId);
+		const bounds = getCommercialZoneBounds(visibleZones, nextSelectedZoneId);
 		if (!bounds) return;
 
 		if (bounds.north === bounds.south && bounds.east === bounds.west) {
@@ -267,6 +269,15 @@
 			left: 28,
 			maxZoom: 17
 		});
+
+		if (nextSelectedZoneId !== 'all') {
+			const selectedZone = visibleZones[0];
+			if (selectedZone) {
+				map.setCenter(
+					new naver.maps.LatLng(selectedZone.center.latitude, selectedZone.center.longitude)
+				);
+			}
+		}
 	}
 
 	function syncCampusSpots(

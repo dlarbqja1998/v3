@@ -6,7 +6,6 @@
 		ChevronDown,
 		ChevronUp,
 		MapPin,
-		Search,
 		ThumbsDown,
 		ThumbsUp,
 		Utensils,
@@ -14,7 +13,17 @@
 	} from '@lucide/svelte';
 	import BottomNavigation from '$lib/navigation/BottomNavigation.svelte';
 	import HomeMapHeader from '$lib/home/HomeMapHeader.svelte';
-	import { changeMapAreaMode, type MapAreaMode } from '$lib/domain/commercial-zones';
+	import OutsidePlaceFilters from '$lib/home/OutsidePlaceFilters.svelte';
+	import { getHomeMapResetState } from '$lib/home/home-map-state';
+	import {
+		CAMPUS_AREA_ID,
+		changeSelectedMapArea,
+		type MapAreaMode
+	} from '$lib/domain/commercial-zones';
+	import type {
+		OutsideCuisine,
+		OutsidePlaceCategory
+	} from '$lib/domain/outside-place-filters';
 	import {
 		DEFAULT_CAMPUS_BOUNDARIES_VISIBLE,
 		DEFAULT_HOME_CAMPUS_SPOT_ID,
@@ -71,7 +80,10 @@ type CafeteriaFeedbackMap = Record<
 
 	let selectedZone = $state('all');
 	let areaMode = $state<MapAreaMode>('campus');
+	let selectedMapAreaId = $state(CAMPUS_AREA_ID);
 	let selectedCommercialZoneId = $state('all');
+	let selectedOutsideCategory = $state<OutsidePlaceCategory>('all');
+	let selectedOutsideCuisine = $state<OutsideCuisine>('all');
 	let selectedCategory = $state('all');
 	let hasSelectedPinFilter = $state(false);
 	let activePlaceId = $state('');
@@ -236,13 +248,6 @@ type CafeteriaFeedbackMap = Record<
 		activePlaceId = activeCafeteria.placeId;
 	});
 
-	function categoryButtonClass(isActive: boolean) {
-		const base = 'rounded-full border px-3 py-2 text-sm font-extrabold whitespace-nowrap transition';
-		return isActive
-			? `${base} border-brand bg-brand text-white shadow-[0_10px_24px_rgba(138,21,56,0.22)]`
-			: `${base} border-brand-border-strong bg-white/95 text-brand-muted shadow-[0_8px_18px_rgba(103,16,43,0.08)]`;
-	}
-
 	function openCafeteriaPanel() {
 		sheetMode = 'cafeteria';
 		setSheetDetent('expanded');
@@ -338,33 +343,22 @@ type CafeteriaFeedbackMap = Record<
 		focusCampusSpotId = showCampusBoundaries ? DEFAULT_HOME_CAMPUS_SPOT_ID : '';
 	}
 
-	function selectZoneFilter(zoneId: string) {
-		selectedZone = zoneId;
-		hasSelectedPinFilter = true;
-		activePlaceId = '';
-	}
-
-	function selectMapAreaMode(nextMode: MapAreaMode) {
-		const nextState = changeMapAreaMode(nextMode);
+	function selectMapArea(areaId: string) {
+		const nextState = changeSelectedMapArea(areaId);
+		selectedMapAreaId = areaId;
 		areaMode = nextState.mode;
 		selectedCommercialZoneId = nextState.selectedZoneId;
+		selectedOutsideCategory = 'all';
+		selectedOutsideCuisine = 'all';
 	}
 
-	function selectCommercialZone(zoneId: string) {
-		selectedCommercialZoneId = zoneId;
-	}
-
-	function selectCategoryFilter(categorySlug: string) {
-		if (hasSelectedPinFilter && selectedCategory === categorySlug) {
-			selectedCategory = 'all';
-			hasSelectedPinFilter = false;
-			activePlaceId = '';
-			return;
-		}
-
-		selectedCategory = categorySlug;
-		hasSelectedPinFilter = true;
-		activePlaceId = '';
+	function resetHomeMapArea() {
+		const resetState = getHomeMapResetState();
+		selectedMapAreaId = resetState.selectedMapAreaId;
+		areaMode = resetState.areaMode;
+		selectedCommercialZoneId = resetState.selectedCommercialZoneId;
+		selectedOutsideCategory = resetState.selectedOutsideCategory;
+		selectedOutsideCuisine = resetState.selectedOutsideCuisine;
 	}
 
 	function selectCafeteria(index: number) {
@@ -533,7 +527,10 @@ type CafeteriaFeedbackMap = Record<
 	}
 
 	function handleBottomNavigation(key: BottomNavigationKey) {
-		if (key === 'home') closePanel();
+		if (key === 'home') {
+			resetHomeMapArea();
+			closePanel();
+		}
 		if (key === 'cafeteria') openCafeteriaPanel();
 		if (key === 'shuttle') openShuttlePanel();
 	}
@@ -754,62 +751,18 @@ type CafeteriaFeedbackMap = Record<
 
 		{#if sheetMode === 'home'}
 			<HomeMapHeader
-				{areaMode}
 				zones={data.commercialZones}
-				selectedZoneId={selectedCommercialZoneId}
-				onAreaModeChange={selectMapAreaMode}
-				onZoneChange={selectCommercialZone}
+				selectedAreaId={selectedMapAreaId}
+				onAreaChange={selectMapArea}
 			/>
 
-			{#if false}
-				<div class="pointer-events-auto relative z-20 grid grid-cols-[116px_1fr] gap-2.5 px-5 pb-3">
-				<label class="grid gap-1.5 text-[11px] font-bold text-brand-muted">
-					<span>구역</span>
-					<select
-						class="w-full rounded-xl border border-brand-border-strong bg-white px-3 py-2.5 text-brand-text shadow-[0_8px_18px_rgba(103,16,43,0.08)] outline-none focus:border-brand focus:ring-4 focus:ring-brand/15"
-						value={selectedZone}
-						onchange={(event) => selectZoneFilter(event.currentTarget.value)}
-					>
-						<option value="all">전체</option>
-						{#each data.zones as zone}
-							<option value={zone.id}>{zone.name}</option>
-						{/each}
-					</select>
-				</label>
-
-				<label class="grid gap-1.5 text-[11px] font-bold text-brand-muted">
-					<span>검색</span>
-					<div class="flex items-center gap-2 rounded-xl border border-brand-border-strong bg-white px-3 py-2.5 shadow-[0_8px_18px_rgba(103,16,43,0.08)] focus-within:border-brand focus-within:ring-4 focus:ring-brand/15">
-						<Search size={16} class="shrink-0 text-brand-muted" />
-						<input
-							class="min-w-0 flex-1 bg-transparent text-brand-text outline-none placeholder:text-brand-muted/65"
-							placeholder="식당, 카페, 축제 검색"
-						/>
-					</div>
-				</label>
-			</div>
-
-			<nav
-				class="pointer-events-auto relative z-20 flex gap-2 overflow-x-auto px-5 pb-3.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-				aria-label="장소 카테고리"
-			>
-				<button
-					class={categoryButtonClass(hasSelectedPinFilter && selectedCategory === 'all')}
-					type="button"
-					onclick={() => selectCategoryFilter('all')}
-				>
-					전체
-				</button>
-				{#each data.categories as category}
-					<button
-						class={categoryButtonClass(hasSelectedPinFilter && selectedCategory === category.slug)}
-						type="button"
-						onclick={() => selectCategoryFilter(category.slug)}
-					>
-						{category.name}
-					</button>
-				{/each}
-				</nav>
+			{#if areaMode === 'outside'}
+				<OutsidePlaceFilters
+					selectedCategory={selectedOutsideCategory}
+					selectedCuisine={selectedOutsideCuisine}
+					onCategoryChange={(category) => (selectedOutsideCategory = category)}
+					onCuisineChange={(cuisine) => (selectedOutsideCuisine = cuisine)}
+				/>
 			{/if}
 		{/if}
 

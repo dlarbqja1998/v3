@@ -18,24 +18,22 @@ const zones = [
 ];
 
 const handlers = {
-	onAreaModeChange: () => undefined,
-	onZoneChange: () => undefined
+	onAreaChange: () => undefined
 };
 
 describe('메인 지도 헤더', () => {
-	it('학교안에서는 구역 칩을 숨기고 상점 페이지 링크를 제공한다', () => {
+	it('캠퍼스를 선택하면 전체 학교 이름과 상점 페이지 링크를 제공한다', () => {
 		const { body } = render(HomeMapHeader, {
 			props: {
-				areaMode: 'campus',
 				zones,
-				selectedZoneId: 'all',
+				selectedAreaId: 'campus',
 				...handlers
 			}
 		});
 
 		expect(body).toContain('href="/shops"');
 		expect(body).toContain('aria-label="상점 페이지"');
-		expect(body).toContain('학교안');
+		expect(body).toContain('고려대학교 세종캠퍼스');
 		expect(body).toContain('-rotate-90');
 		expect(body).not.toContain('고대앞');
 	});
@@ -43,9 +41,8 @@ describe('메인 지도 헤더', () => {
 	it('생활권 선택을 기본 select가 아닌 접근 가능한 커스텀 버튼으로 제공한다', () => {
 		const { body } = render(HomeMapHeader, {
 			props: {
-				areaMode: 'campus',
 				zones,
-				selectedZoneId: 'all',
+				selectedAreaId: 'campus',
 				...handlers
 			}
 		});
@@ -55,33 +52,28 @@ describe('메인 지도 헤더', () => {
 		expect(body).not.toContain('<select');
 	});
 
-	it('학교밖에서는 전체와 DB 상권을 구역 선택지로 표시한다', () => {
+	it('학교 밖 구역을 선택하면 해당 구역 이름을 드롭다운 값으로 표시한다', () => {
 		const { body } = render(HomeMapHeader, {
 			props: {
-				areaMode: 'outside',
 				zones,
-				selectedZoneId: 'front-gate',
+				selectedAreaId: 'front-gate',
 				...handlers
 			}
 		});
 
-		expect(body).toContain('aria-label="학교 밖 상권 구역"');
-		expect(body).toContain('전체');
 		expect(body).toContain('고대앞');
-		expect(body).toContain('조치원역');
-		expect(body).toContain('aria-pressed="true"');
+		expect(body).not.toContain('aria-label="학교 밖 상권 구역"');
 	});
 
-	it('학교밖 상권이 없으면 빈 상태를 안내한다', () => {
+	it('드롭다운 레이어를 학교 밖 필터칩보다 위에 배치한다', () => {
 		const { body } = render(HomeMapHeader, {
 			props: {
-				areaMode: 'outside',
-				zones: [],
-				selectedZoneId: 'all',
+				zones,
+				selectedAreaId: 'front-gate',
 				...handlers
 			}
 		});
 
-		expect(body).toContain('등록된 상권이 없습니다.');
+		expect(body).toMatch(/<header class="[^"]*\bz-30\b/);
 	});
 });

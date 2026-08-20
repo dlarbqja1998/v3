@@ -1,35 +1,29 @@
 <script lang="ts">
-	import MainBrandIcon from '$lib/brand/MainBrandIcon.svelte';
-	import type { CommercialZone, MapAreaMode } from '$lib/domain/commercial-zones';
-	import AppIcon from '$lib/icon/AppIcon.svelte';
 	import { onMount, tick } from 'svelte';
 	import { fly } from 'svelte/transition';
+	import MainBrandIcon from '$lib/brand/MainBrandIcon.svelte';
+	import {
+		buildMapAreaOptions,
+		type CommercialZone
+	} from '$lib/domain/commercial-zones';
+	import AppIcon from '$lib/icon/AppIcon.svelte';
 
 	let {
-		areaMode,
 		zones,
-		selectedZoneId,
-		onAreaModeChange,
-		onZoneChange
+		selectedAreaId,
+		onAreaChange
 	}: {
-		areaMode: MapAreaMode;
 		zones: CommercialZone[];
-		selectedZoneId: string;
-		onAreaModeChange: (mode: MapAreaMode) => void;
-		onZoneChange: (zoneId: string) => void;
+		selectedAreaId: string;
+		onAreaChange: (areaId: string) => void;
 	} = $props();
-
-	const areaModes: { value: MapAreaMode; label: string }[] = [
-		{ value: 'campus', label: '학교안' },
-		{ value: 'outside', label: '학교밖' }
-	];
 
 	let menuOpen = $state(false);
 	let dropdownElement: HTMLDivElement;
 	let triggerElement: HTMLButtonElement;
-
-	const selectedAreaLabel = $derived(
-		areaModes.find((mode) => mode.value === areaMode)?.label ?? '학교안'
+	let areaOptions = $derived(buildMapAreaOptions(zones));
+	let selectedAreaLabel = $derived(
+		areaOptions.find((option) => option.id === selectedAreaId)?.name ?? areaOptions[0]?.name ?? ''
 	);
 
 	function getOptionElements() {
@@ -67,8 +61,8 @@
 		void openMenu();
 	}
 
-	function selectAreaMode(mode: MapAreaMode) {
-		if (mode !== areaMode) onAreaModeChange(mode);
+	function selectArea(areaId: string) {
+		if (areaId !== selectedAreaId) onAreaChange(areaId);
 		closeMenu(true);
 	}
 
@@ -119,18 +113,10 @@
 			document.removeEventListener('keydown', handleDocumentKeydown);
 		};
 	});
-
-	function zoneButtonClass(zoneId: string) {
-		return selectedZoneId === zoneId
-			? 'border-brand bg-brand text-white shadow-[0_6px_14px_rgba(103,16,43,0.18)]'
-			: 'border-brand-border-strong bg-white text-brand-muted';
-	}
 </script>
 
-<header class="pointer-events-auto relative z-20 px-4 pb-3 pt-[max(16px,env(safe-area-inset-top))]">
-	<div
-		class="rounded-[22px] border border-brand-border-strong bg-white p-2.5 shadow-[0_12px_30px_rgba(72,12,31,0.14)]"
-	>
+<header class="pointer-events-auto relative z-30 px-4 pb-3 pt-[max(16px,env(safe-area-inset-top))]">
+	<div class="rounded-[22px] border border-brand-border-strong bg-white p-2.5 shadow-[0_12px_30px_rgba(72,12,31,0.14)]">
 		<div class="flex min-w-0 items-center gap-2.5">
 			<MainBrandIcon />
 
@@ -139,10 +125,10 @@
 					bind:this={triggerElement}
 					type="button"
 					class="relative flex h-11 w-full items-center justify-center rounded-[16px] border border-brand-border-strong bg-brand-surface px-10 text-center text-[15px] font-extrabold tracking-[-0.015em] text-brand-text outline-none transition-[border-color,background-color,box-shadow] duration-150 hover:bg-brand-soft/55 focus-visible:border-brand focus-visible:ring-4 focus-visible:ring-brand/15"
-					aria-label="지도 생활권"
+					aria-label="지도 구역"
 					aria-haspopup="listbox"
 					aria-expanded={menuOpen}
-					aria-controls="home-area-mode-listbox"
+					aria-controls="home-map-area-listbox"
 					onclick={toggleMenu}
 					onkeydown={handleTriggerKeydown}
 				>
@@ -156,27 +142,27 @@
 
 				{#if menuOpen}
 					<div
-						id="home-area-mode-listbox"
-						class="absolute left-0 right-0 top-[calc(100%+8px)] z-50 overflow-hidden rounded-[20px] border border-brand-border-strong bg-white/95 p-1.5 shadow-[0_16px_36px_rgba(72,12,31,0.18)] backdrop-blur-xl"
+						id="home-map-area-listbox"
+						class="absolute left-0 right-0 top-[calc(100%+8px)] z-50 max-h-[min(360px,58dvh)] overflow-y-auto rounded-[20px] border border-brand-border-strong bg-white/95 p-1.5 shadow-[0_16px_36px_rgba(72,12,31,0.18)] backdrop-blur-xl"
 						role="listbox"
 						tabindex="-1"
-						aria-label="지도 생활권 선택"
+						aria-label="지도 구역 선택"
 						onkeydown={handleMenuKeydown}
 						transition:fly={{ y: -6, duration: 140 }}
 					>
-						{#each areaModes as mode}
+						{#each areaOptions as option}
 							<button
 								type="button"
-								class={`flex h-11 w-full items-center justify-center rounded-[14px] px-4 text-center text-[15px] font-extrabold tracking-[-0.015em] outline-none transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-brand/25 ${
-									areaMode === mode.value
+								class={`flex min-h-11 w-full items-center justify-center rounded-[14px] px-4 py-2 text-center text-[15px] font-extrabold tracking-[-0.015em] outline-none transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-brand/25 ${
+									selectedAreaId === option.id
 										? 'bg-brand-soft text-brand'
 										: 'text-brand-text hover:bg-brand-surface'
 								}`}
 								role="option"
-								aria-selected={areaMode === mode.value}
-								onclick={() => selectAreaMode(mode.value)}
+								aria-selected={selectedAreaId === option.id}
+								onclick={() => selectArea(option.id)}
 							>
-								{mode.label}
+								{option.name}
 							</button>
 						{/each}
 					</div>
@@ -191,37 +177,5 @@
 				<AppIcon name="shop" size={24} />
 			</a>
 		</div>
-
-		{#if areaMode === 'outside'}
-			{#if zones.length > 0}
-				<nav
-					class="mt-2.5 flex gap-2 overflow-x-auto pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-					aria-label="학교 밖 상권 구역"
-				>
-					<button
-						class={`shrink-0 rounded-full border px-3.5 py-2 text-[13px] font-black transition-colors ${zoneButtonClass('all')}`}
-						type="button"
-						aria-pressed={selectedZoneId === 'all'}
-						onclick={() => onZoneChange('all')}
-					>
-						전체
-					</button>
-					{#each zones as zone}
-						<button
-							class={`shrink-0 rounded-full border px-3.5 py-2 text-[13px] font-black transition-colors ${zoneButtonClass(zone.id)}`}
-							type="button"
-							aria-pressed={selectedZoneId === zone.id}
-							onclick={() => onZoneChange(zone.id)}
-						>
-							{zone.name}
-						</button>
-					{/each}
-				</nav>
-			{:else}
-				<p class="m-0 px-2 pb-1 pt-3 text-center text-[13px] font-bold text-brand-muted">
-					등록된 상권이 없습니다.
-				</p>
-			{/if}
-		{/if}
 	</div>
 </header>

@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import {
-	changeMapAreaMode,
+	CAMPUS_AREA_ID,
+	buildMapAreaOptions,
+	changeSelectedMapArea,
 	getCommercialZoneBounds,
+	getVisibleCommercialZones,
 	type CommercialZone
 } from './commercial-zones';
 
@@ -64,11 +67,43 @@ describe('학교 밖 상권 지도 범위', () => {
 	it('존재하지 않는 구역을 선택하면 범위를 반환하지 않는다', () => {
 		expect(getCommercialZoneBounds(zones, 'missing')).toBeNull();
 	});
+
+	it('특정 구역을 선택하면 지도에는 그 구역 하나만 표시한다', () => {
+		expect(getVisibleCommercialZones(zones, 'front-gate')).toEqual([zones[0]]);
+		expect(getVisibleCommercialZones(zones, 'missing')).toEqual([]);
+	});
 });
 
 describe('지도 생활권 전환', () => {
-	it('학교 안과 밖으로 전환할 때 선택 구역을 전체로 초기화한다', () => {
-		expect(changeMapAreaMode('campus')).toEqual({ mode: 'campus', selectedZoneId: 'all' });
-		expect(changeMapAreaMode('outside')).toEqual({ mode: 'outside', selectedZoneId: 'all' });
+	it('캠퍼스 선택은 학교 안으로, 상권 선택은 해당 학교 밖 구역으로 전환한다', () => {
+		expect(changeSelectedMapArea(CAMPUS_AREA_ID)).toEqual({
+			mode: 'campus',
+			selectedZoneId: 'all'
+		});
+		expect(changeSelectedMapArea('front-gate')).toEqual({
+			mode: 'outside',
+			selectedZoneId: 'front-gate'
+		});
+	});
+
+	it('캠퍼스와 주요 상권을 지정된 순서로 먼저 보여주고 나머지는 이름순으로 배치한다', () => {
+		const unorderedZones: CommercialZone[] = [
+			{ ...zones[1], id: 'jukrim', name: '죽림리' },
+			{ ...zones[0], id: 'hongdae', name: '홍대사이' },
+			{ ...zones[0], id: 'front-gate', name: '고대앞' },
+			{ ...zones[1], id: 'sinheung', name: '신흥리' },
+			{ ...zones[0], id: 'ukil', name: '욱일' },
+			{ ...zones[1], id: 'station', name: '조치원역' }
+		];
+
+		expect(buildMapAreaOptions(unorderedZones).map((option) => option.name)).toEqual([
+			'고려대학교 세종캠퍼스',
+			'고대앞',
+			'욱일',
+			'홍대사이',
+			'조치원역',
+			'신흥리',
+			'죽림리'
+		]);
 	});
 });
