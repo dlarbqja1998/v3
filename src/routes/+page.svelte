@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
 	import { env as publicEnv } from '$env/dynamic/public';
 	import {
 		Bus,
@@ -73,7 +74,7 @@ type CafeteriaFeedbackMap = Record<
 		items: MealItem[];
 	};
 
-	type SheetMode = 'home' | 'cafeteria' | 'shuttle' | 'pin';
+	type SheetMode = 'home' | 'cafeteria' | 'shuttle' | 'pin' | 'place';
 	const WEATHER_WIDGET_GAP = 12;
 
 	let { data }: { data: PageData } = $props();
@@ -138,12 +139,14 @@ type CafeteriaFeedbackMap = Record<
 	);
 
 	const activePlace = $derived(
-		!hasSelectedPinFilter
-			? null
-			: (filteredPlaces.find((place) => place.id === activePlaceId) ??
-					filteredPlaces.find((place) => place.id === activeCafeteria?.placeId) ??
-					filteredPlaces[0] ??
-					null)
+		sheetMode === 'place'
+			? (data.places.find((place) => place.id === activePlaceId) ?? null)
+			: !hasSelectedPinFilter
+				? null
+				: (filteredPlaces.find((place) => place.id === activePlaceId) ??
+						filteredPlaces.find((place) => place.id === activeCafeteria?.placeId) ??
+						filteredPlaces[0] ??
+						null)
 	);
 
 	const activeCampusSpot = $derived<CampusSpot | null>(
@@ -158,6 +161,8 @@ type CafeteriaFeedbackMap = Record<
 			? []
 			: sheetMode === 'shuttle'
 			? shuttleStops
+			: sheetMode === 'place' && activePlace
+			? [activePlace]
 			: sheetMode === 'cafeteria' && activeCafeteria
 			? data.places.filter((place) => place.id === activeCafeteria.placeId)
 			: filteredPlaces
@@ -200,6 +205,8 @@ type CafeteriaFeedbackMap = Record<
 			openShuttlePanel();
 		} else if (data.initialPanel === 'pin') {
 			openPinPanel();
+		} else if (data.initialPanel === 'place' && data.initialPlaceId) {
+			openPlacePanel(data.initialPlaceId);
 		}
 
 		const timer = window.setInterval(() => {
@@ -283,6 +290,18 @@ type CafeteriaFeedbackMap = Record<
 		void loadCampusSpots();
 	}
 
+	function openPlacePanel(placeId: string) {
+		const place = data.places.find((item) => item.id === placeId && item.type === 'cafeteria');
+		if (!place) return;
+
+		sheetMode = 'place';
+		setSheetDetent('collapsed');
+		hasSelectedPinFilter = true;
+		activePlaceId = place.id;
+		activeCampusSpotId = '';
+		focusCampusSpotId = '';
+	}
+
 	async function loadCampusSpots() {
 		if (campusSpotsLoading || campusSpots.length > 0) return;
 		campusSpotsLoading = true;
@@ -301,6 +320,11 @@ type CafeteriaFeedbackMap = Record<
 	}
 
 	function closePanel() {
+		if (sheetMode === 'place') {
+			void goto('/');
+			return;
+		}
+
 		sheetMode = 'home';
 		setSheetDetent('collapsed');
 		homeFocusRequestId += 1;
@@ -732,7 +756,7 @@ type CafeteriaFeedbackMap = Record<
 			places={mapPlaces}
 			activePlaceId={activeMapPlaceId}
 			focusMode={
-				sheetMode === 'cafeteria' || sheetMode === 'shuttle' || sheetMode === 'pin'
+				sheetMode === 'cafeteria' || sheetMode === 'shuttle' || sheetMode === 'pin' || sheetMode === 'place'
 					? 'top-band'
 					: 'default'
 			}
@@ -803,17 +827,16 @@ type CafeteriaFeedbackMap = Record<
 
 			{#if sheetMode === 'home'}
 				<div class="mb-3 grid grid-cols-3 gap-2">
-					<button
+					<a
 						class="grid min-h-16 content-center gap-1 rounded-[14px] border border-brand-border bg-white p-2.5 text-left"
-						type="button"
-						onclick={openCafeteriaPanel}
+						href="/cafeteria"
 					>
 						<span class="flex items-center gap-1.5 text-[13px] font-black">
 							<Utensils size={15} strokeWidth={2.8} />
 							오늘 학식
 						</span>
 						<span class="text-xs leading-snug text-brand-muted">{cafeteriaSummary}</span>
-					</button>
+					</a>
 					<button
 						class="grid min-h-16 content-center gap-1 rounded-[14px] border border-brand-border bg-white p-2.5 text-left"
 						type="button"
@@ -995,6 +1018,17 @@ type CafeteriaFeedbackMap = Record<
 								</p>
 							</div>
 						{/if}
+					</div>
+				</div>
+			{:else if sheetMode === 'place' && activePlace}
+				<div class="grid min-h-0 flex-1 content-start gap-3 overflow-y-auto pb-2">
+					<div class="flex items-start justify-between gap-3 rounded-[16px] bg-brand-dark p-4 text-white">
+						<div>
+							<p class="m-0 text-xs font-black text-[#f4c7d4]">{activePlace.categoryName}</p>
+							<h2 class="m-0 mt-1 text-[19px] font-black">{activePlace.name}</h2>
+							<p class="m-0 mt-1.5 text-[13px] leading-snug text-[#f7dfe6]">{activePlace.description}</p>
+						</div>
+						<button class="shrink-0 rounded-full bg-white px-3 py-2 text-xs font-black text-brand-dark" type="button" onclick={closePanel}>닫기</button>
 					</div>
 				</div>
 			{:else if sheetMode === 'pin'}

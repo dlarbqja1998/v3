@@ -20,6 +20,15 @@ describe('홈 패널별 로드 정책', () => {
 		});
 	});
 
+	it('장소 포커스는 학식 작업을 기다리지 않고 지도에 바로 진입한다', () => {
+		expect(getHomeLoadPolicy('place')).toEqual({
+			initialPanel: 'place',
+			needsCafeteriaMenu: false,
+			needsCafeteriaFeedback: false,
+			shouldSyncCafeteriaMenu: false
+		});
+	});
+
 	it('학식 패널과 기본 홈은 학식 메뉴와 평가를 유지한다', () => {
 		expect(getHomeLoadPolicy('cafeteria')).toEqual({
 			initialPanel: 'cafeteria',

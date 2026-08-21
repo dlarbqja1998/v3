@@ -52,7 +52,7 @@ export const actions: Actions = {
 		const inputPassword = data.get('adminPassword')?.toString() ?? '';
 		const expectedId = env.ADMIN_LOGIN_ID;
 		const expectedPassword = env.ADMIN_LOGIN_PASSWORD;
-		if (!expectedId || !expectedPassword) {
+		if (!expectedId || !expectedPassword || expectedId !== 'golabau') {
 			return fail(500, { adminMessage: '관리자 로그인 환경변수가 없습니다.' });
 		}
 

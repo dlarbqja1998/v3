@@ -35,6 +35,12 @@ export async function load({ platform, cookies, locals, url }) {
 	}
 
 	const homeData = await getHomeData(env.DATABASE_URL, weeklyMenu);
+	const requestedPlaceId = url.searchParams.get('place') ?? '';
+	const initialPlaceId =
+		loadPolicy.initialPanel === 'place' &&
+		homeData.places.some((place) => place.id === requestedPlaceId && place.type === 'cafeteria')
+			? requestedPlaceId
+			: '';
 	let cafeteriaFeedback = {};
 	if (loadPolicy.needsCafeteriaFeedback) {
 		try {
@@ -51,7 +57,8 @@ export async function load({ platform, cookies, locals, url }) {
 	return {
 		...homeData,
 		cafeteriaFeedback,
-		initialPanel: loadPolicy.initialPanel,
+		initialPanel: initialPlaceId ? loadPolicy.initialPanel : loadPolicy.initialPanel === 'place' ? null : loadPolicy.initialPanel,
+		initialPlaceId,
 		naverMapClientId: env.NAVER_MAP_CLIENT_ID ?? '',
 		user: locals.user
 			? {

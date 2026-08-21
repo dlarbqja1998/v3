@@ -1,7 +1,7 @@
-import adapter from '@sveltejs/adapter-cloudflare';
 import tailwindcss from '@tailwindcss/vite';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
+import { cloudflareAdapterWithCafeteriaSchedule } from './scripts/cafeteria-scheduled-worker-adapter.js';
 
 export default defineConfig({
 	server: {
@@ -20,7 +20,7 @@ export default defineConfig({
 					filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 			},
 
-			adapter: adapter()
+			adapter: cloudflareAdapterWithCafeteriaSchedule()
 		})
 	]
 });

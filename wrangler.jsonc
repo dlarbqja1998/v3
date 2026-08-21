@@ -9,7 +9,7 @@
 		"directory": ".svelte-kit/cloudflare"
 	},
 	"triggers": {
-		"crons": ["*/5 2-6 * * 1"]
+		"crons": ["0 2 * * 1"]
 	},
 	"kv_namespaces": [
 		{

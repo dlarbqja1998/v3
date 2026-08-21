@@ -1,4 +1,4 @@
-import type { WeeklyMenu } from '$lib/domain/places';
+import type { WeeklyMenu } from '../domain/places';
 import { getCafeteriaMenu } from './cafeteria-scraper';
 
 export const MENU_CACHE_KEY = 'cafeteria_menu_weekly';

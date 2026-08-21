@@ -1,5 +1,5 @@
 import { load } from 'cheerio';
-import type { DailyMenu, MenuDayKey, WeeklyMenu } from '$lib/domain/places';
+import type { DailyMenu, MenuDayKey, WeeklyMenu } from '../domain/places';
 
 const MENU_DAY_KEYS: MenuDayKey[] = ['mon', 'tue', 'wed', 'thu', 'fri'];
 const DAY_LABELS: Record<MenuDayKey, string> = {

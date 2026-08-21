@@ -1,6 +1,7 @@
 import { asc, eq, sql } from 'drizzle-orm';
 import type { CafeteriaPanelItem, CafeteriaSummary, Place, PlaceCategory, ShuttleSummary, WeeklyMenu, Zone } from '$lib/domain/places';
-import { cafeteriaPlaces, staticFoodCourtVendors } from '$lib/domain/cafeterias';
+import { cafeteriaPlaces } from '$lib/domain/cafeterias';
+import { buildCafeteriaPanelItems } from '$lib/domain/cafeteria-panel';
 import type { CommercialCoordinate, CommercialZone } from '$lib/domain/commercial-zones';
 import { categories, nextShuttle, places as seedPlaces, todayCafeteria, zones as seedZones } from '$lib/domain/seed';
 import { createDb } from './index';
@@ -190,32 +191,4 @@ function appendCafeteriaPlaces(basePlaces: Place[]) {
 	const existingIds = new Set(basePlaces.map((place) => place.id));
 	const missingCafeterias = cafeteriaPlaces.filter((place) => !existingIds.has(place.id));
 	return [...basePlaces, ...missingCafeterias].sort((a, b) => a.displayPriority - b.displayPriority);
-}
-
-function buildCafeteriaPanelItems(weeklyMenu: WeeklyMenu | null): CafeteriaPanelItem[] {
-	return cafeteriaPlaces.map((place) => {
-		if (place.id === 'cafeteria-foodcourt') {
-			return {
-				id: 'foodcourt',
-				placeId: place.id,
-				name: place.name,
-				description: place.description,
-				source: 'static',
-				latitude: place.latitude,
-				longitude: place.longitude,
-				staticVendors: staticFoodCourtVendors
-			};
-		}
-
-		return {
-			id: place.id === 'cafeteria-faculty' ? 'faculty' : 'jinri',
-			placeId: place.id,
-			name: place.name,
-			description: place.description,
-			source: 'crawler',
-			latitude: place.latitude,
-			longitude: place.longitude,
-			weeklyMenu
-		};
-	});
 }
