@@ -192,7 +192,6 @@
 		return [
 			{ id: 'student-breakfast', name: '조식', items: day.student.breakfast },
 			{ id: 'student-korean', name: '한식', items: day.student.korean },
-			{ id: 'student-special', name: '특식', items: day.student.special },
 			{ id: 'student-snack', name: '분식', items: day.student.snack },
 			{ id: 'student-dinner', name: '석식', items: day.student.dinner }
 		];
@@ -217,10 +216,10 @@
 			<div class="relative flex border-b border-brand-border" aria-label="식당 선택" data-cafeteria-tabs>
 				{#each data.cafeterias as cafeteria, index}
 					<button
-						class={`relative z-10 flex min-h-13 flex-1 items-center justify-center px-1 py-3 text-center text-[15px] font-black transition-colors duration-200 ${
+						class={`relative z-10 flex min-h-13 flex-1 items-center justify-center px-1 py-3 text-center text-[15px] transition-colors duration-200 ${
 							activeCafeteriaIndex === index
-								? 'text-brand'
-								: 'text-brand-muted'
+								? 'font-black text-brand'
+								: 'font-bold text-brand-muted'
 						}`}
 						type="button"
 						aria-pressed={activeCafeteriaIndex === index}
@@ -238,32 +237,39 @@
 			</div>
 
 			{#if activeCafeteria}
-				<div class="mt-4 flex items-end justify-between gap-3">
-					<div>
-						<p class="m-0 text-xs font-black text-brand-muted">{activeCafeteria.source === 'crawler' ? '주간 식단' : '상시 메뉴'}</p>
-						<h2 class="m-0 mt-1 text-lg font-black">{activeCafeteria.name}</h2>
-					</div>
-					<div class="flex shrink-0 items-center gap-1 text-[13px] font-bold text-brand-muted">
-						<button class="flex min-h-11 items-center gap-1 px-1.5" type="button" onclick={viewOnMap}>
-							<MapPin size={15} strokeWidth={2.8} /> 지도에서 보기
-						</button>
-						<button class="flex min-h-11 items-center gap-1 px-1.5" type="button" onclick={openOperatingHours}>
-							<Clock3 size={15} strokeWidth={2.8} /> 운영시간
-						</button>
-					</div>
-				</div>
-
 				<div class="mt-4">
 					{#if activeCafeteria.source === 'crawler' && activeWeeklyMenu}
-						<div class="grid grid-cols-5 gap-1 rounded-[15px] bg-brand-map p-1" data-cafeteria-day-tabs>
+						<div class="grid grid-cols-5 gap-1 py-1" data-cafeteria-day-tabs>
 							{#each activeWeeklyMenu.days as day}
-								<button class={`rounded-[11px] px-1 py-2 text-xs font-black ${activeDayKey === day.key ? 'bg-brand text-white shadow-sm' : 'text-brand-muted'}`} type="button" onclick={() => selectDay(day.key)}>{day.day}</button>
+								<button class={`grid min-h-12 place-items-center rounded-[10px] px-1 py-1 text-[11px] font-black ${activeDayKey === day.key ? 'text-brand' : 'text-brand-muted'}`} type="button" onclick={() => selectDay(day.key)}>
+									<span class={`grid h-9 w-9 place-items-center rounded-full text-s leading-none pt-px ${activeDayKey === day.key ? 'bg-brand text-white shadow-sm' : 'text-brand-muted'}`} data-cafeteria-day-label>{day.day}</span>
+								</button>
 							{/each}
 						</div>
-						<div class="flex items-center justify-between border-b border-brand-border py-3">
-							<span class="text-sm font-black">{formatShortDate(selectedMenuDay?.date)} ({selectedMenuDay?.day})</span>
-							<span class="text-xs font-bold text-brand-muted">메뉴를 눌러 펼쳐보세요</span>
+					{/if}
+
+					<div
+						class={`flex min-h-11 items-center ${
+							activeCafeteria.source === 'crawler' && selectedMenuDay
+								? 'justify-between'
+								: 'justify-end'
+						} border-b border-brand-border py-1`}
+						data-cafeteria-utility-row
+					>
+						{#if activeCafeteria.source === 'crawler' && selectedMenuDay}
+							<span class="text-sm font-black">{formatShortDate(selectedMenuDay.date)} ({selectedMenuDay.day})</span>
+						{/if}
+						<div class="flex items-center gap-1 text-[13px] font-bold text-brand-muted/70" role="group" aria-label="학식 동작" data-cafeteria-actions>
+							<button class="flex min-h-11 items-center gap-1 px-1.5" type="button" onclick={viewOnMap}>
+								<MapPin size={13} strokeWidth={2.8} /> 지도에서 보기
+							</button>
+							<button class="flex min-h-11 items-center gap-1 px-1.5" type="button" onclick={openOperatingHours}>
+								<Clock3 size={13} strokeWidth={2.8} /> 운영시간
+							</button>
 						</div>
+					</div>
+
+					{#if activeCafeteria.source === 'crawler' && activeWeeklyMenu}
 						<div class="divide-y divide-brand-border" data-cafeteria-meal-list>
 							{#each activeMeals as meal}
 								<div class="overflow-hidden">

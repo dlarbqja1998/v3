@@ -42,6 +42,7 @@
 	import { resolveApiUrl } from '$lib/api/base-url';
 	import { isWeatherSnapshot, type WeatherSnapshot } from '$lib/domain/weather';
 	import { getCampusSpotPanelPresentation, type CampusSpot } from '$lib/domain/campus-spots';
+	import { getAvailableMapMarkerTargetRatio, getPlaceFocusZoom } from '$lib/map/focus';
 	import NaverMap from '$lib/map/NaverMap.svelte';
 	import WeatherWidget from '$lib/weather/WeatherWidget.svelte';
 	import type { CafeteriaPanelItem, DailyMenu, MenuDayKey } from '$lib/domain/places';
@@ -107,6 +108,8 @@ type CafeteriaFeedbackMap = Record<
 	let sheetElement = $state<HTMLElement>();
 	let sheetDetent = $state<BottomSheetDetent>('collapsed');
 	let sheetHeight = $state(160);
+	let mapViewportHeight = $state(844);
+	let bottomNavigationHeight = $state(73);
 	let weatherWidgetBottom = $state(getWeatherWidgetBottomOffset(844, 73, WEATHER_WIDGET_GAP));
 	let weather = $state<WeatherSnapshot | null>(null);
 	let weatherLoading = $state(true);
@@ -174,6 +177,16 @@ type CafeteriaFeedbackMap = Record<
 			: sheetMode === 'shuttle'
 			? (shuttleStops.find((stop) => stop.stopId === activeShuttleStopId)?.id ?? '')
 			: (activePlace?.id ?? '')
+	);
+
+	const placeFocusTargetRatio = $derived(
+		sheetMode === 'place'
+			? getAvailableMapMarkerTargetRatio({
+					mapHeight: mapViewportHeight,
+					navigationHeight: bottomNavigationHeight,
+					sheetHeight
+				})
+			: undefined
 	);
 
 	const activeWeeklyMenu = $derived(activeCafeteria?.weeklyMenu ?? null);
@@ -300,6 +313,7 @@ type CafeteriaFeedbackMap = Record<
 		activePlaceId = place.id;
 		activeCampusSpotId = '';
 		focusCampusSpotId = '';
+		homeFocusRequestId += 1;
 	}
 
 	async function loadCampusSpots() {
@@ -435,6 +449,8 @@ type CafeteriaFeedbackMap = Record<
 	function syncSheetHeight() {
 		if (typeof window === 'undefined') return;
 		const { viewportHeight, navigationHeight, sheetHeights } = getCurrentLayoutMetrics();
+		mapViewportHeight = viewportHeight;
+		bottomNavigationHeight = navigationHeight;
 		sheetHeight = sheetHeights[sheetDetent];
 		weatherWidgetBottom = getWeatherWidgetBottomOffset(
 			viewportHeight,
@@ -756,12 +772,13 @@ type CafeteriaFeedbackMap = Record<
 			places={mapPlaces}
 			activePlaceId={activeMapPlaceId}
 			focusMode={
-				sheetMode === 'cafeteria' || sheetMode === 'shuttle' || sheetMode === 'pin' || sheetMode === 'place'
+				sheetMode === 'cafeteria' || sheetMode === 'shuttle' || sheetMode === 'pin'
 					? 'top-band'
 					: 'default'
 			}
 			focusRequestId={homeFocusRequestId}
-			focusZoom={DEFAULT_HOME_MAP_ZOOM}
+			focusZoom={sheetMode === 'place' ? getPlaceFocusZoom(DEFAULT_HOME_MAP_ZOOM) : DEFAULT_HOME_MAP_ZOOM}
+			focusTargetRatio={placeFocusTargetRatio}
 			campusSpots={campusSpots}
 			activeCampusSpotId={activeCampusSpotId}
 			focusCampusSpotId={focusCampusSpotId}

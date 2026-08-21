@@ -15,6 +15,7 @@
 	import {
 		getMapCenterBounds,
 		getSheetAwareLatitudeOffset,
+		shouldFocusMapArea,
 		type MapFocusMode
 	} from '$lib/map/focus';
 
@@ -25,6 +26,7 @@
 		focusMode?: MapFocusMode;
 		focusRequestId?: number;
 		focusZoom?: number;
+		focusTargetRatio?: number;
 		campusSpots?: CampusSpot[];
 		activeCampusSpotId?: string;
 		focusCampusSpotId?: string;
@@ -43,6 +45,7 @@
 		focusMode = 'default',
 		focusRequestId = 0,
 		focusZoom,
+		focusTargetRatio,
 		campusSpots = [],
 		activeCampusSpotId = '',
 		focusCampusSpotId = '',
@@ -101,13 +104,14 @@
 		}
 		syncMarkers(places, activePlaceId);
 		syncCampusSpots(campusSpots, activeCampusSpotId, showCampusBoundaries);
-		focusActivePlace(places, activePlaceId, focusMode);
+		focusActivePlace(places, activePlaceId, focusMode, focusTargetRatio);
 		focusActiveCampusSpot(campusSpots, focusCampusSpotId, focusMode);
 	});
 
 	$effect(() => {
 		if (!isReady || !map) return;
 		syncCommercialZones(areaMode, commercialZones, selectedCommercialZoneId);
+		if (!shouldFocusMapArea(activePlaceId)) return;
 		focusMapArea(areaMode, commercialZones, selectedCommercialZoneId);
 	});
 
@@ -324,14 +328,15 @@
 	function focusActivePlace(
 		nextPlaces: Place[],
 		nextActivePlaceId: string,
-		nextFocusMode: MapFocusMode
+		nextFocusMode: MapFocusMode,
+		nextFocusTargetRatio?: number
 	) {
 		if (!map || !nextActivePlaceId) return;
 
 		const activePlace = nextPlaces.find((place) => place.id === nextActivePlaceId);
 		if (!activePlace) return;
 
-		focusCoordinate(activePlace.latitude, activePlace.longitude, nextFocusMode);
+		focusCoordinate(activePlace.latitude, activePlace.longitude, nextFocusMode, nextFocusTargetRatio);
 	}
 
 	function focusActiveCampusSpot(
@@ -347,7 +352,12 @@
 		focusCoordinate(activeCampusSpot.center.latitude, activeCampusSpot.center.longitude, nextFocusMode);
 	}
 
-	function focusCoordinate(latitude: number, longitude: number, nextFocusMode: MapFocusMode) {
+	function focusCoordinate(
+		latitude: number,
+		longitude: number,
+		nextFocusMode: MapFocusMode,
+		nextFocusTargetRatio?: number
+	) {
 		const naver = window.naver;
 		if (!naver || !map) return;
 
@@ -355,7 +365,8 @@
 			latitude,
 			zoom: map.getZoom(),
 			mapHeight: mapElement?.clientHeight || window.innerHeight || 800,
-			focusMode: nextFocusMode
+			focusMode: nextFocusMode,
+			markerTargetRatio: nextFocusTargetRatio
 		});
 		const center = new naver.maps.LatLng(latitude - sheetAwareLatitudeOffset, longitude);
 

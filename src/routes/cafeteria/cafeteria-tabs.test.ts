@@ -1,4 +1,6 @@
 import { describe, expect, it } from 'vitest';
+// @ts-expect-error 프로젝트 tsconfig는 Node 타입을 전역으로 포함하지 않는다.
+import { readFileSync } from 'node:fs';
 import { render } from 'svelte/server';
 
 import CafeteriaPage from './+page.svelte';
@@ -18,7 +20,14 @@ const weeklyMenu = {
 };
 
 describe('학식 식당 탭', () => {
-	it('선택된 식당에 크림슨 글자와 이동 가능한 밑줄을 표시한다', () => {
+	it('버튼 전역 리셋이 선택 탭의 글꼴 굵기를 덮어쓰지 않는다', () => {
+		const appCss = readFileSync(new URL('../../app.css', import.meta.url), 'utf8');
+
+		expect(appCss).toContain('font-family: inherit;');
+		expect(appCss).not.toMatch(/button,\s*input,\s*select\s*\{\s*font:\s*inherit;/);
+	});
+
+	it('선택된 식당에 굵은 크림슨 글자와 이동 가능한 밑줄을 표시한다', () => {
 		const { body } = render(CafeteriaPage, {
 			props: {
 				data: {
@@ -36,14 +45,15 @@ describe('학식 식당 탭', () => {
 
 		expect(body).toContain('data-cafeteria-tabs');
 		expect(body).toContain('text-[15px]');
+		expect(body).toContain('font-black text-brand" type="button" aria-pressed="true">진리관');
 		expect(body).toContain('text-brand');
 		expect(body).toContain('text-brand-muted');
-		expect(body).toContain('text-brand-muted" type="button" aria-pressed="false">교직원');
+		expect(body).toContain('font-bold text-brand-muted" type="button" aria-pressed="false">교직원');
 		expect(body).toContain('data-cafeteria-tab-indicator');
 		expect(body).toContain('transition-[transform,width] duration-300');
 	});
 
-	it('날짜 선택은 상단 탭과 구분되는 기존 pill UI를 유지한다', () => {
+	it('날짜 없이 선택한 요일을 작은 글자에 맞는 원의 중앙에 강조한다', () => {
 		const { body } = render(CafeteriaPage, {
 			props: {
 				data: {
@@ -56,8 +66,47 @@ describe('학식 식당 탭', () => {
 		});
 
 		expect(body).toContain('data-cafeteria-day-tabs');
-		expect(body).toContain('rounded-[15px] bg-brand-map p-1');
-		expect(body).toContain('bg-brand text-white shadow-sm');
+		expect(body).toContain('data-cafeteria-day-label');
+		expect(body).toContain('h-9 w-9 place-items-center rounded-full text-s leading-none pt-px');
+		expect(body).toContain('bg-brand text-white shadow-sm" data-cafeteria-day-label');
+		expect(body).not.toContain('data-cafeteria-day-number');
+	});
+
+	it('식당별 메뉴 정보 행에서 지도와 운영시간 동작을 제공한다', () => {
+		const crawlerBody = render(CafeteriaPage, {
+			props: {
+				data: {
+					cafeterias: [{ id: 'jinri', name: '진리관', source: 'crawler', weeklyMenu }],
+					canEditOperatingHours: false,
+					user: null
+				},
+				form: null
+			} as never
+		}).body;
+		const staticBody = render(CafeteriaPage, {
+			props: {
+				data: {
+					cafeterias: [{ id: 'foodcourt', name: '푸드코트', source: 'static', staticVendors: [] }],
+					canEditOperatingHours: false,
+					user: null
+				},
+				form: null
+			} as never
+		}).body;
+
+		for (const body of [crawlerBody, staticBody]) {
+			expect(body).toContain('data-cafeteria-utility-row');
+			expect(body).toContain('data-cafeteria-actions');
+			expect(body).toContain('text-[13px] font-bold text-brand-muted/70');
+			expect(body.match(/width="13" height="13"/g)).toHaveLength(2);
+			expect(body).toContain('지도에서 보기');
+			expect(body).toContain('운영시간');
+		}
+		expect(crawlerBody).toContain('items-center justify-between border-b border-brand-border');
+		expect(staticBody).toContain('items-center justify-end border-b border-brand-border');
+		expect(crawlerBody).not.toContain('주간 식단');
+		expect(staticBody).not.toContain('상시 메뉴');
+		expect(crawlerBody).not.toContain('메뉴를 눌러 펼쳐보세요');
 	});
 
 	it('스크롤되어도 흰 배경의 헤더가 콘텐츠를 가린다', () => {

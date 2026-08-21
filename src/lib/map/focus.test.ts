@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import * as mapFocus from './focus';
 import { getMapCenterBounds, getMarkerTargetRatio, getSheetAwareLatitudeOffset } from './focus';
 import { shuttleStops } from '$lib/domain/shuttle';
 
@@ -28,6 +29,33 @@ describe('지도 핀 포커스 위치', () => {
 				focusMode: 'default'
 			})
 		).toBe(0);
+	});
+
+	it('학식 장소 보기는 바텀시트 위의 남은 지도 영역 중앙에 핀을 두고 기본 확대보다 2단계 가깝게 보여준다', () => {
+		const getPlaceFocusZoom = (mapFocus as unknown as Record<string, unknown>).getPlaceFocusZoom;
+		const getAvailableMapMarkerTargetRatio = (
+			mapFocus as unknown as Record<string, unknown>
+		).getAvailableMapMarkerTargetRatio;
+
+		expect(getMarkerTargetRatio('default')).toBe(0.5);
+		expect(getPlaceFocusZoom).toBeTypeOf('function');
+		expect((getPlaceFocusZoom as (homeZoom: number) => number)(17)).toBe(19);
+		expect(getAvailableMapMarkerTargetRatio).toBeTypeOf('function');
+		expect(
+			(getAvailableMapMarkerTargetRatio as (layout: {
+				mapHeight: number;
+				navigationHeight: number;
+				sheetHeight: number;
+			}) => number)({ mapHeight: 720, navigationHeight: 73, sheetHeight: 160 })
+		).toBeCloseTo(487 / 1440, 6);
+	});
+
+	it('선택된 장소가 있으면 캠퍼스 기본 영역으로 다시 포커스하지 않는다', () => {
+		const shouldFocusMapArea = (mapFocus as unknown as Record<string, unknown>).shouldFocusMapArea;
+
+		expect(shouldFocusMapArea).toBeTypeOf('function');
+		expect((shouldFocusMapArea as (activePlaceId: string) => boolean)('cafeteria-jinri')).toBe(false);
+		expect((shouldFocusMapArea as (activePlaceId: string) => boolean)('')).toBe(true);
 	});
 
 	it('조치원역 후편 핀도 상단 1/6 중앙에 둘 수 있도록 남쪽 지도 중심 경계를 열어둔다', () => {
