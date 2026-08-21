@@ -120,6 +120,13 @@ var worker_default = {
     return pragma && res.status < 400 ? c(req, res, ctx) : res;
   }
 };
-export {
-  worker_default as default
+import { refreshCafeteriaMenuOnSchedule } from '../src/lib/server/cafeteria-cron';
+
+const worker_with_cafeteria_schedule = {
+	...worker_default,
+	async scheduled(controller, env, ctx) {
+		await refreshCafeteriaMenuOnSchedule(controller.cron, env, ctx);
+	}
 };
+
+export { worker_with_cafeteria_schedule as default };
