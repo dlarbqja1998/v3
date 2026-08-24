@@ -6,18 +6,29 @@
 		collegeOptions,
 		genderOptions,
 		studentYearOptions,
+		validateNickname,
 		type OnboardingInput
 	} from '$lib/domain/onboarding';
+
+	type NicknameCheck = {
+		nickname: string;
+		status: 'available' | 'duplicate' | 'invalid' | 'error';
+		message: string;
+	};
 
 	let {
 		mode,
 		message = null,
 		submittedValues = null,
+		nicknameCheck = null,
+		next = '/',
 		exitHref = '/my'
 	}: {
 		mode: 'register' | 'preview';
 		message?: string | null;
 		submittedValues?: OnboardingInput | null;
+		nicknameCheck?: NicknameCheck | null;
+		next?: string;
 		exitHref?: string;
 	} = $props();
 
@@ -30,9 +41,30 @@
 	let department = $state('');
 	let studentYear = $state('');
 	let gender = $state('');
+
+	function getInitialSubmittedValues() {
+		return submittedValues;
+	}
+
+	const initialSubmittedValues = getInitialSubmittedValues();
+	if (initialSubmittedValues) {
+		nickname = initialSubmittedValues.nickname;
+		college = initialSubmittedValues.college;
+		department = initialSubmittedValues.department;
+		studentYear = initialSubmittedValues.studentYear;
+		gender = initialSubmittedValues.gender;
+	}
 	let departments = $derived(college ? buildDepartmentOptions(college) : []);
 	let previewNoticeVisible = $state(false);
 	let previewNoticeTimer: ReturnType<typeof setTimeout> | undefined;
+	let nicknameCheckInvalidated = $state(false);
+	let nicknameInputError = $derived(validateNickname(nickname));
+	let hasConfirmedNickname = $derived(
+		!nicknameCheckInvalidated && nicknameCheck?.status === 'available' && nicknameCheck.nickname === nickname
+	);
+	let nicknameCheckResult = $derived(
+		!nicknameCheckInvalidated && nicknameCheck?.nickname === nickname ? nicknameCheck : null
+	);
 
 	$effect(() => {
 		if (!submittedValues) return;
@@ -52,7 +84,7 @@
 	});
 
 	function canGoNext() {
-		if (step === 0) return nickname.trim().length > 0 && nickname.trim().length <= 10;
+		if (step === 0) return isPreview ? !nicknameInputError : hasConfirmedNickname;
 		if (step === 1) return Boolean(college);
 		if (step === 2) return Boolean(department);
 		if (step === 3) return Boolean(studentYear);
@@ -73,6 +105,10 @@
 		previewNoticeTimer = setTimeout(() => (previewNoticeVisible = false), 2200);
 	}
 
+	function invalidateNicknameCheck() {
+		nicknameCheckInvalidated = true;
+	}
+
 	onDestroy(() => {
 		if (previewNoticeTimer) clearTimeout(previewNoticeTimer);
 	});
@@ -81,6 +117,7 @@
 <main class="min-h-dvh bg-brand-bg px-5 pb-7 pt-[calc(1.75rem+env(safe-area-inset-top))] text-brand-text">
 	<form
 		method={isPreview ? undefined : 'POST'}
+		action={isPreview ? undefined : '?/complete'}
 		class="mx-auto flex min-h-[calc(100dvh-56px-env(safe-area-inset-top))] w-full max-w-[430px] flex-col"
 	>
 		<input type="hidden" name="nickname" value={nickname} />
@@ -88,6 +125,9 @@
 		<input type="hidden" name="department" value={department} />
 		<input type="hidden" name="studentYear" value={studentYear} />
 		<input type="hidden" name="gender" value={gender} />
+		{#if !isPreview}
+			<input type="hidden" name="next" value={next} />
+		{/if}
 
 		{#if isPreview}
 			<div class="mb-5 flex items-center justify-between gap-3 rounded-[16px] border border-brand-border-strong bg-white px-3 py-2.5">
@@ -130,16 +170,41 @@
 
 		<section class="mt-8 flex-1 rounded-[22px] border border-brand-border bg-white p-5 shadow-[0_18px_40px_rgba(103,16,43,0.08)]">
 			{#if step === 0}
-				<label class="grid gap-3">
-					<span class="text-xl font-black">닉네임을 정해주세요</span>
-					<input
-						bind:value={nickname}
-						class="h-14 rounded-[16px] border border-brand-border-strong px-4 text-base font-bold outline-none focus:border-brand focus:ring-4 focus:ring-brand/15"
-						maxlength="10"
-						placeholder="최대 10글자"
-					/>
-				</label>
-				<p class="mt-3 text-xs font-bold text-brand-muted">중복 닉네임은 완료 시점에 한 번 더 확인합니다.</p>
+				<div class="grid gap-3">
+					<label class="text-xl font-black" for="nickname">닉네임을 정해주세요</label>
+					<div class={`grid gap-2 ${isPreview ? 'grid-cols-1' : 'grid-cols-[minmax(0,1fr)_auto]'}`}>
+						<input
+							bind:value={nickname}
+							class="h-14 min-w-0 rounded-[16px] border border-brand-border-strong px-4 text-base font-bold outline-none focus:border-brand focus:ring-4 focus:ring-brand/15"
+							id="nickname"
+							maxlength="10"
+							oninput={invalidateNicknameCheck}
+							placeholder="닉네임 입력"
+						/>
+						{#if !isPreview}
+							<button
+								class="h-14 rounded-[16px] bg-brand px-4 text-sm font-black text-white disabled:bg-brand-border-strong"
+								disabled={Boolean(nicknameInputError)}
+								formaction="?/checkNickname"
+								type="submit"
+							>
+								중복 확인
+							</button>
+						{/if}
+					</div>
+				</div>
+				<p class="mt-3 text-xs font-bold leading-5 text-brand-muted">
+					2~10자, 한글/영문/숫자/밑줄(_)만 사용 가능, 공백 및 특수문자 불가합니다.
+				</p>
+				{#if nicknameCheckResult}
+					<p
+						class={`mt-3 rounded-[14px] px-4 py-3 text-sm font-bold ${nicknameCheckResult.status === 'available' ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'}`}
+						role="status"
+						aria-live="polite"
+					>
+						{nicknameCheckResult.message}
+					</p>
+				{/if}
 			{:else if step === 1}
 				<div class="grid gap-3">
 					<h2 class="m-0 text-xl font-black">단과대를 선택해주세요</h2>
@@ -235,6 +300,7 @@
 					class="flex h-14 items-center justify-center gap-2 rounded-[16px] bg-brand text-base font-black text-white disabled:bg-brand-border-strong"
 					type={isPreview ? 'button' : 'submit'}
 					disabled={!canGoNext()}
+					formaction={isPreview ? undefined : '?/complete'}
 					onclick={isPreview ? showPreviewNotice : undefined}
 				>
 					<Check size={18} strokeWidth={3} />

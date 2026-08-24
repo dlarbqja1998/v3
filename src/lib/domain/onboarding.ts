@@ -85,8 +85,24 @@ export function buildDepartmentOptions(college: string) {
 	return universityData[college] ?? [];
 }
 
+export function validateNickname(nickname: string) {
+	if (!nickname.trim()) {
+		return '닉네임을 입력해 주세요.';
+	}
+
+	if (nickname.length < 2 || nickname.length > 10) {
+		return '닉네임은 2자 이상 10자 이하로 입력해 주세요.';
+	}
+
+	if (!/^[가-힣A-Za-z0-9_]+$/.test(nickname)) {
+		return '닉네임은 한글, 영문, 숫자, 밑줄(_)만 사용할 수 있어요.';
+	}
+
+	return null;
+}
+
 export function normalizeOnboardingInput(input: OnboardingInput): OnboardingInput {
-	const nickname = input.nickname.trim();
+	const nickname = input.nickname;
 	const college = input.college.trim();
 	const studentYear = input.studentYear.trim();
 	const gender = input.gender.trim();
@@ -104,12 +120,9 @@ export function normalizeOnboardingInput(input: OnboardingInput): OnboardingInpu
 export function validateOnboardingInput(input: OnboardingInput): OnboardingValidationResult {
 	const value = normalizeOnboardingInput(input);
 
-	if (!value.nickname) {
-		return { ok: false, message: '닉네임을 입력해 주세요.', value };
-	}
-
-	if (value.nickname.length > 10) {
-		return { ok: false, message: '닉네임은 10글자 이하로 입력해 주세요.', value };
+	const nicknameError = validateNickname(value.nickname);
+	if (nicknameError) {
+		return { ok: false, message: nicknameError, value };
 	}
 
 	if (!collegeOptions.includes(value.college)) {
