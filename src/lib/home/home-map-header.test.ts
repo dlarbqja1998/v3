@@ -38,6 +38,18 @@ describe('메인 지도 헤더', () => {
 		expect(body).not.toContain('고대앞');
 	});
 
+	it('선택한 지도 구역을 헤더의 접근 가능한 이름으로 안내한다', () => {
+		const { body } = render(HomeMapHeader, {
+			props: {
+				zones,
+				selectedAreaId: 'front-gate',
+				...handlers
+			}
+		});
+
+		expect(body).toContain('aria-label="지도 구역: 고대앞"');
+	});
+
 	it('생활권 선택을 기본 select가 아닌 접근 가능한 커스텀 버튼으로 제공한다', () => {
 		const { body } = render(HomeMapHeader, {
 			props: {

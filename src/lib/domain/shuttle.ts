@@ -31,6 +31,7 @@ export type UpcomingShuttle = ShuttleSchedule & {
 	fromName: string;
 	toName: string;
 	minutesLeft: number;
+	serviceDate: string;
 };
 
 export const shuttleScheduleSource = {
@@ -94,13 +95,15 @@ function createScheduleRows({
 	from,
 	to,
 	times,
-	fridayUnavailableFrom
+	fridayUnavailableFrom,
+	notesByTime
 }: {
 	dayType: ShuttleServiceDay;
 	from: ShuttleStopId;
 	to: ShuttleDestinationId;
 	times: string[];
 	fridayUnavailableFrom?: string;
+	notesByTime?: Record<string, string>;
 }): ShuttleSchedule[] {
 	return times.map((departureTime) => ({
 		id: `${dayType}-${from}-${departureTime.replace(':', '')}`,
@@ -108,6 +111,7 @@ function createScheduleRows({
 		to,
 		departureTime,
 		dayType,
+		note: notesByTime?.[departureTime],
 		fridayUnavailable: Boolean(
 			fridayUnavailableFrom && timeToMinutes(departureTime) >= timeToMinutes(fridayUnavailableFrom)
 		)
@@ -130,14 +134,17 @@ export const shuttleSchedules: ShuttleSchedule[] = [
 		departureTime: '18:10',
 		dayType: 'weekday',
 		tag: 'last',
-		note: '조치원역 경유 · 오송역 종착'
+		note: '조치원역 경유 · 오송역 도착'
 	},
 	...createScheduleRows({
 		dayType: 'weekday',
 		from: 'jochewon-station-back',
 		to: 'campus',
 		times: weekdayStationTimes,
-		fridayUnavailableFrom: '19:20'
+		fridayUnavailableFrom: '19:20',
+		notesByTime: {
+			'08:30': '오송역 6번 출구 출발 · 조치원역 경유'
+		}
 	}),
 	...createScheduleRows({
 		dayType: 'sunday',
@@ -167,7 +174,7 @@ export const shuttleServiceNotices: ShuttleServiceNotice[] = [
 		dayType: 'weekday',
 		time: '18:10',
 		label: '학교 출발',
-		note: '조치원역 경유 · 오송역 종착'
+		note: '조치원역 경유 · 오송역 도착'
 	}
 ];
 
@@ -202,17 +209,64 @@ export function getShuttleSchedulesForDate(date: Date, from?: ShuttleStopId): Sh
 export function getUpcomingShuttles(now: Date, from?: ShuttleStopId, limit = 5): UpcomingShuttle[] {
 	const nowMinutes = now.getHours() * 60 + now.getMinutes();
 	return getShuttleSchedulesForDate(now, from)
-		.map((schedule) => {
-			const departureMinutes = timeToMinutes(schedule.departureTime);
-			return {
-				...schedule,
-				fromName: getStopName(schedule.from),
-				toName: getStopName(schedule.to),
-				minutesLeft: departureMinutes - nowMinutes
-			};
-		})
+		.map((schedule) =>
+			toUpcomingShuttle(schedule, timeToMinutes(schedule.departureTime) - nowMinutes, toDateKey(now))
+		)
 		.filter((schedule) => schedule.minutesLeft >= 0)
 		.slice(0, limit);
+}
+
+/** 마지막 출발 이후에는 운행차가 없으며, 출발 간격 사이의 직전 차량만 운행차로 본다. */
+export function getCurrentShuttle(now: Date, from?: ShuttleStopId): ShuttleSchedule | null {
+	const schedules = getShuttleSchedulesForDate(now, from);
+	const nowMinutes = now.getHours() * 60 + now.getMinutes();
+
+	for (let index = schedules.length - 2; index >= 0; index -= 1) {
+		const current = schedules[index];
+		const next = schedules[index + 1];
+		if (!current || !next) continue;
+		if (timeToMinutes(current.departureTime) <= nowMinutes && nowMinutes < timeToMinutes(next.departureTime)) {
+			return current;
+		}
+	}
+
+	return null;
+}
+
+/** 운행차부터 시작해 사용자가 아래로 계속 스크롤하면 나머지 시간도 모두 볼 수 있게 정렬한다. */
+export function orderShuttleTimeline(
+	schedules: ShuttleSchedule[],
+	startScheduleId?: string
+): ShuttleSchedule[] {
+	const startIndex = startScheduleId
+		? schedules.findIndex((schedule) => schedule.id === startScheduleId)
+		: -1;
+	if (startIndex <= 0) return [...schedules];
+	return [...schedules.slice(startIndex), ...schedules.slice(0, startIndex)];
+}
+
+/** 오늘 운행이 끝난 경우에도 다음 운행일의 첫차를 다음차로 제공한다. */
+export function getNextAvailableShuttle(now: Date, from?: ShuttleStopId): UpcomingShuttle | null {
+	const nowMinutes = now.getHours() * 60 + now.getMinutes();
+	const todayNext = getShuttleSchedulesForDate(now, from)
+		.map((schedule) =>
+			toUpcomingShuttle(schedule, timeToMinutes(schedule.departureTime) - nowMinutes, toDateKey(now))
+		)
+		.find((schedule) => schedule.minutesLeft > 0);
+	if (todayNext) return todayNext;
+
+	for (let dayOffset = 1; dayOffset <= 7; dayOffset += 1) {
+		const nextDate = new Date(now);
+		nextDate.setDate(now.getDate() + dayOffset);
+		nextDate.setHours(0, 0, 0, 0);
+		const firstSchedule = getShuttleSchedulesForDate(nextDate, from)[0];
+		if (!firstSchedule) continue;
+
+		const minutesLeft = dayOffset * 24 * 60 - nowMinutes + timeToMinutes(firstSchedule.departureTime);
+		return toUpcomingShuttle(firstSchedule, minutesLeft, toDateKey(nextDate));
+	}
+
+	return null;
 }
 
 export function formatMinutesLeft(minutes: number) {
@@ -227,4 +281,25 @@ export function formatMinutesLeft(minutes: number) {
 function timeToMinutes(time: string) {
 	const [hours, minutes] = time.split(':').map(Number);
 	return hours * 60 + minutes;
+}
+
+function toUpcomingShuttle(
+	schedule: ShuttleSchedule,
+	minutesLeft: number,
+	serviceDate: string
+): UpcomingShuttle {
+	return {
+		...schedule,
+		fromName: getStopName(schedule.from),
+		toName: getStopName(schedule.to),
+		minutesLeft,
+		serviceDate
+	};
+}
+
+function toDateKey(date: Date) {
+	const year = date.getFullYear();
+	const month = String(date.getMonth() + 1).padStart(2, '0');
+	const day = String(date.getDate()).padStart(2, '0');
+	return `${year}-${month}-${day}`;
 }

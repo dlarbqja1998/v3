@@ -2,7 +2,7 @@
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
-	import { ChevronDown, ChevronUp, Clock3, MapPin, Pencil, Plus, Trash2 } from '@lucide/svelte';
+	import { ChevronDown, ChevronRight, ChevronUp, Clock3, MapPin, Pencil, Plus, Trash2 } from '@lucide/svelte';
 
 	import {
 		getCafeteriaOperatingStatus,
@@ -216,7 +216,7 @@
 			<div class="relative flex border-b border-brand-border" aria-label="식당 선택" data-cafeteria-tabs>
 				{#each data.cafeterias as cafeteria, index}
 					<button
-						class={`relative z-10 flex min-h-13 flex-1 items-center justify-center px-1 py-3 text-center text-[15px] transition-colors duration-200 ${
+						class={`relative z-10 flex min-h-13 flex-1 items-center justify-center px-1 py-3 text-center text-[15px] outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-brand/25 ${
 							activeCafeteriaIndex === index
 								? 'font-black text-brand'
 								: 'font-bold text-brand-muted'
@@ -257,13 +257,20 @@
 						data-cafeteria-utility-row
 					>
 						{#if activeCafeteria.source === 'crawler' && selectedMenuDay}
-							<span class="text-sm font-black">{formatShortDate(selectedMenuDay.date)} ({selectedMenuDay.day})</span>
+							<h2 class="m-0 text-[17px] font-black tracking-[-0.02em]" data-cafeteria-date>
+								{formatShortDate(selectedMenuDay.date)} ({selectedMenuDay.day})
+							</h2>
 						{/if}
-						<div class="flex items-center gap-1 text-[13px] font-bold text-brand-muted/70" role="group" aria-label="학식 동작" data-cafeteria-actions>
-							<button class="flex min-h-11 items-center gap-1 px-1.5" type="button" onclick={viewOnMap}>
-								<MapPin size={13} strokeWidth={2.8} /> 지도에서 보기
+						<div class="flex shrink-0 items-center gap-1" role="group" aria-label="학식 동작" data-cafeteria-actions>
+							<button
+								class="flex min-h-11 items-center gap-1 whitespace-nowrap px-1.5 text-[13px] font-bold text-brand transition-colors hover:text-brand-deep"
+								type="button"
+								onclick={viewOnMap}
+								data-cafeteria-map-action
+							>
+								<MapPin size={13} strokeWidth={2.4} /> 지도에서 보기 <ChevronRight size={14} strokeWidth={2.4} />
 							</button>
-							<button class="flex min-h-11 items-center gap-1 px-1.5" type="button" onclick={openOperatingHours}>
+							<button class="flex min-h-11 items-center gap-1 whitespace-nowrap px-1.5 text-[13px] font-bold text-brand-muted/70" type="button" onclick={openOperatingHours}>
 								<Clock3 size={13} strokeWidth={2.8} /> 운영시간
 							</button>
 						</div>
@@ -272,14 +279,27 @@
 					{#if activeCafeteria.source === 'crawler' && activeWeeklyMenu}
 						<div class="divide-y divide-brand-border" data-cafeteria-meal-list>
 							{#each activeMeals as meal}
-								<div class="overflow-hidden">
-									<button class="flex w-full items-center justify-between py-4 text-left" type="button" onclick={() => toggleMeal(meal.id)}>
-										<span class="text-sm font-black">{meal.name}</span>
-										<span class="flex items-center gap-1.5 text-xs font-bold text-brand-muted">{meal.items.length > 0 ? `${meal.items.length}개` : '메뉴 없음'} {#if expandedMealId === meal.id}<ChevronUp size={16} strokeWidth={3} />{:else}<ChevronDown size={16} strokeWidth={3} />{/if}</span>
+								{@const isExpanded = expandedMealId === meal.id}
+								<div class={`overflow-hidden transition-colors duration-200 ${isExpanded ? 'bg-brand-map' : ''}`}>
+									<button
+										class="flex w-full items-center justify-between px-1 py-4 text-left"
+										type="button"
+										aria-expanded={isExpanded}
+										aria-controls={`cafeteria-meal-${meal.id}`}
+										aria-label={`${meal.name} 메뉴 ${isExpanded ? '접기' : '펼치기'}`}
+										onclick={() => toggleMeal(meal.id)}
+									>
+										<span class="flex items-center gap-2.5">
+											<span class="h-[18px] w-1 shrink-0 rounded-full bg-brand" data-cafeteria-list-pin aria-hidden="true"></span>
+											<h3 class="m-0 text-[15px] font-bold tracking-[-0.015em]" data-cafeteria-meal-title>{meal.name}</h3>
+										</span>
+										<span class={`grid h-6 w-6 place-items-center rounded-full text-brand-muted transition-colors ${isExpanded ? 'bg-white text-brand' : ''}`} aria-hidden="true">
+											{#if isExpanded}<ChevronUp size={18} strokeWidth={2.8} />{:else}<ChevronDown size={18} strokeWidth={2.8} />{/if}
+										</span>
 									</button>
-									{#if expandedMealId === meal.id}
-										<div class="pb-4">
-											{#if meal.items.length > 0}<ul class="m-0 grid list-none gap-2 p-0">{#each meal.items as item}<li class="text-[13px] leading-relaxed text-brand-muted">{item}</li>{/each}</ul>{:else}<p class="m-0 text-sm text-brand-muted">등록된 메뉴가 없습니다.</p>{/if}
+									{#if isExpanded}
+										<div id={`cafeteria-meal-${meal.id}`} class="px-7 pb-4" role="region" aria-label={`${meal.name} 메뉴`}>
+											{#if meal.items.length > 0}<ul class="m-0 grid list-none gap-2 p-0">{#each meal.items as item}<li class="text-[13px] leading-relaxed text-brand-muted">{item}</li>{/each}</ul>{:else}<p class="m-0 text-[13px] text-brand-muted">등록된 메뉴가 없습니다.</p>{/if}
 										</div>
 									{/if}
 								</div>

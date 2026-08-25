@@ -53,6 +53,21 @@ describe('학식 식당 탭', () => {
 		expect(body).toContain('transition-[transform,width] duration-300');
 	});
 
+	it('식당 탭은 마우스 선택 때 기본 검은 윤곽선 대신 키보드 포커스 표시만 사용한다', () => {
+		const { body } = render(CafeteriaPage, {
+			props: {
+				data: {
+					cafeterias: [{ id: 'jinri', name: '진리관', source: 'crawler', weeklyMenu }],
+					canEditOperatingHours: false,
+					user: null
+				},
+				form: null
+			} as never
+		});
+
+		expect(body).toMatch(/<button class="[^"]*outline-none[^"]*focus-visible:ring-2[^"]*"[^>]*aria-pressed="true">진리관/);
+	});
+
 	it('날짜 없이 선택한 요일을 작은 글자에 맞는 원의 중앙에 강조한다', () => {
 		const { body } = render(CafeteriaPage, {
 			props: {
@@ -70,6 +85,41 @@ describe('학식 식당 탭', () => {
 		expect(body).toContain('h-9 w-9 place-items-center rounded-full text-s leading-none pt-px');
 		expect(body).toContain('bg-brand text-white shadow-sm" data-cafeteria-day-label');
 		expect(body).not.toContain('data-cafeteria-day-number');
+	});
+
+	it('날짜를 식사명보다 높은 문서 위계로 제공하고, 식사 행의 펼침 상태를 안내한다', () => {
+		const { body } = render(CafeteriaPage, {
+			props: {
+				data: {
+					cafeterias: [{ id: 'jinri', name: '진리관', source: 'crawler', weeklyMenu }],
+					canEditOperatingHours: false,
+					user: null
+				},
+				form: null
+			} as never
+		});
+
+		expect(body).toMatch(/<h2[^>]*data-cafeteria-date[^>]*>8\.24 \(월\)<\/h2>/);
+		expect(body).toMatch(/<h3[^>]*data-cafeteria-meal-title[^>]*>조식<\/h3>/);
+		expect(body).toContain('data-cafeteria-list-pin');
+		expect(body).toContain('aria-label="조식 메뉴 펼치기"');
+		expect(body).toContain('aria-expanded="false"');
+	});
+
+	it('접힌 식사 메뉴에는 더하기 기호 대신 아래 방향 꺾쇠를 표시한다', () => {
+		const { body } = render(CafeteriaPage, {
+			props: {
+				data: {
+					cafeterias: [{ id: 'jinri', name: '진리관', source: 'crawler', weeklyMenu }],
+					canEditOperatingHours: false,
+					user: null
+				},
+				form: null
+			} as never
+		});
+
+		expect(body).toContain('lucide-chevron-down');
+		expect(body).not.toContain('lucide-plus');
 	});
 
 	it('식당별 메뉴 정보 행에서 지도와 운영시간 동작을 제공한다', () => {
@@ -97,7 +147,10 @@ describe('학식 식당 탭', () => {
 		for (const body of [crawlerBody, staticBody]) {
 			expect(body).toContain('data-cafeteria-utility-row');
 			expect(body).toContain('data-cafeteria-actions');
-			expect(body).toContain('text-[13px] font-bold text-brand-muted/70');
+			expect(body).toContain('data-cafeteria-map-action');
+			expect(body).toContain('text-[13px] font-bold text-brand');
+			expect(body).toContain('whitespace-nowrap');
+			expect(body).toContain('lucide-chevron-right');
 			expect(body.match(/width="13" height="13"/g)).toHaveLength(2);
 			expect(body).toContain('지도에서 보기');
 			expect(body).toContain('운영시간');
