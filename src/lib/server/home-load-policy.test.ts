@@ -29,7 +29,7 @@ describe('홈 패널별 로드 정책', () => {
 		});
 	});
 
-	it('학식 패널과 기본 홈은 학식 메뉴와 평가를 유지한다', () => {
+	it('학식 패널만 상세 메뉴와 평가를 기다리고 기본 홈은 지도 데이터를 먼저 연다', () => {
 		expect(getHomeLoadPolicy('cafeteria')).toEqual({
 			initialPanel: 'cafeteria',
 			needsCafeteriaMenu: true,
@@ -38,18 +38,18 @@ describe('홈 패널별 로드 정책', () => {
 		});
 		expect(getHomeLoadPolicy(null)).toEqual({
 			initialPanel: null,
-			needsCafeteriaMenu: true,
-			needsCafeteriaFeedback: true,
-			shouldSyncCafeteriaMenu: true
+			needsCafeteriaMenu: false,
+			needsCafeteriaFeedback: false,
+			shouldSyncCafeteriaMenu: false
 		});
 	});
 
 	it('알 수 없는 panel 값은 기본 홈 정책으로 다룬다', () => {
 		expect(getHomeLoadPolicy('unknown')).toEqual({
 			initialPanel: null,
-			needsCafeteriaMenu: true,
-			needsCafeteriaFeedback: true,
-			shouldSyncCafeteriaMenu: true
+			needsCafeteriaMenu: false,
+			needsCafeteriaFeedback: false,
+			shouldSyncCafeteriaMenu: false
 		});
 	});
 });

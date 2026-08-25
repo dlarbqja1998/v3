@@ -34,7 +34,7 @@
 			return;
 		}
 
-		if (!onNavigate || key === 'today' || key === 'my' || key === 'cafeteria') return;
+		if (!onNavigate || key === 'today' || key === 'my' || key === 'cafeteria' || key === 'shuttle') return;
 		event.preventDefault();
 		onNavigate(key);
 	}

@@ -9,6 +9,7 @@ import {
 } from '$lib/server/cafeteria-sync';
 import { getOrCreateVoterHash, getWeeklyCafeteriaFeedback } from '$lib/server/cafeteria-feedback';
 import { getHomeLoadPolicy } from '$lib/server/home-load-policy';
+import type { ShuttleStopId } from '$lib/domain/shuttle';
 
 export async function load({ platform, cookies, locals, url }) {
 	const loadPolicy = getHomeLoadPolicy(url.searchParams.get('panel'));
@@ -36,6 +37,10 @@ export async function load({ platform, cookies, locals, url }) {
 
 	const homeData = await getHomeData(env.DATABASE_URL, weeklyMenu);
 	const requestedPlaceId = url.searchParams.get('place') ?? '';
+	const initialShuttleStopId: ShuttleStopId =
+		url.searchParams.get('shuttleStop') === 'jochewon-station-back'
+		? 'jochewon-station-back'
+			: 'campus';
 	const initialPlaceId =
 		loadPolicy.initialPanel === 'place' &&
 		homeData.places.some((place) => place.id === requestedPlaceId && place.type === 'cafeteria')
@@ -59,6 +64,7 @@ export async function load({ platform, cookies, locals, url }) {
 		cafeteriaFeedback,
 		initialPanel: initialPlaceId ? loadPolicy.initialPanel : loadPolicy.initialPanel === 'place' ? null : loadPolicy.initialPanel,
 		initialPlaceId,
+		initialShuttleStopId: loadPolicy.initialPanel === 'shuttle' ? initialShuttleStopId : null,
 		naverMapClientId: env.NAVER_MAP_CLIENT_ID ?? '',
 		user: locals.user
 			? {

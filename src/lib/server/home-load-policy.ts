@@ -9,7 +9,7 @@ export type HomeLoadPolicy = {
 
 export function getHomeLoadPolicy(panel: string | null): HomeLoadPolicy {
 	const initialPanel = normalizePanel(panel);
-	const needsCafeteria = initialPanel === null || initialPanel === 'cafeteria';
+	const needsCafeteria = initialPanel === 'cafeteria';
 
 	return {
 		initialPanel,

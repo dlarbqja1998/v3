@@ -180,7 +180,7 @@ type CafeteriaFeedbackMap = Record<
 	);
 
 	const placeFocusTargetRatio = $derived(
-		sheetMode === 'place'
+		sheetMode === 'place' || sheetMode === 'shuttle'
 			? getAvailableMapMarkerTargetRatio({
 					mapHeight: mapViewportHeight,
 					navigationHeight: bottomNavigationHeight,
@@ -201,7 +201,7 @@ type CafeteriaFeedbackMap = Record<
 			null
 	);
 
-	const cafeteriaSummary = $derived(createCafeteriaSummary(data.cafeterias));
+	const cafeteriaSummary = $derived(createCafeteriaSummary(data.cafeterias, data.todayCafeteria.summary));
 	const activeMealSections = $derived(buildMealSections(activeCafeteria, selectedMenuDay));
 	const upcomingShuttles = $derived(getUpcomingShuttles(currentTime, activeShuttleStopId, 5));
 	const nextShuttle = $derived(getUpcomingShuttles(currentTime, undefined, 1)[0] ?? null);
@@ -215,7 +215,7 @@ type CafeteriaFeedbackMap = Record<
 		if (data.initialPanel === 'cafeteria') {
 			openCafeteriaPanel();
 		} else if (data.initialPanel === 'shuttle') {
-			openShuttlePanel();
+			openShuttlePanel(data.initialShuttleStopId ?? undefined);
 		} else if (data.initialPanel === 'pin') {
 			openPinPanel();
 		} else if (data.initialPanel === 'place' && data.initialPlaceId) {
@@ -281,13 +281,14 @@ type CafeteriaFeedbackMap = Record<
 		requestAnimationFrame(() => cafeteriaScroller?.scrollTo({ left: 0, behavior: 'smooth' }));
 	}
 
-	function openShuttlePanel() {
+	function openShuttlePanel(stopId?: ShuttleStopId) {
 		sheetMode = 'shuttle';
-		setSheetDetent('expanded');
+		setSheetDetent('collapsed');
 		activeCampusSpotId = '';
 		focusCampusSpotId = '';
 		selectedCategory = 'all';
-		activeShuttleStopId = nextShuttle?.from ?? 'campus';
+		activeShuttleStopId = stopId ?? nextShuttle?.from ?? 'campus';
+		homeFocusRequestId += 1;
 	}
 
 	function openPinPanel() {
@@ -572,7 +573,6 @@ type CafeteriaFeedbackMap = Record<
 			closePanel();
 		}
 		if (key === 'cafeteria') openCafeteriaPanel();
-		if (key === 'shuttle') openShuttlePanel();
 	}
 
 	function formatShortDate(dateStr?: string) {
@@ -582,14 +582,14 @@ type CafeteriaFeedbackMap = Record<
 		return `${Number(parts[1])}.${Number(parts[2])}`;
 	}
 
-	function createCafeteriaSummary(cafeterias: CafeteriaPanelItem[]) {
+	function createCafeteriaSummary(cafeterias: CafeteriaPanelItem[], fallbackSummary: string) {
 		const jinri = cafeterias.find((cafeteria) => cafeteria.id === 'jinri');
 		const today = jinri?.weeklyMenu?.days.find((day) => day.key === jinri.weeklyMenu?.todayKey);
 		const lunch = today?.student.korean?.[0] ?? today?.student.special?.[0] ?? today?.student.snack?.[0];
 
 		if (lunch) return lunch;
 		if (jinri?.weeklyMenu) return `${formatShortDate(jinri.weeklyMenu.todayDate)} 주간 식단`;
-		return '주간 식단 확인';
+		return fallbackSummary || '주간 식단 확인';
 	}
 
 	function buildLegacyMealSections(cafeteria: CafeteriaPanelItem | null, day: DailyMenu | null): unknown[] {
@@ -771,13 +771,13 @@ type CafeteriaFeedbackMap = Record<
 			clientId={data.naverMapClientId}
 			places={mapPlaces}
 			activePlaceId={activeMapPlaceId}
-			focusMode={
-				sheetMode === 'cafeteria' || sheetMode === 'shuttle' || sheetMode === 'pin'
-					? 'top-band'
-					: 'default'
-			}
+			focusMode={sheetMode === 'cafeteria' || sheetMode === 'pin' ? 'top-band' : 'default'}
 			focusRequestId={homeFocusRequestId}
-			focusZoom={sheetMode === 'place' ? getPlaceFocusZoom(DEFAULT_HOME_MAP_ZOOM) : DEFAULT_HOME_MAP_ZOOM}
+			focusZoom={
+				sheetMode === 'place' || sheetMode === 'shuttle'
+					? getPlaceFocusZoom(DEFAULT_HOME_MAP_ZOOM)
+					: DEFAULT_HOME_MAP_ZOOM
+			}
 			focusTargetRatio={placeFocusTargetRatio}
 			campusSpots={campusSpots}
 			activeCampusSpotId={activeCampusSpotId}
@@ -854,10 +854,9 @@ type CafeteriaFeedbackMap = Record<
 						</span>
 						<span class="text-xs leading-snug text-brand-muted">{cafeteriaSummary}</span>
 					</a>
-					<button
+					<a
 						class="grid min-h-16 content-center gap-1 rounded-[14px] border border-brand-border bg-white p-2.5 text-left"
-						type="button"
-						onclick={openShuttlePanel}
+						href="/shuttle"
 					>
 						<span class="flex items-center gap-1.5 text-[13px] font-black">
 							<Bus size={15} strokeWidth={2.8} />
@@ -870,7 +869,7 @@ type CafeteriaFeedbackMap = Record<
 								오늘 운행 종료
 							{/if}
 						</span>
-					</button>
+					</a>
 					<a
 						class="grid min-h-16 content-center gap-1 rounded-[14px] border border-brand-border bg-white p-2.5"
 						href="/meetups"
@@ -1108,8 +1107,10 @@ type CafeteriaFeedbackMap = Record<
 				<div class="flex min-h-0 flex-1 flex-col">
 					<div class="mb-3 flex items-center justify-between gap-3">
 						<div>
-							<p class="m-0 text-xs font-black text-brand-muted">학교-조치원역 셔틀</p>
-							<h2 class="m-0 mt-0.5 text-xl font-black">다음 셔틀</h2>
+							<p class="m-0 text-xs font-black text-brand-muted">셔틀 정류장</p>
+							<h2 class="m-0 mt-0.5 text-xl font-black">
+								{shuttleStops.find((stop) => stop.stopId === activeShuttleStopId)?.name}
+							</h2>
 						</div>
 						<button
 							class="rounded-full border border-brand-border bg-white px-3 py-2 text-xs font-black text-brand-muted"
@@ -1120,34 +1121,27 @@ type CafeteriaFeedbackMap = Record<
 						</button>
 					</div>
 
-					<section class="mb-3 rounded-[18px] bg-brand-dark p-4 text-white">
-						{#if nextShuttle}
-							<div class="flex items-start justify-between gap-3">
-								<div>
-									<p class="m-0 text-xs font-black text-[#f4c7d4]">
-										{nextShuttle.fromName} 출발
-									</p>
-									<h3 class="m-0 mt-1 text-[34px] font-black leading-none">
-										{formatMinutesLeft(nextShuttle.minutesLeft)}
-									</h3>
-								</div>
-								<span class="rounded-full bg-white px-3 py-1.5 text-sm font-black text-brand-dark">
-									{nextShuttle.departureTime}
-								</span>
+					<section class="mb-3 border-y border-brand-border py-4" data-shuttle-map-spot>
+						<div class="flex items-start gap-3">
+							<div class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-brand-map text-brand">
+								<MapPin size={18} strokeWidth={2.8} />
 							</div>
-							<p class="m-0 mt-3 text-sm font-bold text-[#f7dfe6]">
-								{nextShuttle.toName} 방향
-							</p>
-						{:else}
-							<p class="m-0 text-xs font-black text-[#f4c7d4]">오늘의 셔틀</p>
-							<h3 class="m-0 mt-1 text-[30px] font-black leading-tight">운행 종료</h3>
-							<p class="m-0 mt-3 text-sm font-bold text-[#f7dfe6]">
-								내일 첫 출발 시간표를 확인해 주세요.
-							</p>
-						{/if}
+							<div>
+								<p class="m-0 text-[13px] font-bold leading-relaxed text-brand-muted">
+									{shuttleStops.find((stop) => stop.stopId === activeShuttleStopId)?.description}
+								</p>
+								<a
+									class="mt-3 inline-flex items-center gap-1 text-sm font-black text-brand"
+									href={`/shuttle?stop=${activeShuttleStopId}`}
+								>
+									상세보기
+									<ChevronDown class="-rotate-90" size={15} strokeWidth={3} />
+								</a>
+							</div>
+						</div>
 					</section>
 
-					<div class="mb-3 grid grid-cols-2 gap-2">
+					<div class="hidden">
 						{#each shuttleStops as stop}
 							<button
 								class={`rounded-[14px] border px-3 py-3 text-left transition ${
@@ -1170,7 +1164,7 @@ type CafeteriaFeedbackMap = Record<
 						{/each}
 					</div>
 
-					<div class="min-h-0 flex-1 overflow-y-auto pb-2">
+					<div class="hidden">
 						<div class="mb-2 flex items-center justify-between px-1">
 							<h3 class="m-0 text-sm font-black">이후 출발</h3>
 							<span class="text-xs font-bold text-brand-muted">평일 기준 · {shuttleSchedules.length}회</span>
