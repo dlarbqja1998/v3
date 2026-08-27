@@ -21,4 +21,14 @@ describe('공용 앱 아이콘', () => {
 
 		expect(body).toContain('aria-hidden="true"');
 	});
+
+	it('시설 아이콘은 요청한 20px 자산을 사용한다', () => {
+		const { body } = render(AppIcon, {
+			props: { name: 'print', size: 20, label: '복사실' } as never
+		});
+
+		expect(body).toContain('/20 icon/print.svg');
+		expect(body).toContain('width:20px');
+	});
+
 });

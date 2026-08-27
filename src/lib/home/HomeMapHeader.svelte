@@ -7,24 +7,46 @@
 		type CommercialZone
 	} from '$lib/domain/commercial-zones';
 	import AppIcon from '$lib/icon/AppIcon.svelte';
+	import { getFacilitySearchPlaceholder } from '$lib/home/facility-discovery';
 
 	let {
 		zones,
 		selectedAreaId,
-		onAreaChange
+		onAreaChange,
+		searchOpen = false,
+		searchQuery = '',
+		onSearchOpenChange = () => undefined,
+		onSearchQueryChange = () => undefined
 	}: {
 		zones: CommercialZone[];
 		selectedAreaId: string;
 		onAreaChange: (areaId: string) => void;
+		searchOpen?: boolean;
+		searchQuery?: string;
+		onSearchOpenChange?: (open: boolean) => void;
+		onSearchQueryChange?: (query: string) => void;
 	} = $props();
 
 	let menuOpen = $state(false);
-	let dropdownElement: HTMLDivElement;
-	let triggerElement: HTMLButtonElement;
+	let dropdownElement = $state<HTMLDivElement>();
+	let triggerElement = $state<HTMLButtonElement>();
+	let searchInput = $state<HTMLInputElement>();
 	let areaOptions = $derived(buildMapAreaOptions(zones));
 	let selectedAreaLabel = $derived(
 		areaOptions.find((option) => option.id === selectedAreaId)?.name ?? areaOptions[0]?.name ?? ''
 	);
+	let searchPlaceholder = $derived(
+		getFacilitySearchPlaceholder(selectedAreaId === 'campus' ? 'campus' : 'outside', selectedAreaLabel)
+	);
+
+	$effect(() => {
+		if (!searchOpen) return;
+		void tick().then(() => searchInput?.focus());
+	});
+
+	function closeSearch() {
+		onSearchOpenChange(false);
+	}
 
 	function getOptionElements() {
 		return Array.from(
@@ -95,13 +117,17 @@
 
 	onMount(() => {
 		function handlePointerDown(event: PointerEvent) {
-			if (menuOpen && !dropdownElement.contains(event.target as Node)) closeMenu();
+			if (menuOpen && dropdownElement && !dropdownElement.contains(event.target as Node)) closeMenu();
 		}
 
 		function handleDocumentKeydown(event: KeyboardEvent) {
 			if (menuOpen && event.key === 'Escape') {
 				event.preventDefault();
 				closeMenu(true);
+			}
+			if (searchOpen && event.key === 'Escape') {
+				event.preventDefault();
+				closeSearch();
 			}
 		}
 
@@ -121,6 +147,19 @@
 	>
 		<MainBrandIcon />
 
+		{#if searchOpen}
+			<div class="min-w-0">
+				<input
+					bind:this={searchInput}
+					class="h-11 w-full border-b-2 border-brand bg-transparent px-1 text-[15px] font-bold outline-none placeholder:text-brand-muted/70"
+					type="search"
+					value={searchQuery}
+					placeholder={searchPlaceholder}
+					aria-label="시설 검색어"
+					oninput={(event) => onSearchQueryChange(event.currentTarget.value)}
+				/>
+			</div>
+		{:else}
 		<div class="relative min-w-0" bind:this={dropdownElement}>
 			<button
 				bind:this={triggerElement}
@@ -169,13 +208,15 @@
 				</div>
 			{/if}
 		</div>
+		{/if}
 
-		<a
+		<button
 			class="grid h-11 w-11 shrink-0 place-items-center rounded-[10px] text-brand-muted transition-colors hover:bg-brand-surface hover:text-brand focus-visible:bg-brand-soft focus-visible:text-brand focus-visible:ring-2 focus-visible:ring-brand/25"
-			href="/shops"
-			aria-label="상점 페이지"
+			type="button"
+			aria-label={searchOpen ? '시설 검색 닫기' : '시설 검색'}
+			onclick={() => (searchOpen ? closeSearch() : onSearchOpenChange(true))}
 		>
-			<AppIcon name="shop" size={20} />
-		</a>
+			<AppIcon name={searchOpen ? 'clear' : 'search'} size={20} />
+		</button>
 	</div>
 </header>

@@ -1,4 +1,6 @@
-export type PlaceType = 'restaurant' | 'cafeteria' | 'shuttle_stop' | 'cafe' | 'meetup';
+export type PlaceType = 'restaurant' | 'cafeteria' | 'shuttle_stop' | 'cafe' | 'meetup' | 'facility';
+
+export type PlaceScope = 'campus' | 'outside';
 
 export type PlaceCategory = {
 	id: string;
@@ -23,9 +25,13 @@ export type Place = {
 	name: string;
 	categorySlug: string;
 	categoryName: string;
-	zoneId: string;
+	zoneId: string | null;
+	scope: PlaceScope;
 	latitude: number;
 	longitude: number;
+	locationGuide: string | null;
+	operatingHours: string | null;
+	phone: string | null;
 	description: string;
 	icon: string;
 	isVisible: boolean;

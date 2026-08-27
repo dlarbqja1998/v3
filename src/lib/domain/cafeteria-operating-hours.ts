@@ -136,5 +136,5 @@ export function validateOperatingHoursInput(
 }
 
 export function canEditCafeteriaOperatingHours(user: SessionUser): boolean {
-	return user?.id === 1 && user.role === 'admin';
+	return user?.role === 'admin';
 }

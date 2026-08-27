@@ -2,7 +2,8 @@ import { describe, expect, it } from 'vitest';
 import {
 	createSessionToken,
 	getUserIdFromSessionToken,
-	validateAdminCredentials
+	hashAdminPassword,
+	verifyAdminPassword
 } from './auth';
 
 describe('인증 유틸리티', () => {
@@ -13,23 +14,18 @@ describe('인증 유틸리티', () => {
 		});
 	});
 
-	it('관리자 아이디와 비밀번호를 환경값 기준으로 검증한다', async () => {
-		await expect(
-			validateAdminCredentials({
-				inputId: 'golabau',
-				inputPassword: 'golabau123@',
-				expectedId: 'golabau',
-				expectedPassword: 'golabau123@'
-			})
-		).resolves.toBe(true);
+	it('관리자 비밀번호를 버전이 포함된 PBKDF2 해시로 저장하고 검증한다', async () => {
+		const encoded = await hashAdminPassword('golabau123@', new Uint8Array(16).fill(7));
 
+		expect(encoded).toMatch(/^pbkdf2-sha256\$310000\$/);
+		await expect(verifyAdminPassword('golabau123@', encoded)).resolves.toBe(true);
+		await expect(verifyAdminPassword('wrong', encoded)).resolves.toBe(false);
+	});
+
+	it('잘못된 관리자 비밀번호 해시 형식을 거부한다', async () => {
+		await expect(verifyAdminPassword('password', 'broken')).resolves.toBe(false);
 		await expect(
-			validateAdminCredentials({
-				inputId: 'golabau',
-				inputPassword: 'wrong',
-				expectedId: 'golabau',
-				expectedPassword: 'golabau123@'
-			})
+			verifyAdminPassword('password', 'pbkdf2-sha256$1$00$00')
 		).resolves.toBe(false);
 	});
 });

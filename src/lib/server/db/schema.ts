@@ -88,12 +88,14 @@ export const places = pgTable('places', {
 		.notNull()
 		.references(() => placeCategories.id),
 	zoneId: uuid('zone_id')
-		.notNull()
 		.references(() => zones.id),
+	scope: varchar('scope', { length: 20 }).notNull().default('outside'),
 	latitude: doublePrecision('latitude').notNull(),
 	longitude: doublePrecision('longitude').notNull(),
 	address: text('address'),
 	roadAddress: text('road_address'),
+	locationGuide: varchar('location_guide', { length: 160 }),
+	operatingHours: varchar('operating_hours', { length: 240 }),
 	phone: varchar('phone', { length: 40 }),
 	description: text('description').notNull().default(''),
 	isVisible: boolean('is_visible').notNull().default(true),

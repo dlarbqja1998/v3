@@ -11,6 +11,8 @@
 		"db:push": "drizzle-kit push",
 		"db:campus-spots:apply": "tsx scripts/apply-campus-spots-table.ts",
 		"db:campus-spots:seed": "tsx scripts/seed-campus-spots.ts",
+		"db:admin:upsert": "tsx scripts/upsert-admin.ts",
+		"db:facility-pins:prepare": "tsx scripts/prepare-facility-pins.ts",
 		"db:seed": "tsx scripts/seed.ts",
 		"naver:local": "tsx scripts/naver-local-search.ts",
 		"preview": "vite preview",

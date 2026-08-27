@@ -1,9 +1,9 @@
 import { dev } from '$app/environment';
 import { env } from '$env/dynamic/private';
 import { fail, redirect } from '@sveltejs/kit';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import type { Actions, PageServerLoad } from './$types';
-import { validateAdminCredentials } from '$lib/server/auth';
+import { authenticateAdmin } from '$lib/server/admin-login';
 import { createDb } from '$lib/server/db';
 import { users } from '$lib/server/db/schema';
 import { createUserSessionToken } from '$lib/server/user';
@@ -50,20 +50,20 @@ export const actions: Actions = {
 		const data = await request.formData();
 		const inputId = data.get('adminId')?.toString().trim() ?? '';
 		const inputPassword = data.get('adminPassword')?.toString() ?? '';
-		const expectedId = env.ADMIN_LOGIN_ID;
-		const expectedPassword = env.ADMIN_LOGIN_PASSWORD;
-		if (!expectedId || !expectedPassword || expectedId !== 'golabau') {
-			return fail(500, { adminMessage: '관리자 로그인 환경변수가 없습니다.' });
-		}
+		const db = createDb(env.DATABASE_URL);
+		const authentication = await authenticateAdmin(
+			{ inputId, inputPassword },
+			async (loginId) =>
+				(await db.query.users.findFirst({
+					where: and(
+						eq(users.provider, 'local'),
+						eq(users.providerId, loginId),
+						eq(users.role, 'admin')
+					)
+				})) ?? null
+		);
 
-		const isValid = await validateAdminCredentials({
-			inputId,
-			inputPassword,
-			expectedId,
-			expectedPassword
-		});
-
-		if (!isValid) {
+		if (!authentication.ok) {
 			const nextFails = attempt.fails + 1;
 			adminAttempts.set(ip, {
 				fails: nextFails >= 5 ? 0 : nextFails,
@@ -73,37 +73,7 @@ export const actions: Actions = {
 		}
 
 		adminAttempts.delete(ip);
-
-		const db = createDb(env.DATABASE_URL);
-		const existingAdmin = await db.query.users.findFirst({
-			where: eq(users.id, 1)
-		});
-
-		if (existingAdmin) {
-			await db
-				.update(users)
-				.set({
-					email: existingAdmin.email || 'admin@golabau.local',
-					nickname: existingAdmin.nickname || '관리자',
-					provider: 'local',
-					role: 'admin',
-					isOnboarded: true,
-					status: 'ACTIVE',
-					isBanned: false
-				})
-				.where(eq(users.id, 1));
-		} else {
-			await db.insert(users).values({
-				id: 1,
-				email: 'admin@golabau.local',
-				nickname: '관리자',
-				provider: 'local',
-				role: 'admin',
-				isOnboarded: true
-			});
-		}
-
-		const sessionToken = await createUserSessionToken(1);
+		const sessionToken = await createUserSessionToken(authentication.userId);
 		cookies.set('session_id', sessionToken, {
 			path: '/',
 			httpOnly: true,

@@ -46,9 +46,9 @@ describe('학식 운영시간', () => {
 		).toEqual({ ok: false, message: '종료 시간은 시작 시간보다 늦어야 합니다.' });
 	});
 
-	it('ID 1 관리자에게만 수정 권한을 준다', () => {
+	it('사용자 ID와 무관하게 모든 관리자에게 수정 권한을 준다', () => {
 		expect(canEditCafeteriaOperatingHours({ id: 1, role: 'admin' })).toBe(true);
-		expect(canEditCafeteriaOperatingHours({ id: 2, role: 'admin' })).toBe(false);
+		expect(canEditCafeteriaOperatingHours({ id: 27, role: 'admin' })).toBe(true);
 		expect(canEditCafeteriaOperatingHours({ id: 1, role: 'student' })).toBe(false);
 	});
 });

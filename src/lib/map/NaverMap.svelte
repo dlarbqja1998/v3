@@ -9,6 +9,7 @@
 	} from '$lib/domain/commercial-zones';
 	import { shouldShowCampusCenterMarker } from '$lib/domain/campus-boundary-visibility';
 	import type { Place } from '$lib/domain/places';
+	import { getSafeMarkerIcon } from '$lib/map/marker-icon';
 	import { getCampusPolygonStyle } from '$lib/map/campus-polygon';
 	import { cancelMapMotion } from '$lib/map/map-motion';
 	import { getCommercialPolygonStyle } from '$lib/map/commercial-polygon';
@@ -203,7 +204,7 @@
 				map,
 				title: place.name,
 				icon: {
-					content: markerHtml(place.categorySlug, isActive),
+					content: markerHtml(place.icon, place.categorySlug, isActive),
 					size: new naver.maps.Size(32, 32),
 					anchor: new naver.maps.Point(16, 32)
 				}
@@ -415,11 +416,14 @@
 		mapListeners = [];
 	}
 
-	function markerHtml(categorySlug: string, isActive: boolean) {
+	function markerHtml(icon: string, categorySlug: string, isActive: boolean) {
 		const isShuttle = categorySlug === 'shuttle';
 		const background = isActive ? '#5f0f2d' : isShuttle ? '#1f6f78' : '#a51c45';
 		const outline = isActive ? '0 0 0 5px rgba(165, 28, 69, 0.24),' : '';
-		const content = isShuttle ? 'BUS' : '';
+		const safeIcon = getSafeMarkerIcon(icon === '식당' ? 'food' : icon === '버스' ? 'bus' : icon);
+		const content = safeIcon
+			? `<span style="display:block;width:18px;height:18px;background:#fff;mask:url('/24 icon/${safeIcon}.svg') center/contain no-repeat;-webkit-mask:url('/24 icon/${safeIcon}.svg') center/contain no-repeat;"></span>`
+			: '';
 
 		return `
 			<div style="
@@ -437,7 +441,7 @@
 				box-shadow: ${outline}0 8px 18px rgba(103, 16, 43, 0.24);
 				transform: rotate(-45deg);
 			">
-				<span style="transform: rotate(45deg);">${content}</span>
+				<span style="transform: rotate(45deg);display:grid;place-items:center;">${content}</span>
 			</div>
 		`;
 	}

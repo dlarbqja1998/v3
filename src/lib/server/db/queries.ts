@@ -51,8 +51,12 @@ export async function getHomeData(databaseUrl?: string, weeklyMenu: WeeklyMenu |
 					categorySlug: placeCategories.slug,
 					categoryName: placeCategories.name,
 					zoneId: zones.slug,
+					scope: places.scope,
 					latitude: places.latitude,
 					longitude: places.longitude,
+					locationGuide: places.locationGuide,
+					operatingHours: places.operatingHours,
+					phone: places.phone,
 					description: places.description,
 					icon: placeCategories.icon,
 					isVisible: places.isVisible,
@@ -60,7 +64,7 @@ export async function getHomeData(databaseUrl?: string, weeklyMenu: WeeklyMenu |
 				})
 				.from(places)
 				.innerJoin(placeCategories, eq(places.categoryId, placeCategories.id))
-				.innerJoin(zones, eq(places.zoneId, zones.id))
+				.leftJoin(zones, eq(places.zoneId, zones.id))
 				.where(eq(places.isVisible, true))
 				.orderBy(asc(places.displayPriority)),
 			db

@@ -13,8 +13,13 @@
 		Users
 	} from '@lucide/svelte';
 	import BottomNavigation from '$lib/navigation/BottomNavigation.svelte';
+	import FacilityFilterChips from '$lib/home/FacilityFilterChips.svelte';
 	import HomeMapHeader from '$lib/home/HomeMapHeader.svelte';
 	import OutsidePlaceFilters from '$lib/home/OutsidePlaceFilters.svelte';
+	import {
+		getNextActivePlaceId,
+		getVisibleFacilityPlaces
+	} from '$lib/home/facility-discovery';
 	import { getHomeMapResetState } from '$lib/home/home-map-state';
 	import {
 		CAMPUS_AREA_ID,
@@ -75,7 +80,7 @@ type CafeteriaFeedbackMap = Record<
 		items: MealItem[];
 	};
 
-	type SheetMode = 'home' | 'cafeteria' | 'shuttle' | 'pin' | 'place';
+	type SheetMode = 'home' | 'facility' | 'cafeteria' | 'shuttle' | 'pin' | 'place';
 	const WEATHER_WIDGET_GAP = 12;
 
 	let { data }: { data: PageData } = $props();
@@ -87,6 +92,9 @@ type CafeteriaFeedbackMap = Record<
 	let selectedOutsideCategory = $state<OutsidePlaceCategory>('all');
 	let selectedOutsideCuisine = $state<OutsideCuisine>('all');
 	let selectedCategory = $state('all');
+	let selectedFacilityCategory = $state('all');
+	let facilitySearchOpen = $state(false);
+	let facilitySearchQuery = $state('');
 	let hasSelectedPinFilter = $state(false);
 	let activePlaceId = $state('');
 	let activeCampusSpotId = $state('');
@@ -101,6 +109,8 @@ type CafeteriaFeedbackMap = Record<
 	let activeDayKey = $state<MenuDayKey>('mon');
 	let expandedMealId = $state('');
 	let cafeteriaScroller = $state<HTMLDivElement>();
+	let facilityScroller = $state<HTMLDivElement>();
+	let shuttleScroller = $state<HTMLDivElement>();
 	let activeShuttleStopId = $state<ShuttleStopId>('campus');
 	let currentTime = $state(new Date());
 	let cafeteriaFeedback = $state<CafeteriaFeedbackMap>({});
@@ -140,9 +150,22 @@ type CafeteriaFeedbackMap = Record<
 	const activeCafeteria = $derived(
 		data.cafeterias[activeCafeteriaIndex] ?? data.cafeterias[0] ?? null
 	);
+	const facilityPlaces = $derived(
+		getVisibleFacilityPlaces(data.places, {
+			scope: areaMode,
+			zoneId: areaMode === 'outside' ? selectedCommercialZoneId : 'all',
+			categorySlug: selectedFacilityCategory,
+			query: facilitySearchQuery
+		})
+	);
+	const activeFacilityPlace = $derived(
+		facilityPlaces.find((place) => place.id === activePlaceId) ?? facilityPlaces[0] ?? null
+	);
 
 	const activePlace = $derived(
-		sheetMode === 'place'
+		sheetMode === 'facility'
+			? activeFacilityPlace
+			: sheetMode === 'place'
 			? (data.places.find((place) => place.id === activePlaceId) ?? null)
 			: !hasSelectedPinFilter
 				? null
@@ -158,16 +181,16 @@ type CafeteriaFeedbackMap = Record<
 	const activeCampusSpotPanel = $derived(getCampusSpotPanelPresentation(activeCampusSpot));
 
 	const mapPlaces = $derived(
-		areaMode === 'outside'
-			? []
-			: sheetMode === 'pin'
+		sheetMode === 'pin'
 			? []
 			: sheetMode === 'shuttle'
 			? shuttleStops
+			: sheetMode === 'facility'
+			? facilityPlaces
 			: sheetMode === 'place' && activePlace
 			? [activePlace]
-			: sheetMode === 'cafeteria' && activeCafeteria
-			? data.places.filter((place) => place.id === activeCafeteria.placeId)
+			: sheetMode === 'cafeteria'
+			? data.places.filter((place) => data.cafeterias.some((cafeteria) => cafeteria.placeId === place.id))
 			: filteredPlaces
 	);
 
@@ -180,7 +203,7 @@ type CafeteriaFeedbackMap = Record<
 	);
 
 	const placeFocusTargetRatio = $derived(
-		sheetMode === 'place' || sheetMode === 'shuttle'
+		sheetMode === 'place' || sheetMode === 'facility' || sheetMode === 'shuttle'
 			? getAvailableMapMarkerTargetRatio({
 					mapHeight: mapViewportHeight,
 					navigationHeight: bottomNavigationHeight,
@@ -289,6 +312,13 @@ type CafeteriaFeedbackMap = Record<
 		selectedCategory = 'all';
 		activeShuttleStopId = stopId ?? nextShuttle?.from ?? 'campus';
 		homeFocusRequestId += 1;
+		requestAnimationFrame(() => {
+			const stopIndex = shuttleStops.findIndex((stop) => stop.stopId === activeShuttleStopId);
+			shuttleScroller?.scrollTo({
+				left: Math.max(0, stopIndex) * shuttleScroller.clientWidth,
+				behavior: 'instant'
+			});
+		});
 	}
 
 	function openPinPanel() {
@@ -307,14 +337,45 @@ type CafeteriaFeedbackMap = Record<
 	function openPlacePanel(placeId: string) {
 		const place = data.places.find((item) => item.id === placeId && item.type === 'cafeteria');
 		if (!place) return;
+		const cafeteriaIndex = data.cafeterias.findIndex((item) => item.placeId === place.id);
 
-		sheetMode = 'place';
+		sheetMode = 'cafeteria';
 		setSheetDetent('collapsed');
 		hasSelectedPinFilter = true;
+		activeCafeteriaIndex = Math.max(0, cafeteriaIndex);
 		activePlaceId = place.id;
 		activeCampusSpotId = '';
 		focusCampusSpotId = '';
 		homeFocusRequestId += 1;
+		requestAnimationFrame(() =>
+			cafeteriaScroller?.scrollTo({
+				left: activeCafeteriaIndex * cafeteriaScroller.clientWidth,
+				behavior: 'instant'
+			})
+		);
+	}
+
+	function selectFacilityCategory(categorySlug: string) {
+		selectedFacilityCategory = categorySlug;
+		facilitySearchQuery = '';
+		openFacilityResults();
+	}
+
+	function updateFacilitySearch(query: string) {
+		facilitySearchQuery = query;
+		selectedFacilityCategory = 'all';
+		if (query.trim()) openFacilityResults();
+	}
+
+	function openFacilityResults() {
+		sheetMode = 'facility';
+		setSheetDetent('collapsed');
+		hasSelectedPinFilter = true;
+		activeCampusSpotId = '';
+		focusCampusSpotId = '';
+		activePlaceId = getNextActivePlaceId(facilityPlaces, activePlaceId);
+		homeFocusRequestId += 1;
+		requestAnimationFrame(() => facilityScroller?.scrollTo({ left: 0, behavior: 'instant' }));
 	}
 
 	async function loadCampusSpots() {
@@ -346,6 +407,9 @@ type CafeteriaFeedbackMap = Record<
 		hasSelectedPinFilter = false;
 		selectedZone = 'all';
 		selectedCategory = 'all';
+		selectedFacilityCategory = 'all';
+		facilitySearchQuery = '';
+		facilitySearchOpen = false;
 		activePlaceId = '';
 		activeCampusSpotId = '';
 		focusCampusSpotId = DEFAULT_HOME_CAMPUS_SPOT_ID;
@@ -353,12 +417,29 @@ type CafeteriaFeedbackMap = Record<
 
 	function selectShuttleStop(stopId: ShuttleStopId) {
 		activeShuttleStopId = stopId;
+		const stopIndex = shuttleStops.findIndex((stop) => stop.stopId === stopId);
+		shuttleScroller?.scrollTo({
+			left: Math.max(0, stopIndex) * shuttleScroller.clientWidth,
+			behavior: 'smooth'
+		});
+		homeFocusRequestId += 1;
 	}
 
 	function handleMarkerClick(placeId: string) {
 		if (sheetMode === 'shuttle') {
 			const stop = shuttleStops.find((item) => item.id === placeId);
-			if (stop) activeShuttleStopId = stop.stopId;
+			if (stop) selectShuttleStop(stop.stopId);
+			return;
+		}
+
+		if (sheetMode === 'cafeteria') {
+			const cafeteriaIndex = data.cafeterias.findIndex((item) => item.placeId === placeId);
+			if (cafeteriaIndex >= 0) selectCafeteria(cafeteriaIndex);
+			return;
+		}
+
+		if (sheetMode === 'facility') {
+			selectFacilityPlace(placeId);
 			return;
 		}
 
@@ -389,6 +470,13 @@ type CafeteriaFeedbackMap = Record<
 		selectedCommercialZoneId = nextState.selectedZoneId;
 		selectedOutsideCategory = 'all';
 		selectedOutsideCuisine = 'all';
+		if (sheetMode === 'facility') {
+			requestAnimationFrame(() => {
+				activePlaceId = getNextActivePlaceId(facilityPlaces, '');
+				facilityScroller?.scrollTo({ left: 0, behavior: 'instant' });
+				homeFocusRequestId += 1;
+			});
+		}
 	}
 
 	function resetHomeMapArea() {
@@ -420,6 +508,35 @@ type CafeteriaFeedbackMap = Record<
 		const nextMenu = data.cafeterias[nextIndex]?.weeklyMenu;
 		activeDayKey = nextMenu?.todayKey ?? activeDayKey;
 		expandedMealId = '';
+	}
+
+	function selectFacilityPlace(placeId: string) {
+		const placeIndex = facilityPlaces.findIndex((place) => place.id === placeId);
+		if (placeIndex < 0) return;
+		activePlaceId = placeId;
+		facilityScroller?.scrollTo({
+			left: placeIndex * facilityScroller.clientWidth,
+			behavior: 'smooth'
+		});
+		homeFocusRequestId += 1;
+	}
+
+	function handleFacilityScroll() {
+		if (!facilityScroller) return;
+		const nextIndex = Math.round(facilityScroller.scrollLeft / facilityScroller.clientWidth);
+		const nextPlace = facilityPlaces[nextIndex];
+		if (!nextPlace || nextPlace.id === activePlaceId) return;
+		activePlaceId = nextPlace.id;
+		homeFocusRequestId += 1;
+	}
+
+	function handleShuttleScroll() {
+		if (!shuttleScroller) return;
+		const nextIndex = Math.round(shuttleScroller.scrollLeft / shuttleScroller.clientWidth);
+		const nextStop = shuttleStops[nextIndex];
+		if (!nextStop || nextStop.stopId === activeShuttleStopId) return;
+		activeShuttleStopId = nextStop.stopId;
+		homeFocusRequestId += 1;
 	}
 
 	function selectDay(dayKey: MenuDayKey) {
@@ -774,7 +891,7 @@ type CafeteriaFeedbackMap = Record<
 			focusMode={sheetMode === 'cafeteria' || sheetMode === 'pin' ? 'top-band' : 'default'}
 			focusRequestId={homeFocusRequestId}
 			focusZoom={
-				sheetMode === 'place' || sheetMode === 'shuttle'
+				sheetMode === 'place' || sheetMode === 'facility' || sheetMode === 'shuttle'
 					? getPlaceFocusZoom(DEFAULT_HOME_MAP_ZOOM)
 					: DEFAULT_HOME_MAP_ZOOM
 			}
@@ -790,14 +907,22 @@ type CafeteriaFeedbackMap = Record<
 			onCampusSpotClick={selectCampusSpot}
 		/>
 
-		{#if sheetMode === 'home'}
+		{#if sheetMode === 'home' || sheetMode === 'facility'}
 			<HomeMapHeader
 				zones={data.commercialZones}
 				selectedAreaId={selectedMapAreaId}
 				onAreaChange={selectMapArea}
+				searchOpen={facilitySearchOpen}
+				searchQuery={facilitySearchQuery}
+				onSearchOpenChange={(open) => (facilitySearchOpen = open)}
+				onSearchQueryChange={updateFacilitySearch}
+			/>
+			<FacilityFilterChips
+				selectedCategory={selectedFacilityCategory}
+				onCategoryChange={selectFacilityCategory}
 			/>
 
-			{#if areaMode === 'outside'}
+			{#if areaMode === 'outside' && sheetMode === 'home'}
 				<OutsidePlaceFilters
 					selectedCategory={selectedOutsideCategory}
 					selectedCuisine={selectedOutsideCuisine}
@@ -906,6 +1031,75 @@ type CafeteriaFeedbackMap = Record<
 							: '카테고리를 선택하면 지도에 핀이 표시됩니다.'}
 					</p>
 				{/if}
+			{:else if sheetMode === 'facility'}
+				<div class="flex min-h-0 flex-1 flex-col">
+					<div class="mb-2 flex items-center justify-between gap-3">
+						<div>
+							<p class="m-0 text-xs font-bold text-brand-muted">
+								{areaMode === 'campus' ? '교내 시설' : '교외 시설'} · {facilityPlaces.length}곳
+							</p>
+							<h2 class="m-0 mt-0.5 text-[18px] font-black">
+								{activeFacilityPlace?.categoryName ?? '검색 결과'}
+							</h2>
+						</div>
+						<button
+							class="px-1 py-2 text-[13px] font-bold text-brand-muted"
+							type="button"
+							onclick={closePanel}
+						>
+							닫기
+						</button>
+					</div>
+
+					{#if facilityPlaces.length > 0}
+						<div
+							bind:this={facilityScroller}
+							class="-mx-[18px] flex snap-x snap-mandatory overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+							onscroll={handleFacilityScroll}
+						>
+							{#each facilityPlaces as place}
+								<article class="w-full shrink-0 snap-center px-[18px]" aria-label={place.name}>
+									<div class="flex items-start gap-3 border-y border-brand-border py-3">
+										<span
+											class="mt-0.5 inline-block h-6 w-6 shrink-0 bg-brand"
+											style={`mask:url('/24 icon/${place.icon}.svg') center/contain no-repeat;-webkit-mask:url('/24 icon/${place.icon}.svg') center/contain no-repeat;`}
+										></span>
+										<div class="min-w-0 flex-1">
+											<h3 class="m-0 text-[16px] font-black">{place.name}</h3>
+											{#if place.locationGuide}
+												<p class="m-0 mt-1 text-[13px] font-bold text-brand-muted">{place.locationGuide}</p>
+											{/if}
+											{#if place.description}
+												<p class="m-0 mt-2 text-[13px] leading-relaxed text-brand-text">{place.description}</p>
+											{/if}
+											<div class="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-brand-muted">
+												{#if place.operatingHours}<span>{place.operatingHours}</span>{/if}
+												{#if place.phone}<a class="font-bold text-brand" href={`tel:${place.phone}`}>{place.phone}</a>{/if}
+											</div>
+										</div>
+									</div>
+								</article>
+							{/each}
+						</div>
+
+						{#if facilityPlaces.length > 1}
+							<div class="mt-3 flex justify-center gap-1.5">
+								{#each facilityPlaces as place}
+									<button
+										class={`h-2 rounded-full transition-all ${activePlaceId === place.id ? 'w-6 bg-brand' : 'w-2 bg-brand-border-strong'}`}
+										type="button"
+										aria-label={`${place.name} 보기`}
+										onclick={() => selectFacilityPlace(place.id)}
+									></button>
+								{/each}
+							</div>
+						{/if}
+					{:else}
+						<p class="m-0 border-y border-brand-border py-6 text-center text-sm font-bold text-brand-muted">
+							조건에 맞는 시설이 아직 없습니다.
+						</p>
+					{/if}
+				</div>
 			{:else if sheetMode === 'cafeteria'}
 				<div class="flex min-h-0 flex-1 flex-col">
 					<div class="mb-3 flex items-center justify-between gap-3">
@@ -1121,25 +1315,39 @@ type CafeteriaFeedbackMap = Record<
 						</button>
 					</div>
 
-					<section class="mb-3 border-y border-brand-border py-4" data-shuttle-map-spot>
-						<div class="flex items-start gap-3">
-							<div class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-brand-map text-brand">
-								<MapPin size={18} strokeWidth={2.8} />
-							</div>
-							<div>
-								<p class="m-0 text-[13px] font-bold leading-relaxed text-brand-muted">
-									{shuttleStops.find((stop) => stop.stopId === activeShuttleStopId)?.description}
-								</p>
-								<a
-									class="mt-3 inline-flex items-center gap-1 text-sm font-black text-brand"
-									href={`/shuttle?stop=${activeShuttleStopId}`}
-								>
-									상세보기
-									<ChevronDown class="-rotate-90" size={15} strokeWidth={3} />
-								</a>
-							</div>
-						</div>
-					</section>
+					<div
+						bind:this={shuttleScroller}
+						class="-mx-[18px] mb-3 flex snap-x snap-mandatory overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+						onscroll={handleShuttleScroll}
+					>
+						{#each shuttleStops as stop}
+							<section class="w-full shrink-0 snap-center px-[18px]" data-shuttle-map-spot>
+								<div class="flex items-start gap-3 border-y border-brand-border py-4">
+									<div class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-brand-map text-brand">
+										<MapPin size={18} strokeWidth={2.8} />
+									</div>
+									<div>
+										<p class="m-0 text-[13px] font-bold leading-relaxed text-brand-muted">{stop.description}</p>
+										<a class="mt-3 inline-flex items-center gap-1 text-sm font-black text-brand" href={`/shuttle?stop=${stop.stopId}`}>
+											상세보기
+											<ChevronDown class="-rotate-90" size={15} strokeWidth={3} />
+										</a>
+									</div>
+								</div>
+							</section>
+						{/each}
+					</div>
+
+					<div class="mb-3 flex justify-center gap-1.5">
+						{#each shuttleStops as stop}
+							<button
+								class={`h-2 rounded-full transition-all ${activeShuttleStopId === stop.stopId ? 'w-6 bg-brand' : 'w-2 bg-brand-border-strong'}`}
+								type="button"
+								aria-label={`${stop.name} 보기`}
+								onclick={() => selectShuttleStop(stop.stopId)}
+							></button>
+						{/each}
+					</div>
 
 					<div class="hidden">
 						{#each shuttleStops as stop}

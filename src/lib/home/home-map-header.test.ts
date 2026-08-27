@@ -18,11 +18,13 @@ const zones = [
 ];
 
 const handlers = {
-	onAreaChange: () => undefined
+	onAreaChange: () => undefined,
+	onSearchOpenChange: () => undefined,
+	onSearchQueryChange: () => undefined
 };
 
 describe('메인 지도 헤더', () => {
-	it('캠퍼스를 선택하면 전체 학교 이름과 상점 페이지 링크를 제공한다', () => {
+	it('캠퍼스를 선택하면 전체 학교 이름과 시설 검색 버튼을 제공한다', () => {
 		const { body } = render(HomeMapHeader, {
 			props: {
 				zones,
@@ -31,11 +33,26 @@ describe('메인 지도 헤더', () => {
 			}
 		});
 
-		expect(body).toContain('href="/shops"');
-		expect(body).toContain('aria-label="상점 페이지"');
+		expect(body).toContain('aria-label="시설 검색"');
+		expect(body).toContain('/20 icon/search.svg');
 		expect(body).toContain('고려대학교 세종캠퍼스');
 		expect(body).toContain('-rotate-90');
 		expect(body).not.toContain('고대앞');
+	});
+
+	it('검색을 열면 교내 시설 검색 입력창으로 전환한다', () => {
+		const { body } = render(HomeMapHeader, {
+			props: {
+				zones,
+				selectedAreaId: 'campus',
+				searchOpen: true,
+				searchQuery: '',
+				...handlers
+			}
+		});
+
+		expect(body).toContain('placeholder="교내 시설을 검색해 보세요"');
+		expect(body).toContain('aria-label="시설 검색 닫기"');
 	});
 
 	it('선택한 지도 구역을 헤더의 접근 가능한 이름으로 안내한다', () => {

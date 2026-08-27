@@ -2,13 +2,19 @@
 	export type AppIconName =
 		| 'bell'
 		| 'bus'
+		| 'cafe'
 		| 'chevron'
 		| 'clear'
 		| 'comment'
+		| 'convenience_store_GS'
+		| 'crimson_store'
 		| 'edit'
 		| 'food'
+		| 'gym'
 		| 'home'
 		| 'my'
+		| 'post_office'
+		| 'print'
 		| 'save'
 		| 'search'
 		| 'setting'
@@ -29,7 +35,7 @@
 		class?: string;
 	} = $props();
 
-	const assetPath = $derived(`/24 icon/${name}.svg`);
+	const assetPath = $derived(`/${size} icon/${name}.svg`);
 </script>
 
 <span
