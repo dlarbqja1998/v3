@@ -922,6 +922,17 @@ type CafeteriaFeedbackMap = Record<
 				onCategoryChange={selectFacilityCategory}
 			/>
 
+			{#if data.homeNotice && sheetMode === 'home'}
+				<a
+					class="pointer-events-auto relative z-20 flex h-10 items-center gap-2 border-b border-brand-border bg-white px-4 text-[13px]"
+					href={`/notices/${data.homeNotice.id}`}
+				>
+					<strong class="shrink-0 text-brand">공지</strong>
+					<span class="min-w-0 flex-1 truncate font-bold text-brand-text">{data.homeNotice.title}</span>
+					<span class="shrink-0 text-xs font-bold text-brand-muted">보기</span>
+				</a>
+			{/if}
+
 			{#if areaMode === 'outside' && sheetMode === 'home'}
 				<OutsidePlaceFilters
 					selectedCategory={selectedOutsideCategory}

@@ -2,7 +2,7 @@
 	import { ChevronDown, KeyRound, LogIn, MessageCircle } from '@lucide/svelte';
 	import type { ActionData, PageData } from './$types';
 
-	let { data, form }: { data: PageData; form: ActionData } = $props();
+	let { data, form }: { data: PageData; form: ActionData | null } = $props();
 	let showAdminLogin = $state(false);
 </script>
 
@@ -35,7 +35,8 @@
 		</a>
 
 		<p class="mt-5 text-center text-xs font-bold leading-5 text-brand-muted">
-			로그인하면 서비스 이용약관과 개인정보처리방침에 동의한 것으로 간주됩니다.
+			로그인하면 <a class="underline underline-offset-2" href="/terms">서비스 이용약관</a>과
+			<a class="underline underline-offset-2" href="/privacy">개인정보 처리방침</a>에 동의한 것으로 간주됩니다.
 		</p>
 
 		<div class="mt-10 text-center">

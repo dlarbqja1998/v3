@@ -9,6 +9,7 @@ import {
 } from '$lib/server/cafeteria-sync';
 import { getOrCreateVoterHash, getWeeklyCafeteriaFeedback } from '$lib/server/cafeteria-feedback';
 import { getHomeLoadPolicy } from '$lib/server/home-load-policy';
+import { getHomeNotice } from '$lib/server/notices';
 import type { ShuttleStopId } from '$lib/domain/shuttle';
 
 export async function load({ platform, cookies, locals, url }) {
@@ -36,6 +37,14 @@ export async function load({ platform, cookies, locals, url }) {
 	}
 
 	const homeData = await getHomeData(env.DATABASE_URL, weeklyMenu);
+	let homeNotice = null;
+	if (env.DATABASE_URL) {
+		try {
+			homeNotice = await getHomeNotice(env.DATABASE_URL);
+		} catch (error) {
+			console.error('메인 공지 조회 실패:', error);
+		}
+	}
 	const requestedPlaceId = url.searchParams.get('place') ?? '';
 	const initialShuttleStopId: ShuttleStopId =
 		url.searchParams.get('shuttleStop') === 'jochewon-station-back'
@@ -61,6 +70,7 @@ export async function load({ platform, cookies, locals, url }) {
 
 	return {
 		...homeData,
+		homeNotice,
 		cafeteriaFeedback,
 		initialPanel: initialPlaceId ? loadPolicy.initialPanel : loadPolicy.initialPanel === 'place' ? null : loadPolicy.initialPanel,
 		initialPlaceId,

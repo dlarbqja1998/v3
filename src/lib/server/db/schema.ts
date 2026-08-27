@@ -2,6 +2,7 @@ import {
 	boolean,
 	date,
 	doublePrecision,
+	index,
 	integer,
 	jsonb,
 	pgTable,
@@ -39,6 +40,51 @@ export const users = pgTable(
 		uniqueIndex('users_email_unique').on(table.email),
 		uniqueIndex('users_provider_id_unique').on(table.provider, table.providerId),
 		uniqueIndex('users_nickname_unique').on(table.nickname)
+	]
+);
+
+export const notices = pgTable(
+	'notices',
+	{
+		id: uuid('id').defaultRandom().primaryKey(),
+		title: varchar('title', { length: 100 }).notNull(),
+		content: text('content').notNull(),
+		status: varchar('status', { length: 20 }).notNull().default('DRAFT'),
+		isPinned: boolean('is_pinned').notNull().default(false),
+		showOnHome: boolean('show_on_home').notNull().default(false),
+		authorId: integer('author_id').references(() => users.id, { onDelete: 'set null' }),
+		publishedAt: timestamp('published_at', { withTimezone: true }),
+		createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+		updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
+	},
+	(table) => [
+		index('notices_public_idx').on(table.status, table.isPinned, table.publishedAt),
+		index('notices_home_idx').on(table.status, table.showOnHome, table.publishedAt)
+	]
+);
+
+export const supportInquiries = pgTable(
+	'support_inquiries',
+	{
+		id: uuid('id').defaultRandom().primaryKey(),
+		userId: integer('user_id')
+			.notNull()
+			.references(() => users.id, { onDelete: 'cascade' }),
+		category: varchar('category', { length: 40 }).notNull(),
+		title: varchar('title', { length: 60 }).notNull(),
+		content: text('content').notNull(),
+		status: varchar('status', { length: 20 }).notNull().default('WAITING'),
+		answer: text('answer'),
+		answeredBy: integer('answered_by').references(() => users.id, { onDelete: 'set null' }),
+		answeredAt: timestamp('answered_at', { withTimezone: true }),
+		answerUpdatedAt: timestamp('answer_updated_at', { withTimezone: true }),
+		answerReadAt: timestamp('answer_read_at', { withTimezone: true }),
+		createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+		updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
+	},
+	(table) => [
+		index('support_inquiries_user_idx').on(table.userId, table.createdAt),
+		index('support_inquiries_status_idx').on(table.status, table.createdAt)
 	]
 );
 
