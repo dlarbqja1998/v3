@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
-	import { Check, ChevronLeft, ChevronRight, Eye, X } from '@lucide/svelte';
+	import { Check, Eye, X } from '@lucide/svelte';
 	import {
 		buildDepartmentOptions,
 		collegeOptions,
@@ -54,6 +54,7 @@
 		studentYear = initialSubmittedValues.studentYear;
 		gender = initialSubmittedValues.gender;
 	}
+
 	let departments = $derived(college ? buildDepartmentOptions(college) : []);
 	let previewNoticeVisible = $state(false);
 	let previewNoticeTimer: ReturnType<typeof setTimeout> | undefined;
@@ -73,6 +74,7 @@
 		department = submittedValues.department;
 		studentYear = submittedValues.studentYear;
 		gender = submittedValues.gender;
+		nicknameCheckInvalidated = false;
 	});
 
 	$effect(() => {
@@ -84,7 +86,7 @@
 	});
 
 	function canGoNext() {
-		if (step === 0) return isPreview ? !nicknameInputError : hasConfirmedNickname;
+		if (step === 0) return hasConfirmedNickname;
 		if (step === 1) return Boolean(college);
 		if (step === 2) return Boolean(department);
 		if (step === 3) return Boolean(studentYear);
@@ -114,11 +116,11 @@
 	});
 </script>
 
-<main class="min-h-dvh bg-brand-bg px-5 pb-7 pt-[calc(1.75rem+env(safe-area-inset-top))] text-brand-text">
+<main class="min-h-dvh bg-brand-bg text-brand-text md:grid md:place-items-center md:p-6">
 	<form
-		method={isPreview ? undefined : 'POST'}
-		action={isPreview ? undefined : '?/complete'}
-		class="mx-auto flex min-h-[calc(100dvh-56px-env(safe-area-inset-top))] w-full max-w-[430px] flex-col"
+		method="POST"
+		action="?/checkNickname"
+		class="relative mx-auto flex min-h-dvh w-full max-w-[430px] flex-col bg-white px-6 pb-[max(20px,env(safe-area-inset-bottom))] pt-[calc(68px+env(safe-area-inset-top))] shadow-[0_24px_60px_rgba(72,12,31,0.10)] md:min-h-[min(844px,calc(100dvh-48px))] md:rounded-[24px] md:border md:border-brand-border"
 	>
 		<input type="hidden" name="nickname" value={nickname} />
 		<input type="hidden" name="college" value={college} />
@@ -130,75 +132,80 @@
 		{/if}
 
 		{#if isPreview}
-			<div class="mb-5 flex items-center justify-between gap-3 rounded-[16px] border border-brand-border-strong bg-white px-3 py-2.5">
-				<span class="flex items-center gap-2 text-sm font-black text-brand">
-					<Eye size={17} strokeWidth={2.8} />
+			<div class="absolute inset-x-5 top-[max(12px,env(safe-area-inset-top))] flex items-center justify-between">
+				<span class="flex items-center gap-1.5 text-[12px] font-bold text-brand-muted">
+					<Eye size={14} strokeWidth={2.4} />
 					미리보기
 				</span>
 				<a
-					class="flex min-h-10 items-center gap-1.5 rounded-[12px] px-3 text-sm font-black text-brand-muted transition hover:bg-brand-map"
+					class="flex min-h-9 items-center gap-1 rounded-[8px] px-2.5 text-[12px] font-bold text-brand-muted transition hover:bg-brand-map"
 					href={exitHref}
 				>
-					<X size={16} strokeWidth={2.8} />
+					<X size={14} strokeWidth={2.4} />
 					미리보기 나가기
 				</a>
 			</div>
 		{/if}
 
 		<header>
-			<p class="m-0 text-sm font-black text-brand-muted">하이브리드 온보딩</p>
-			<h1 class="m-0 mt-2 text-3xl font-black">조금만 알려주세요</h1>
-			<p class="mt-3 text-sm font-bold leading-6 text-brand-muted">
-				입력한 정보는 골라바유 통계와 맞춤 기능을 위한 기준으로만 사용합니다.
+			<p class="m-0 text-[12px] font-bold text-brand">카카오 계정 연동 완료</p>
+			<h1 class="m-0 mt-2 text-[22px] font-bold tracking-[-0.02em]">당신의 정보를 알려주세요</h1>
+			<p class="m-0 mt-2 text-[12px] leading-5 text-brand-muted">
+				입력한 정보는 골라바유 맞춤 정보 제공과 통계에만 사용해요.
 			</p>
 		</header>
 
-		<div class="mt-7 flex gap-1.5">
+		<div
+			class="mt-4 grid grid-cols-5 gap-1"
+			role="progressbar"
+			aria-label={`온보딩 진행도 ${step + 1} / ${steps.length}`}
+			aria-valuemin="1"
+			aria-valuemax={steps.length}
+			aria-valuenow={step + 1}
+		>
 			{#each steps as item, index}
-				<div
-					class={`h-2 flex-1 rounded-full ${index <= step ? 'bg-brand' : 'bg-brand-border-strong'}`}
+				<span
+					class={`h-[3px] rounded-full transition-colors duration-200 ${index <= step ? 'bg-brand' : 'bg-brand-border-strong'}`}
 					aria-label={item}
-				></div>
+				></span>
 			{/each}
 		</div>
 
 		{#if message}
-			<p class="mt-5 rounded-[14px] border border-red-200 bg-red-50 px-4 py-3 text-sm font-bold text-red-700">
+			<p class="m-0 mt-4 rounded-[8px] border border-red-200 bg-red-50 px-3 py-2.5 text-[12px] font-bold text-red-700">
 				{message}
 			</p>
 		{/if}
 
-		<section class="mt-8 flex-1 rounded-[22px] border border-brand-border bg-white p-5 shadow-[0_18px_40px_rgba(103,16,43,0.08)]">
+		<section class="mt-6 min-h-0 flex-1 overflow-y-auto pb-4">
 			{#if step === 0}
-				<div class="grid gap-3">
-					<label class="text-xl font-black" for="nickname">닉네임을 정해주세요</label>
-					<div class={`grid gap-2 ${isPreview ? 'grid-cols-1' : 'grid-cols-[minmax(0,1fr)_auto]'}`}>
+				<div class="grid gap-2.5">
+					<label class="text-[13px] font-bold" for="nickname">닉네임을 입력하세요</label>
+					<div class="grid grid-cols-[minmax(0,1fr)_auto] gap-2">
 						<input
 							bind:value={nickname}
-							class="h-14 min-w-0 rounded-[16px] border border-brand-border-strong px-4 text-base font-bold outline-none focus:border-brand focus:ring-4 focus:ring-brand/15"
+							class="h-11 min-w-0 rounded-[8px] border border-brand-border-strong px-3 text-[13px] outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/10"
 							id="nickname"
 							maxlength="10"
 							oninput={invalidateNicknameCheck}
-							placeholder="닉네임 입력"
+							placeholder="닉네임을 입력하세요"
 						/>
-						{#if !isPreview}
-							<button
-								class="h-14 rounded-[16px] bg-brand px-4 text-sm font-black text-white disabled:bg-brand-border-strong"
-								disabled={Boolean(nicknameInputError)}
-								formaction="?/checkNickname"
-								type="submit"
-							>
-								중복 확인
-							</button>
-						{/if}
+						<button
+							class="h-11 shrink-0 rounded-[8px] bg-brand px-3.5 text-[12px] font-bold text-white transition disabled:bg-brand-border-strong"
+							disabled={Boolean(nicknameInputError)}
+							formaction="?/checkNickname"
+							type="submit"
+						>
+							중복 확인
+						</button>
 					</div>
 				</div>
-				<p class="mt-3 text-xs font-bold leading-5 text-brand-muted">
+				<p class="m-0 mt-2.5 text-[11px] leading-[18px] text-brand-muted">
 					2~10자, 한글/영문/숫자/밑줄(_)만 사용 가능, 공백 및 특수문자 불가합니다.
 				</p>
 				{#if nicknameCheckResult}
 					<p
-						class={`mt-3 rounded-[14px] px-4 py-3 text-sm font-bold ${nicknameCheckResult.status === 'available' ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'}`}
+						class={`m-0 mt-3 rounded-[8px] px-3 py-2.5 text-[12px] font-bold ${nicknameCheckResult.status === 'available' ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'}`}
 						role="status"
 						aria-live="polite"
 					>
@@ -206,12 +213,12 @@
 					</p>
 				{/if}
 			{:else if step === 1}
-				<div class="grid gap-3">
-					<h2 class="m-0 text-xl font-black">단과대를 선택해주세요</h2>
+				<div class="grid gap-2.5">
+					<h2 class="m-0 text-[13px] font-bold">단과대를 선택하세요</h2>
 					<div class="grid gap-2">
 						{#each collegeOptions as option}
 							<button
-								class={`min-h-12 rounded-[14px] border px-4 text-left text-sm font-black ${college === option ? 'border-brand bg-brand text-white' : 'border-brand-border bg-white text-brand-text'}`}
+								class={`min-h-11 rounded-[8px] border px-3 text-left text-[12px] transition ${college === option ? 'border-brand bg-brand font-bold text-white' : 'border-brand-border-strong bg-white text-brand-text'}`}
 								type="button"
 								onclick={() => (college = option)}
 							>
@@ -221,17 +228,17 @@
 					</div>
 				</div>
 			{:else if step === 2}
-				<div class="grid gap-3">
-					<h2 class="m-0 text-xl font-black">학과를 선택해주세요</h2>
+				<div class="grid gap-2.5">
+					<h2 class="m-0 text-[13px] font-bold">학과를 선택하세요</h2>
 					{#if !college}
-						<p class="rounded-[14px] bg-brand-map px-4 py-3 text-sm font-bold text-brand-muted">
+						<p class="m-0 rounded-[8px] bg-brand-map px-3 py-3 text-[12px] text-brand-muted">
 							먼저 단과대를 선택해 주세요.
 						</p>
 					{:else}
-						<div class="grid max-h-[52dvh] gap-2 overflow-y-auto pr-1">
+						<div class="grid gap-2">
 							{#each departments as option}
 								<button
-									class={`min-h-12 rounded-[14px] border px-4 text-left text-sm font-black ${department === option ? 'border-brand bg-brand text-white' : 'border-brand-border bg-white text-brand-text'}`}
+									class={`min-h-11 rounded-[8px] border px-3 text-left text-[12px] transition ${department === option ? 'border-brand bg-brand font-bold text-white' : 'border-brand-border-strong bg-white text-brand-text'}`}
 									type="button"
 									onclick={() => (department = option)}
 								>
@@ -242,12 +249,12 @@
 					{/if}
 				</div>
 			{:else if step === 3}
-				<div class="grid gap-3">
-					<h2 class="m-0 text-xl font-black">학번을 선택해주세요</h2>
+				<div class="grid gap-2.5">
+					<h2 class="m-0 text-[13px] font-bold">학번을 선택해주세요</h2>
 					<div class="grid grid-cols-2 gap-2">
 						{#each studentYearOptions as option}
 							<button
-								class={`h-12 rounded-[14px] border text-sm font-black ${studentYear === option ? 'border-brand bg-brand text-white' : 'border-brand-border bg-white text-brand-text'}`}
+								class={`h-11 rounded-[8px] border text-[12px] transition ${studentYear === option ? 'border-brand bg-brand font-bold text-white' : 'border-brand-border-strong bg-white text-brand-text'}`}
 								type="button"
 								onclick={() => (studentYear = option)}
 							>
@@ -257,12 +264,12 @@
 					</div>
 				</div>
 			{:else}
-				<div class="grid gap-3">
-					<h2 class="m-0 text-xl font-black">성별을 선택해주세요</h2>
+				<div class="grid gap-2.5">
+					<h2 class="m-0 text-[13px] font-bold">성별을 선택해주세요</h2>
 					<div class="grid gap-2">
 						{#each genderOptions as option}
 							<button
-								class={`h-14 rounded-[14px] border px-4 text-left text-sm font-black ${gender === option.value ? 'border-brand bg-brand text-white' : 'border-brand-border bg-white text-brand-text'}`}
+								class={`h-11 rounded-[8px] border px-3 text-left text-[12px] transition ${gender === option.value ? 'border-brand bg-brand font-bold text-white' : 'border-brand-border-strong bg-white text-brand-text'}`}
 								type="button"
 								onclick={() => (gender = option.value)}
 							>
@@ -274,37 +281,34 @@
 			{/if}
 		</section>
 
-		<footer class="mt-5 grid grid-cols-[auto_1fr] gap-2 pb-[max(0px,env(safe-area-inset-bottom))]">
+		<footer class="mt-auto grid grid-cols-[72px_minmax(0,1fr)] gap-2 border-t border-transparent bg-white pt-3">
 			<button
-				class="grid h-14 w-14 place-items-center rounded-[16px] border border-brand-border-strong bg-white text-brand-muted disabled:opacity-35"
+				class="h-12 rounded-[10px] border border-brand-border-strong bg-white text-[13px] font-bold text-brand-muted transition disabled:opacity-45"
 				type="button"
 				disabled={step === 0}
 				onclick={prevStep}
-				aria-label="이전"
 			>
-				<ChevronLeft size={22} strokeWidth={3} />
+				이전
 			</button>
 
 			{#if step < steps.length - 1}
 				<button
-					class="flex h-14 items-center justify-center gap-2 rounded-[16px] bg-brand text-base font-black text-white disabled:bg-brand-border-strong"
+					class="h-12 rounded-[10px] bg-brand text-[13px] font-bold text-white transition disabled:bg-brand-border-strong"
 					type="button"
 					disabled={!canGoNext()}
 					onclick={nextStep}
 				>
 					다음
-					<ChevronRight size={18} strokeWidth={3} />
 				</button>
 			{:else}
 				<button
-					class="flex h-14 items-center justify-center gap-2 rounded-[16px] bg-brand text-base font-black text-white disabled:bg-brand-border-strong"
+					class="h-12 rounded-[10px] bg-brand text-[13px] font-bold text-white transition disabled:bg-brand-border-strong"
 					type={isPreview ? 'button' : 'submit'}
 					disabled={!canGoNext()}
 					formaction={isPreview ? undefined : '?/complete'}
 					onclick={isPreview ? showPreviewNotice : undefined}
 				>
-					<Check size={18} strokeWidth={3} />
-					시작하기
+					다음
 				</button>
 			{/if}
 		</footer>
@@ -312,12 +316,12 @@
 
 	{#if isPreview}
 		<div
-			class={`pointer-events-none fixed inset-x-5 bottom-[calc(88px+env(safe-area-inset-bottom))] z-50 mx-auto flex max-w-[390px] items-center gap-3 rounded-[16px] border border-brand bg-white px-4 py-3 text-sm font-black text-brand shadow-[0_12px_30px_rgba(116,17,47,0.16)] transition duration-200 ${previewNoticeVisible ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'}`}
+			class={`pointer-events-none fixed inset-x-5 bottom-[calc(84px+env(safe-area-inset-bottom))] z-50 mx-auto flex max-w-[390px] items-center gap-2 rounded-[10px] border border-brand bg-white px-3 py-2.5 text-[12px] font-bold text-brand shadow-[0_12px_30px_rgba(116,17,47,0.16)] transition duration-200 ${previewNoticeVisible ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'}`}
 			role="status"
 			aria-live="polite"
 			aria-hidden={!previewNoticeVisible}
 		>
-			<Check size={18} strokeWidth={2.8} />
+			<Check size={16} strokeWidth={2.6} />
 			미리보기에서는 정보가 저장되지 않습니다.
 		</div>
 	{/if}

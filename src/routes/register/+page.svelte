@@ -23,4 +23,10 @@
 	<title>온보딩 | 골라바유</title>
 </svelte:head>
 
-<OnboardingFlow mode="register" message={form?.message ?? null} {submittedValues} {nicknameCheck} {next} />
+<OnboardingFlow
+	mode="register"
+	message={form && 'message' in form ? form.message ?? null : null}
+	{submittedValues}
+	{nicknameCheck}
+	{next}
+/>
