@@ -1,3 +1,12 @@
+<script module lang="ts">
+	export function getSavedPinsForEditor<T extends { id: string }>(
+		pins: T[],
+		selectedPinId: string
+	) {
+		return selectedPinId ? pins.filter((pin) => pin.id !== selectedPinId) : pins;
+	}
+</script>
+
 <script lang="ts">
 	import { onDestroy, onMount, untrack } from 'svelte';
 	import { ArrowLeft, MapPin, Plus, Save, Trash2 } from '@lucide/svelte';
@@ -51,6 +60,11 @@
 		displayPriority = selectedPin.displayPriority;
 		isVisible = selectedPin.isVisible;
 		refreshDraftMarker(true);
+	});
+
+	$effect(() => {
+		selectedPinId;
+		renderSavedMarkers();
 	});
 
 	onMount(() => void initializeMap());
@@ -144,7 +158,7 @@
 		if (!map || !window.naver) return;
 		for (const marker of savedMarkers) marker.setMap(null);
 		const naver = window.naver as any;
-		savedMarkers = data.pins.map((pin) => {
+		savedMarkers = getSavedPinsForEditor(data.pins, selectedPinId).map((pin) => {
 			const marker = new naver.maps.Marker({
 				map,
 				position: new naver.maps.LatLng(pin.latitude, pin.longitude),
@@ -253,7 +267,7 @@
 				<label class="grid gap-1 text-sm font-bold">설명<textarea class="min-h-20 border border-brand-border p-2" name="description" bind:value={description}></textarea></label>
 				<label class="grid gap-1 text-sm font-bold">운영시간<input class="h-11 border-b border-brand-border px-1" name="operatingHours" maxlength="240" placeholder="예: 평일 09:00~18:00" bind:value={operatingHours} /></label>
 				<label class="grid gap-1 text-sm font-bold">전화번호<input class="h-11 border-b border-brand-border px-1" name="phone" maxlength="40" inputmode="tel" bind:value={phone} /></label>
-				<label class="grid gap-1 text-sm font-bold">표시 순서<input class="h-11 border-b border-brand-border px-1" name="displayPriority" type="number" min="0" max="9999" bind:value={displayPriority} /></label>
+				<label class="grid gap-1 text-sm font-bold">바텀시트 표시 순서<input class="h-11 border-b border-brand-border px-1" name="displayPriority" type="number" min="0" max="9999" bind:value={displayPriority} /></label>
 				<label class="flex min-h-12 items-center justify-between gap-4 border-y border-brand-border py-2 text-sm font-black">지도에 표시<input class="h-5 w-10 accent-brand" name="isVisible" type="checkbox" bind:checked={isVisible} /></label>
 
 				<p class="m-0 text-xs font-bold text-brand-muted">지도를 눌러 핀을 만들고, 마커를 드래그해 위치를 조정하세요.</p>
