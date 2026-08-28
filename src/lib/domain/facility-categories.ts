@@ -9,7 +9,8 @@ export const FACILITY_CATEGORIES = [
 	{ slug: 'copy-room', name: '복사실', icon: 'print', displayOrder: 3 },
 	{ slug: 'crimson-store', name: '크림슨스토어', icon: 'crimson_store', displayOrder: 4 },
 	{ slug: 'gym', name: '헬스장', icon: 'gym', displayOrder: 5 },
-	{ slug: 'post-office', name: '우체국', icon: 'post_office', displayOrder: 6 }
+	{ slug: 'post-office', name: '우체국', icon: 'post_office', displayOrder: 6 },
+	{ slug: 'bookstore', name: '서점', icon: 'bookstore', displayOrder: 7 }
 ] as const;
 
 export type FacilityCategorySlug = (typeof FACILITY_CATEGORIES)[number]['slug'];
