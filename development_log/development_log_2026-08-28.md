@@ -128,6 +128,10 @@
   - 경고 0개
 - `npm run build`
   - Cloudflare 프로덕션 빌드 성공
+- `npm run deploy`
+  - Cloudflare Workers 배포 성공
+  - 배포 주소 HTTP 응답 코드 `200` 확인
+  - 배포 HTML에서 메인 헤더 그라데이션과 골라바유 로고 마크업 확인
 
 ## Git 및 배포
 
@@ -137,9 +141,10 @@
 - `2414262` — `fix: Cloudflare 관리자 로그인 복구`
 - `cfb91ad` — `feat: 서점 시설 카테고리 추가`
 - `3faffb9` — `fix: 핀 편집 중복 마커 제거`
+- `79b7069` — `feat: 메인 지도 UI와 핀 편집 UX 개선`
 - 위 변경을 모두 `origin/main`에 푸시했다.
 - 배포 주소: <https://v3.dlarbqja1998.workers.dev>
-- 기존 기록 당시 Cloudflare 배포 버전: `d6977246-ae87-438f-856c-759c46bb7cb3`
+- 현재 Cloudflare 배포 버전: `a1ad223d-2808-45c5-87fc-b79c7a2bd705`
 
 ## 다음 논의 사항
 
