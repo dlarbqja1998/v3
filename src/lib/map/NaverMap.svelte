@@ -14,6 +14,10 @@
 	import { cancelMapMotion } from '$lib/map/map-motion';
 	import { getCommercialPolygonStyle } from '$lib/map/commercial-polygon';
 	import {
+		getNaverLogoControlPosition,
+		watchNaverAttributionLogo
+	} from '$lib/map/naver-attribution';
+	import {
 		getMapCenterBounds,
 		getSheetAwareLatitudeOffset,
 		shouldFocusMapArea,
@@ -34,6 +38,7 @@
 		showCampusBoundaries?: boolean;
 		onMarkerClick: (placeId: string) => void;
 		onCampusSpotClick?: (spotId: string) => void;
+		attributionBottomOffset?: number;
 		areaMode?: MapAreaMode;
 		commercialZones?: CommercialZone[];
 		selectedCommercialZoneId?: string;
@@ -53,6 +58,7 @@
 		showCampusBoundaries = false,
 		onMarkerClick,
 		onCampusSpotClick,
+		attributionBottomOffset = 0,
 		areaMode = 'campus',
 		commercialZones = [],
 		selectedCommercialZoneId = 'all'
@@ -110,6 +116,19 @@
 	});
 
 	$effect(() => {
+		const bottomOffset = Math.max(0, attributionBottomOffset);
+		if (!isReady || typeof MutationObserver === 'undefined') return;
+
+		return watchNaverAttributionLogo(mapElement, bottomOffset, (callback) => {
+			const observer = new MutationObserver(callback);
+			return {
+				observe: () => observer.observe(mapElement, { childList: true, subtree: true }),
+				disconnect: () => observer.disconnect()
+			};
+		});
+	});
+
+	$effect(() => {
 		if (!isReady || !map) return;
 		syncCommercialZones(areaMode, commercialZones, selectedCommercialZoneId);
 		if (!shouldFocusMapArea(activePlaceId)) return;
@@ -136,7 +155,7 @@
 				mapDataControl: false,
 				scaleControl: false,
 				logoControlOptions: {
-					position: naver.maps.Position.BOTTOM_LEFT
+					position: getNaverLogoControlPosition(naver.maps.Position)
 				},
 				zoomControl: false
 			});
@@ -486,7 +505,12 @@
 	}
 </script>
 
-<div class="absolute inset-0">
+<div
+	class="absolute inset-0"
+	data-map-layer="background"
+	data-map-attribution-bottom-offset={attributionBottomOffset}
+	style="isolation: isolate; z-index: 0;"
+>
 	<div bind:this={mapElement} class="h-full w-full"></div>
 
 	{#if !clientId || loadError}

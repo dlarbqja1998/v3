@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { onMount, tick } from 'svelte';
 	import { fly } from 'svelte/transition';
-	import MainBrandIcon from '$lib/brand/MainBrandIcon.svelte';
 	import {
 		buildMapAreaOptions,
 		type CommercialZone
@@ -141,82 +140,110 @@
 	});
 </script>
 
-<header class="pointer-events-auto relative z-30 border-b border-brand-border bg-white">
-	<div
-		class="grid h-[calc(56px+env(safe-area-inset-top))] grid-cols-[44px_minmax(0,1fr)_44px] items-center gap-2 px-4 pt-[env(safe-area-inset-top)]"
-	>
-		<MainBrandIcon />
+	<header class="pointer-events-auto relative z-30 pt-[env(safe-area-inset-top)]">
+	<div class="flex h-14 items-center gap-2 px-5 py-2.5">
+		<img
+			class="h-9 w-9 shrink-0 object-contain"
+			src="/icon.png"
+			alt="골라바유"
+		/>
 
 		{#if searchOpen}
-			<div class="min-w-0">
+			<div
+				class="relative min-w-0 flex-1"
+				role="search"
+				aria-label="시설 검색"
+			>
+				<AppIcon
+					name="search"
+					size={20}
+					class="pointer-events-none absolute left-4 top-1/2 z-10 -translate-y-1/2 text-brand-text"
+				/>
 				<input
 					bind:this={searchInput}
-					class="h-11 w-full border-b-2 border-brand bg-transparent px-1 text-[15px] font-bold outline-none placeholder:text-brand-muted/70"
+					class="h-9 w-full rounded-[18px] bg-white pl-11 pr-10 text-[12px] font-normal text-brand-text shadow-[0_1px_2px_rgba(25,24,26,0.05)] outline-none placeholder:text-[#c9c6ca] focus-visible:ring-2 focus-visible:ring-brand/25"
 					type="search"
 					value={searchQuery}
 					placeholder={searchPlaceholder}
 					aria-label="시설 검색어"
 					oninput={(event) => onSearchQueryChange(event.currentTarget.value)}
 				/>
+				<button
+					class="absolute right-1 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full text-brand-muted transition-colors hover:bg-brand-surface hover:text-brand focus-visible:ring-2 focus-visible:ring-brand/25"
+					type="button"
+					aria-label="시설 검색 닫기"
+					onclick={closeSearch}
+				>
+					<AppIcon name="clear" size={20} />
+				</button>
 			</div>
 		{:else}
-		<div class="relative min-w-0" bind:this={dropdownElement}>
-			<button
-				bind:this={triggerElement}
-				type="button"
-				class="relative flex h-11 w-full items-center justify-center px-7 text-center text-[16px] font-bold tracking-[-0.02em] text-brand-text outline-none transition-colors duration-150 hover:text-brand focus-visible:text-brand focus-visible:ring-2 focus-visible:ring-brand/25"
-				aria-label={`지도 구역: ${selectedAreaLabel}`}
-				aria-haspopup="listbox"
-				aria-expanded={menuOpen}
-				aria-controls="home-map-area-listbox"
-				onclick={toggleMenu}
-				onkeydown={handleTriggerKeydown}
-			>
-				<span class="block w-full truncate text-center">{selectedAreaLabel}</span>
-			</button>
-			<AppIcon
-				name="chevron"
-				size={20}
-				class={`pointer-events-none absolute right-1 top-[22px] -translate-y-1/2 text-brand-muted transition-transform duration-150 ${menuOpen ? 'rotate-90' : '-rotate-90'}`}
-			/>
-
-			{#if menuOpen}
-				<div
-					id="home-map-area-listbox"
-					class="absolute left-1/2 top-[calc(100%+1px)] z-50 max-h-[min(360px,58dvh)] w-[min(calc(100vw-32px),360px)] -translate-x-1/2 overflow-y-auto rounded-b-[14px] border-x border-b border-brand-border bg-white shadow-[0_10px_20px_rgba(72,12,31,0.12)]"
-					role="listbox"
-					tabindex="-1"
-					aria-label="지도 구역 선택"
-					onkeydown={handleMenuKeydown}
-					transition:fly={{ y: -6, duration: 140 }}
+			<div class="relative min-w-0 flex-1" bind:this={dropdownElement}>
+				<button
+					bind:this={triggerElement}
+					type="button"
+					class="relative z-20 flex h-9 w-full items-center gap-2 rounded-[18px] bg-white px-4 text-center text-[13px] font-medium tracking-[-0.01em] text-brand-text shadow-[0_1px_2px_rgba(25,24,26,0.05)] outline-none transition-colors duration-150 hover:text-brand focus-visible:ring-2 focus-visible:ring-brand/25"
+					aria-label={`지도 구역: ${selectedAreaLabel}`}
+					aria-haspopup="listbox"
+					aria-expanded={menuOpen}
+					aria-controls="home-map-area-listbox"
+					onclick={toggleMenu}
+					onkeydown={handleTriggerKeydown}
 				>
-					{#each areaOptions as option}
-						<button
-							type="button"
-							class={`flex min-h-[52px] w-full items-center justify-center border-b border-brand-border px-4 py-2 text-center text-[15px] tracking-[-0.015em] outline-none transition-colors duration-150 last:border-b-0 focus-visible:bg-brand-soft focus-visible:ring-inset focus-visible:ring-2 focus-visible:ring-brand/25 ${
-								selectedAreaId === option.id
-									? 'font-bold text-brand'
-									: 'font-medium text-brand-muted hover:bg-brand-surface hover:text-brand-text'
-							}`}
-							role="option"
-							aria-selected={selectedAreaId === option.id}
-							onclick={() => selectArea(option.id)}
-						>
-							{option.name}
-						</button>
-					{/each}
-				</div>
-			{/if}
-		</div>
-		{/if}
+					<span class="block min-w-0 flex-1 truncate text-center">{selectedAreaLabel}</span>
+					<AppIcon
+						name="chevron"
+						size={20}
+						class={`shrink-0 text-brand-muted transition-transform duration-150 ${menuOpen ? 'rotate-90' : '-rotate-90'}`}
+					/>
+				</button>
 
-		<button
-			class="grid h-11 w-11 shrink-0 place-items-center rounded-[10px] text-brand-muted transition-colors hover:bg-brand-surface hover:text-brand focus-visible:bg-brand-soft focus-visible:text-brand focus-visible:ring-2 focus-visible:ring-brand/25"
-			type="button"
-			aria-label={searchOpen ? '시설 검색 닫기' : '시설 검색'}
-			onclick={() => (searchOpen ? closeSearch() : onSearchOpenChange(true))}
-		>
-			<AppIcon name={searchOpen ? 'clear' : 'search'} size={20} />
-		</button>
+				{#if menuOpen}
+					<div
+						id="home-map-area-listbox"
+						class="absolute inset-x-0 top-7 z-10 max-h-[min(360px,58dvh)] overflow-y-auto rounded-b-[18px] bg-white pt-2 shadow-[0_8px_18px_rgba(25,24,26,0.08)]"
+						role="listbox"
+						tabindex="-1"
+						aria-label="지도 구역 선택"
+						onkeydown={handleMenuKeydown}
+						transition:fly={{ y: -6, duration: 140 }}
+					>
+						{#each areaOptions as option}
+							<button
+								type="button"
+								class={`flex min-h-10 w-full items-center justify-center px-4 py-2 text-center text-[13px] tracking-[-0.01em] outline-none transition-colors duration-150 focus-visible:bg-brand-soft focus-visible:ring-inset focus-visible:ring-2 focus-visible:ring-brand/25 ${
+									selectedAreaId === option.id
+										? 'font-medium text-brand'
+										: 'font-medium text-brand-text hover:bg-brand-surface'
+								}`}
+								role="option"
+								aria-selected={selectedAreaId === option.id}
+								onclick={() => selectArea(option.id)}
+							>
+								{option.name}
+							</button>
+						{/each}
+					</div>
+				{/if}
+			</div>
+
+			<div class="flex shrink-0 items-center gap-2">
+				<a
+					class="grid h-9 w-9 place-items-center rounded-full bg-white text-brand-text shadow-[0_1px_2px_rgba(25,24,26,0.05)] transition-colors hover:text-brand focus-visible:ring-2 focus-visible:ring-brand/25"
+					href="/shops"
+					aria-label="상점"
+				>
+					<AppIcon name="shop" size={20} />
+				</a>
+				<button
+					class="grid h-9 w-9 place-items-center rounded-full bg-white text-brand-text shadow-[0_1px_2px_rgba(25,24,26,0.05)] transition-colors hover:text-brand focus-visible:ring-2 focus-visible:ring-brand/25"
+					type="button"
+					aria-label="시설 검색"
+					onclick={() => onSearchOpenChange(true)}
+				>
+					<AppIcon name="search" size={20} />
+				</button>
+			</div>
+		{/if}
 	</div>
 </header>

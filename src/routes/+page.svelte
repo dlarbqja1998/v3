@@ -21,6 +21,7 @@
 		getVisibleFacilityPlaces
 	} from '$lib/home/facility-discovery';
 	import { getHomeMapResetState } from '$lib/home/home-map-state';
+	import { formatHomeDate } from '$lib/home/home-date';
 	import {
 		CAMPUS_AREA_ID,
 		changeSelectedMapArea,
@@ -37,8 +38,10 @@
 	} from '$lib/domain/campus-boundary-visibility';
 	import type { BottomNavigationKey } from '$lib/domain/bottom-navigation';
 	import {
+		COLLAPSED_HEIGHT,
 		clampBottomSheetHeight,
 		getBottomSheetHeights,
+		getMapAttributionBottomOffset,
 		getNextBottomSheetDetent,
 		getWeatherWidgetBottomOffset,
 		resolveBottomSheetDetent,
@@ -82,6 +85,7 @@ type CafeteriaFeedbackMap = Record<
 
 	type SheetMode = 'home' | 'facility' | 'cafeteria' | 'shuttle' | 'pin' | 'place';
 	const WEATHER_WIDGET_GAP = 12;
+	const homeDateLabel = formatHomeDate(new Date());
 
 	let { data }: { data: PageData } = $props();
 
@@ -117,10 +121,11 @@ type CafeteriaFeedbackMap = Record<
 	let appShellElement = $state<HTMLElement>();
 	let sheetElement = $state<HTMLElement>();
 	let sheetDetent = $state<BottomSheetDetent>('collapsed');
-	let sheetHeight = $state(160);
+	let sheetHeight = $state(COLLAPSED_HEIGHT);
 	let mapViewportHeight = $state(844);
 	let bottomNavigationHeight = $state(73);
 	let weatherWidgetBottom = $state(getWeatherWidgetBottomOffset(844, 73, WEATHER_WIDGET_GAP));
+	let mapAttributionBottom = $state(getMapAttributionBottomOffset(844, 73));
 	let weather = $state<WeatherSnapshot | null>(null);
 	let weatherLoading = $state(true);
 	let weatherError = $state(false);
@@ -575,6 +580,7 @@ type CafeteriaFeedbackMap = Record<
 			navigationHeight,
 			WEATHER_WIDGET_GAP
 		);
+		mapAttributionBottom = getMapAttributionBottomOffset(viewportHeight, navigationHeight);
 	}
 
 	function setSheetDetent(detent: BottomSheetDetent) {
@@ -900,6 +906,7 @@ type CafeteriaFeedbackMap = Record<
 			activeCampusSpotId={activeCampusSpotId}
 			focusCampusSpotId={focusCampusSpotId}
 			showCampusBoundaries={showCampusBoundaries}
+			attributionBottomOffset={mapAttributionBottom}
 			{areaMode}
 			commercialZones={data.commercialZones}
 			{selectedCommercialZoneId}
@@ -908,6 +915,12 @@ type CafeteriaFeedbackMap = Record<
 		/>
 
 		{#if sheetMode === 'home' || sheetMode === 'facility'}
+			<div
+				class="pointer-events-none absolute inset-x-0 top-0 z-10 h-[200px]"
+				style="background: linear-gradient(180deg, #f4f3f1 0%, rgba(244, 243, 241, 0.92) 58%, rgba(244, 243, 241, 0) 100%);"
+				data-home-map-top-gradient
+				aria-hidden="true"
+			></div>
 			<HomeMapHeader
 				zones={data.commercialZones}
 				selectedAreaId={selectedMapAreaId}
@@ -979,6 +992,14 @@ type CafeteriaFeedbackMap = Record<
 				</button>
 
 			{#if sheetMode === 'home'}
+				<div class="mb-2 flex items-center justify-between gap-4">
+					<h2 class="m-0 text-left text-[18px] font-black leading-5 tracking-[-0.01em]">지금, 고려대학교</h2>
+					<span
+						class="shrink-0 text-[12px] leading-5 tracking-[0.04em] text-brand"
+						data-home-date
+						style="font-weight: 500;"
+					>{homeDateLabel}</span>
+				</div>
 				<div class="mb-3 grid grid-cols-3 gap-2">
 					<a
 						class="grid min-h-16 content-center gap-1 rounded-[14px] border border-brand-border bg-white p-2.5 text-left"

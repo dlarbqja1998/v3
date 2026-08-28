@@ -55,6 +55,35 @@ describe('관리자 핀 에디터 화면', () => {
 		expect(getSavedPinsForEditor?.(pins, 'selected')).toEqual([{ id: 'other' }]);
 	});
 
+	it('같은 핀을 편집하는 동안 좌표가 바뀌어도 저장 좌표를 다시 주입하지 않는다', () => {
+		const shouldHydratePinEditorDraft = (
+			PinEditorPageModule as typeof PinEditorPageModule & {
+				shouldHydratePinEditorDraft?: (hydratedPinId: string, selectedPinId: string) => boolean;
+			}
+		).shouldHydratePinEditorDraft;
+
+		expect(shouldHydratePinEditorDraft?.('', 'pin-1')).toBe(true);
+		expect(shouldHydratePinEditorDraft?.('pin-1', 'pin-1')).toBe(false);
+		expect(shouldHydratePinEditorDraft?.('pin-1', 'pin-2')).toBe(true);
+	});
+
+	it('저장하지 않은 수정사항이 있으면 이동 방식에 맞는 이탈 확인을 선택한다', () => {
+		const getPinEditorLeaveGuard = (
+			PinEditorPageModule as typeof PinEditorPageModule & {
+				getPinEditorLeaveGuard?: (
+					hasUnsavedChanges: boolean,
+					allowNextNavigation: boolean,
+					willUnload: boolean
+				) => 'allow' | 'dialog' | 'native';
+			}
+		).getPinEditorLeaveGuard;
+
+		expect(getPinEditorLeaveGuard?.(false, false, false)).toBe('allow');
+		expect(getPinEditorLeaveGuard?.(true, true, false)).toBe('allow');
+		expect(getPinEditorLeaveGuard?.(true, false, false)).toBe('dialog');
+		expect(getPinEditorLeaveGuard?.(true, false, true)).toBe('native');
+	});
+
 	it('네이버 SDK가 위치 스타일을 바꿔도 지도 높이가 유지되는 내부 컨테이너를 사용한다', () => {
 		const { body } = render(PinEditorPage, { props: { data, form: null } as never });
 

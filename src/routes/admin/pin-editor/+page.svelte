@@ -1,4 +1,17 @@
 <script module lang="ts">
+	export function shouldHydratePinEditorDraft(hydratedPinId: string, selectedPinId: string) {
+		return hydratedPinId !== selectedPinId;
+	}
+
+	export function getPinEditorLeaveGuard(
+		hasUnsavedChanges: boolean,
+		allowNextNavigation: boolean,
+		willUnload: boolean
+	): 'allow' | 'dialog' | 'native' {
+		if (!hasUnsavedChanges || allowNextNavigation) return 'allow';
+		return willUnload ? 'native' : 'dialog';
+	}
+
 	export function getSavedPinsForEditor<T extends { id: string }>(
 		pins: T[],
 		selectedPinId: string
@@ -8,8 +21,11 @@
 </script>
 
 <script lang="ts">
+	import { enhance } from '$app/forms';
+	import { beforeNavigate, goto } from '$app/navigation';
 	import { onDestroy, onMount, untrack } from 'svelte';
 	import { ArrowLeft, MapPin, Plus, Save, Trash2 } from '@lucide/svelte';
+	import type { SubmitFunction } from '@sveltejs/kit';
 	import { isFacilityCategorySlug, type FacilityCategorySlug } from '$lib/domain/facility-categories';
 	import { findContainingZoneId } from '$lib/domain/facility-zone';
 	import type { ActionData, PageData } from './$types';
@@ -36,6 +52,13 @@
 	let draftMarker: any;
 	let savedMarkers: any[] = [];
 	let loadError = $state('');
+	let hydratedPinId = $state('');
+	let hasUnsavedChanges = $state(false);
+	let allowNextNavigation = $state(false);
+	let showLeaveDialog = $state(false);
+	let pendingNavigationUrl = $state('');
+	let isSaving = $state(false);
+	let saveForm: HTMLFormElement;
 
 	const selectedCategory = $derived(
 		data.categories.find((category) => category.slug === categorySlug) ?? data.categories[0]
@@ -43,23 +66,32 @@
 	const selectedPin = $derived(data.pins.find((pin) => pin.id === selectedPinId) ?? null);
 
 	$effect(() => {
-		if (!selectedPin) return;
-		name = selectedPin.name;
-		scope = selectedPin.scope === 'outside' ? 'outside' : 'campus';
-		categorySlug = isFacilityCategorySlug(selectedPin.categorySlug)
-			? selectedPin.categorySlug
-			: 'convenience-store';
-		zoneId = selectedPin.zoneId ?? '';
-		latitude = selectedPin.latitude;
-		longitude = selectedPin.longitude;
-		hasCoordinate = true;
-		locationGuide = selectedPin.locationGuide ?? '';
-		description = selectedPin.description;
-		operatingHours = selectedPin.operatingHours ?? '';
-		phone = selectedPin.phone ?? '';
-		displayPriority = selectedPin.displayPriority;
-		isVisible = selectedPin.isVisible;
-		refreshDraftMarker(true);
+		const pin = selectedPin;
+		if (!pin) {
+			hydratedPinId = '';
+			return;
+		}
+		if (!shouldHydratePinEditorDraft(hydratedPinId, pin.id)) return;
+		hydratedPinId = pin.id;
+		untrack(() => {
+			name = pin.name;
+			scope = pin.scope === 'outside' ? 'outside' : 'campus';
+			categorySlug = isFacilityCategorySlug(pin.categorySlug)
+				? pin.categorySlug
+				: 'convenience-store';
+			zoneId = pin.zoneId ?? '';
+			latitude = pin.latitude;
+			longitude = pin.longitude;
+			hasCoordinate = true;
+			locationGuide = pin.locationGuide ?? '';
+			description = pin.description;
+			operatingHours = pin.operatingHours ?? '';
+			phone = pin.phone ?? '';
+			displayPriority = pin.displayPriority;
+			isVisible = pin.isVisible;
+			hasUnsavedChanges = false;
+			refreshDraftMarker(true);
+		});
 	});
 
 	$effect(() => {
@@ -67,11 +99,28 @@
 		renderSavedMarkers();
 	});
 
+	beforeNavigate((navigation) => {
+		const guard = getPinEditorLeaveGuard(
+			hasUnsavedChanges,
+			allowNextNavigation,
+			navigation.willUnload
+		);
+		if (guard === 'allow') {
+			allowNextNavigation = false;
+			return;
+		}
+		navigation.cancel();
+		if (guard === 'native') return;
+		pendingNavigationUrl = navigation.to?.url.href ?? '';
+		showLeaveDialog = true;
+	});
+
 	onMount(() => void initializeMap());
 	onDestroy(clearMarkers);
 
 	function startNewPin() {
 		selectedPinId = '';
+		hydratedPinId = '';
 		name = '';
 		scope = 'campus';
 		categorySlug = data.categories[0]?.slug ?? 'convenience-store';
@@ -83,6 +132,7 @@
 		phone = '';
 		displayPriority = Math.max(0, ...data.pins.map((pin) => pin.displayPriority + 1));
 		isVisible = true;
+		hasUnsavedChanges = false;
 		refreshDraftMarker(false);
 	}
 
@@ -90,6 +140,7 @@
 		scope = nextScope;
 		if (scope === 'campus') zoneId = '';
 		else if (hasCoordinate) inferZone();
+		markDirty();
 	}
 
 	function inferZone() {
@@ -132,8 +183,52 @@
 		longitude = nextLongitude;
 		hasCoordinate = true;
 		if (scope === 'outside') inferZone();
+		markDirty();
 		refreshDraftMarker(false);
 	}
+
+	function markDirty() {
+		hasUnsavedChanges = true;
+	}
+
+	function closeLeaveDialog() {
+		showLeaveDialog = false;
+		pendingNavigationUrl = '';
+	}
+
+	async function leaveWithoutSaving() {
+		const destination = pendingNavigationUrl;
+		if (!destination) return;
+		showLeaveDialog = false;
+		allowNextNavigation = true;
+		await goto(destination);
+	}
+
+	function saveBeforeLeaving() {
+		saveForm?.requestSubmit();
+	}
+
+	const enhanceSaveForm: SubmitFunction = () => {
+		isSaving = true;
+		const destination = pendingNavigationUrl;
+		return async ({ result, update }) => {
+			isSaving = false;
+			if (result.type === 'success' || result.type === 'redirect') {
+				hasUnsavedChanges = false;
+				showLeaveDialog = false;
+				pendingNavigationUrl = '';
+				allowNextNavigation = true;
+				if (destination) {
+					await goto(destination);
+					return;
+				}
+			} else {
+				showLeaveDialog = false;
+				pendingNavigationUrl = '';
+			}
+			await update();
+		};
+	};
 
 	function refreshDraftMarker(shouldFocus: boolean) {
 		if (!map || !window.naver) return;
@@ -233,7 +328,7 @@
 				<button class="mt-5 flex h-10 items-center gap-1 px-2 text-sm font-black text-brand" type="button" onclick={startNewPin}><Plus size={16} />새 핀</button>
 			</div>
 
-			<form method="POST" action="?/savePin" class="grid gap-4">
+			<form bind:this={saveForm} method="POST" action="?/savePin" class="grid gap-4" oninput={markDirty} use:enhance={enhanceSaveForm}>
 				<input type="hidden" name="id" value={selectedPinId} />
 				<input type="hidden" name="scope" value={scope} />
 				<input type="hidden" name="latitude" value={hasCoordinate ? latitude : ''} />
@@ -290,4 +385,18 @@
 			{#if loadError}<p class="absolute inset-0 grid place-items-center bg-white/90 p-6 text-center text-sm font-bold text-brand-muted">{loadError}</p>{/if}
 		</section>
 	</section>
+
+	{#if showLeaveDialog}
+		<div class="fixed inset-0 z-[1000] grid place-items-end bg-black/45 p-4 pb-[max(16px,env(safe-area-inset-bottom))] md:place-items-center" role="presentation">
+			<div class="w-full max-w-[430px] bg-white p-5 shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="leave-dialog-title">
+				<h2 id="leave-dialog-title" class="m-0 text-base font-black">저장하지 않은 수정사항이 있습니다</h2>
+				<p class="m-0 mt-2 text-sm leading-6 text-brand-muted">페이지를 나가기 전에 수정한 핀 정보를 저장할까요?</p>
+				<div class="mt-5 grid gap-2">
+					<button class="h-12 bg-brand text-sm font-black text-white disabled:opacity-50" type="button" disabled={isSaving} onclick={saveBeforeLeaving}>{isSaving ? '저장 중…' : '저장 후 나가기'}</button>
+					<button class="h-11 border-b border-brand-border text-sm font-bold text-red-700" type="button" disabled={isSaving} onclick={leaveWithoutSaving}>저장하지 않고 나가기</button>
+					<button class="h-11 text-sm font-bold text-brand-muted" type="button" disabled={isSaving} onclick={closeLeaveDialog}>계속 편집</button>
+				</div>
+			</div>
+		</div>
+	{/if}
 </main>

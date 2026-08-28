@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
 	clampBottomSheetHeight,
 	getBottomSheetHeights,
+	getMapAttributionBottomOffset,
 	getNextBottomSheetDetent,
 	getWeatherWidgetBottomOffset,
 	resolveBottomSheetDetent
@@ -10,7 +11,7 @@ import {
 describe('바텀시트 높이', () => {
 	it('화면과 하단 내비게이션 높이로 최소·중간·최대 단계를 계산한다', () => {
 		expect(getBottomSheetHeights(844, 73)).toEqual({
-			collapsed: 160,
+			collapsed: 184,
 			medium: 385.5,
 			expanded: 630.3333333333334
 		});
@@ -25,13 +26,17 @@ describe('바텀시트 높이', () => {
 	});
 
 	it('날씨 위젯은 활성 단계와 무관하게 최소 단계 바로 위에 고정한다', () => {
-		expect(getWeatherWidgetBottomOffset(844, 73, 12)).toBe(245);
+		expect(getWeatherWidgetBottomOffset(844, 73, 12)).toBe(269);
+	});
+
+	it('지도 출처 로고는 접힌 바텀시트 바로 위를 기준선으로 삼는다', () => {
+		expect(getMapAttributionBottomOffset(844, 73)).toBe(257);
 	});
 
 	it('드래그 높이를 최소와 최대 단계 사이로 제한한다', () => {
 		const heights = getBottomSheetHeights(844, 73);
 
-		expect(clampBottomSheetHeight(80, heights)).toBe(160);
+		expect(clampBottomSheetHeight(80, heights)).toBe(184);
 		expect(clampBottomSheetHeight(420, heights)).toBe(420);
 		expect(clampBottomSheetHeight(700, heights)).toBe(630.3333333333334);
 	});

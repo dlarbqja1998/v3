@@ -3,7 +3,7 @@ export type BottomSheetDetent = 'collapsed' | 'medium' | 'expanded';
 export type BottomSheetHeights = Record<BottomSheetDetent, number>;
 
 const DETENTS: BottomSheetDetent[] = ['collapsed', 'medium', 'expanded'];
-const COLLAPSED_HEIGHT = 160;
+export const COLLAPSED_HEIGHT = 184;
 const EXPANDED_VIEWPORT_RATIO = 5 / 6;
 const SWIPE_VELOCITY_THRESHOLD = 0.45;
 
@@ -34,6 +34,14 @@ export function getWeatherWidgetBottomOffset(
 	const collapsedHeight = getBottomSheetHeights(viewportHeight, safeNavigationHeight).collapsed;
 
 	return safeNavigationHeight + collapsedHeight + safeGap;
+}
+
+export function getMapAttributionBottomOffset(
+	viewportHeight: number,
+	navigationHeight: number
+): number {
+	const safeNavigationHeight = Math.max(0, navigationHeight);
+	return safeNavigationHeight + getBottomSheetHeights(viewportHeight, safeNavigationHeight).collapsed;
 }
 
 export function clampBottomSheetHeight(height: number, heights: BottomSheetHeights): number {

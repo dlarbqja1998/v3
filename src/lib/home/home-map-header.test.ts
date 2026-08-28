@@ -24,6 +24,47 @@ const handlers = {
 };
 
 describe('메인 지도 헤더', () => {
+	it('좌측 상단에 실제 골라바유 로고 이미지를 보여준다', () => {
+		const { body } = render(HomeMapHeader, {
+			props: {
+				zones,
+				selectedAreaId: 'campus',
+				...handlers
+			}
+		});
+
+		expect(body).toContain('src="/icon.png"');
+		expect(body).toContain('alt="골라바유"');
+	});
+
+	it('골라바유 로고를 크림슨 카드 없이 투명 아이콘으로 보여준다', () => {
+		const { body } = render(HomeMapHeader, {
+			props: {
+				zones,
+				selectedAreaId: 'campus',
+				...handlers
+			}
+		});
+
+		expect(body).toMatch(/<img class="[^"]*object-contain[^"]*" src="\/icon\.png"/);
+		expect(body).not.toMatch(/<img class="[^"]*bg-\[#8a1538\][^"]*" src="\/icon\.png"/);
+	});
+
+	it('기본 상태에서 상점 바로가기와 시설 검색 동작을 함께 제공한다', () => {
+		const { body } = render(HomeMapHeader, {
+			props: {
+				zones,
+				selectedAreaId: 'campus',
+				...handlers
+			}
+		});
+
+		expect(body).toContain('href="/shops"');
+		expect(body).toContain('aria-label="상점"');
+		expect(body).toContain('/20 icon/shop.svg');
+		expect(body).toContain('aria-label="시설 검색"');
+	});
+
 	it('캠퍼스를 선택하면 전체 학교 이름과 시설 검색 버튼을 제공한다', () => {
 		const { body } = render(HomeMapHeader, {
 			props: {

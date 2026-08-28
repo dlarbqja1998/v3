@@ -26,6 +26,7 @@ declare global {
 				Point: new (x: number, y: number) => unknown;
 				Position: {
 					BOTTOM_LEFT: unknown;
+					BOTTOM_RIGHT: unknown;
 				};
 				Size: new (width: number, height: number) => unknown;
 			};

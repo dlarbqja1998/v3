@@ -11,18 +11,17 @@
 	} = $props();
 </script>
 
-<nav class="pointer-events-auto border-b border-brand-border bg-white" aria-label="시설 카테고리">
-	<div class="flex snap-x gap-1 overflow-x-auto px-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+<nav class="pointer-events-auto relative z-20 bg-transparent" aria-label="시설 카테고리">
+	<div class="flex snap-x gap-2 overflow-x-auto px-5 pb-3 pt-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
 		{#each FACILITY_CATEGORIES as category}
 			<button
-				class={`relative flex h-12 shrink-0 snap-start items-center gap-1.5 px-3 text-[13px] transition-colors duration-200 ${selectedCategory === category.slug ? 'font-black text-brand' : 'font-bold text-brand-muted'}`}
+				class={`flex h-9 shrink-0 snap-start items-center gap-1.5 rounded-[14px] border px-3 text-[13px] shadow-[0_1px_2px_rgba(25,24,26,0.04)] transition-[color,background-color,border-color] duration-200 ${selectedCategory === category.slug ? 'border-brand bg-brand font-black text-white' : 'border-brand-border bg-white font-bold text-brand-muted'}`}
 				type="button"
 				aria-pressed={selectedCategory === category.slug}
 				onclick={() => onCategoryChange(category.slug)}
 			>
 				<AppIcon name={category.icon} size={20} />
 				{category.name}
-				<span class={`absolute inset-x-2 bottom-0 h-0.5 bg-brand transition-transform duration-200 ${selectedCategory === category.slug ? 'scale-x-100' : 'scale-x-0'}`}></span>
 			</button>
 		{/each}
 	</div>

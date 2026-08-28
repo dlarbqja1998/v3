@@ -1,13 +1,17 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { render } from 'svelte/server';
 
 import ShuttlePage from './+page.svelte';
 
 describe('셔틀 페이지', () => {
 	it('GB1 스타일의 독립 페이지에서 출발지 시간표와 지도 동작을 제공한다', () => {
+		vi.useFakeTimers();
+		vi.setSystemTime(new Date(2026, 7, 24, 12, 0));
+
 		const { body } = render(ShuttlePage, {
 			props: { data: { user: null } } as never
 		});
+		vi.useRealTimers();
 
 		expect(body).toContain('data-shuttle-page');
 		expect(body).toContain('셔틀버스');
