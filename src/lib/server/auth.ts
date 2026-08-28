@@ -1,6 +1,6 @@
 const encoder = new TextEncoder();
 const ADMIN_PASSWORD_FORMAT = 'pbkdf2-sha256';
-const ADMIN_PASSWORD_ITERATIONS = 310_000;
+const ADMIN_PASSWORD_ITERATIONS = 100_000;
 
 function bytesToHex(bytes: ArrayBuffer) {
 	return [...new Uint8Array(bytes)].map((byte) => byte.toString(16).padStart(2, '0')).join('');
