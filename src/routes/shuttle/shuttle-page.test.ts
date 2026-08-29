@@ -20,9 +20,9 @@ describe('셔틀 페이지', () => {
 		expect(body).toContain('data-shuttle-tabs');
 		expect(body).toContain('aria-label="방향 선택"');
 		expect(body).toContain('data-shuttle-tab-indicator');
-		expect(body).toContain('학교 출발');
-		expect(body).toContain('조치원역 출발');
-		expect(body).toMatch(/<button class="[^"]*outline-none[^"]*focus-visible:ring-2[^"]*"[^>]*aria-pressed="true">학교 출발/);
+		expect(body).toContain('조치원역 행');
+		expect(body).toContain('고려대 행');
+		expect(body).toMatch(/<button class="[^"]*outline-none[^"]*focus-visible:ring-2[^"]*"[^>]*aria-pressed="true">조치원역 행/);
 		expect(body).toContain('data-shuttle-next-card');
 		expect(body).toMatch(/<section class="[^"]*border-b[^"]*"[^>]*data-shuttle-next-card/);
 		expect(body).toContain('다음 셔틀까지');

@@ -187,7 +187,7 @@ export const shuttleServiceNotices: ShuttleServiceNotice[] = [
 ];
 
 export function getShuttleStopLabel(stopId: ShuttleStopId) {
-	return stopId === 'campus' ? '학교 출발' : '조치원역 출발';
+	return stopId === 'campus' ? '조치원역 행' : '고려대 행';
 }
 
 export function getStopName(stopId: ShuttleDestinationId) {
