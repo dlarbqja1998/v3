@@ -83,3 +83,14 @@
 
 - `040fada` — `fix: 셔틀 방향 탭 문구 수정`
 - `25f9e9d` — `feat: 행사 지도 탐색과 메인 시트 개선`
+- `e3bbe4d` — `feat: 식당 지도 탐색과 학식 연동 개선`
+
+## Git 및 배포
+
+- 식당 지도 탐색과 학식 연동 변경을 `origin/main`에 푸시했다.
+- `npm run deploy`로 Cloudflare Workers 배포를 완료했다.
+- 배포 주소: <https://v3.dlarbqja1998.workers.dev>
+- Cloudflare 배포 버전: `af33dbd8-928e-4615-ade7-d31f4642c6d6`
+- 배포된 메인과 학식 페이지의 HTTP 응답 코드 `200`을 확인했다.
+- `/cafeteria?cafeteria=faculty`에서 교직원 탭이 선택되는 것을 확인했다.
+- 공개 지도 API에서 `진리관 식당`, `교직원 식당`, `구시아 푸드마켓`, `bb.q CHICKEN`, `김밥전문점` 5곳이 식당으로 반환되는 것을 확인했다.
