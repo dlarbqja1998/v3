@@ -8,10 +8,11 @@ describe('시설 카테고리 필터칩', () => {
 			props: { selectedCategory: 'all', onCategoryChange: () => undefined }
 		});
 
-		for (const label of ['행사', '편의점', '카페', '서점', '복사실', '우체국', '크림슨스토어', '헬스장']) {
+		for (const label of ['행사', '식당', '편의점', '카페', '서점', '복사실', '우체국', '크림슨스토어', '헬스장']) {
 			expect(body).toContain(label);
 		}
-		expect(body.indexOf('행사')).toBeLessThan(body.indexOf('편의점'));
+		expect(body.indexOf('행사')).toBeLessThan(body.indexOf('식당'));
+		expect(body.indexOf('식당')).toBeLessThan(body.indexOf('편의점'));
 		expect(body).not.toContain('학식');
 		expect(body).not.toContain('셔틀');
 	});

@@ -1,6 +1,7 @@
 import { getCampusEventStatus, type CampusEventTimeRange } from '$lib/domain/campus-events';
 
 const FACILITY_FILTER_ORDER = [
+	'restaurant',
 	'convenience-store',
 	'cafe',
 	'bookstore',

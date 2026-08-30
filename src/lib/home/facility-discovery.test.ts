@@ -63,6 +63,47 @@ describe('시설 탐색 상태', () => {
 		).toEqual(['gs']);
 	});
 
+	it('식당 필터에는 관리자 식당과 기존 두 학식당을 함께 표시한다', () => {
+		const restaurant = facility({
+			id: 'bbq',
+			name: 'BBQ',
+			categorySlug: 'restaurant',
+			categoryName: '식당',
+			icon: 'food'
+		});
+		const jinri = facility({
+			id: 'cafeteria-jinri',
+			name: '진리관 식당',
+			type: 'cafeteria',
+			categorySlug: 'restaurant',
+			categoryName: '식당',
+			icon: 'food',
+			displayPriority: 3
+		});
+		const faculty = facility({
+			id: 'cafeteria-faculty',
+			name: '교직원 식당',
+			type: 'cafeteria',
+			categorySlug: 'restaurant',
+			categoryName: '식당',
+			icon: 'food',
+			displayPriority: 4
+		});
+		const legacyCafeteria = facility({
+			id: 'legacy-student-center',
+			name: '학생회관 학식',
+			type: 'cafeteria',
+			categorySlug: 'cafeteria',
+			categoryName: '학식'
+		});
+
+		expect(
+			getVisibleFacilityPlaces([faculty, legacyCafeteria, restaurant, jinri], {
+				scope: 'campus', zoneId: 'all', categorySlug: 'restaurant', query: ''
+			}).map((place) => place.id)
+		).toEqual(['bbq', 'cafeteria-jinri', 'cafeteria-faculty']);
+	});
+
 	it('요청한 활성 핀이 없으면 첫 시설을 선택한다', () => {
 		const places = [facility({ id: 'first', name: '첫 시설' }), facility({ id: 'second', name: '둘째 시설' })];
 		expect(getNextActivePlaceId(places, 'missing')).toBe('first');

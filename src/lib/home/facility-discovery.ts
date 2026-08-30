@@ -10,10 +10,19 @@ export type FacilityDiscoveryState = {
 export function getVisibleFacilityPlaces(places: Place[], state: FacilityDiscoveryState) {
 	const query = state.query.trim().toLocaleLowerCase('ko');
 	return places
-		.filter((place) => place.type === 'facility' && place.isVisible && place.scope === state.scope)
+		.filter((place) => {
+			const isFacility = place.type === 'facility';
+			const isCafeteriaInRestaurantFilter =
+				state.categorySlug === 'restaurant' &&
+				place.type === 'cafeteria' &&
+				place.categorySlug === 'restaurant';
+			return (isFacility || isCafeteriaInRestaurantFilter) && place.isVisible && place.scope === state.scope;
+		})
 		.filter((place) => state.zoneId === 'all' || place.zoneId === state.zoneId)
 		.filter(
-			(place) => state.categorySlug === 'all' || place.categorySlug === state.categorySlug
+			(place) =>
+				state.categorySlug === 'all' ||
+				place.categorySlug === state.categorySlug
 		)
 		.filter(
 			(place) =>

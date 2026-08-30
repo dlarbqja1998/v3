@@ -1,12 +1,46 @@
 import { describe, expect, it } from 'vitest';
-import { staticFoodCourtVendors } from './cafeterias';
+import {
+	cafeteriaPlaces,
+	getCafeteriaPageHref,
+	getInitialCafeteriaIndex
+} from './cafeterias';
 
-describe('푸드코트 정적 메뉴', () => {
-	it('업체별 메뉴에 수정 가능한 식별자와 가격을 제공한다', () => {
-		const menu = staticFoodCourtVendors[0]?.menus[0];
+describe('주간 학식당 지도 장소', () => {
+	it('진리관과 교직원 좌표를 유지하면서 식당 카테고리로 제공한다', () => {
+		expect(cafeteriaPlaces).toHaveLength(2);
+		expect(cafeteriaPlaces.map((place) => place.id)).toEqual([
+			'cafeteria-jinri',
+			'cafeteria-faculty'
+		]);
+		for (const place of cafeteriaPlaces) {
+			expect(place).toEqual(
+				expect.objectContaining({
+					type: 'cafeteria',
+					categorySlug: 'restaurant',
+					categoryName: '식당',
+					icon: 'food'
+				})
+			);
+		}
+	});
 
-		expect(menu).toEqual(
-			expect.objectContaining({ id: expect.any(String), name: expect.any(String), price: expect.any(Number) })
-		);
+	it('진리관과 교직원만 해당 식당이 선택되는 학식 페이지 링크를 제공한다', () => {
+		expect(getCafeteriaPageHref(cafeteriaPlaces[0])).toBe('/cafeteria?cafeteria=jinri');
+		expect(getCafeteriaPageHref(cafeteriaPlaces[1])).toBe('/cafeteria?cafeteria=faculty');
+		expect(
+			getCafeteriaPageHref({
+				...cafeteriaPlaces[0],
+				id: 'restaurant-bbq',
+				type: 'facility'
+			})
+		).toBeNull();
+	});
+
+	it('요청한 학식당을 초기 선택하고 알 수 없는 값은 첫 식당으로 돌린다', () => {
+		const cafeterias = [{ id: 'jinri' }, { id: 'faculty' }];
+
+		expect(getInitialCafeteriaIndex(cafeterias, 'faculty')).toBe(1);
+		expect(getInitialCafeteriaIndex(cafeterias, 'unknown')).toBe(0);
+		expect(getInitialCafeteriaIndex([], 'faculty')).toBe(0);
 	});
 });

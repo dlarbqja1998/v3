@@ -11,11 +11,12 @@ import { getTodayMenuWithRefresh } from '$lib/server/cafeteria-cache';
 import { replaceCafeteriaOperatingHours } from '$lib/server/cafeteria-operating-hours';
 import type { Actions, PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ platform, locals }) => {
+export const load: PageServerLoad = async ({ platform, locals, url }) => {
 	const weeklyMenu = await getTodayMenuWithRefresh(platform);
 
 	return {
 		cafeterias: buildCafeteriaPanelItems(weeklyMenu),
+		initialCafeteriaId: url.searchParams.get('cafeteria'),
 		canEditOperatingHours: canEditCafeteriaOperatingHours(locals.user),
 		user: locals.user
 			? {

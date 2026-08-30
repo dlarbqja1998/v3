@@ -1,12 +1,17 @@
 import type { CafeteriaPanelItem, Place } from './places';
 
+const CAFETERIA_ID_BY_PLACE_ID: Record<string, string> = {
+	'cafeteria-jinri': 'jinri',
+	'cafeteria-faculty': 'faculty'
+};
+
 export const cafeteriaPlaces: Place[] = [
 	{
 		id: 'cafeteria-jinri',
 		type: 'cafeteria',
 		name: '진리관 식당',
-		categorySlug: 'cafeteria',
-		categoryName: '학식',
+		categorySlug: 'restaurant',
+		categoryName: '식당',
 		zoneId: 'front-gate',
 		scope: 'campus',
 		latitude: 36.61121812587927,
@@ -15,7 +20,7 @@ export const cafeteriaPlaces: Place[] = [
 		operatingHours: null,
 		phone: null,
 		description: '조식부터 석식까지 주간 식단을 확인할 수 있어요.',
-		icon: '식당',
+		icon: 'food',
 		isVisible: true,
 		displayPriority: 3
 	},
@@ -23,8 +28,8 @@ export const cafeteriaPlaces: Place[] = [
 		id: 'cafeteria-faculty',
 		type: 'cafeteria',
 		name: '교직원 식당',
-		categorySlug: 'cafeteria',
-		categoryName: '학식',
+		categorySlug: 'restaurant',
+		categoryName: '식당',
 		zoneId: 'front-gate',
 		scope: 'campus',
 		latitude: 36.610507457052316,
@@ -33,30 +38,29 @@ export const cafeteriaPlaces: Place[] = [
 		operatingHours: null,
 		phone: null,
 		description: '교직원 식당의 주간 중식과 석식 메뉴를 확인할 수 있어요.',
-		icon: '식당',
+		icon: 'food',
 		isVisible: true,
 		displayPriority: 4
-	},
-	{
-		id: 'cafeteria-foodcourt',
-		type: 'cafeteria',
-		name: '학생회관 푸드코트',
-		categorySlug: 'cafeteria',
-		categoryName: '학식',
-		zoneId: 'student-center',
-		scope: 'campus',
-		latitude: 36.610478424045624,
-		longitude: 127.2896423876288,
-		locationGuide: '학생회관',
-		operatingHours: null,
-		phone: null,
-		description: '바비든, 비비고고, 갑찌개가 있는 고정 메뉴 푸드코트예요.',
-		icon: '식당',
-		isVisible: true,
-		displayPriority: 5
 	}
 ];
 
+export function getCafeteriaPageHref(place: Pick<Place, 'id' | 'type'>): string | null {
+	if (place.type !== 'cafeteria') return null;
+	const cafeteriaId = CAFETERIA_ID_BY_PLACE_ID[place.id];
+	return cafeteriaId ? `/cafeteria?cafeteria=${cafeteriaId}` : null;
+}
+
+export function getInitialCafeteriaIndex(
+	cafeterias: Array<{ id: string }>,
+	requestedCafeteriaId: string | null | undefined
+): number {
+	const requestedIndex = cafeterias.findIndex(
+		(cafeteria) => cafeteria.id === requestedCafeteriaId
+	);
+	return requestedIndex >= 0 ? requestedIndex : 0;
+}
+
+// 기존 학식 평가·동기화 데이터의 호환을 위해 유지한다. 사용자 학식 화면에는 노출하지 않는다.
 export const staticFoodCourtVendors: NonNullable<CafeteriaPanelItem['staticVendors']> = [
 	{
 		id: 'babi',

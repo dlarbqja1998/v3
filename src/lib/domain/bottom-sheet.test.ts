@@ -4,6 +4,7 @@ import {
 	getBottomSheetHeights,
 	getMapAttributionBottomOffset,
 	getNextBottomSheetDetent,
+	getResultPanelInitialDetent,
 	getWeatherWidgetBottomOffset,
 	resolveBottomSheetDetent
 } from './bottom-sheet';
@@ -43,6 +44,11 @@ describe('바텀시트 높이', () => {
 });
 
 describe('바텀시트 스냅', () => {
+	it('시설 결과는 중간 높이로 열고 행사는 기존 접힘 높이를 유지한다', () => {
+		expect(getResultPanelInitialDetent('facility')).toBe('medium');
+		expect(getResultPanelInitialDetent('event')).toBe('collapsed');
+	});
+
 	it('천천히 놓으면 가장 가까운 단계에 스냅한다', () => {
 		const heights = getBottomSheetHeights(844, 73);
 

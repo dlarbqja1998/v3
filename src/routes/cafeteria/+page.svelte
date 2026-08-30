@@ -1,13 +1,14 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
-	import { onMount } from 'svelte';
+	import { onMount, untrack } from 'svelte';
 	import { ChevronDown, ChevronRight, ChevronUp, Clock3, MapPin, Pencil, Plus, Trash2 } from '@lucide/svelte';
 
 	import {
 		getCafeteriaOperatingStatus,
 		type CafeteriaOperatingHour
 	} from '$lib/domain/cafeteria-operating-hours';
+	import { getInitialCafeteriaIndex } from '$lib/domain/cafeterias';
 	import type { CafeteriaPanelItem, DailyMenu, MenuDayKey } from '$lib/domain/places';
 	import BottomNavigation from '$lib/navigation/BottomNavigation.svelte';
 	import LifestylePageHeader from '$lib/navigation/LifestylePageHeader.svelte';
@@ -27,8 +28,13 @@
 	];
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
-	let activeCafeteriaIndex = $state(0);
-	let activeDayKey = $state<MenuDayKey>('mon');
+	const initialCafeteriaIndex = untrack(() =>
+		getInitialCafeteriaIndex(data.cafeterias, data.initialCafeteriaId)
+	);
+	let activeCafeteriaIndex = $state(initialCafeteriaIndex);
+	let activeDayKey = $state<MenuDayKey>(
+		untrack(() => data.cafeterias[initialCafeteriaIndex]?.weeklyMenu?.todayKey ?? 'mon')
+	);
 	let expandedMealId = $state('');
 	let currentTime = $state(new Date());
 	let isOperatingHoursOpen = $state(false);
@@ -318,6 +324,14 @@
 					{/if}
 				</div>
 			{/if}
+
+			<a
+				class="mt-6 flex min-h-14 items-center justify-between border-y border-brand-border py-3 text-[13px] font-bold text-brand-muted transition-colors hover:text-brand"
+				href="/?panel=facility&category=restaurant"
+			>
+				<span>다른 교내 식당 찾기</span>
+				<ChevronRight size={16} strokeWidth={2.4} />
+			</a>
 		</div>
 
 		<BottomNavigation activeKey="cafeteria" containerClass="fixed inset-x-0 bottom-0 z-40 md:left-1/2 md:w-[min(100%,430px)] md:-translate-x-1/2" isAuthenticated={Boolean(data.user)} />

@@ -13,6 +13,7 @@ import { getHomeNotice } from '$lib/server/notices';
 import { listPublicCampusEvents } from '$lib/server/campus-events';
 import { getEventSpotlight, getInitialHomeEventId } from '$lib/home/home-events';
 import type { ShuttleStopId } from '$lib/domain/shuttle';
+import { isFacilityCategorySlug } from '$lib/domain/facility-categories';
 
 export async function load({ platform, cookies, locals, url }) {
 	const loadPolicy = getHomeLoadPolicy(url.searchParams.get('panel'));
@@ -55,6 +56,7 @@ export async function load({ platform, cookies, locals, url }) {
 	}
 	const requestedPlaceId = url.searchParams.get('place') ?? '';
 	const requestedEventId = url.searchParams.get('eventId') ?? '';
+	const requestedFacilityCategory = url.searchParams.get('category') ?? '';
 	const initialEventId =
 		loadPolicy.initialPanel === 'event'
 			? getInitialHomeEventId(campusEvents, requestedEventId)
@@ -97,6 +99,10 @@ export async function load({ platform, cookies, locals, url }) {
 						: loadPolicy.initialPanel,
 		initialPlaceId,
 		initialEventId,
+		initialFacilityCategory:
+			loadPolicy.initialPanel === 'facility' && isFacilityCategorySlug(requestedFacilityCategory)
+				? requestedFacilityCategory
+				: null,
 		initialShuttleStopId: loadPolicy.initialPanel === 'shuttle' ? initialShuttleStopId : null,
 		naverMapClientId: env.NAVER_MAP_CLIENT_ID ?? '',
 		user: locals.user

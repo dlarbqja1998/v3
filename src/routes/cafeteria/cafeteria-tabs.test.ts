@@ -33,8 +33,7 @@ describe('학식 식당 탭', () => {
 				data: {
 					cafeterias: [
 						{ id: 'jinri', name: '진리관', source: 'crawler', weeklyMenu },
-						{ id: 'faculty', name: '교직원 식당', source: 'crawler', weeklyMenu },
-						{ id: 'foodcourt', name: '푸드코트', source: 'static', staticVendors: [] }
+						{ id: 'faculty', name: '교직원 식당', source: 'crawler', weeklyMenu }
 					],
 					canEditOperatingHours: false,
 					user: null
@@ -49,8 +48,30 @@ describe('학식 식당 탭', () => {
 		expect(body).toContain('text-brand');
 		expect(body).toContain('text-brand-muted');
 		expect(body).toContain('font-bold text-brand-muted" type="button" aria-pressed="false">교직원');
+		expect(body).not.toContain('푸드코트');
 		expect(body).toContain('data-cafeteria-tab-indicator');
 		expect(body).toContain('transition-[transform,width] duration-300');
+	});
+
+	it('교직원 식당 링크로 진입하면 교직원 탭을 초기 선택한다', () => {
+		const { body } = render(CafeteriaPage, {
+			props: {
+				data: {
+					cafeterias: [
+						{ id: 'jinri', name: '진리관', source: 'crawler', weeklyMenu },
+						{ id: 'faculty', name: '교직원 식당', source: 'crawler', weeklyMenu }
+					],
+					initialCafeteriaId: 'faculty',
+					canEditOperatingHours: false,
+					user: null
+				},
+				form: null
+			} as never
+		});
+
+		expect(body).toContain('font-bold text-brand-muted" type="button" aria-pressed="false">진리관');
+		expect(body).toContain('font-black text-brand" type="button" aria-pressed="true">교직원');
+		expect(body).toContain('transform: translateX(100%);');
 	});
 
 	it('식당 탭은 마우스 선택 때 기본 검은 윤곽선 대신 키보드 포커스 표시만 사용한다', () => {
@@ -173,5 +194,21 @@ describe('학식 식당 탭', () => {
 		expect(body).toContain('data-lifestyle-page-header');
 		expect(body).toContain('오늘, 학식');
 		expect(body).toContain('sticky top-0 z-20');
+	});
+
+	it('상시 매장은 메인의 식당 필터로 이어준다', () => {
+		const { body } = render(CafeteriaPage, {
+			props: {
+				data: {
+					cafeterias: [{ id: 'jinri', name: '진리관', source: 'crawler', weeklyMenu }],
+					canEditOperatingHours: false,
+					user: null
+				},
+				form: null
+			} as never
+		});
+
+		expect(body).toContain('다른 교내 식당 찾기');
+		expect(body).toContain('href="/?panel=facility&amp;category=restaurant"');
 	});
 });

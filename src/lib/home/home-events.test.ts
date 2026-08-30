@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { getEventSpotlight, getHomeEventFilterOrder, getInitialHomeEventId } from './home-events';
 
 const categories = [
+	{ slug: 'restaurant', name: '식당', icon: 'food' },
 	{ slug: 'copy-room', name: '복사실', icon: 'print' },
 	{ slug: 'gym', name: '헬스장', icon: 'gym' },
 	{ slug: 'bookstore', name: '서점', icon: 'bookstore' },
@@ -18,7 +19,7 @@ function event(id: string, startsAt: string, endsAt: string) {
 describe('메인 행사 탐색', () => {
 	it('행사를 맨 앞에 두고 시설 카테고리를 승인된 순서로 정렬한다', () => {
 		expect(getHomeEventFilterOrder(categories).map((category) => category.slug)).toEqual([
-			'event', 'convenience-store', 'cafe', 'bookstore', 'copy-room', 'post-office', 'crimson-store', 'gym'
+			'event', 'restaurant', 'convenience-store', 'cafe', 'bookstore', 'copy-room', 'post-office', 'crimson-store', 'gym'
 		]);
 	});
 

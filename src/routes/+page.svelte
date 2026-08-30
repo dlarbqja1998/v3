@@ -5,6 +5,7 @@
 	import {
 		CalendarDays,
 		ChevronDown,
+		ChevronRight,
 		ChevronUp,
 		MapPin,
 		ThumbsDown,
@@ -41,6 +42,7 @@
 		getBottomSheetHeights,
 		getMapAttributionBottomOffset,
 		getNextBottomSheetDetent,
+		getResultPanelInitialDetent,
 		getWeatherWidgetBottomOffset,
 		resolveBottomSheetDetent,
 		type BottomSheetDetent
@@ -61,6 +63,7 @@
 		type ShuttleStopId
 	} from '$lib/domain/shuttle';
 	import { createOfferingKey, getVoteWindow, type OfferingFeedbackSummary } from '$lib/domain/cafeteria-feedback';
+	import { getCafeteriaPageHref } from '$lib/domain/cafeterias';
 	import type { PageData } from './$types';
 
 type MealItem = {
@@ -253,6 +256,9 @@ type CafeteriaFeedbackMap = Record<
 			openPlacePanel(data.initialPlaceId);
 		} else if (data.initialPanel === 'event' && data.initialEventId) {
 			openEventPanel(data.initialEventId);
+		} else if (data.initialPanel === 'facility') {
+			selectedFacilityCategory = data.initialFacilityCategory ?? 'all';
+			openFacilityResults();
 		}
 
 		const timer = window.setInterval(() => {
@@ -379,13 +385,13 @@ type CafeteriaFeedbackMap = Record<
 		if (data.campusEvents.length === 0) {
 			selectedFacilityCategory = 'event';
 			sheetMode = 'event';
-			setSheetDetent('collapsed');
+			setSheetDetent(getResultPanelInitialDetent('event'));
 			activeEventId = '';
 			return;
 		}
 		selectedFacilityCategory = 'event';
 		sheetMode = 'event';
-		setSheetDetent('collapsed');
+		setSheetDetent(getResultPanelInitialDetent('event'));
 		hasSelectedPinFilter = false;
 		activeCampusSpotId = '';
 		focusCampusSpotId = '';
@@ -411,7 +417,7 @@ type CafeteriaFeedbackMap = Record<
 
 	function openFacilityResults() {
 		sheetMode = 'facility';
-		setSheetDetent('collapsed');
+		setSheetDetent(getResultPanelInitialDetent('facility'));
 		hasSelectedPinFilter = true;
 		activeCampusSpotId = '';
 		focusCampusSpotId = '';
@@ -1112,6 +1118,7 @@ type CafeteriaFeedbackMap = Record<
 							onscroll={handleFacilityScroll}
 						>
 							{#each facilityPlaces as place}
+								{@const cafeteriaHref = getCafeteriaPageHref(place)}
 								<article class="w-full shrink-0 snap-center px-[18px]" aria-label={place.name}>
 									<div class="flex items-start gap-3 border-y border-brand-border py-3">
 										<span
@@ -1125,6 +1132,15 @@ type CafeteriaFeedbackMap = Record<
 											{/if}
 											{#if place.description}
 												<p class="m-0 mt-2 text-[13px] leading-relaxed text-brand-text">{place.description}</p>
+											{/if}
+											{#if cafeteriaHref}
+												<a
+													class="mt-2 inline-flex min-h-9 items-center gap-1 text-[13px] font-bold text-brand"
+													href={cafeteriaHref}
+												>
+													학식 페이지에서 보기
+													<ChevronRight size={14} strokeWidth={2.4} />
+												</a>
 											{/if}
 											<div class="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-brand-muted">
 												{#if place.operatingHours}<span>{place.operatingHours}</span>{/if}

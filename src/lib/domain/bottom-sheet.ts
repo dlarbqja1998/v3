@@ -1,11 +1,16 @@
 export type BottomSheetDetent = 'collapsed' | 'medium' | 'expanded';
 
 export type BottomSheetHeights = Record<BottomSheetDetent, number>;
+export type ResultPanelKind = 'event' | 'facility';
 
 const DETENTS: BottomSheetDetent[] = ['collapsed', 'medium', 'expanded'];
 export const COLLAPSED_HEIGHT = 104;
 const EXPANDED_VIEWPORT_RATIO = 5 / 6;
 const SWIPE_VELOCITY_THRESHOLD = 0.45;
+
+export function getResultPanelInitialDetent(kind: ResultPanelKind): BottomSheetDetent {
+	return kind === 'facility' ? 'medium' : 'collapsed';
+}
 
 export function getBottomSheetHeights(
 	viewportHeight: number,

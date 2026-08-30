@@ -1,4 +1,4 @@
-export type HomeInitialPanel = 'cafeteria' | 'shuttle' | 'pin' | 'place' | 'event' | null;
+export type HomeInitialPanel = 'cafeteria' | 'shuttle' | 'pin' | 'place' | 'event' | 'facility' | null;
 
 export type HomeLoadPolicy = {
 	initialPanel: HomeInitialPanel;
@@ -20,7 +20,14 @@ export function getHomeLoadPolicy(panel: string | null): HomeLoadPolicy {
 }
 
 function normalizePanel(panel: string | null): HomeInitialPanel {
-	if (panel === 'cafeteria' || panel === 'shuttle' || panel === 'pin' || panel === 'place' || panel === 'event') {
+	if (
+		panel === 'cafeteria' ||
+		panel === 'shuttle' ||
+		panel === 'pin' ||
+		panel === 'place' ||
+		panel === 'event' ||
+		panel === 'facility'
+	) {
 		return panel;
 	}
 
