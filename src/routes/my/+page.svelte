@@ -36,6 +36,7 @@
 			</section>
 
 			{#if isAdmin}<section class="mt-9" aria-labelledby="admin-title"><h2 id="admin-title" data-section-heading class="m-0 border-b border-brand-border pb-3 text-[15px] font-black tracking-[-0.01em]">관리자 도구</h2>
+				<a class="menu-row pl-3 pr-1" data-menu-row href="/admin/events"><span>행사 관리</span><ChevronRight size={18} /></a>
 				<a class="menu-row pl-3 pr-1" data-menu-row href="/admin/pin-editor"><span>핀 수정하기</span><ChevronRight size={18} /></a>
 				<a class="menu-row pl-3 pr-1" data-menu-row href="/admin/onboarding-preview"><span>온보딩 미리보기</span><ChevronRight size={18} /></a>
 				<a class="menu-row pl-3 pr-1" data-menu-row href="/admin/notices"><span>공지 관리</span><ChevronRight size={18} /></a>

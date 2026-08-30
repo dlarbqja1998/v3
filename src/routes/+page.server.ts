@@ -10,6 +10,8 @@ import {
 import { getOrCreateVoterHash, getWeeklyCafeteriaFeedback } from '$lib/server/cafeteria-feedback';
 import { getHomeLoadPolicy } from '$lib/server/home-load-policy';
 import { getHomeNotice } from '$lib/server/notices';
+import { listPublicCampusEvents } from '$lib/server/campus-events';
+import { getEventSpotlight, getInitialHomeEventId } from '$lib/home/home-events';
 import type { ShuttleStopId } from '$lib/domain/shuttle';
 
 export async function load({ platform, cookies, locals, url }) {
@@ -37,6 +39,12 @@ export async function load({ platform, cookies, locals, url }) {
 	}
 
 	const homeData = await getHomeData(env.DATABASE_URL, weeklyMenu);
+	let campusEvents: Awaited<ReturnType<typeof listPublicCampusEvents>> = [];
+	try {
+		campusEvents = await listPublicCampusEvents(env.DATABASE_URL);
+	} catch (error) {
+		console.error('메인 행사 조회 실패:', error);
+	}
 	let homeNotice = null;
 	if (env.DATABASE_URL) {
 		try {
@@ -46,6 +54,11 @@ export async function load({ platform, cookies, locals, url }) {
 		}
 	}
 	const requestedPlaceId = url.searchParams.get('place') ?? '';
+	const requestedEventId = url.searchParams.get('eventId') ?? '';
+	const initialEventId =
+		loadPolicy.initialPanel === 'event'
+			? getInitialHomeEventId(campusEvents, requestedEventId)
+			: '';
 	const initialShuttleStopId: ShuttleStopId =
 		url.searchParams.get('shuttleStop') === 'jochewon-station-back'
 		? 'jochewon-station-back'
@@ -70,10 +83,20 @@ export async function load({ platform, cookies, locals, url }) {
 
 	return {
 		...homeData,
+		campusEvents,
+		eventSpotlight: getEventSpotlight(campusEvents),
 		homeNotice,
 		cafeteriaFeedback,
-		initialPanel: initialPlaceId ? loadPolicy.initialPanel : loadPolicy.initialPanel === 'place' ? null : loadPolicy.initialPanel,
+		initialPanel:
+			loadPolicy.initialPanel === 'event'
+				? initialEventId ? 'event' : null
+				: initialPlaceId
+					? loadPolicy.initialPanel
+					: loadPolicy.initialPanel === 'place'
+						? null
+						: loadPolicy.initialPanel,
 		initialPlaceId,
+		initialEventId,
 		initialShuttleStopId: loadPolicy.initialPanel === 'shuttle' ? initialShuttleStopId : null,
 		naverMapClientId: env.NAVER_MAP_CLIENT_ID ?? '',
 		user: locals.user

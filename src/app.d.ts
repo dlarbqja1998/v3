@@ -53,6 +53,7 @@ declare global {
 		// interface PageState {}
 		interface Platform {
 			env?: {
+				EVENT_MEDIA?: import('$lib/server/event-media').EventMediaBucket;
 				GOLABAU_CACHE?: {
 					get(key: string): Promise<string | null>;
 					put(key: string, value: string, options?: { expirationTtl?: number }): Promise<void>;

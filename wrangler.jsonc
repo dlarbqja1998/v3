@@ -17,6 +17,12 @@
 			"id": "692a6da28f784bf2bf0179a894fda042"
 		}
 	],
+	"r2_buckets": [
+		{
+			"binding": "EVENT_MEDIA",
+			"bucket_name": "golabau-media"
+		}
+	],
 	"observability": {
 		"enabled": true
 	}

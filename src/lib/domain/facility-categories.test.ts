@@ -6,11 +6,11 @@ describe('시설 핀 고정 카테고리', () => {
 		expect(FACILITY_CATEGORIES.map(({ slug, icon }) => [slug, icon])).toEqual([
 			['convenience-store', 'convenience_store_GS'],
 			['cafe', 'cafe'],
+			['bookstore', 'bookstore'],
 			['copy-room', 'print'],
-			['crimson-store', 'crimson_store'],
-			['gym', 'gym'],
 			['post-office', 'post_office'],
-			['bookstore', 'bookstore']
+			['crimson-store', 'crimson_store'],
+			['gym', 'gym']
 		]);
 	});
 

@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
-	import { ChevronLeft, ChevronRight, MapPin, X } from '@lucide/svelte';
+	import { ChevronRight, MapPin } from '@lucide/svelte';
 
 	import BottomNavigation from '$lib/navigation/BottomNavigation.svelte';
+	import LifestylePageHeader from '$lib/navigation/LifestylePageHeader.svelte';
 	import {
 		formatMinutesLeft,
 		getCurrentShuttle,
@@ -53,15 +53,6 @@
 		activeStopId = stopId;
 	}
 
-	function goBack() {
-		if (window.history.length > 1) {
-			window.history.back();
-			return;
-		}
-
-		goto('/');
-	}
-
 	function getInitialShuttleStopId(pageData: PageData): ShuttleStopId {
 		return pageData.initialShuttleStopId === 'jochewon-station-back'
 			? 'jochewon-station-back'
@@ -104,25 +95,7 @@
 		aria-label="셔틀"
 		data-shuttle-page
 	>
-		<header class="sticky top-0 z-20 flex min-h-14 items-center justify-center bg-white px-5 pt-[max(8px,env(safe-area-inset-top))]" data-shuttle-header>
-			<button
-				class="absolute left-5 grid h-11 w-11 place-items-center rounded-full text-brand-text outline-none transition-colors hover:bg-brand-map focus-visible:ring-2 focus-visible:ring-brand/25"
-				type="button"
-				aria-label="뒤로 가기"
-				onclick={goBack}
-			>
-				<ChevronLeft size={21} strokeWidth={2} />
-			</button>
-			<h1 class="m-0 text-[16px] font-black tracking-[-0.02em]">셔틀버스</h1>
-			<button
-				class="absolute right-5 grid h-11 w-11 place-items-center rounded-full text-brand-text outline-none transition-colors hover:bg-brand-map focus-visible:ring-2 focus-visible:ring-brand/25"
-				type="button"
-				aria-label="셔틀 닫기"
-				onclick={() => goto('/')}
-			>
-				<X size={20} strokeWidth={2} />
-			</button>
-		</header>
+		<LifestylePageHeader title="오늘, 셔틀" closeLabel="셔틀 닫기" />
 
 		<div class="px-5 py-4">
 			<div class="relative flex border-b border-brand-border" aria-label="방향 선택" data-shuttle-tabs>

@@ -6,11 +6,11 @@ export const FACILITY_CATEGORIES = [
 		displayOrder: 1
 	},
 	{ slug: 'cafe', name: '카페', icon: 'cafe', displayOrder: 2 },
-	{ slug: 'copy-room', name: '복사실', icon: 'print', displayOrder: 3 },
-	{ slug: 'crimson-store', name: '크림슨스토어', icon: 'crimson_store', displayOrder: 4 },
-	{ slug: 'gym', name: '헬스장', icon: 'gym', displayOrder: 5 },
-	{ slug: 'post-office', name: '우체국', icon: 'post_office', displayOrder: 6 },
-	{ slug: 'bookstore', name: '서점', icon: 'bookstore', displayOrder: 7 }
+	{ slug: 'bookstore', name: '서점', icon: 'bookstore', displayOrder: 3 },
+	{ slug: 'copy-room', name: '복사실', icon: 'print', displayOrder: 4 },
+	{ slug: 'post-office', name: '우체국', icon: 'post_office', displayOrder: 5 },
+	{ slug: 'crimson-store', name: '크림슨스토어', icon: 'crimson_store', displayOrder: 6 },
+	{ slug: 'gym', name: '헬스장', icon: 'gym', displayOrder: 7 }
 ] as const;
 
 export type FacilityCategorySlug = (typeof FACILITY_CATEGORIES)[number]['slug'];

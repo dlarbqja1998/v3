@@ -5,22 +5,34 @@ import HomePage from './+page.svelte';
 const data = {
 	places: [],
 	cafeterias: [],
-	todayCafeteria: { summary: '' },
+	todayCafeteria: { summary: '돈가스, 된장국', mealType: '점심', updatedAt: '2026-08-30' },
+	nextShuttle: { stopName: '학술정보원 앞', departureTime: '16:20', routeName: '조치원역 행' },
 	cafeteriaFeedback: {},
 	commercialZones: [],
 	homeNotice: null,
+	campusEvents: [],
+	eventSpotlight: {
+		id: 'event-spotlight',
+		title: '메인에서 제거할 행사 홍보',
+		category: '축제',
+		startsAt: new Date('2026-08-30T02:00:00.000Z'),
+		endsAt: new Date('2026-08-30T05:00:00.000Z'),
+		locationName: '중앙광장',
+		images: []
+	},
 	initialPanel: null,
 	initialPlaceId: null,
+	initialEventId: null,
 	initialShuttleStopId: null,
 	naverMapClientId: '',
 	user: null
 };
 
 describe('메인 첫 바텀시트', () => {
-	it('첫 진입 시 184px 높이로 보여준다', () => {
+	it('첫 진입 시 맥락 헤더만 보이는 104px 높이로 접힌다', () => {
 		const { body } = render(HomePage, { props: { data } as never });
 
-		expect(body).toContain('height: 184px;');
+		expect(body).toContain('height: 104px;');
 	});
 
 	it('현재 학교 맥락을 왼쪽 상단 제목으로 보여준다', () => {
@@ -33,6 +45,15 @@ describe('메인 첫 바텀시트', () => {
 		const { body } = render(HomePage, { props: { data } as never });
 
 		expect(body).toMatch(/data-home-date[^>]*>[A-Z]{3} · \d{2} [A-Z]{3}</);
+	});
+
+	it('첫 진입에서는 학식·셔틀·행사 콘텐츠를 중복 노출하지 않는다', () => {
+		const { body } = render(HomePage, { props: { data } as never });
+
+		expect(body).not.toContain('data-home-quick-status');
+		expect(body).not.toContain('돈가스, 된장국');
+		expect(body).not.toContain('다음 셔틀');
+		expect(body).not.toContain('메인에서 제거할 행사 홍보');
 	});
 
 	it('상단 헤더부터 필터칩 아래까지 200px 흰색 그라데이션을 겹친다', () => {

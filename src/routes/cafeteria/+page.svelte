@@ -10,6 +10,7 @@
 	} from '$lib/domain/cafeteria-operating-hours';
 	import type { CafeteriaPanelItem, DailyMenu, MenuDayKey } from '$lib/domain/places';
 	import BottomNavigation from '$lib/navigation/BottomNavigation.svelte';
+	import LifestylePageHeader from '$lib/navigation/LifestylePageHeader.svelte';
 	import type { ActionData, PageData } from './$types';
 
 	type MealSection = { id: string; name: string; items: string[] };
@@ -208,9 +209,7 @@
 		class="relative min-h-[100dvh] w-full bg-brand-surface pb-[calc(var(--bottom-navigation-height)+20px)] shadow-[0_24px_60px_rgba(103,16,43,0.18)] md:min-h-[min(860px,calc(100vh-48px))] md:w-[min(100%,430px)] md:rounded-[28px] md:border md:border-brand-border"
 		aria-label="학식"
 	>
-		<header class="sticky top-0 z-20 border-b border-brand-border bg-white px-5 pb-4 pt-[max(20px,env(safe-area-inset-top))]" data-cafeteria-header>
-			<h1 class="m-0 text-center text-lg font-black">오늘의 학식</h1>
-		</header>
+		<LifestylePageHeader title="오늘, 학식" closeLabel="학식 닫기" />
 
 		<div class="px-5 py-5">
 			<div class="relative flex border-b border-brand-border" aria-label="식당 선택" data-cafeteria-tabs>

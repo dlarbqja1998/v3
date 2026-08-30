@@ -63,6 +63,47 @@ export const notices = pgTable(
 	]
 );
 
+export const campusEvents = pgTable(
+	'campus_events',
+	{
+		id: uuid('id').defaultRandom().primaryKey(),
+		title: varchar('title', { length: 120 }).notNull(),
+		category: varchar('category', { length: 20 }).notNull(),
+		organizer: varchar('organizer', { length: 120 }).notNull(),
+		description: text('description').notNull(),
+		startsAt: timestamp('starts_at', { withTimezone: true }).notNull(),
+		endsAt: timestamp('ends_at', { withTimezone: true }).notNull(),
+		locationName: varchar('location_name', { length: 160 }).notNull(),
+		latitude: doublePrecision('latitude').notNull(),
+		longitude: doublePrecision('longitude').notNull(),
+		isVisible: boolean('is_visible').notNull().default(false),
+		createdBy: integer('created_by').references(() => users.id, { onDelete: 'set null' }),
+		createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+		updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
+	},
+	(table) => [index('campus_events_public_idx').on(table.isVisible, table.startsAt, table.endsAt)]
+);
+
+export const campusEventImages = pgTable(
+	'campus_event_images',
+	{
+		id: uuid('id').defaultRandom().primaryKey(),
+		eventId: uuid('event_id')
+			.notNull()
+			.references(() => campusEvents.id, { onDelete: 'cascade' }),
+		objectKey: text('object_key').notNull(),
+		contentType: varchar('content_type', { length: 40 }).notNull(),
+		byteSize: integer('byte_size').notNull(),
+		displayOrder: integer('display_order').notNull().default(0),
+		isCover: boolean('is_cover').notNull().default(false),
+		createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
+	},
+	(table) => [
+		uniqueIndex('campus_event_images_object_key_unique').on(table.objectKey),
+		index('campus_event_images_event_order_idx').on(table.eventId, table.displayOrder)
+	]
+);
+
 export const supportInquiries = pgTable(
 	'support_inquiries',
 	{

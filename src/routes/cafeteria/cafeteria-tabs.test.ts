@@ -170,7 +170,8 @@ describe('학식 식당 탭', () => {
 			} as never
 		});
 
-		expect(body).toContain('data-cafeteria-header');
-		expect(body).toContain('sticky top-0 z-20 border-b border-brand-border bg-white');
+		expect(body).toContain('data-lifestyle-page-header');
+		expect(body).toContain('오늘, 학식');
+		expect(body).toContain('sticky top-0 z-20');
 	});
 });

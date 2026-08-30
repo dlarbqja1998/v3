@@ -3,14 +3,12 @@
 	import { goto } from '$app/navigation';
 	import { env as publicEnv } from '$env/dynamic/public';
 	import {
-		Bus,
+		CalendarDays,
 		ChevronDown,
 		ChevronUp,
 		MapPin,
 		ThumbsDown,
-		ThumbsUp,
-		Utensils,
-		Users
+		ThumbsUp
 	} from '@lucide/svelte';
 	import BottomNavigation from '$lib/navigation/BottomNavigation.svelte';
 	import FacilityFilterChips from '$lib/home/FacilityFilterChips.svelte';
@@ -56,6 +54,7 @@
 	import type { CafeteriaPanelItem, DailyMenu, MenuDayKey } from '$lib/domain/places';
 	import {
 		formatMinutesLeft,
+		getNextAvailableShuttle,
 		getUpcomingShuttles,
 		shuttleSchedules,
 		shuttleStops,
@@ -83,7 +82,7 @@ type CafeteriaFeedbackMap = Record<
 		items: MealItem[];
 	};
 
-	type SheetMode = 'home' | 'facility' | 'cafeteria' | 'shuttle' | 'pin' | 'place';
+	type SheetMode = 'home' | 'event' | 'facility' | 'cafeteria' | 'shuttle' | 'pin' | 'place';
 	const WEATHER_WIDGET_GAP = 12;
 	const homeDateLabel = formatHomeDate(new Date());
 
@@ -101,6 +100,7 @@ type CafeteriaFeedbackMap = Record<
 	let facilitySearchQuery = $state('');
 	let hasSelectedPinFilter = $state(false);
 	let activePlaceId = $state('');
+	let activeEventId = $state('');
 	let activeCampusSpotId = $state('');
 	let focusCampusSpotId = $state(DEFAULT_HOME_CAMPUS_SPOT_ID);
 	let homeFocusRequestId = $state(0);
@@ -114,6 +114,7 @@ type CafeteriaFeedbackMap = Record<
 	let expandedMealId = $state('');
 	let cafeteriaScroller = $state<HTMLDivElement>();
 	let facilityScroller = $state<HTMLDivElement>();
+	let eventScroller = $state<HTMLDivElement>();
 	let shuttleScroller = $state<HTMLDivElement>();
 	let activeShuttleStopId = $state<ShuttleStopId>('campus');
 	let currentTime = $state(new Date());
@@ -179,6 +180,9 @@ type CafeteriaFeedbackMap = Record<
 						filteredPlaces[0] ??
 						null)
 	);
+	const activeEvent = $derived(
+		data.campusEvents.find((event) => event.id === activeEventId) ?? data.campusEvents[0] ?? null
+	);
 
 	const activeCampusSpot = $derived<CampusSpot | null>(
 		campusSpots.find((spot) => spot.id === activeCampusSpotId) ?? null
@@ -208,7 +212,7 @@ type CafeteriaFeedbackMap = Record<
 	);
 
 	const placeFocusTargetRatio = $derived(
-		sheetMode === 'place' || sheetMode === 'facility' || sheetMode === 'shuttle'
+		sheetMode === 'place' || sheetMode === 'facility' || sheetMode === 'shuttle' || sheetMode === 'event'
 			? getAvailableMapMarkerTargetRatio({
 					mapHeight: mapViewportHeight,
 					navigationHeight: bottomNavigationHeight,
@@ -229,10 +233,9 @@ type CafeteriaFeedbackMap = Record<
 			null
 	);
 
-	const cafeteriaSummary = $derived(createCafeteriaSummary(data.cafeterias, data.todayCafeteria.summary));
 	const activeMealSections = $derived(buildMealSections(activeCafeteria, selectedMenuDay));
 	const upcomingShuttles = $derived(getUpcomingShuttles(currentTime, activeShuttleStopId, 5));
-	const nextShuttle = $derived(getUpcomingShuttles(currentTime, undefined, 1)[0] ?? null);
+	const nextShuttle = $derived(getNextAvailableShuttle(currentTime));
 
 	onMount(() => {
 		const weatherAbortController = new AbortController();
@@ -248,6 +251,8 @@ type CafeteriaFeedbackMap = Record<
 			openPinPanel();
 		} else if (data.initialPanel === 'place' && data.initialPlaceId) {
 			openPlacePanel(data.initialPlaceId);
+		} else if (data.initialPanel === 'event' && data.initialEventId) {
+			openEventPanel(data.initialEventId);
 		}
 
 		const timer = window.setInterval(() => {
@@ -361,9 +366,41 @@ type CafeteriaFeedbackMap = Record<
 	}
 
 	function selectFacilityCategory(categorySlug: string) {
+		if (categorySlug === 'event') {
+			openEventPanel();
+			return;
+		}
 		selectedFacilityCategory = categorySlug;
 		facilitySearchQuery = '';
 		openFacilityResults();
+	}
+
+	function openEventPanel(eventId = '') {
+		if (data.campusEvents.length === 0) {
+			selectedFacilityCategory = 'event';
+			sheetMode = 'event';
+			setSheetDetent('collapsed');
+			activeEventId = '';
+			return;
+		}
+		selectedFacilityCategory = 'event';
+		sheetMode = 'event';
+		setSheetDetent('collapsed');
+		hasSelectedPinFilter = false;
+		activeCampusSpotId = '';
+		focusCampusSpotId = '';
+		activePlaceId = '';
+		activeEventId = data.campusEvents.some((event) => event.id === eventId)
+			? eventId
+			: data.campusEvents[0].id;
+		homeFocusRequestId += 1;
+		requestAnimationFrame(() => {
+			const index = data.campusEvents.findIndex((event) => event.id === activeEventId);
+			eventScroller?.scrollTo({
+				left: Math.max(0, index) * eventScroller.clientWidth,
+				behavior: 'instant'
+			});
+		});
 	}
 
 	function updateFacilitySearch(query: string) {
@@ -416,6 +453,7 @@ type CafeteriaFeedbackMap = Record<
 		facilitySearchQuery = '';
 		facilitySearchOpen = false;
 		activePlaceId = '';
+		activeEventId = '';
 		activeCampusSpotId = '';
 		focusCampusSpotId = DEFAULT_HOME_CAMPUS_SPOT_ID;
 	}
@@ -449,6 +487,23 @@ type CafeteriaFeedbackMap = Record<
 		}
 
 		activePlaceId = placeId;
+	}
+
+	function selectEvent(eventId: string) {
+		const index = data.campusEvents.findIndex((event) => event.id === eventId);
+		if (index < 0) return;
+		activeEventId = eventId;
+		eventScroller?.scrollTo({ left: index * eventScroller.clientWidth, behavior: 'smooth' });
+		homeFocusRequestId += 1;
+	}
+
+	function handleEventScroll() {
+		if (!eventScroller) return;
+		const nextIndex = Math.round(eventScroller.scrollLeft / eventScroller.clientWidth);
+		const nextEvent = data.campusEvents[nextIndex];
+		if (!nextEvent || nextEvent.id === activeEventId) return;
+		activeEventId = nextEvent.id;
+		homeFocusRequestId += 1;
 	}
 
 	function selectCampusSpot(spotId: string) {
@@ -705,14 +760,21 @@ type CafeteriaFeedbackMap = Record<
 		return `${Number(parts[1])}.${Number(parts[2])}`;
 	}
 
-	function createCafeteriaSummary(cafeterias: CafeteriaPanelItem[], fallbackSummary: string) {
-		const jinri = cafeterias.find((cafeteria) => cafeteria.id === 'jinri');
-		const today = jinri?.weeklyMenu?.days.find((day) => day.key === jinri.weeklyMenu?.todayKey);
-		const lunch = today?.student.korean?.[0] ?? today?.student.special?.[0] ?? today?.student.snack?.[0];
-
-		if (lunch) return lunch;
-		if (jinri?.weeklyMenu) return `${formatShortDate(jinri.weeklyMenu.todayDate)} 주간 식단`;
-		return fallbackSummary || '주간 식단 확인';
+	function formatEventPeriod(startsAt: Date, endsAt: Date) {
+		const date = new Intl.DateTimeFormat('ko-KR', {
+			timeZone: 'Asia/Seoul',
+			month: 'numeric',
+			day: 'numeric'
+		});
+		const time = new Intl.DateTimeFormat('ko-KR', {
+			timeZone: 'Asia/Seoul',
+			hour: '2-digit',
+			minute: '2-digit',
+			hour12: false
+		});
+		return date.format(startsAt) === date.format(endsAt)
+			? `${date.format(startsAt)} ${time.format(startsAt)}–${time.format(endsAt)}`
+			: `${date.format(startsAt)}–${date.format(endsAt)}`;
 	}
 
 	function buildLegacyMealSections(cafeteria: CafeteriaPanelItem | null, day: DailyMenu | null): unknown[] {
@@ -897,7 +959,7 @@ type CafeteriaFeedbackMap = Record<
 			focusMode={sheetMode === 'cafeteria' || sheetMode === 'pin' ? 'top-band' : 'default'}
 			focusRequestId={homeFocusRequestId}
 			focusZoom={
-				sheetMode === 'place' || sheetMode === 'facility' || sheetMode === 'shuttle'
+				sheetMode === 'place' || sheetMode === 'facility' || sheetMode === 'shuttle' || sheetMode === 'event'
 					? getPlaceFocusZoom(DEFAULT_HOME_MAP_ZOOM)
 					: DEFAULT_HOME_MAP_ZOOM
 			}
@@ -912,9 +974,12 @@ type CafeteriaFeedbackMap = Record<
 			{selectedCommercialZoneId}
 			onMarkerClick={handleMarkerClick}
 			onCampusSpotClick={selectCampusSpot}
+			events={sheetMode === 'event' ? data.campusEvents : []}
+			{activeEventId}
+			onEventMarkerClick={selectEvent}
 		/>
 
-		{#if sheetMode === 'home' || sheetMode === 'facility'}
+		{#if sheetMode === 'home' || sheetMode === 'facility' || sheetMode === 'event'}
 			<div
 				class="pointer-events-none absolute inset-x-0 top-0 z-10 h-[200px]"
 				style="background: linear-gradient(180deg, #f4f3f1 0%, rgba(244, 243, 241, 0.92) 58%, rgba(244, 243, 241, 0) 100%);"
@@ -1000,69 +1065,26 @@ type CafeteriaFeedbackMap = Record<
 						style="font-weight: 500;"
 					>{homeDateLabel}</span>
 				</div>
-				<div class="mb-3 grid grid-cols-3 gap-2">
-					<a
-						class="grid min-h-16 content-center gap-1 rounded-[14px] border border-brand-border bg-white p-2.5 text-left"
-						href="/cafeteria"
-					>
-						<span class="flex items-center gap-1.5 text-[13px] font-black">
-							<Utensils size={15} strokeWidth={2.8} />
-							오늘 학식
-						</span>
-						<span class="text-xs leading-snug text-brand-muted">{cafeteriaSummary}</span>
-					</a>
-					<a
-						class="grid min-h-16 content-center gap-1 rounded-[14px] border border-brand-border bg-white p-2.5 text-left"
-						href="/shuttle"
-					>
-						<span class="flex items-center gap-1.5 text-[13px] font-black">
-							<Bus size={15} strokeWidth={2.8} />
-							다음 셔틀
-						</span>
-						<span class="text-xs leading-snug text-brand-muted">
-							{#if nextShuttle}
-								{formatMinutesLeft(nextShuttle.minutesLeft)} · {nextShuttle.departureTime}
-							{:else}
-								오늘 운행 종료
-							{/if}
-						</span>
-					</a>
-					<a
-						class="grid min-h-16 content-center gap-1 rounded-[14px] border border-brand-border bg-white p-2.5"
-						href="/meetups"
-					>
-						<span class="flex items-center gap-1.5 text-[13px] font-black">
-							<Users size={15} strokeWidth={2.8} />
-							모임
-						</span>
-						<span class="text-xs leading-snug text-brand-muted">점심 번개 열기</span>
-					</a>
-				</div>
-
-				{#if activePlace}
-					<article class="flex items-center justify-between gap-4 rounded-[18px] bg-brand-dark p-4 text-white">
-						<div>
-							<p class="m-0 text-xs font-black text-[#f4c7d4]">{activePlace.categoryName}</p>
-							<h2 class="mt-1 text-[19px] font-black">{activePlace.name}</h2>
-							<span class="mt-1.5 block text-[13px] leading-snug text-[#f7dfe6]">
-								{activePlace.description}
-							</span>
-						</div>
-						<a
-							class="flex shrink-0 items-center gap-1 rounded-full bg-white px-3 py-2.5 text-[13px] font-black text-brand-dark"
-							href={`/places/${activePlace.id}`}
-						>
-							<MapPin size={15} strokeWidth={3} />
-							자세히
-						</a>
-					</article>
-				{:else}
-					<p class="m-0 pt-3 text-center text-sm text-brand-muted">
-						{hasSelectedPinFilter
-							? '선택한 조건에 맞는 장소가 아직 없습니다.'
-							: '카테고리를 선택하면 지도에 핀이 표시됩니다.'}
-					</p>
+				{#if sheetDetent !== 'collapsed'}
+					<div class="mt-3 border-t border-brand-border pt-5" data-home-sheet-guidance>
+						<h3 class="m-0 text-[15px] font-bold text-brand-text">찾고 싶은 곳이 있나요?</h3>
+						<p class="m-0 mt-2 max-w-[290px] text-[13px] leading-5 text-brand-muted">
+							상단의 필터를 선택하거나 검색하면 원하는 교내 시설을 지도에서 바로 확인할 수 있어요.
+						</p>
+					</div>
 				{/if}
+			{:else if sheetMode === 'event'}
+				<div class="flex min-h-0 flex-1 flex-col">
+					<div class="mb-2 flex items-center justify-between gap-3"><div><p class="m-0 text-xs font-bold text-brand-muted">교내 행사 · {data.campusEvents.length}개</p><h2 class="m-0 mt-0.5 text-[18px] font-black">{activeEvent?.title ?? '행사'}</h2></div><button class="px-1 py-2 text-[13px] font-bold text-brand-muted" type="button" onclick={closePanel}>닫기</button></div>
+					{#if data.campusEvents.length > 0}
+						<div bind:this={eventScroller} class="-mx-[18px] flex snap-x snap-mandatory overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" onscroll={handleEventScroll}>
+							{#each data.campusEvents as event}
+								<article class="w-full shrink-0 snap-center px-[18px]" aria-label={event.title}><div class="flex items-start gap-3 border-y border-brand-border py-3">{#if event.images[0]}<img class="h-20 w-20 shrink-0 rounded-xl object-cover" src={event.images[0].url} alt="" />{:else}<span class="grid h-20 w-20 shrink-0 place-items-center rounded-xl bg-brand-map text-brand"><CalendarDays size={24} /></span>{/if}<div class="min-w-0 flex-1"><p class="m-0 text-[11px] font-black text-brand">{event.category}</p><h3 class="m-0 mt-1 truncate text-[16px] font-black">{event.title}</h3><p class="m-0 mt-1 text-[12px] text-brand-muted">{formatEventPeriod(event.startsAt, event.endsAt)}</p><p class="m-0 mt-1 truncate text-[12px] text-brand-muted">{event.locationName}</p><a class="mt-2 inline-block text-[12px] font-black text-brand" href={`/today/${event.id}`}>상세 보기</a></div></div></article>
+							{/each}
+						</div>
+						{#if data.campusEvents.length > 1}<div class="mt-3 flex justify-center gap-1.5">{#each data.campusEvents as event}<button class={`h-2 rounded-full transition-all ${activeEventId === event.id ? 'w-6 bg-brand' : 'w-2 bg-brand-border-strong'}`} type="button" aria-label={`${event.title} 보기`} onclick={() => selectEvent(event.id)}></button>{/each}</div>{/if}
+					{:else}<p class="m-0 border-y border-brand-border py-6 text-center text-sm font-bold text-brand-muted">진행 중이거나 7일 이내 예정된 행사가 없습니다.</p>{/if}
+				</div>
 			{:else if sheetMode === 'facility'}
 				<div class="flex min-h-0 flex-1 flex-col">
 					<div class="mb-2 flex items-center justify-between gap-3">

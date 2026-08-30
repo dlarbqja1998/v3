@@ -29,6 +29,15 @@ describe('홈 패널별 로드 정책', () => {
 		});
 	});
 
+	it('행사 딥링크는 학식 작업 없이 행사 패널을 연다', () => {
+		expect(getHomeLoadPolicy('event')).toEqual({
+			initialPanel: 'event',
+			needsCafeteriaMenu: false,
+			needsCafeteriaFeedback: false,
+			shouldSyncCafeteriaMenu: false
+		});
+	});
+
 	it('학식 패널만 상세 메뉴와 평가를 기다리고 기본 홈은 지도 데이터를 먼저 연다', () => {
 		expect(getHomeLoadPolicy('cafeteria')).toEqual({
 			initialPanel: 'cafeteria',

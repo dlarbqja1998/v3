@@ -38,6 +38,9 @@
 		showCampusBoundaries?: boolean;
 		onMarkerClick: (placeId: string) => void;
 		onCampusSpotClick?: (spotId: string) => void;
+		events?: { id: string; title: string; latitude: number; longitude: number }[];
+		activeEventId?: string;
+		onEventMarkerClick?: (eventId: string) => void;
 		attributionBottomOffset?: number;
 		areaMode?: MapAreaMode;
 		commercialZones?: CommercialZone[];
@@ -58,6 +61,9 @@
 		showCampusBoundaries = false,
 		onMarkerClick,
 		onCampusSpotClick,
+		events = [],
+		activeEventId = '',
+		onEventMarkerClick,
 		attributionBottomOffset = 0,
 		areaMode = 'campus',
 		commercialZones = [],
@@ -67,6 +73,7 @@
 	let mapElement: HTMLDivElement;
 	let map: any = null;
 	let markers: any[] = [];
+	let eventMarkers: any[] = [];
 	let campusMarkers: any[] = [];
 	let campusPolygons: any[] = [];
 	let commercialPolygons: any[] = [];
@@ -98,6 +105,7 @@
 	onDestroy(() => {
 		clearMapListeners();
 		clearMarkers();
+		clearEventMarkers();
 		clearCampusSpots();
 		clearCommercialZones();
 		map = null;
@@ -110,8 +118,10 @@
 			if (focusZoom !== undefined) map.setZoom(focusZoom);
 		}
 		syncMarkers(places, activePlaceId);
+		syncEventMarkers(events, activeEventId);
 		syncCampusSpots(campusSpots, activeCampusSpotId, showCampusBoundaries);
 		focusActivePlace(places, activePlaceId, focusMode, focusTargetRatio);
+		focusActiveEvent(events, activeEventId, focusMode, focusTargetRatio);
 		focusActiveCampusSpot(campusSpots, focusCampusSpotId, focusMode);
 	});
 
@@ -163,6 +173,7 @@
 			bindMapGuards();
 			isReady = true;
 			syncMarkers(places, activePlaceId);
+			syncEventMarkers(events, activeEventId);
 		} catch {
 			loadError = '네이버 지도를 불러오지 못했습니다.';
 		}
@@ -231,6 +242,32 @@
 
 			naver.maps.Event.addListener(marker, 'click', () => onMarkerClick(place.id));
 			markers.push(marker);
+		}
+	}
+
+	function syncEventMarkers(
+		nextEvents: { id: string; title: string; latitude: number; longitude: number }[],
+		nextActiveEventId: string
+	) {
+		clearEventMarkers();
+		const naver = window.naver;
+		if (!naver) return;
+		for (const event of nextEvents) {
+			const isActive = event.id === nextActiveEventId;
+			const marker = new naver.maps.Marker({
+				position: new naver.maps.LatLng(event.latitude, event.longitude),
+				map,
+				title: event.title,
+				zIndex: isActive ? 300 : 180,
+				icon: {
+					url: '/images/map/event-pin.svg',
+					size: new naver.maps.Size(isActive ? 50 : 42, isActive ? 50 : 42),
+					scaledSize: new naver.maps.Size(isActive ? 50 : 42, isActive ? 50 : 42),
+					anchor: new naver.maps.Point(isActive ? 25 : 21, isActive ? 47 : 40)
+				}
+			});
+			naver.maps.Event.addListener(marker, 'click', () => onEventMarkerClick?.(event.id));
+			eventMarkers.push(marker);
 		}
 	}
 
@@ -372,6 +409,18 @@
 		focusCoordinate(activeCampusSpot.center.latitude, activeCampusSpot.center.longitude, nextFocusMode);
 	}
 
+	function focusActiveEvent(
+		nextEvents: { id: string; latitude: number; longitude: number }[],
+		nextActiveEventId: string,
+		nextFocusMode: MapFocusMode,
+		nextFocusTargetRatio?: number
+	) {
+		if (!nextActiveEventId) return;
+		const activeEvent = nextEvents.find((event) => event.id === nextActiveEventId);
+		if (!activeEvent) return;
+		focusCoordinate(activeEvent.latitude, activeEvent.longitude, nextFocusMode, nextFocusTargetRatio);
+	}
+
 	function focusCoordinate(
 		latitude: number,
 		longitude: number,
@@ -403,6 +452,11 @@
 			marker.setMap(null);
 		}
 		markers = [];
+	}
+
+	function clearEventMarkers() {
+		for (const marker of eventMarkers) marker.setMap(null);
+		eventMarkers = [];
 	}
 
 	function clearCampusSpots() {
