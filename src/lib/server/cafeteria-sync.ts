@@ -29,9 +29,8 @@ const JINRI_SECTIONS: Array<{
 	{ section: 'dinner', mealSlot: 'dinner' }
 ];
 
-const FACULTY_SECTIONS: Array<{ section: 'lunch' | 'dinner'; mealSlot: CafeteriaMealSlot }> = [
-	{ section: 'lunch', mealSlot: 'lunch' },
-	{ section: 'dinner', mealSlot: 'dinner' }
+const FACULTY_SECTIONS: Array<{ section: 'lunch'; mealSlot: CafeteriaMealSlot }> = [
+	{ section: 'lunch', mealSlot: 'lunch' }
 ];
 
 function toDatabaseDate(menuDate: string) {

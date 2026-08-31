@@ -41,6 +41,42 @@ describe('주간 학식 메뉴 동기화 입력', () => {
 			])
 		);
 	});
+
+	it('교직원은 중식만 동기화하고 진리관 석식은 유지한다', () => {
+		const offerings = flattenWeeklyMenu({
+			weekStartDate: '2026.08.31',
+			todayKey: 'mon',
+			todayDate: '2026.08.31',
+			todayDay: '월',
+			days: [
+				{
+					key: 'mon',
+					date: '2026.08.31',
+					day: '월',
+					student: {
+						breakfast: [],
+						korean: [],
+						special: [],
+						snack: [],
+						dinner: ['진리관 석식']
+					},
+					faculty: { lunch: ['교직원 중식'], dinner: ['잘못 들어온 교직원 석식'] }
+				}
+			]
+		});
+
+		expect(offerings).toEqual(
+			expect.arrayContaining([
+				expect.objectContaining({ cafeteriaCode: 'faculty', displayName: '교직원 중식' }),
+				expect.objectContaining({ cafeteriaCode: 'jinri', displayName: '진리관 석식' })
+			])
+		);
+		expect(offerings).not.toEqual(
+			expect.arrayContaining([
+				expect.objectContaining({ cafeteriaCode: 'faculty', mealSlot: 'dinner' })
+			])
+		);
+	});
 });
 
 describe('푸드코트 메뉴 동기화 입력', () => {

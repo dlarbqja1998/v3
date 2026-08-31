@@ -265,7 +265,7 @@
 			openEventPanel(data.initialEventId);
 		} else if (data.initialPanel === 'facility') {
 			selectedFacilityCategory = data.initialFacilityCategory ?? 'all';
-			openFacilityResults();
+			openFacilityResults(data.initialFacilityPlaceId ?? '');
 		}
 
 		const timer = window.setInterval(() => {
@@ -428,15 +428,21 @@
 		if (query.trim()) openFacilityResults();
 	}
 
-	function openFacilityResults() {
+	function openFacilityResults(requestedPlaceId = '') {
 		sheetMode = 'facility';
 		setSheetDetent(getResultPanelInitialDetent('facility'));
 		hasSelectedPinFilter = true;
 		activeCampusSpotId = '';
 		focusCampusSpotId = '';
-		activePlaceId = getNextActivePlaceId(facilityPlaces, activePlaceId);
+		activePlaceId = getNextActivePlaceId(facilityPlaces, requestedPlaceId || activePlaceId);
 		homeFocusRequestId += 1;
-		requestAnimationFrame(() => facilityScroller?.scrollTo({ left: 0, behavior: 'instant' }));
+		requestAnimationFrame(() => {
+			const placeIndex = facilityPlaces.findIndex((place) => place.id === activePlaceId);
+			facilityScroller?.scrollTo({
+				left: Math.max(0, placeIndex) * facilityScroller.clientWidth,
+				behavior: 'instant'
+			});
+		});
 	}
 
 	async function loadCampusSpots() {
@@ -801,8 +807,7 @@
 
 		if (cafeteria.id === 'faculty') {
 			return [
-				{ id: 'faculty-lunch', name: '중식', items: day.faculty.lunch },
-				{ id: 'faculty-dinner', name: '석식', items: day.faculty.dinner }
+				{ id: 'faculty-lunch', name: '중식', items: day.faculty.lunch }
 			];
 		}
 
@@ -831,8 +836,7 @@
 
 		if (cafeteria.id === 'faculty') {
 			return [
-				{ id: 'faculty-lunch', name: '중식', items: createItems('lunch', 'lunch', day.faculty.lunch) },
-				{ id: 'faculty-dinner', name: '석식', items: createItems('dinner', 'dinner', day.faculty.dinner) }
+				{ id: 'faculty-lunch', name: '중식', items: createItems('lunch', 'lunch', day.faculty.lunch) }
 			];
 		}
 

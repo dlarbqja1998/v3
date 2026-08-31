@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
 	cafeteriaPlaces,
+	getCafeteriaMapHref,
 	getCafeteriaPageHref,
 	getInitialCafeteriaIndex
 } from './cafeterias';
@@ -34,6 +35,15 @@ describe('주간 학식당 지도 장소', () => {
 				type: 'facility'
 			})
 		).toBeNull();
+	});
+
+	it('지도에서 보기는 식당 필터의 해당 학식당으로 연결한다', () => {
+		expect(getCafeteriaMapHref(cafeteriaPlaces[0])).toBe(
+			'/?panel=facility&category=restaurant&place=cafeteria-jinri'
+		);
+		expect(getCafeteriaMapHref(cafeteriaPlaces[1])).toBe(
+			'/?panel=facility&category=restaurant&place=cafeteria-faculty'
+		);
 	});
 
 	it('요청한 학식당을 초기 선택하고 알 수 없는 값은 첫 식당으로 돌린다', () => {

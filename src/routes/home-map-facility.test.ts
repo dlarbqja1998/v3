@@ -15,7 +15,8 @@ describe('메인 지도 시설 탐색 연결', () => {
 	it('시설 딥링크는 요청 카테고리를 선택하고 시설 결과를 연다', () => {
 		expect(source).toContain("data.initialPanel === 'facility'");
 		expect(source).toContain("selectedFacilityCategory = data.initialFacilityCategory ?? 'all'");
-		expect(source).toContain('openFacilityResults()');
+		expect(source).toContain('openFacilityResults(data.initialFacilityPlaceId ?? \'\')');
+		expect(source).toContain('function openFacilityResults(requestedPlaceId = \'\')');
 	});
 
 	it('시설·학식·셔틀 결과를 좌우 스냅 목록으로 제공한다', () => {

@@ -74,6 +74,32 @@ describe('학식 식당 탭', () => {
 		expect(body).toContain('transform: translateX(100%);');
 	});
 
+	it('교직원 식당은 중식만 표시하고 석식은 표시하지 않는다', () => {
+		const facultyMenu = {
+			...weeklyMenu,
+			days: weeklyMenu.days.map((day, index) =>
+				index === 0
+					? { ...day, faculty: { lunch: ['교직원 중식'], dinner: ['교직원 석식'] } }
+					: day
+			)
+		};
+		const { body } = render(CafeteriaPage, {
+			props: {
+				data: {
+					cafeterias: [{ id: 'faculty', name: '교직원 식당', source: 'crawler', weeklyMenu: facultyMenu }],
+					initialCafeteriaId: 'faculty',
+					canEditOperatingHours: false,
+					user: null
+				},
+				form: null
+			} as never
+		});
+
+		expect(body).toContain('중식 메뉴 펼치기');
+		expect(body).not.toContain('석식 메뉴 펼치기');
+		expect(body).not.toContain('교직원 석식');
+	});
+
 	it('로그인 후 돌아오면 선택했던 요일을 초기 선택한다', () => {
 		const { body } = render(CafeteriaPage, {
 			props: {

@@ -15,7 +15,7 @@
 		getCafeteriaOperatingStatus,
 		type CafeteriaOperatingHour
 	} from '$lib/domain/cafeteria-operating-hours';
-	import { getInitialCafeteriaIndex } from '$lib/domain/cafeterias';
+	import { getCafeteriaMapHref, getInitialCafeteriaIndex } from '$lib/domain/cafeterias';
 	import type { CafeteriaPanelItem, DailyMenu, MenuDayKey } from '$lib/domain/places';
 	import BottomNavigation from '$lib/navigation/BottomNavigation.svelte';
 	import LifestylePageHeader from '$lib/navigation/LifestylePageHeader.svelte';
@@ -197,7 +197,7 @@
 
 	function viewOnMap() {
 		if (!activeCafeteria) return;
-		void goto(`/?panel=place&place=${activeCafeteria.placeId}`);
+		void goto(getCafeteriaMapHref({ id: activeCafeteria.placeId }));
 	}
 
 	function showToast(message: string) {
@@ -284,8 +284,7 @@
 		if (!cafeteria || !day || cafeteria.source !== 'crawler') return [];
 		if (cafeteria.id === 'faculty') {
 			return [
-				{ id: 'faculty-lunch', name: '중식', items: day.faculty.lunch, mealSlot: 'lunch', menuSection: 'lunch' },
-				{ id: 'faculty-dinner', name: '석식', items: day.faculty.dinner, mealSlot: 'dinner', menuSection: 'dinner' }
+				{ id: 'faculty-lunch', name: '중식', items: day.faculty.lunch, mealSlot: 'lunch', menuSection: 'lunch' }
 			];
 		}
 		return [

@@ -59,6 +59,17 @@ export async function load({ platform, locals, url }) {
 		homeData.places.some((place) => place.id === requestedPlaceId && place.type === 'cafeteria')
 			? requestedPlaceId
 			: '';
+	const initialFacilityPlaceId =
+		loadPolicy.initialPanel === 'facility' &&
+		homeData.places.some(
+			(place) =>
+				place.id === requestedPlaceId &&
+				place.scope === 'campus' &&
+				place.isVisible &&
+				(place.type === 'facility' || place.type === 'cafeteria')
+		)
+			? requestedPlaceId
+			: '';
 	let cafeteriaFeedback = {};
 	if (loadPolicy.needsCafeteriaFeedback) {
 		try {
@@ -87,6 +98,7 @@ export async function load({ platform, locals, url }) {
 						? null
 						: loadPolicy.initialPanel,
 		initialPlaceId,
+		initialFacilityPlaceId,
 		initialEventId,
 		initialFacilityCategory:
 			loadPolicy.initialPanel === 'facility' && isFacilityCategorySlug(requestedFacilityCategory)

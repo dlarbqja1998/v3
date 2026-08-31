@@ -37,7 +37,7 @@ export const cafeteriaPlaces: Place[] = [
 		locationGuide: '교직원 식당',
 		operatingHours: null,
 		phone: null,
-		description: '교직원 식당의 주간 중식과 석식 메뉴를 확인할 수 있어요.',
+		description: '교직원 식당의 주간 중식 메뉴를 확인할 수 있어요.',
 		icon: 'food',
 		isVisible: true,
 		displayPriority: 4
@@ -48,6 +48,10 @@ export function getCafeteriaPageHref(place: Pick<Place, 'id' | 'type'>): string 
 	if (place.type !== 'cafeteria') return null;
 	const cafeteriaId = CAFETERIA_ID_BY_PLACE_ID[place.id];
 	return cafeteriaId ? `/cafeteria?cafeteria=${cafeteriaId}` : null;
+}
+
+export function getCafeteriaMapHref(place: Pick<Place, 'id'>): string {
+	return `/?panel=facility&category=restaurant&place=${encodeURIComponent(place.id)}`;
 }
 
 export function getInitialCafeteriaIndex(
