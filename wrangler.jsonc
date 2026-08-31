@@ -4,6 +4,12 @@
 	"main": "worker/index.ts",
 	"compatibility_date": "2026-07-08",
 	"compatibility_flags": ["nodejs_als"],
+	"routes": [
+		{
+			"pattern": "golabau.com",
+			"custom_domain": true
+		}
+	],
 	"assets": {
 		"binding": "ASSETS",
 		"directory": ".svelte-kit/cloudflare"
