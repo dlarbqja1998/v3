@@ -32,6 +32,7 @@ function form(overrides: Record<string, string> = {}) {
 		startsAt: '2026-08-30T12:00',
 		endsAt: '2026-08-30T18:00',
 		locationName: '중앙광장',
+		externalUrl: '',
 		latitude: '36.6101',
 		longitude: '127.2872',
 		isVisible: 'on',
@@ -133,6 +134,29 @@ describe('교내 행사 도메인', () => {
 			ok: false,
 			message: '행사 카테고리를 확인해 주세요.'
 		});
+	});
+
+	it('박람회 카테고리와 HTTPS 안내 링크를 정규화한다', () => {
+		const result = normalizeCampusEventInput(
+			form({ category: '박람회', externalUrl: ' https://kusejong-jobfair.com/ ' }),
+			{ coverImageCount: 1 }
+		);
+
+		expect(result).toMatchObject({
+			ok: true,
+			value: {
+				category: '박람회',
+				externalUrl: 'https://kusejong-jobfair.com/'
+			}
+		});
+	});
+
+	it('HTTP 또는 HTTPS가 아닌 안내 링크를 거부한다', () => {
+		expect(
+			normalizeCampusEventInput(form({ externalUrl: 'javascript:alert(1)' }), {
+				coverImageCount: 1
+			})
+		).toEqual({ ok: false, message: '안내 링크는 http 또는 https 주소로 입력해 주세요.' });
 	});
 
 	it('대표 이미지 없는 행사는 공개할 수 없다', () => {

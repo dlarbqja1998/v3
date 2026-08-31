@@ -1,4 +1,4 @@
-export const EVENT_CATEGORIES = ['축제', '공연', '전시', '강연', '체험', '기타'] as const;
+export const EVENT_CATEGORIES = ['축제', '공연', '전시', '박람회', '강연', '체험', '기타'] as const;
 
 export type CampusEventCategory = (typeof EVENT_CATEGORIES)[number];
 export type CampusEventStatus = 'ongoing' | 'upcoming' | 'ended';
@@ -17,6 +17,7 @@ export type CampusEventInput = {
 	category: CampusEventCategory;
 	organizer: string;
 	description: string;
+	externalUrl: string | null;
 	startsAt: Date;
 	endsAt: Date;
 	locationName: string;
@@ -87,6 +88,19 @@ function parseCoordinate(value: FormDataEntryValue | null) {
 	return Number.isFinite(parsed) ? parsed : null;
 }
 
+function parseExternalUrl(value: FormDataEntryValue | null) {
+	const raw = String(value ?? '').trim();
+	if (!raw) return { ok: true as const, value: null };
+	if (raw.length > 2_048) return { ok: false as const };
+	try {
+		const url = new URL(raw);
+		if (!['http:', 'https:'].includes(url.protocol)) return { ok: false as const };
+		return { ok: true as const, value: url.toString() };
+	} catch {
+		return { ok: false as const };
+	}
+}
+
 export function normalizeCampusEventInput(
 	formData: FormData,
 	options: { coverImageCount?: number } = {}
@@ -95,6 +109,7 @@ export function normalizeCampusEventInput(
 	const category = String(formData.get('category') ?? '').trim();
 	const organizer = String(formData.get('organizer') ?? '').trim();
 	const description = String(formData.get('description') ?? '').trim();
+	const externalUrl = parseExternalUrl(formData.get('externalUrl'));
 	const startsAt = parseDate(formData.get('startsAt'));
 	const endsAt = parseDate(formData.get('endsAt'));
 	const locationName = String(formData.get('locationName') ?? '').trim();
@@ -113,6 +128,9 @@ export function normalizeCampusEventInput(
 	}
 	if (description.length < 5 || description.length > 10_000) {
 		return { ok: false, message: '행사 설명을 5~10,000자로 입력해 주세요.' };
+	}
+	if (!externalUrl.ok) {
+		return { ok: false, message: '안내 링크는 http 또는 https 주소로 입력해 주세요.' };
 	}
 	if (!startsAt || !endsAt) {
 		return { ok: false, message: '행사 시작과 종료 일시를 확인해 주세요.' };
@@ -137,6 +155,7 @@ export function normalizeCampusEventInput(
 			category,
 			organizer,
 			description,
+			externalUrl: externalUrl.value,
 			startsAt,
 			endsAt,
 			locationName,

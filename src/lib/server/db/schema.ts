@@ -71,6 +71,7 @@ export const campusEvents = pgTable(
 		category: varchar('category', { length: 20 }).notNull(),
 		organizer: varchar('organizer', { length: 120 }).notNull(),
 		description: text('description').notNull(),
+		externalUrl: text('external_url'),
 		startsAt: timestamp('starts_at', { withTimezone: true }).notNull(),
 		endsAt: timestamp('ends_at', { withTimezone: true }).notNull(),
 		locationName: varchar('location_name', { length: 160 }).notNull(),

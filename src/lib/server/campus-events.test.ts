@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+	buildCampusEventValidationFormData,
 	listPublicCampusEvents,
 	selectCampusEventSpotlight,
 	toCampusEventDto
@@ -14,6 +15,7 @@ function row(overrides: Record<string, unknown> = {}) {
 		category: '축제',
 		organizer: '총학생회',
 		description: '교내 구성원이 함께 즐기는 행사입니다.',
+		externalUrl: null,
 		startsAt: new Date('2026-08-30T02:00:00.000Z'),
 		endsAt: new Date('2026-08-30T05:00:00.000Z'),
 		locationName: '중앙광장',
@@ -28,6 +30,12 @@ function row(overrides: Record<string, unknown> = {}) {
 }
 
 describe('교내 행사 저장소 변환', () => {
+	it('링크가 없는 기존 행사를 공개 검증할 때 빈 링크 값으로 변환한다', () => {
+		const formData = buildCampusEventValidationFormData(row({ externalUrl: null }));
+
+		expect(formData.get('externalUrl')).toBe('');
+	});
+
 	it('행사 테이블이 아직 없으면 사용자 목록을 빈 배열로 반환한다', async () => {
 		const missingTableError = Object.assign(
 			new Error('relation "campus_events" does not exist'),

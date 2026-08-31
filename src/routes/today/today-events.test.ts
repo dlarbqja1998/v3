@@ -13,6 +13,7 @@ function event(overrides: Record<string, unknown> = {}) {
 		startsAt: new Date('2026-08-30T02:00:00.000Z'),
 		endsAt: new Date('2026-08-30T05:00:00.000Z'),
 		locationName: '중앙광장',
+		externalUrl: null,
 		latitude: 36.6101,
 		longitude: 127.2872,
 		isVisible: true,
@@ -80,5 +81,14 @@ describe('행사 상세', () => {
 		expect(body).toContain(`/?panel=event&amp;eventId=${detailEvent.id}`);
 		expect(body).toContain('지도에서 보기');
 		expect(body).not.toContain('신청하기');
+	});
+
+	it('안내 링크가 있으면 행사 홈페이지로 이동하는 보조 동작을 제공한다', () => {
+		const detailEvent = event({ externalUrl: 'https://kusejong-jobfair.com/' });
+		const body = render(TodayDetailPage, { props: { data: { event: detailEvent } } as never }).body;
+
+		expect(body).toContain('행사 홈페이지');
+		expect(body).toContain('href="https://kusejong-jobfair.com/"');
+		expect(body).toContain('rel="noreferrer"');
 	});
 });

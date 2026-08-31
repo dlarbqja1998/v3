@@ -3,6 +3,7 @@ import { fail, redirect } from '@sveltejs/kit';
 import { normalizeCampusEventInput } from '$lib/domain/campus-events';
 import {
 	deleteCampusEventRows,
+	buildCampusEventValidationFormData,
 	getAdminCampusEvent,
 	listAdminCampusEvents,
 	setCampusEventVisibility
@@ -28,16 +29,7 @@ export const actions: Actions = {
 		const event = await getAdminCampusEvent(env.DATABASE_URL, id);
 		if (!event) return fail(404, { message: '행사를 찾지 못했습니다.' });
 		if (isVisible) {
-			const values = new FormData();
-			for (const key of ['title', 'category', 'organizer', 'description', 'locationName'] as const) {
-				values.set(key, String(event[key]));
-			}
-			values.set('startsAt', event.startsAt.toISOString());
-			values.set('endsAt', event.endsAt.toISOString());
-			values.set('latitude', String(event.latitude));
-			values.set('longitude', String(event.longitude));
-			values.set('isVisible', 'on');
-			const parsed = normalizeCampusEventInput(values, {
+			const parsed = normalizeCampusEventInput(buildCampusEventValidationFormData(event), {
 				coverImageCount: event.coverImageId ? 1 : 0
 			});
 			if (!parsed.ok) return fail(400, { message: parsed.message });

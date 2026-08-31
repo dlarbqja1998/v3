@@ -26,6 +26,20 @@ export type CampusEventDto = Omit<CampusEventRow, 'category'> & {
 
 type CampusEventDb = Pick<Db, 'query' | 'insert' | 'update' | 'delete'>;
 
+export function buildCampusEventValidationFormData(event: CampusEventRow) {
+	const values = new FormData();
+	for (const key of ['title', 'category', 'organizer', 'description', 'locationName'] as const) {
+		values.set(key, String(event[key]));
+	}
+	values.set('externalUrl', event.externalUrl ?? '');
+	values.set('startsAt', event.startsAt.toISOString());
+	values.set('endsAt', event.endsAt.toISOString());
+	values.set('latitude', String(event.latitude));
+	values.set('longitude', String(event.longitude));
+	values.set('isVisible', 'on');
+	return values;
+}
+
 function getDb(databaseUrl: string, providedDb?: CampusEventDb) {
 	return providedDb ?? createDb(databaseUrl);
 }

@@ -92,6 +92,7 @@
 				<label class="field-label">카테고리<select class="field-input" name="category" value={event?.category ?? EVENT_CATEGORIES[0]}>{#each EVENT_CATEGORIES as category}<option value={category}>{category}</option>{/each}</select></label>
 				<label class="field-label">주최<input class="field-input" name="organizer" maxlength="120" value={event?.organizer ?? ''} required /></label>
 				<label class="field-label">상세 설명<textarea class="min-h-36 rounded-xl border border-brand-border p-3 text-sm leading-6" name="description" maxlength="10000" required>{event?.description ?? ''}</textarea></label>
+				<label class="field-label">안내 링크 <span class="font-medium text-brand-muted">(선택)</span><input class="field-input" name="externalUrl" type="url" maxlength="2048" value={event?.externalUrl ?? ''} placeholder="https://example.com" inputmode="url" /></label>
 			</section>
 
 			<section class="grid gap-4" aria-labelledby="event-time-title">
