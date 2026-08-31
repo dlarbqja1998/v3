@@ -8,15 +8,36 @@ import {
 } from '$lib/domain/cafeteria-operating-hours';
 import { buildCafeteriaPanelItems } from '$lib/domain/cafeteria-panel';
 import { getTodayMenuWithRefresh } from '$lib/server/cafeteria-cache';
+import { getWeeklyCafeteriaFeedback } from '$lib/server/cafeteria-feedback';
 import { replaceCafeteriaOperatingHours } from '$lib/server/cafeteria-operating-hours';
+import { ensureWeeklyCafeteriaMenu } from '$lib/server/cafeteria-sync';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ platform, locals, url }) => {
 	const weeklyMenu = await getTodayMenuWithRefresh(platform);
+	let cafeteriaFeedback = {};
+	if (weeklyMenu) {
+		try {
+			await ensureWeeklyCafeteriaMenu(env.DATABASE_URL, weeklyMenu);
+			cafeteriaFeedback = await getWeeklyCafeteriaFeedback(
+				env.DATABASE_URL,
+				weeklyMenu,
+				locals.user?.id
+			);
+		} catch (error) {
+			console.error('학식 평가 정보 로드 실패:', error);
+		}
+	}
+	const requestedDay = url.searchParams.get('day');
+	const initialDayKey = ['mon', 'tue', 'wed', 'thu', 'fri'].includes(requestedDay ?? '')
+		? requestedDay
+		: null;
 
 	return {
 		cafeterias: buildCafeteriaPanelItems(weeklyMenu),
 		initialCafeteriaId: url.searchParams.get('cafeteria'),
+		initialDayKey,
+		cafeteriaFeedback,
 		canEditOperatingHours: canEditCafeteriaOperatingHours(locals.user),
 		user: locals.user
 			? {

@@ -28,9 +28,27 @@ export type MapAreaOption = {
 	id: string;
 	name: string;
 	mode: MapAreaMode;
+	disabled?: boolean;
+	badge?: string;
 };
 
-export function buildMapAreaOptions(zones: CommercialZone[]): MapAreaOption[] {
+export function buildMapAreaOptions(
+	zones: CommercialZone[],
+	{ outsideEnabled = true }: { outsideEnabled?: boolean } = {}
+): MapAreaOption[] {
+	if (!outsideEnabled) {
+		return [
+			{ id: CAMPUS_AREA_ID, name: CAMPUS_AREA_NAME, mode: 'campus' },
+			{
+				id: 'outside-coming-soon',
+				name: '교외 음식점',
+				mode: 'outside',
+				disabled: true,
+				badge: '준비 중'
+			}
+		];
+	}
+
 	const priority = new Map<string, number>(
 		PRIORITY_ZONE_NAMES.map((name, index) => [name, index])
 	);

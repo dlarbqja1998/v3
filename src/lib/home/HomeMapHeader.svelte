@@ -30,7 +30,7 @@
 	let dropdownElement = $state<HTMLDivElement>();
 	let triggerElement = $state<HTMLButtonElement>();
 	let searchInput = $state<HTMLInputElement>();
-	let areaOptions = $derived(buildMapAreaOptions(zones));
+	let areaOptions = $derived(buildMapAreaOptions(zones, { outsideEnabled: false }));
 	let selectedAreaLabel = $derived(
 		areaOptions.find((option) => option.id === selectedAreaId)?.name ?? areaOptions[0]?.name ?? ''
 	);
@@ -49,7 +49,7 @@
 
 	function getOptionElements() {
 		return Array.from(
-			dropdownElement?.querySelectorAll<HTMLButtonElement>('[role="option"]') ?? []
+			dropdownElement?.querySelectorAll<HTMLButtonElement>('[role="option"]:not(:disabled)') ?? []
 		);
 	}
 
@@ -83,6 +83,8 @@
 	}
 
 	function selectArea(areaId: string) {
+		const option = areaOptions.find((candidate) => candidate.id === areaId);
+		if (!option || option.disabled) return;
 		if (areaId !== selectedAreaId) onAreaChange(areaId);
 		closeMenu(true);
 	}
@@ -211,16 +213,28 @@
 						{#each areaOptions as option}
 							<button
 								type="button"
-								class={`flex min-h-10 w-full items-center justify-center px-4 py-2 text-center text-[13px] tracking-[-0.01em] outline-none transition-colors duration-150 focus-visible:bg-brand-soft focus-visible:ring-inset focus-visible:ring-2 focus-visible:ring-brand/25 ${
+								class={`grid min-h-10 w-full grid-cols-[1fr_auto_1fr] items-center px-4 py-2 text-center text-[13px] tracking-[-0.01em] outline-none transition-colors duration-150 focus-visible:bg-brand-soft focus-visible:ring-inset focus-visible:ring-2 focus-visible:ring-brand/25 ${
 									selectedAreaId === option.id
 										? 'font-medium text-brand'
-										: 'font-medium text-brand-text hover:bg-brand-surface'
+										: option.disabled
+											? 'cursor-not-allowed font-medium text-brand-muted'
+											: 'font-medium text-brand-text hover:bg-brand-surface'
 								}`}
 								role="option"
 								aria-selected={selectedAreaId === option.id}
+								aria-disabled={option.disabled}
+								disabled={option.disabled}
 								onclick={() => selectArea(option.id)}
 							>
-								{option.name}
+								<span aria-hidden="true"></span>
+								<span>{option.name}</span>
+								{#if option.badge}
+									<span class="justify-self-end rounded-full bg-brand-map px-2 py-1 text-[10px] font-bold text-brand-muted">
+										{option.badge}
+									</span>
+								{:else}
+									<span aria-hidden="true"></span>
+								{/if}
 							</button>
 						{/each}
 					</div>

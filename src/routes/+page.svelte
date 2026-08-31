@@ -7,9 +7,7 @@
 		ChevronDown,
 		ChevronRight,
 		ChevronUp,
-		MapPin,
-		ThumbsDown,
-		ThumbsUp
+		MapPin
 	} from '@lucide/svelte';
 	import BottomNavigation from '$lib/navigation/BottomNavigation.svelte';
 	import FacilityFilterChips from '$lib/home/FacilityFilterChips.svelte';
@@ -62,22 +60,27 @@
 		shuttleStops,
 		type ShuttleStopId
 	} from '$lib/domain/shuttle';
-	import { createOfferingKey, getVoteWindow, type OfferingFeedbackSummary } from '$lib/domain/cafeteria-feedback';
+	import {
+		createOfferingKey,
+		getWeeklyVoteAvailability,
+		type MenuReaction,
+		type OfferingFeedbackSummary
+	} from '$lib/domain/cafeteria-feedback';
 	import { getCafeteriaPageHref } from '$lib/domain/cafeterias';
+	import CafeteriaMenuVoteRow from './cafeteria/CafeteriaMenuVoteRow.svelte';
 	import type { PageData } from './$types';
 
-type MealItem = {
+	type MenuFeedback = OfferingFeedbackSummary & { offeringId: string; isVotable: boolean };
+
+	type MealItem = {
 		name: string;
 		feedbackKey: string;
-		feedback: (OfferingFeedbackSummary & { offeringId: string; isVotable: boolean }) | undefined;
-		mealSlot: 'breakfast' | 'lunch' | 'dinner' | 'all_day';
+		feedback: MenuFeedback | undefined;
+		mealSlot: 'breakfast' | 'lunch' | 'dinner';
 		menuDate: string;
 };
 
-type CafeteriaFeedbackMap = Record<
-	string,
-	OfferingFeedbackSummary & { offeringId: string; isVotable: boolean }
->;
+	type CafeteriaFeedbackMap = Record<string, MenuFeedback>;
 
 	type MealSection = {
 		id: string;
@@ -122,6 +125,10 @@ type CafeteriaFeedbackMap = Record<
 	let activeShuttleStopId = $state<ShuttleStopId>('campus');
 	let currentTime = $state(new Date());
 	let cafeteriaFeedback = $state<CafeteriaFeedbackMap>({});
+	let submittingOfferingIds = $state<string[]>([]);
+	let isVoteLoginPromptOpen = $state(false);
+	let voteToastMessage = $state('');
+	let voteToastTimer: ReturnType<typeof setTimeout> | undefined;
 	let appShellElement = $state<HTMLElement>();
 	let sheetElement = $state<HTMLElement>();
 	let sheetDetent = $state<BottomSheetDetent>('collapsed');
@@ -225,10 +232,6 @@ type CafeteriaFeedbackMap = Record<
 	);
 
 	const activeWeeklyMenu = $derived(activeCafeteria?.weeklyMenu ?? null);
-	const currentCafeteriaDate = $derived(
-		data.cafeterias.find((cafeteria) => cafeteria.id === 'jinri')?.weeklyMenu?.todayDate?.replaceAll('.', '-') ?? ''
-	);
-
 	const selectedMenuDay = $derived(
 		activeWeeklyMenu?.days?.find((day) => day.key === activeDayKey) ??
 			activeWeeklyMenu?.days?.find((day) => day.key === activeWeeklyMenu.todayKey) ??
@@ -237,6 +240,10 @@ type CafeteriaFeedbackMap = Record<
 	);
 
 	const activeMealSections = $derived(buildMealSections(activeCafeteria, selectedMenuDay));
+	const voteLoginReturnUrl = $derived(
+		`/cafeteria?cafeteria=${encodeURIComponent(activeCafeteria?.id ?? 'jinri')}&day=${encodeURIComponent(activeDayKey)}`
+	);
+	const voteLoginHref = $derived(`/login?next=${encodeURIComponent(voteLoginReturnUrl)}`);
 	const upcomingShuttles = $derived(getUpcomingShuttles(currentTime, activeShuttleStopId, 5));
 	const nextShuttle = $derived(getNextAvailableShuttle(currentTime));
 
@@ -265,16 +272,22 @@ type CafeteriaFeedbackMap = Record<
 			currentTime = new Date();
 		}, 30000);
 		const handleViewportResize = () => syncSheetHeight();
+		const handleKeydown = (event: KeyboardEvent) => {
+			if (event.key === 'Escape') isVoteLoginPromptOpen = false;
+		};
 
 		window.addEventListener('resize', handleViewportResize);
 		window.visualViewport?.addEventListener('resize', handleViewportResize);
+		window.addEventListener('keydown', handleKeydown);
 		requestAnimationFrame(syncSheetHeight);
 
 		return () => {
 			weatherAbortController.abort();
 			window.clearInterval(timer);
+			if (voteToastTimer) window.clearTimeout(voteToastTimer);
 			window.removeEventListener('resize', handleViewportResize);
 			window.visualViewport?.removeEventListener('resize', handleViewportResize);
+			window.removeEventListener('keydown', handleKeydown);
 		};
 	});
 
@@ -826,56 +839,61 @@ type CafeteriaFeedbackMap = Record<
 		return [
 			{ id: 'student-breakfast', name: '조식', items: createItems('breakfast', 'breakfast', day.student.breakfast) },
 			{ id: 'student-korean', name: '한식', items: createItems('lunch', 'korean', day.student.korean) },
-			{ id: 'student-special', name: '특식', items: createItems('lunch', 'special', day.student.special) },
+			{ id: 'student-special', name: '일품', items: createItems('lunch', 'special', day.student.special) },
 			{ id: 'student-snack', name: '분식', items: createItems('lunch', 'snack', day.student.snack) },
 			{ id: 'student-dinner', name: '석식', items: createItems('dinner', 'dinner', day.student.dinner) }
 		];
 	}
 
-	function isVoteOpen(item: MealItem) {
-		const window = getVoteWindow(item.menuDate, item.mealSlot);
-		return currentTime >= window.opensAt && currentTime < window.closesAt;
+	function showVoteToast(message: string) {
+		voteToastMessage = message;
+		if (voteToastTimer) window.clearTimeout(voteToastTimer);
+		voteToastTimer = window.setTimeout(() => (voteToastMessage = ''), 2400);
 	}
 
-	function getVoteText(likes: number, dislikes: number) {
-		const total = likes + dislikes;
-		if (total < 3) return `평가 ${total}개`;
-		return `호감 ${Math.round((likes / total) * 100)}% · ${total}개`;
-	}
-
-	async function voteForMenu(item: MealItem, reaction: 'like' | 'dislike') {
-		if (!item.feedback || !item.feedback.isVotable || !isVoteOpen(item)) return;
-		const response = await fetch('/api/cafeteria/votes', {
-			method: 'POST',
-			headers: { 'content-type': 'application/json' },
-			body: JSON.stringify({ offeringId: item.feedback.offeringId, reaction })
-		});
-		if (!response.ok) return;
-
-		const previousReaction = item.feedback.myReaction;
-		const next = { ...item.feedback, myReaction: reaction };
-		if (previousReaction !== reaction) {
-			if (previousReaction === 'like') {
-				next.todayLikes -= 1;
-				next.historicalLikes -= 1;
-			} else if (previousReaction === 'dislike') {
-				next.todayDislikes -= 1;
-				next.historicalDislikes -= 1;
+	async function voteForMenu(item: MealItem, reaction: MenuReaction) {
+		if (!item.feedback || submittingOfferingIds.includes(item.feedback.offeringId)) return;
+		submittingOfferingIds = [...submittingOfferingIds, item.feedback.offeringId];
+		try {
+			const response = await fetch('/api/cafeteria/votes', {
+				method: 'POST',
+				headers: { 'content-type': 'application/json' },
+				body: JSON.stringify({ offeringId: item.feedback.offeringId, reaction })
+			});
+			const payload: unknown = await response.json();
+			if (response.status === 401) {
+				isVoteLoginPromptOpen = true;
+				return;
 			}
-			if (reaction === 'like') {
-				next.todayLikes += 1;
-				next.historicalLikes += 1;
-			} else {
-				next.todayDislikes += 1;
-				next.historicalDislikes += 1;
+			if (!response.ok || !isVoteResponse(payload)) {
+				showVoteToast(getVoteError(payload));
+				return;
 			}
+			cafeteriaFeedback = { ...cafeteriaFeedback, [item.feedbackKey]: payload.feedback };
+		} catch (error) {
+			console.error('지도 학식 메뉴 평가 요청 실패:', error);
+			showVoteToast('평가를 저장하지 못했어요. 다시 시도해 주세요.');
+		} finally {
+			submittingOfferingIds = submittingOfferingIds.filter((id) => id !== item.feedback?.offeringId);
 		}
-		cafeteriaFeedback = { ...cafeteriaFeedback, [item.feedbackKey]: next };
+	}
+
+	function isVoteResponse(value: unknown): value is { feedback: MenuFeedback } {
+		if (!value || typeof value !== 'object') return false;
+		const feedback = (value as { feedback?: unknown }).feedback;
+		return !!feedback && typeof feedback === 'object' && typeof (feedback as { offeringId?: unknown }).offeringId === 'string';
+	}
+
+	function getVoteError(value: unknown) {
+		if (value && typeof value === 'object' && typeof (value as { error?: unknown }).error === 'string') {
+			return (value as { error: string }).error;
+		}
+		return '평가를 저장하지 못했어요. 다시 시도해 주세요.';
 	}
 </script>
 
 <svelte:head>
-	<title>골라바유 v3</title>
+	<title>골라바유</title>
 	<meta
 		name="description"
 		content="고려대 세종 학생을 위한 네이버 지도 기반 로컬 생활 플랫폼"
@@ -903,47 +921,22 @@ type CafeteriaFeedbackMap = Record<
 		{#if expandedMealId === meal.id}
 			<div class="border-t border-brand-border bg-[#fffdfd] px-4 py-3">
 				{#if meal.items.length > 0}
-					<ul class="grid gap-1.5">
+					<div>
 						{#each meal.items as item}
-							<li class="rounded-[10px] py-1.5 text-[13px] leading-relaxed text-brand-muted">
-								<div class="flex items-center justify-between gap-3">
-									<span>{item.name}</span>
-									{#if item.feedback?.isVotable}
-										<span class="shrink-0 text-[11px] font-bold text-brand-muted">
-											오늘 {getVoteText(item.feedback.todayLikes, item.feedback.todayDislikes)}
-										</span>
-									{/if}
-								</div>
-								{#if item.feedback?.isVotable}
-									<div class="mt-1 flex items-center justify-between gap-2">
-										<span class="text-[11px] font-bold text-brand-muted">
-											역대 {getVoteText(item.feedback.historicalLikes, item.feedback.historicalDislikes)}
-										</span>
-										<div class="flex gap-1">
-											<button
-												class={`grid h-7 w-7 place-items-center rounded-full border ${item.feedback.myReaction === 'like' ? 'border-brand bg-brand text-white' : 'border-brand-border bg-white text-brand-muted'} disabled:cursor-not-allowed disabled:opacity-45`}
-												type="button"
-												aria-label={`${item.name} 좋았어요`}
-												disabled={!isVoteOpen(item)}
-												onclick={() => voteForMenu(item, 'like')}
-											>
-												<ThumbsUp size={14} strokeWidth={2.8} />
-											</button>
-											<button
-												class={`grid h-7 w-7 place-items-center rounded-full border ${item.feedback.myReaction === 'dislike' ? 'border-brand bg-brand text-white' : 'border-brand-border bg-white text-brand-muted'} disabled:cursor-not-allowed disabled:opacity-45`}
-												type="button"
-												aria-label={`${item.name} 아쉬웠어요`}
-												disabled={!isVoteOpen(item)}
-												onclick={() => voteForMenu(item, 'dislike')}
-											>
-												<ThumbsDown size={14} strokeWidth={2.8} />
-											</button>
-										</div>
-									</div>
-								{/if}
-							</li>
+							{@const availability = getWeeklyVoteAvailability(item.menuDate, currentTime)}
+							<CafeteriaMenuVoteRow
+								menuName={item.name}
+								feedback={item.feedback}
+								isAuthenticated={Boolean(data.user)}
+								isVoteOpen={availability.isOpen}
+								availableFromDayLabel={availability.availableFromDayLabel}
+								isSubmitting={Boolean(item.feedback && submittingOfferingIds.includes(item.feedback.offeringId))}
+								onVote={(reaction) => voteForMenu(item, reaction)}
+								onLoginRequired={() => (isVoteLoginPromptOpen = true)}
+								onFutureVote={(dayLabel) => showVoteToast(dayLabel ? `${dayLabel}부터 평가할 수 있어요` : '평가 기간이 지났습니다.')}
+							/>
 						{/each}
-					</ul>
+					</div>
 				{:else}
 					<p class="m-0 text-[13px] text-brand-muted">등록된 메뉴가 없습니다.</p>
 				{/if}
@@ -956,7 +949,7 @@ type CafeteriaFeedbackMap = Record<
 	<section
 		bind:this={appShellElement}
 		class="relative min-h-screen w-full overflow-hidden bg-brand-surface shadow-[0_24px_60px_rgba(103,16,43,0.18)] md:min-h-[min(860px,calc(100vh-48px))] md:w-[min(100%,430px)] md:rounded-[28px] md:border md:border-brand-border-strong"
-		aria-label="골라바유 v3 지도 홈"
+		aria-label="골라바유 지도 홈"
 	>
 		<NaverMap
 			clientId={data.naverMapClientId}
@@ -1265,23 +1258,11 @@ type CafeteriaFeedbackMap = Record<
 										</div>
 										<div class="mt-3 grid gap-2">
 											{#each vendor.menus as menu}
-												{@const feedbackKey = createOfferingKey('foodcourt', currentCafeteriaDate, 'all_day', vendor.id, menu.name)}
-												{@const feedback = cafeteriaFeedback[feedbackKey]}
-												{@const item: MealItem = { name: menu.name, feedbackKey, feedback, mealSlot: 'all_day', menuDate: currentCafeteriaDate }}
 												<div class="rounded-[10px] bg-brand-map px-3 py-2">
 													<div class="flex items-center justify-between gap-3">
 														<span class="text-[13px] font-black text-brand-text">{menu.name}</span>
 														<span class="text-xs font-bold text-brand-muted">{menu.price.toLocaleString()}원</span>
 													</div>
-													{#if feedback?.isVotable}
-														<div class="mt-1 flex items-center justify-between gap-2">
-															<span class="text-[11px] font-bold text-brand-muted">오늘 {getVoteText(feedback.todayLikes, feedback.todayDislikes)} · 역대 {getVoteText(feedback.historicalLikes, feedback.historicalDislikes)}</span>
-															<div class="flex gap-1">
-																<button class={`grid h-7 w-7 place-items-center rounded-full border ${feedback.myReaction === 'like' ? 'border-brand bg-brand text-white' : 'border-brand-border bg-white text-brand-muted'} disabled:opacity-45`} type="button" aria-label={`${menu.name} 좋았어요`} disabled={!isVoteOpen(item)} onclick={() => voteForMenu(item, 'like')}><ThumbsUp size={14} strokeWidth={2.8} /></button>
-																<button class={`grid h-7 w-7 place-items-center rounded-full border ${feedback.myReaction === 'dislike' ? 'border-brand bg-brand text-white' : 'border-brand-border bg-white text-brand-muted'} disabled:opacity-45`} type="button" aria-label={`${menu.name} 아쉬웠어요`} disabled={!isVoteOpen(item)} onclick={() => voteForMenu(item, 'dislike')}><ThumbsDown size={14} strokeWidth={2.8} /></button>
-															</div>
-														</div>
-													{/if}
 												</div>
 											{/each}
 										</div>
@@ -1497,3 +1478,38 @@ type CafeteriaFeedbackMap = Record<
 		/>
 	</section>
 </main>
+
+{#if voteToastMessage}
+	<div
+		class="fixed inset-x-5 z-[70] mx-auto max-w-[390px] rounded-[14px] bg-brand-text px-4 py-3 text-center text-sm font-bold text-white shadow-[0_12px_28px_rgba(25,24,26,0.24)]"
+		style="bottom: calc(var(--bottom-navigation-height) + 16px);"
+		role="status"
+		aria-live="polite"
+	>
+		{voteToastMessage}
+	</div>
+{/if}
+
+{#if isVoteLoginPromptOpen}
+	<div class="fixed inset-0 z-[80] grid place-items-end md:place-items-center md:p-5">
+		<button
+			class="absolute inset-0 bg-black/40"
+			type="button"
+			aria-label="로그인 안내 닫기"
+			onclick={() => (isVoteLoginPromptOpen = false)}
+		></button>
+		<div
+			class="relative w-full rounded-t-[24px] bg-white px-5 pb-[max(24px,env(safe-area-inset-bottom))] pt-6 shadow-[0_-18px_42px_rgba(42,10,20,0.22)] md:max-w-[430px] md:rounded-[24px]"
+			role="dialog"
+			aria-modal="true"
+			aria-label="메뉴 평가 로그인 안내"
+		>
+			<h2 class="m-0 text-[18px] font-black tracking-[-0.02em]">로그인하고 메뉴를 평가해 주세요</h2>
+			<p class="m-0 mt-2 text-[13px] font-bold leading-5 text-brand-muted">평가는 계정당 한 번만 반영돼요.</p>
+			<div class="mt-5 grid gap-2">
+				<a class="flex min-h-12 items-center justify-center rounded-[14px] bg-brand text-sm font-black text-white" href={voteLoginHref}>카카오로 로그인</a>
+				<button class="min-h-11 text-sm font-bold text-brand-muted" type="button" onclick={() => (isVoteLoginPromptOpen = false)}>나중에</button>
+			</div>
+		</div>
+	</div>
+{/if}

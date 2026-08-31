@@ -19,7 +19,7 @@ function event(id: string, startsAt: string, endsAt: string) {
 describe('메인 행사 탐색', () => {
 	it('행사를 맨 앞에 두고 시설 카테고리를 승인된 순서로 정렬한다', () => {
 		expect(getHomeEventFilterOrder(categories).map((category) => category.slug)).toEqual([
-			'event', 'restaurant', 'convenience-store', 'cafe', 'bookstore', 'copy-room', 'post-office', 'crimson-store', 'gym'
+			'event', 'restaurant', 'cafe', 'convenience-store', 'bookstore', 'copy-room', 'post-office', 'crimson-store', 'gym'
 		]);
 	});
 

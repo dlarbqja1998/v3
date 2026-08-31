@@ -74,6 +74,25 @@ describe('학식 식당 탭', () => {
 		expect(body).toContain('transform: translateX(100%);');
 	});
 
+	it('로그인 후 돌아오면 선택했던 요일을 초기 선택한다', () => {
+		const { body } = render(CafeteriaPage, {
+			props: {
+				data: {
+					cafeterias: [{ id: 'jinri', name: '진리관', source: 'crawler', weeklyMenu }],
+					initialCafeteriaId: 'jinri',
+					initialDayKey: 'wed',
+					cafeteriaFeedback: {},
+					canEditOperatingHours: false,
+					user: null
+				},
+				form: null
+			} as never
+		});
+
+		expect(body).toContain('data-cafeteria-day-key="wed"');
+		expect(body).toMatch(/<h2[^>]*data-cafeteria-date[^>]*>8\.26 \(수\)<\/h2>/);
+	});
+
 	it('식당 탭은 마우스 선택 때 기본 검은 윤곽선 대신 키보드 포커스 표시만 사용한다', () => {
 		const { body } = render(CafeteriaPage, {
 			props: {
@@ -106,6 +125,30 @@ describe('학식 식당 탭', () => {
 		expect(body).toContain('h-9 w-9 place-items-center rounded-full text-s leading-none pt-px');
 		expect(body).toContain('bg-brand text-white shadow-sm" data-cafeteria-day-label');
 		expect(body).not.toContain('data-cafeteria-day-number');
+	});
+
+	it('진리관의 일품 구획을 학교 식단 명칭 그대로 표시한다', () => {
+		const menuWithSpecial = {
+			...weeklyMenu,
+			days: weeklyMenu.days.map((day, index) =>
+				index === 0
+					? { ...day, student: { ...day.student, special: ['불고기'] } }
+					: day
+			)
+		};
+		const { body } = render(CafeteriaPage, {
+			props: {
+				data: {
+					cafeterias: [{ id: 'jinri', name: '진리관', source: 'crawler', weeklyMenu: menuWithSpecial }],
+					canEditOperatingHours: false,
+					user: null
+				},
+				form: null
+			} as never
+		});
+
+		expect(body).toContain('일품 메뉴 펼치기');
+		expect(body).not.toContain('특식 메뉴 펼치기');
 	});
 
 	it('날짜를 식사명보다 높은 문서 위계로 제공하고, 식사 행의 펼침 상태를 안내한다', () => {

@@ -36,7 +36,8 @@ describe('주간 학식 메뉴 동기화 입력', () => {
 					isVotable: true
 				}),
 				expect.objectContaining({ displayName: '된장국', isVotable: true }),
-				expect.objectContaining({ displayName: '쌀밥', isVotable: false })
+				expect.objectContaining({ displayName: '쌀밥', isVotable: true }),
+				expect.objectContaining({ displayName: '배추김치', isVotable: true })
 			])
 		);
 	});

@@ -57,6 +57,13 @@
       "when": 1788072109844,
       "tag": "0007_fancy_beast",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1788153397383,
+      "tag": "0008_cafeteria_user_votes",
+      "breakpoints": true
     }
   ]
 }

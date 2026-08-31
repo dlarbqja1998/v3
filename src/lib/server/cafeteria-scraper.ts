@@ -59,13 +59,22 @@ function formatDate(date: Date) {
 }
 
 function sanitizeMenuItems(rawHtml: string) {
-	return rawHtml
+	const items = rawHtml
 		.replace(/<br\s*[/]?>/gi, '\n')
 		.replace(/<[^>]+>/g, '')
 		.replace(/"/g, '')
 		.split('\n')
 		.map((item) => item.replace(/\s*\([\d,.\s]+\)/g, '').trim())
 		.filter((item) => item.length > 0);
+
+	return items.filter((item, index) => {
+		if (/^kcal(?:\s*[\d,.]+)?$/i.test(item)) return false;
+		return !(
+			index > 0 &&
+			/^kcal$/i.test(items[index - 1] ?? '') &&
+			/^[\d,.]+$/.test(item)
+		);
+	});
 }
 
 function parseHeaderDay(text: string) {

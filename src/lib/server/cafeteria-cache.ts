@@ -1,8 +1,8 @@
 import type { WeeklyMenu } from '../domain/places';
 import { getCafeteriaMenu } from './cafeteria-scraper';
 
-export const MENU_CACHE_KEY = 'cafeteria_menu_weekly';
-export const MENU_META_KEY = 'cafeteria_menu_weekly_meta';
+export const MENU_CACHE_KEY = 'cafeteria_menu_weekly_v2';
+export const MENU_META_KEY = 'cafeteria_menu_weekly_meta_v2';
 
 type MenuKV = {
 	get(key: string): Promise<string | null>;

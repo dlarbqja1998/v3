@@ -3,6 +3,13 @@
 	import { goto } from '$app/navigation';
 	import { onMount, untrack } from 'svelte';
 	import { ChevronDown, ChevronRight, ChevronUp, Clock3, MapPin, Pencil, Plus, Trash2 } from '@lucide/svelte';
+	import {
+		createOfferingKey,
+		getWeeklyVoteAvailability,
+		type CafeteriaMealSlot,
+		type MenuReaction,
+		type OfferingFeedbackSummary
+	} from '$lib/domain/cafeteria-feedback';
 
 	import {
 		getCafeteriaOperatingStatus,
@@ -12,9 +19,18 @@
 	import type { CafeteriaPanelItem, DailyMenu, MenuDayKey } from '$lib/domain/places';
 	import BottomNavigation from '$lib/navigation/BottomNavigation.svelte';
 	import LifestylePageHeader from '$lib/navigation/LifestylePageHeader.svelte';
+	import CafeteriaMenuVoteRow from './CafeteriaMenuVoteRow.svelte';
 	import type { ActionData, PageData } from './$types';
 
-	type MealSection = { id: string; name: string; items: string[] };
+	type MealSection = {
+		id: string;
+		name: string;
+		items: string[];
+		mealSlot: CafeteriaMealSlot;
+		menuSection: string;
+	};
+	type MenuFeedback = OfferingFeedbackSummary & { offeringId: string; isVotable: boolean };
+	type CafeteriaFeedbackMap = Record<string, MenuFeedback>;
 	type OperatingHourDraft = Pick<CafeteriaOperatingHour, 'label' | 'daysOfWeek' | 'opensAt' | 'closesAt'>;
 
 	const weekdays = [
@@ -33,7 +49,13 @@
 	);
 	let activeCafeteriaIndex = $state(initialCafeteriaIndex);
 	let activeDayKey = $state<MenuDayKey>(
-		untrack(() => data.cafeterias[initialCafeteriaIndex]?.weeklyMenu?.todayKey ?? 'mon')
+		untrack(() => {
+			const weekly = data.cafeterias[initialCafeteriaIndex]?.weeklyMenu;
+			const requested = data.initialDayKey as MenuDayKey | null | undefined;
+			return requested && weekly?.days.some((day) => day.key === requested)
+				? requested
+				: (weekly?.todayKey ?? 'mon');
+		})
 	);
 	let expandedMealId = $state('');
 	let currentTime = $state(new Date());
@@ -45,6 +67,13 @@
 	let operatingHoursLoading = $state(false);
 	let operatingHoursError = $state('');
 	let operatingHoursLoadedFor = $state('');
+	let cafeteriaFeedback = $state<CafeteriaFeedbackMap>(
+		untrack(() => ({ ...((data.cafeteriaFeedback ?? {}) as CafeteriaFeedbackMap) }))
+	);
+	let submittingOfferingIds = $state<string[]>([]);
+	let isLoginPromptOpen = $state(false);
+	let toastMessage = $state('');
+	let toastTimer: ReturnType<typeof setTimeout> | undefined;
 
 	const activeCafeteria = $derived(data.cafeterias[activeCafeteriaIndex] ?? data.cafeterias[0] ?? null);
 	const activeWeeklyMenu = $derived(activeCafeteria?.weeklyMenu ?? null);
@@ -60,15 +89,21 @@
 	);
 	const operatingStatus = $derived(getCafeteriaOperatingStatus(activeOperatingHours, currentTime));
 	const cafeteriaTabWidth = $derived(data.cafeterias.length > 0 ? 100 / data.cafeterias.length : 0);
+	const loginReturnUrl = $derived(
+		`/cafeteria?cafeteria=${encodeURIComponent(activeCafeteria?.id ?? 'jinri')}&day=${encodeURIComponent(activeDayKey)}`
+	);
+	const loginHref = $derived(`/login?next=${encodeURIComponent(loginReturnUrl)}`);
 
 	onMount(() => {
 		const timer = window.setInterval(() => (currentTime = new Date()), 30000);
 		const handleKeydown = (event: KeyboardEvent) => {
 			if (event.key === 'Escape') closeOperatingHours();
+			if (event.key === 'Escape') isLoginPromptOpen = false;
 		};
 		window.addEventListener('keydown', handleKeydown);
 		return () => {
 			window.clearInterval(timer);
+			if (toastTimer) window.clearTimeout(toastTimer);
 			window.removeEventListener('keydown', handleKeydown);
 		};
 	});
@@ -165,6 +200,63 @@
 		void goto(`/?panel=place&place=${activeCafeteria.placeId}`);
 	}
 
+	function showToast(message: string) {
+		toastMessage = message;
+		if (toastTimer) window.clearTimeout(toastTimer);
+		toastTimer = window.setTimeout(() => (toastMessage = ''), 2400);
+	}
+
+	function getMenuFeedbackKey(meal: MealSection, menuName: string) {
+		if (!activeCafeteria || !selectedMenuDay) return '';
+		return createOfferingKey(
+			activeCafeteria.id,
+			selectedMenuDay.date.replaceAll('.', '-'),
+			meal.mealSlot,
+			meal.menuSection,
+			menuName
+		);
+	}
+
+	async function voteForMenu(feedbackKey: string, feedback: MenuFeedback | undefined, reaction: MenuReaction) {
+		if (!feedback || submittingOfferingIds.includes(feedback.offeringId)) return;
+		submittingOfferingIds = [...submittingOfferingIds, feedback.offeringId];
+		try {
+			const response = await fetch('/api/cafeteria/votes', {
+				method: 'POST',
+				headers: { 'content-type': 'application/json' },
+				body: JSON.stringify({ offeringId: feedback.offeringId, reaction })
+			});
+			const payload: unknown = await response.json();
+			if (response.status === 401) {
+				isLoginPromptOpen = true;
+				return;
+			}
+			if (!response.ok || !isVoteResponse(payload)) {
+				showToast(getVoteError(payload));
+				return;
+			}
+			cafeteriaFeedback = { ...cafeteriaFeedback, [feedbackKey]: payload.feedback };
+		} catch (error) {
+			console.error('학식 메뉴 평가 요청 실패:', error);
+			showToast('평가를 저장하지 못했어요. 다시 시도해 주세요.');
+		} finally {
+			submittingOfferingIds = submittingOfferingIds.filter((id) => id !== feedback.offeringId);
+		}
+	}
+
+	function isVoteResponse(value: unknown): value is { feedback: MenuFeedback } {
+		if (!value || typeof value !== 'object') return false;
+		const feedback = (value as { feedback?: unknown }).feedback;
+		return !!feedback && typeof feedback === 'object' && typeof (feedback as MenuFeedback).offeringId === 'string';
+	}
+
+	function getVoteError(value: unknown) {
+		if (value && typeof value === 'object' && typeof (value as { error?: unknown }).error === 'string') {
+			return (value as { error: string }).error;
+		}
+		return '평가를 저장하지 못했어요. 다시 시도해 주세요.';
+	}
+
 	function formatOperatingDays(daysOfWeek: number[]) {
 		if (daysOfWeek.length === 5 && [1, 2, 3, 4, 5].every((day) => daysOfWeek.includes(day))) {
 			return '평일';
@@ -192,15 +284,16 @@
 		if (!cafeteria || !day || cafeteria.source !== 'crawler') return [];
 		if (cafeteria.id === 'faculty') {
 			return [
-				{ id: 'faculty-lunch', name: '중식', items: day.faculty.lunch },
-				{ id: 'faculty-dinner', name: '석식', items: day.faculty.dinner }
+				{ id: 'faculty-lunch', name: '중식', items: day.faculty.lunch, mealSlot: 'lunch', menuSection: 'lunch' },
+				{ id: 'faculty-dinner', name: '석식', items: day.faculty.dinner, mealSlot: 'dinner', menuSection: 'dinner' }
 			];
 		}
 		return [
-			{ id: 'student-breakfast', name: '조식', items: day.student.breakfast },
-			{ id: 'student-korean', name: '한식', items: day.student.korean },
-			{ id: 'student-snack', name: '분식', items: day.student.snack },
-			{ id: 'student-dinner', name: '석식', items: day.student.dinner }
+			{ id: 'student-breakfast', name: '조식', items: day.student.breakfast, mealSlot: 'breakfast', menuSection: 'breakfast' },
+			{ id: 'student-korean', name: '한식', items: day.student.korean, mealSlot: 'lunch', menuSection: 'korean' },
+			{ id: 'student-special', name: '일품', items: day.student.special, mealSlot: 'lunch', menuSection: 'special' },
+			{ id: 'student-snack', name: '분식', items: day.student.snack, mealSlot: 'lunch', menuSection: 'snack' },
+			{ id: 'student-dinner', name: '석식', items: day.student.dinner, mealSlot: 'dinner', menuSection: 'dinner' }
 		];
 	}
 </script>
@@ -246,7 +339,7 @@
 					{#if activeCafeteria.source === 'crawler' && activeWeeklyMenu}
 						<div class="grid grid-cols-5 gap-1 py-1" data-cafeteria-day-tabs>
 							{#each activeWeeklyMenu.days as day}
-								<button class={`grid min-h-12 place-items-center rounded-[10px] px-1 py-1 text-[11px] font-black ${activeDayKey === day.key ? 'text-brand' : 'text-brand-muted'}`} type="button" onclick={() => selectDay(day.key)}>
+								<button class={`grid min-h-12 place-items-center rounded-[10px] px-1 py-1 text-[11px] font-black ${activeDayKey === day.key ? 'text-brand' : 'text-brand-muted'}`} type="button" data-cafeteria-day-key={day.key} onclick={() => selectDay(day.key)}>
 									<span class={`grid h-9 w-9 place-items-center rounded-full text-s leading-none pt-px ${activeDayKey === day.key ? 'bg-brand text-white shadow-sm' : 'text-brand-muted'}`} data-cafeteria-day-label>{day.day}</span>
 								</button>
 							{/each}
@@ -304,7 +397,26 @@
 									</button>
 									{#if isExpanded}
 										<div id={`cafeteria-meal-${meal.id}`} class="px-7 pb-4" role="region" aria-label={`${meal.name} 메뉴`}>
-											{#if meal.items.length > 0}<ul class="m-0 grid list-none gap-2 p-0">{#each meal.items as item}<li class="text-[13px] leading-relaxed text-brand-muted">{item}</li>{/each}</ul>{:else}<p class="m-0 text-[13px] text-brand-muted">등록된 메뉴가 없습니다.</p>{/if}
+											{#if meal.items.length > 0}
+												<div class="border-t border-brand-border">
+													{#each meal.items as item}
+														{@const feedbackKey = getMenuFeedbackKey(meal, item)}
+														{@const feedback = cafeteriaFeedback[feedbackKey]}
+														{@const availability = getWeeklyVoteAvailability(selectedMenuDay?.date ?? '')}
+														<CafeteriaMenuVoteRow
+															menuName={item}
+															{feedback}
+															isAuthenticated={Boolean(data.user)}
+															isVoteOpen={availability.isOpen}
+															availableFromDayLabel={availability.availableFromDayLabel}
+															isSubmitting={Boolean(feedback && submittingOfferingIds.includes(feedback.offeringId))}
+															onVote={(reaction) => voteForMenu(feedbackKey, feedback, reaction)}
+															onLoginRequired={() => (isLoginPromptOpen = true)}
+															onFutureVote={(dayLabel) => showToast(dayLabel ? `${dayLabel}부터 평가할 수 있어요` : '평가 기간이 지났습니다.')}
+														/>
+													{/each}
+												</div>
+											{:else}<p class="m-0 text-[13px] text-brand-muted">등록된 메뉴가 없습니다.</p>{/if}
 										</div>
 									{/if}
 								</div>
@@ -337,6 +449,41 @@
 		<BottomNavigation activeKey="cafeteria" containerClass="fixed inset-x-0 bottom-0 z-40 md:left-1/2 md:w-[min(100%,430px)] md:-translate-x-1/2" isAuthenticated={Boolean(data.user)} />
 	</section>
 </main>
+
+{#if toastMessage}
+	<div
+		class="fixed inset-x-5 z-[70] mx-auto max-w-[390px] rounded-[14px] bg-brand-text px-4 py-3 text-center text-sm font-bold text-white shadow-[0_12px_28px_rgba(25,24,26,0.24)]"
+		style="bottom: calc(var(--bottom-navigation-height) + 16px);"
+		role="status"
+		aria-live="polite"
+	>
+		{toastMessage}
+	</div>
+{/if}
+
+{#if isLoginPromptOpen}
+	<div class="fixed inset-0 z-[80] grid place-items-end md:place-items-center md:p-5">
+		<button
+			class="absolute inset-0 bg-black/40"
+			type="button"
+			aria-label="로그인 안내 닫기"
+			onclick={() => (isLoginPromptOpen = false)}
+		></button>
+		<div
+			class="relative w-full rounded-t-[24px] bg-white px-5 pb-[max(24px,env(safe-area-inset-bottom))] pt-6 shadow-[0_-18px_42px_rgba(42,10,20,0.22)] md:max-w-[430px] md:rounded-[24px]"
+			role="dialog"
+			aria-modal="true"
+			aria-label="메뉴 평가 로그인 안내"
+		>
+			<h2 class="m-0 text-[18px] font-black tracking-[-0.02em]">로그인하고 메뉴를 평가해 주세요</h2>
+			<p class="m-0 mt-2 text-[13px] font-bold leading-5 text-brand-muted">평가는 계정당 한 번만 반영돼요.</p>
+			<div class="mt-5 grid gap-2">
+				<a class="flex min-h-12 items-center justify-center rounded-[14px] bg-brand text-sm font-black text-white" href={loginHref}>카카오로 로그인</a>
+				<button class="min-h-11 text-sm font-bold text-brand-muted" type="button" onclick={() => (isLoginPromptOpen = false)}>나중에</button>
+			</div>
+		</div>
+	</div>
+{/if}
 
 {#if isOperatingHoursOpen && activeCafeteria}
 	<div class="fixed inset-0 z-50 grid place-items-end p-0 md:place-items-center md:p-5">

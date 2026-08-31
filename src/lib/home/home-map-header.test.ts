@@ -96,7 +96,7 @@ describe('메인 지도 헤더', () => {
 		expect(body).toContain('aria-label="시설 검색 닫기"');
 	});
 
-	it('선택한 지도 구역을 헤더의 접근 가능한 이름으로 안내한다', () => {
+	it('이전에 선택한 교외 구역이 있어도 준비 중에는 캠퍼스로 안내한다', () => {
 		const { body } = render(HomeMapHeader, {
 			props: {
 				zones,
@@ -105,7 +105,7 @@ describe('메인 지도 헤더', () => {
 			}
 		});
 
-		expect(body).toContain('aria-label="지도 구역: 고대앞"');
+		expect(body).toContain('aria-label="지도 구역: 고려대학교 세종캠퍼스"');
 	});
 
 	it('생활권 선택을 기본 select가 아닌 접근 가능한 커스텀 버튼으로 제공한다', () => {
@@ -122,7 +122,7 @@ describe('메인 지도 헤더', () => {
 		expect(body).not.toContain('<select');
 	});
 
-	it('학교 밖 구역을 선택하면 해당 구역 이름을 드롭다운 값으로 표시한다', () => {
+	it('교외 준비 중에는 실제 상권 이름을 헤더 값으로 노출하지 않는다', () => {
 		const { body } = render(HomeMapHeader, {
 			props: {
 				zones,
@@ -131,8 +131,8 @@ describe('메인 지도 헤더', () => {
 			}
 		});
 
-		expect(body).toContain('고대앞');
-		expect(body).not.toContain('aria-label="학교 밖 상권 구역"');
+		expect(body).toContain('고려대학교 세종캠퍼스');
+		expect(body).not.toContain('고대앞');
 	});
 
 	it('드롭다운 레이어를 학교 밖 필터칩보다 위에 배치한다', () => {

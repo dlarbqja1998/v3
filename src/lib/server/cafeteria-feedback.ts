@@ -1,7 +1,8 @@
-import { and, eq, gte, inArray, lte, or } from 'drizzle-orm';
+import { and, eq, gte, inArray, lte } from 'drizzle-orm';
 import {
 	aggregateOfferingFeedback,
 	createOfferingKey,
+	type MenuReaction,
 	type OfferingFeedbackSummary
 } from '$lib/domain/cafeteria-feedback';
 import type { WeeklyMenu } from '$lib/domain/places';
@@ -16,14 +17,13 @@ export type CafeteriaFeedbackByKey = Record<
 export async function getWeeklyCafeteriaFeedback(
 	databaseUrl: string | undefined,
 	weeklyMenu: WeeklyMenu | null,
-	voterHash?: string
+	userId?: number
 ): Promise<CafeteriaFeedbackByKey> {
 	if (!databaseUrl || !weeklyMenu || weeklyMenu.days.length === 0) return {};
 
 	const menuDates = weeklyMenu.days.map((day) => day.date.replaceAll('.', '-'));
 	const firstDate = menuDates[0];
 	const lastDate = menuDates.at(-1);
-	const todayDate = weeklyMenu.todayDate.replaceAll('.', '-');
 	if (!firstDate || !lastDate) return {};
 
 	const db = createDb(databaseUrl);
@@ -40,16 +40,10 @@ export async function getWeeklyCafeteriaFeedback(
 		})
 		.from(cafeteriaMenuOfferings)
 		.where(
-			or(
-				and(
-					inArray(cafeteriaMenuOfferings.cafeteriaCode, ['jinri', 'faculty']),
-					gte(cafeteriaMenuOfferings.menuDate, firstDate),
-					lte(cafeteriaMenuOfferings.menuDate, lastDate)
-				),
-				and(
-					eq(cafeteriaMenuOfferings.cafeteriaCode, 'foodcourt'),
-					eq(cafeteriaMenuOfferings.menuDate, todayDate)
-				)
+			and(
+				inArray(cafeteriaMenuOfferings.cafeteriaCode, ['jinri', 'faculty']),
+				gte(cafeteriaMenuOfferings.menuDate, firstDate),
+				lte(cafeteriaMenuOfferings.menuDate, lastDate)
 			)
 		);
 
@@ -65,7 +59,7 @@ export async function getWeeklyCafeteriaFeedback(
 		? await db
 				.select({
 					offeringId: cafeteriaMenuVotes.offeringId,
-					voterHash: cafeteriaMenuVotes.voterHash,
+					userId: cafeteriaMenuVotes.userId,
 					reaction: cafeteriaMenuVotes.reaction
 				})
 				.from(cafeteriaMenuVotes)
@@ -79,19 +73,20 @@ export async function getWeeklyCafeteriaFeedback(
 			isCurrent: currentIds.has(offering.id)
 		})),
 		votes.filter(
-			(vote): vote is { offeringId: string; voterHash: string; reaction: 'like' | 'dislike' } =>
+			(vote): vote is { offeringId: string; userId: number; reaction: 'like' | 'dislike' } =>
 				vote.reaction === 'like' || vote.reaction === 'dislike'
 		),
-		voterHash
+		userId
 	);
 
 	return Object.fromEntries(
 		currentOfferings.map((offering) => {
 			const summary = summaries.get(offering.id) ?? {
-				todayLikes: 0,
-				todayDislikes: 0,
-				historicalLikes: 0,
-				historicalDislikes: 0,
+				occurrenceLikes: 0,
+				occurrenceDislikes: 0,
+				cumulativeLikes: 0,
+				cumulativeDislikes: 0,
+				hasPreviousOffering: false,
 				myReaction: null
 			};
 			return [
@@ -108,17 +103,6 @@ export async function getWeeklyCafeteriaFeedback(
 	);
 }
 
-export async function hashVoterId(voterId: string) {
-	const bytes = new TextEncoder().encode(voterId);
-	const hash = await crypto.subtle.digest('SHA-256', bytes);
-	return [...new Uint8Array(hash)].map((byte) => byte.toString(16).padStart(2, '0')).join('');
-}
-
-export async function getOrCreateVoterHash(voterId?: string) {
-	const id = voterId || crypto.randomUUID();
-	return { voterId: id, voterHash: await hashVoterId(id) };
-}
-
 export async function getOfferingById(databaseUrl: string | undefined, offeringId: string) {
 	if (!databaseUrl) return null;
 	const db = createDb(databaseUrl);
@@ -127,4 +111,122 @@ export async function getOfferingById(databaseUrl: string | undefined, offeringI
 		.from(cafeteriaMenuOfferings)
 		.where(eq(cafeteriaMenuOfferings.id, offeringId));
 	return offering ?? null;
+}
+
+export type CafeteriaVoteStore = {
+	find: (offeringId: string, userId: number) => Promise<{ reaction: MenuReaction } | null>;
+	insert: (offeringId: string, userId: number, reaction: MenuReaction) => Promise<void>;
+	update: (offeringId: string, userId: number, reaction: MenuReaction) => Promise<void>;
+	remove: (offeringId: string, userId: number) => Promise<void>;
+};
+
+function createVoteStore(databaseUrl: string): CafeteriaVoteStore {
+	const db = createDb(databaseUrl);
+	return {
+		find: async (offeringId, userId) => {
+			const [vote] = await db
+				.select({ reaction: cafeteriaMenuVotes.reaction })
+				.from(cafeteriaMenuVotes)
+				.where(
+					and(
+						eq(cafeteriaMenuVotes.offeringId, offeringId),
+						eq(cafeteriaMenuVotes.userId, userId)
+					)
+				);
+			if (!vote || (vote.reaction !== 'like' && vote.reaction !== 'dislike')) return null;
+			return { reaction: vote.reaction };
+		},
+		insert: async (offeringId, userId, reaction) => {
+			await db.insert(cafeteriaMenuVotes).values({ offeringId, userId, reaction });
+		},
+		update: async (offeringId, userId, reaction) => {
+			await db
+				.update(cafeteriaMenuVotes)
+				.set({ reaction, updatedAt: new Date() })
+				.where(
+					and(
+						eq(cafeteriaMenuVotes.offeringId, offeringId),
+						eq(cafeteriaMenuVotes.userId, userId)
+					)
+				);
+		},
+		remove: async (offeringId, userId) => {
+			await db
+				.delete(cafeteriaMenuVotes)
+				.where(
+					and(
+						eq(cafeteriaMenuVotes.offeringId, offeringId),
+						eq(cafeteriaMenuVotes.userId, userId)
+					)
+				);
+		}
+	};
+}
+
+export async function toggleCafeteriaMenuVote(
+	databaseUrl: string | undefined,
+	offeringId: string,
+	userId: number,
+	reaction: MenuReaction,
+	providedStore?: CafeteriaVoteStore
+) {
+	if (!databaseUrl && !providedStore) throw new Error('데이터베이스 연결 정보가 없습니다.');
+	const store = providedStore ?? createVoteStore(databaseUrl as string);
+	const existing = await store.find(offeringId, userId);
+
+	if (!existing) {
+		await store.insert(offeringId, userId, reaction);
+		return { reaction };
+	}
+	if (existing.reaction === reaction) {
+		await store.remove(offeringId, userId);
+		return { reaction: null };
+	}
+
+	await store.update(offeringId, userId, reaction);
+	return { reaction };
+}
+
+export async function getOfferingFeedback(
+	databaseUrl: string | undefined,
+	offeringId: string,
+	userId: number
+): Promise<(OfferingFeedbackSummary & { offeringId: string; isVotable: boolean }) | null> {
+	if (!databaseUrl) return null;
+	const db = createDb(databaseUrl);
+	const [currentOffering] = await db
+		.select({
+			id: cafeteriaMenuOfferings.id,
+			menuItemId: cafeteriaMenuOfferings.menuItemId,
+			isVotable: cafeteriaMenuOfferings.isVotable
+		})
+		.from(cafeteriaMenuOfferings)
+		.where(eq(cafeteriaMenuOfferings.id, offeringId));
+	if (!currentOffering) return null;
+
+	const offerings = await db
+		.select({ id: cafeteriaMenuOfferings.id, menuItemId: cafeteriaMenuOfferings.menuItemId })
+		.from(cafeteriaMenuOfferings)
+		.where(eq(cafeteriaMenuOfferings.menuItemId, currentOffering.menuItemId));
+	const offeringIds = offerings.map((offering) => offering.id);
+	const votes = offeringIds.length
+		? await db
+				.select({
+					offeringId: cafeteriaMenuVotes.offeringId,
+					userId: cafeteriaMenuVotes.userId,
+					reaction: cafeteriaMenuVotes.reaction
+				})
+				.from(cafeteriaMenuVotes)
+				.where(inArray(cafeteriaMenuVotes.offeringId, offeringIds))
+		: [];
+	const summary = aggregateOfferingFeedback(
+		offerings.map((offering) => ({ ...offering, isCurrent: offering.id === offeringId })),
+		votes.filter(
+			(vote): vote is { offeringId: string; userId: number; reaction: MenuReaction } =>
+				vote.reaction === 'like' || vote.reaction === 'dislike'
+		),
+		userId
+	).get(offeringId);
+
+	return summary ? { ...summary, offeringId, isVotable: currentOffering.isVotable } : null;
 }

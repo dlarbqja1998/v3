@@ -3,7 +3,6 @@ import { cafeteriaMenuItems, cafeteriaMenuOfferings } from '$lib/server/db/schem
 import { and, gte, inArray, lte } from 'drizzle-orm';
 import { staticFoodCourtVendors } from '$lib/domain/cafeterias';
 import {
-	isVotableMenu,
 	normalizeMenuName,
 	type CafeteriaMealSlot
 } from '$lib/domain/cafeteria-feedback';
@@ -46,14 +45,15 @@ function createOffering(
 	menuSection: string,
 	displayName: string
 ): CafeteriaOfferingInput {
+	const normalizedName = normalizeMenuName(displayName);
 	return {
 		cafeteriaCode,
 		menuDate: toDatabaseDate(menuDate),
 		mealSlot,
 		menuSection,
 		displayName,
-		normalizedName: normalizeMenuName(displayName),
-		isVotable: isVotableMenu(displayName)
+		normalizedName,
+		isVotable: normalizedName.length > 0
 	};
 }
 

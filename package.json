@@ -8,6 +8,7 @@
 		"build": "vite build",
 		"deploy": "npm run build && wrangler deploy",
 		"db:generate": "drizzle-kit generate",
+		"db:migrate": "drizzle-kit migrate",
 		"db:push": "drizzle-kit push",
 		"db:campus-spots:apply": "tsx scripts/apply-campus-spots-table.ts",
 		"db:campus-spots:seed": "tsx scripts/seed-campus-spots.ts",

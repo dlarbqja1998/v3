@@ -29,6 +29,19 @@ const data = {
 };
 
 describe('메인 첫 바텀시트', () => {
+	it('브라우저 제목에는 제품명만 표시한다', () => {
+		const { head } = render(HomePage, { props: { data } as never });
+
+		expect(head).toContain('<title>골라바유</title>');
+		expect(head).not.toContain('골라바유 v3');
+	});
+
+	it('지도 홈 접근성 이름에는 버전명을 노출하지 않는다', () => {
+		const { body } = render(HomePage, { props: { data } as never });
+
+		expect(body).toContain('aria-label="골라바유 지도 홈"');
+	});
+
 	it('첫 진입 시 맥락 헤더만 보이는 104px 높이로 접힌다', () => {
 		const { body } = render(HomePage, { props: { data } as never });
 

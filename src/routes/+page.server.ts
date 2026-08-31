@@ -1,5 +1,4 @@
 import { env } from '$env/dynamic/private';
-import { dev } from '$app/environment';
 import { getHomeData } from '$lib/server/db/queries';
 import { getTodayMenuWithRefresh } from '$lib/server/cafeteria-cache';
 import {
@@ -7,7 +6,7 @@ import {
 	syncFoodCourtMenu,
 	syncWeeklyCafeteriaMenu
 } from '$lib/server/cafeteria-sync';
-import { getOrCreateVoterHash, getWeeklyCafeteriaFeedback } from '$lib/server/cafeteria-feedback';
+import { getWeeklyCafeteriaFeedback } from '$lib/server/cafeteria-feedback';
 import { getHomeLoadPolicy } from '$lib/server/home-load-policy';
 import { getHomeNotice } from '$lib/server/notices';
 import { listPublicCampusEvents } from '$lib/server/campus-events';
@@ -15,18 +14,8 @@ import { getEventSpotlight, getInitialHomeEventId } from '$lib/home/home-events'
 import type { ShuttleStopId } from '$lib/domain/shuttle';
 import { isFacilityCategorySlug } from '$lib/domain/facility-categories';
 
-export async function load({ platform, cookies, locals, url }) {
+export async function load({ platform, locals, url }) {
 	const loadPolicy = getHomeLoadPolicy(url.searchParams.get('panel'));
-	const voter = await getOrCreateVoterHash(cookies.get('cafeteria_voter'));
-	if (!cookies.get('cafeteria_voter')) {
-		cookies.set('cafeteria_voter', voter.voterId, {
-			path: '/',
-			httpOnly: true,
-			sameSite: 'lax',
-			secure: !dev,
-			maxAge: 60 * 60 * 24 * 365
-		});
-	}
 
 	const weeklyMenu = loadPolicy.needsCafeteriaMenu
 		? await getTodayMenuWithRefresh(platform, {
@@ -76,7 +65,7 @@ export async function load({ platform, cookies, locals, url }) {
 			cafeteriaFeedback = await getWeeklyCafeteriaFeedback(
 				env.DATABASE_URL,
 				weeklyMenu,
-				voter.voterHash
+				locals.user?.id
 			);
 		} catch (error) {
 			console.error('cafeteria feedback load failed:', error);

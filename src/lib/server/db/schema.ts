@@ -320,10 +320,12 @@ export const cafeteriaMenuVotes = pgTable(
 		offeringId: uuid('offering_id')
 			.notNull()
 			.references(() => cafeteriaMenuOfferings.id),
-		voterHash: varchar('voter_hash', { length: 64 }).notNull(),
+		userId: integer('user_id')
+			.notNull()
+			.references(() => users.id, { onDelete: 'cascade' }),
 		reaction: varchar('reaction', { length: 10 }).notNull(),
 		createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 		updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
 	},
-	(table) => [uniqueIndex('cafeteria_menu_votes_offering_voter_unique').on(table.offeringId, table.voterHash)]
+	(table) => [uniqueIndex('cafeteria_menu_votes_offering_user_unique').on(table.offeringId, table.userId)]
 );
