@@ -3,6 +3,8 @@
 	import { goto } from '$app/navigation';
 	import { getBottomNavigationItems, type BottomNavigationKey } from '$lib/domain/bottom-navigation';
 	import AppIcon from '$lib/icon/AppIcon.svelte';
+	import { analyticsEvents } from '$lib/analytics/events';
+	import { track } from '$lib/analytics/posthog.client';
 	import LoginRequiredToast from '$lib/navigation/LoginRequiredToast.svelte';
 	import { getNavigationDecision } from '$lib/navigation/login-required';
 
@@ -23,6 +25,11 @@
 	let loginTimer: ReturnType<typeof setTimeout> | null = null;
 
 	function handleClick(event: MouseEvent, key: BottomNavigationKey) {
+		track(analyticsEvents.navigationTabSelected, {
+			navigation_key: key,
+			from_navigation_key: activeKey,
+			is_authenticated: isAuthenticated
+		});
 		const decision = getNavigationDecision(key, isAuthenticated);
 		if (decision.kind === 'login-required') {
 			event.preventDefault();

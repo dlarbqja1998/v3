@@ -1,5 +1,8 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { ArrowLeft, CalendarDays, ExternalLink, MapPin, X } from '@lucide/svelte';
+	import { analyticsEvents } from '$lib/analytics/events';
+	import { track } from '$lib/analytics/posthog.client';
 	import { getCampusEventStatus } from '$lib/domain/campus-events';
 	import EventImageGallery from '$lib/events/EventImageGallery.svelte';
 	import type { PageData } from './$types';
@@ -7,6 +10,14 @@
 	let { data }: { data: PageData } = $props();
 	const event = $derived(data.event);
 	const status = $derived(getCampusEventStatus(event, new Date()));
+
+	onMount(() => {
+		track(analyticsEvents.viewEventDetail, {
+			event_id: event.id,
+			category: event.category,
+			status
+		});
+	});
 
 	function formatDateTime(value: Date) {
 		return new Intl.DateTimeFormat('ko-KR', { timeZone: 'Asia/Seoul', year: 'numeric', month: 'long', day: 'numeric', weekday: 'short', hour: '2-digit', minute: '2-digit' }).format(value);

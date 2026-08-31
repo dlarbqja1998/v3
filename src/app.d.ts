@@ -2,6 +2,7 @@
 // for information about these interfaces
 declare global {
 	interface Window {
+		posthog?: import('$lib/analytics/posthog.client').PostHogClient;
 		naver?: {
 			maps: {
 				Event: {

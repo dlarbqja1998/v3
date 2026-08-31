@@ -7,7 +7,7 @@ const children = createRawSnippet(() => ({ render: () => '' }));
 
 describe('앱 문서 셸', () => {
 	it('호이 핀 PNG를 전역 파비콘으로 사용한다', () => {
-		const { head } = render(RootLayout, { props: { children } });
+		const { head } = render(RootLayout, { props: { children, data: { user: null } } });
 
 		expect(head).toContain('<link rel="icon" type="image/png" href="/icon.png"/>');
 		expect(head).not.toContain('svelte-logo');

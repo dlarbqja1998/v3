@@ -46,6 +46,8 @@
 		type BottomSheetDetent
 	} from '$lib/domain/bottom-sheet';
 	import { resolveApiUrl } from '$lib/api/base-url';
+	import { analyticsEvents } from '$lib/analytics/events';
+	import { track } from '$lib/analytics/posthog.client';
 	import { isWeatherSnapshot, type WeatherSnapshot } from '$lib/domain/weather';
 	import { getCampusSpotPanelPresentation, type CampusSpot } from '$lib/domain/campus-spots';
 	import { getAvailableMapMarkerTargetRatio, getPlaceFocusZoom } from '$lib/map/focus';
@@ -321,6 +323,7 @@
 	});
 
 	function openCafeteriaPanel() {
+		track(analyticsEvents.openCafeteria, { source: 'home_bottom_navigation' });
 		sheetMode = 'cafeteria';
 		setSheetDetent('expanded');
 		activeCampusSpotId = '';
@@ -334,6 +337,10 @@
 	}
 
 	function openShuttlePanel(stopId?: ShuttleStopId) {
+		track(analyticsEvents.clickShuttleMarker, {
+			source: 'home_bottom_navigation',
+			shuttle_stop_id: stopId ?? nextShuttle?.from ?? 'campus'
+		});
 		sheetMode = 'shuttle';
 		setSheetDetent('collapsed');
 		activeCampusSpotId = '';
@@ -385,6 +392,10 @@
 	}
 
 	function selectFacilityCategory(categorySlug: string) {
+		track(analyticsEvents.selectCategory, {
+			category_slug: categorySlug,
+			area_mode: areaMode
+		});
 		if (categorySlug === 'event') {
 			openEventPanel();
 			return;
@@ -395,6 +406,10 @@
 	}
 
 	function openEventPanel(eventId = '') {
+		track(analyticsEvents.openToday, {
+			source: eventId ? 'deep_link' : 'facility_filter',
+			event_count: data.campusEvents.length
+		});
 		if (data.campusEvents.length === 0) {
 			selectedFacilityCategory = 'event';
 			sheetMode = 'event';
@@ -423,9 +438,23 @@
 	}
 
 	function updateFacilitySearch(query: string) {
+		const hadQuery = Boolean(facilitySearchQuery.trim());
 		facilitySearchQuery = query;
 		selectedFacilityCategory = 'all';
-		if (query.trim()) openFacilityResults();
+		if (query.trim()) {
+			if (!hadQuery) {
+				track(analyticsEvents.searchPlace, {
+					query_length: query.trim().length,
+					area_mode: areaMode
+				});
+			}
+			openFacilityResults();
+		}
+	}
+
+	function setFacilitySearchOpen(open: boolean) {
+		facilitySearchOpen = open;
+		if (open) track(analyticsEvents.searchOpened, { area_mode: areaMode });
 	}
 
 	function openFacilityResults(requestedPlaceId = '') {
@@ -484,6 +513,10 @@
 	}
 
 	function selectShuttleStop(stopId: ShuttleStopId) {
+		track(analyticsEvents.selectShuttleRoute, {
+			shuttle_stop_id: stopId,
+			source: 'home_map'
+		});
 		activeShuttleStopId = stopId;
 		const stopIndex = shuttleStops.findIndex((stop) => stop.stopId === stopId);
 		shuttleScroller?.scrollTo({
@@ -494,6 +527,10 @@
 	}
 
 	function handleMarkerClick(placeId: string) {
+		track(analyticsEvents.clickPlaceMarker, {
+			place_id: placeId,
+			sheet_mode: sheetMode
+		});
 		if (sheetMode === 'shuttle') {
 			const stop = shuttleStops.find((item) => item.id === placeId);
 			if (stop) selectShuttleStop(stop.stopId);
@@ -517,6 +554,7 @@
 	function selectEvent(eventId: string) {
 		const index = data.campusEvents.findIndex((event) => event.id === eventId);
 		if (index < 0) return;
+		track(analyticsEvents.selectEvent, { event_id: eventId, source: 'home_map' });
 		activeEventId = eventId;
 		eventScroller?.scrollTo({ left: index * eventScroller.clientWidth, behavior: 'smooth' });
 		homeFocusRequestId += 1;
@@ -534,6 +572,7 @@
 	function selectCampusSpot(spotId: string) {
 		const selectedSpot = campusSpots.find((spot) => spot.id === spotId);
 		if (!selectedSpot) return;
+		track(analyticsEvents.selectBuilding, { building_id: spotId, source: 'home_map' });
 
 		activeCampusSpotId = spotId;
 		focusCampusSpotId = spotId;
@@ -549,6 +588,7 @@
 	}
 
 	function selectMapArea(areaId: string) {
+		track(analyticsEvents.selectZone, { area_id: areaId });
 		const nextState = changeSelectedMapArea(areaId);
 		selectedMapAreaId = areaId;
 		areaMode = nextState.mode;
@@ -574,6 +614,13 @@
 	}
 
 	function selectCafeteria(index: number) {
+		const cafeteria = data.cafeterias[index];
+		if (cafeteria) {
+			track(analyticsEvents.selectCafeteria, {
+				cafeteria_id: cafeteria.id,
+				source: 'home_map'
+			});
+		}
 		activeCafeteriaIndex = index;
 		const nextMenu = data.cafeterias[index]?.weeklyMenu;
 		activeDayKey = nextMenu?.todayKey ?? activeDayKey;
@@ -598,6 +645,16 @@
 	function selectFacilityPlace(placeId: string) {
 		const placeIndex = facilityPlaces.findIndex((place) => place.id === placeId);
 		if (placeIndex < 0) return;
+		track(
+			facilitySearchQuery.trim()
+				? analyticsEvents.searchResultSelected
+				: analyticsEvents.openPlaceSheet,
+			{
+				place_id: placeId,
+				category_slug: facilityPlaces[placeIndex]?.categorySlug,
+				result_position: placeIndex + 1
+			}
+		);
 		activePlaceId = placeId;
 		facilityScroller?.scrollTo({
 			left: placeIndex * facilityScroller.clientWidth,
@@ -625,6 +682,11 @@
 	}
 
 	function selectDay(dayKey: MenuDayKey) {
+		track(analyticsEvents.selectMealDate, {
+			cafeteria_id: activeCafeteria?.id,
+			day_key: dayKey,
+			source: 'home_map'
+		});
 		activeDayKey = dayKey;
 		expandedMealId = '';
 	}
@@ -995,7 +1057,7 @@
 				onAreaChange={selectMapArea}
 				searchOpen={facilitySearchOpen}
 				searchQuery={facilitySearchQuery}
-				onSearchOpenChange={(open) => (facilitySearchOpen = open)}
+				onSearchOpenChange={setFacilitySearchOpen}
 				onSearchQueryChange={updateFacilitySearch}
 			/>
 			<FacilityFilterChips

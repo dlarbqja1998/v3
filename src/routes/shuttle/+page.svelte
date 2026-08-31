@@ -3,6 +3,8 @@
 	import { ChevronRight, MapPin } from '@lucide/svelte';
 
 	import BottomNavigation from '$lib/navigation/BottomNavigation.svelte';
+	import { analyticsEvents } from '$lib/analytics/events';
+	import { track } from '$lib/analytics/posthog.client';
 	import LifestylePageHeader from '$lib/navigation/LifestylePageHeader.svelte';
 	import {
 		formatMinutesLeft,
@@ -50,7 +52,18 @@
 	});
 
 	function selectStop(stopId: ShuttleStopId) {
+		track(analyticsEvents.selectShuttleRoute, {
+			shuttle_stop_id: stopId,
+			source: 'shuttle_page'
+		});
 		activeStopId = stopId;
+	}
+
+	function trackShuttleMapOpen() {
+		track(analyticsEvents.clickShuttleMarker, {
+			shuttle_stop_id: activeStopId,
+			source: 'shuttle_page'
+		});
 	}
 
 	function getInitialShuttleStopId(pageData: PageData): ShuttleStopId {
@@ -141,6 +154,7 @@
 				<a
 					class="mt-3 inline-flex items-center gap-1 text-[13px] font-bold text-brand transition-colors hover:text-brand-deep"
 					href={`/?panel=shuttle&shuttleStop=${activeStopId}`}
+					onclick={trackShuttleMapOpen}
 				>
 					<MapPin size={13} strokeWidth={2.4} /> 지도에서 보기 <ChevronRight size={14} strokeWidth={2.4} />
 				</a>

@@ -18,6 +18,8 @@
 	import { getCafeteriaMapHref, getInitialCafeteriaIndex } from '$lib/domain/cafeterias';
 	import type { CafeteriaPanelItem, DailyMenu, MenuDayKey } from '$lib/domain/places';
 	import BottomNavigation from '$lib/navigation/BottomNavigation.svelte';
+	import { analyticsEvents } from '$lib/analytics/events';
+	import { track } from '$lib/analytics/posthog.client';
 	import LifestylePageHeader from '$lib/navigation/LifestylePageHeader.svelte';
 	import CafeteriaMenuVoteRow from './CafeteriaMenuVoteRow.svelte';
 	import type { ActionData, PageData } from './$types';
@@ -95,6 +97,10 @@
 	const loginHref = $derived(`/login?next=${encodeURIComponent(loginReturnUrl)}`);
 
 	onMount(() => {
+		track(analyticsEvents.openCafeteria, {
+			source: 'cafeteria_page',
+			cafeteria_id: activeCafeteria?.id
+		});
 		const timer = window.setInterval(() => (currentTime = new Date()), 30000);
 		const handleKeydown = (event: KeyboardEvent) => {
 			if (event.key === 'Escape') closeOperatingHours();
@@ -109,12 +115,24 @@
 	});
 
 	function selectCafeteria(index: number) {
+		const cafeteria = data.cafeterias[index];
+		if (cafeteria) {
+			track(analyticsEvents.selectCafeteria, {
+				cafeteria_id: cafeteria.id,
+				source: 'cafeteria_page'
+			});
+		}
 		activeCafeteriaIndex = index;
 		activeDayKey = data.cafeterias[index]?.weeklyMenu?.todayKey ?? 'mon';
 		expandedMealId = '';
 	}
 
 	function selectDay(dayKey: MenuDayKey) {
+		track(analyticsEvents.selectMealDate, {
+			cafeteria_id: activeCafeteria?.id,
+			day_key: dayKey,
+			source: 'cafeteria_page'
+		});
 		activeDayKey = dayKey;
 		expandedMealId = '';
 	}
@@ -197,6 +215,11 @@
 
 	function viewOnMap() {
 		if (!activeCafeteria) return;
+		track(analyticsEvents.clickPlaceDetail, {
+			place_id: activeCafeteria.placeId,
+			cafeteria_id: activeCafeteria.id,
+			action: 'view_on_map'
+		});
 		void goto(getCafeteriaMapHref({ id: activeCafeteria.placeId }));
 	}
 
@@ -236,6 +259,11 @@
 				return;
 			}
 			cafeteriaFeedback = { ...cafeteriaFeedback, [feedbackKey]: payload.feedback };
+			track(analyticsEvents.menuReactionChanged, {
+				cafeteria_id: activeCafeteria?.id,
+				offering_id: feedback.offeringId,
+				reaction: payload.feedback.myReaction ?? 'cancel'
+			});
 		} catch (error) {
 			console.error('학식 메뉴 평가 요청 실패:', error);
 			showToast('평가를 저장하지 못했어요. 다시 시도해 주세요.');

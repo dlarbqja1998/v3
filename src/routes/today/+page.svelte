@@ -1,13 +1,36 @@
 <script lang="ts">
 	import { CalendarDays, ChevronRight, MapPin } from '@lucide/svelte';
-	import { untrack } from 'svelte';
+	import { onMount, untrack } from 'svelte';
 	import BottomNavigation from '$lib/navigation/BottomNavigation.svelte';
+	import { analyticsEvents } from '$lib/analytics/events';
+	import { track } from '$lib/analytics/posthog.client';
 	import LifestylePageHeader from '$lib/navigation/LifestylePageHeader.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
 	let activeTab = $state<'ongoing' | 'upcoming'>(untrack(() => data.initialTab));
 	const activeEvents = $derived(activeTab === 'ongoing' ? data.ongoingEvents : data.upcomingEvents);
+
+	onMount(() => {
+		track(analyticsEvents.openToday, {
+			source: 'today_page',
+			ongoing_count: data.ongoingEvents.length,
+			upcoming_count: data.upcomingEvents.length
+		});
+	});
+
+	function selectTab(tab: 'ongoing' | 'upcoming') {
+		activeTab = tab;
+		track(analyticsEvents.selectTodayTab, { tab });
+	}
+
+	function selectEvent(eventId: string, position: number) {
+		track(analyticsEvents.selectEvent, {
+			event_id: eventId,
+			tab: activeTab,
+			result_position: position
+		});
+	}
 
 	function formatPeriod(startsAt: Date, endsAt: Date) {
 		const day = new Intl.DateTimeFormat('ko-KR', { timeZone: 'Asia/Seoul', month: 'numeric', day: 'numeric' });
@@ -27,8 +50,8 @@
 
 		<div class="h-[calc(100dvh-56px)] overflow-y-auto px-5 pb-[calc(96px+env(safe-area-inset-bottom))] md:h-[calc(min(860px,100vh-48px)-56px)]">
 			<div class="relative grid grid-cols-2 border-b border-brand-border" aria-label="행사 상태" data-today-tabs>
-				<button class={`h-12 text-[15px] outline-none focus-visible:ring-2 focus-visible:ring-brand/30 ${activeTab === 'ongoing' ? 'font-black text-brand' : 'font-bold text-brand-muted'}`} type="button" aria-pressed={activeTab === 'ongoing'} onclick={() => activeTab = 'ongoing'}>진행 중</button>
-				<button class={`h-12 text-[15px] outline-none focus-visible:ring-2 focus-visible:ring-brand/30 ${activeTab === 'upcoming' ? 'font-black text-brand' : 'font-bold text-brand-muted'}`} type="button" aria-pressed={activeTab === 'upcoming'} onclick={() => activeTab = 'upcoming'}>진행 예정</button>
+				<button class={`h-12 text-[15px] outline-none focus-visible:ring-2 focus-visible:ring-brand/30 ${activeTab === 'ongoing' ? 'font-black text-brand' : 'font-bold text-brand-muted'}`} type="button" aria-pressed={activeTab === 'ongoing'} onclick={() => selectTab('ongoing')}>진행 중</button>
+				<button class={`h-12 text-[15px] outline-none focus-visible:ring-2 focus-visible:ring-brand/30 ${activeTab === 'upcoming' ? 'font-black text-brand' : 'font-bold text-brand-muted'}`} type="button" aria-pressed={activeTab === 'upcoming'} onclick={() => selectTab('upcoming')}>진행 예정</button>
 				<span class="absolute bottom-0 left-0 h-0.5 w-1/2 bg-brand transition-transform duration-300" style={`transform:translateX(${activeTab === 'ongoing' ? 0 : 100}%)`} data-today-tab-indicator></span>
 			</div>
 
@@ -38,8 +61,8 @@
 				</section>
 			{:else}
 				<div class="divide-y divide-brand-border border-b border-brand-border">
-					{#each activeEvents as event (event.id)}
-						<a class="flex min-h-28 items-center gap-3 py-4" href={`/today/${event.id}`}>
+					{#each activeEvents as event, index (event.id)}
+						<a class="flex min-h-28 items-center gap-3 py-4" href={`/today/${event.id}`} onclick={() => selectEvent(event.id, index + 1)}>
 							{#if event.images[0]}
 								<img class="h-20 w-20 shrink-0 rounded-xl object-cover" src={event.images[0].url} alt="" />
 							{:else}
