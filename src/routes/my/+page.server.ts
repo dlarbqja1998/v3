@@ -4,6 +4,7 @@ import { env } from '$env/dynamic/private';
 import { APP_VERSION } from '$lib/config/app-version';
 import { buildMyPageRows } from '$lib/domain/my-page';
 import { countUnreadInquiryAnswers } from '$lib/server/support-inquiries';
+import { revokeUserSessionToken } from '$lib/server/user';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	if (!locals.user) {
@@ -29,6 +30,8 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 export const actions: Actions = {
 	logout: async ({ cookies }) => {
+		const sessionToken = cookies.get('session_id');
+		if (sessionToken) await revokeUserSessionToken(sessionToken, env.DATABASE_URL);
 		cookies.delete('session_id', { path: '/' });
 		throw redirect(303, '/');
 	}

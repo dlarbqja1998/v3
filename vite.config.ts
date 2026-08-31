@@ -1,6 +1,6 @@
 import tailwindcss from '@tailwindcss/vite';
 import { sveltekit } from '@sveltejs/kit/vite';
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 import { cloudflareAdapterWithCafeteriaSchedule } from './scripts/cafeteria-scheduled-worker-adapter.js';
 
 export default defineConfig({
@@ -10,6 +10,9 @@ export default defineConfig({
 			'softball-shows-selecting-doors.trycloudflare.com',
 			'dating-head-routes-beer.trycloudflare.com'
 		]
+	},
+	test: {
+		include: ['src/**/*.test.ts']
 	},
 	plugins: [
 		tailwindcss(),

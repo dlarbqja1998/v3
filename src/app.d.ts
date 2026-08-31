@@ -53,6 +53,12 @@ declare global {
 		// interface PageState {}
 		interface Platform {
 			env?: {
+				ADMIN_LOGIN_RATE_LIMITER?: {
+					limit(options: { key: string }): Promise<{ success: boolean }>;
+				};
+				PUBLIC_WRITE_RATE_LIMITER?: {
+					limit(options: { key: string }): Promise<{ success: boolean }>;
+				};
 				EVENT_MEDIA?: import('$lib/server/event-media').EventMediaBucket;
 				GOLABAU_CACHE?: {
 					get(key: string): Promise<string | null>;

@@ -32,6 +32,7 @@ function makeEvent(options: {
 	user?: typeof user | null;
 	menuDate?: string;
 	reaction?: 'like' | 'dislike';
+	rateLimitSuccess?: boolean;
 }) {
 	getOfferingById.mockResolvedValue({
 		id: 'offering',
@@ -45,7 +46,14 @@ function makeEvent(options: {
 			headers: { 'content-type': 'application/json' },
 			body: JSON.stringify({ offeringId: 'offering', reaction: options.reaction ?? 'like' })
 		}),
-		locals: { user: options.user === undefined ? user : options.user }
+		locals: { user: options.user === undefined ? user : options.user },
+		platform: {
+			env: {
+				PUBLIC_WRITE_RATE_LIMITER: {
+					limit: vi.fn(async () => ({ success: options.rateLimitSuccess ?? true }))
+				}
+			}
+		}
 	} as never;
 }
 
@@ -83,6 +91,13 @@ describe('학식 메뉴 투표 API', () => {
 
 		expect(response.status).toBe(403);
 		expect(toggleCafeteriaMenuVote).not.toHaveBeenCalled();
+	});
+
+	it('한 사용자의 과도한 반복 평가는 DB 조회 전에 429로 거부한다', async () => {
+		const response = await POST(makeEvent({ rateLimitSuccess: false }));
+
+		expect(response.status).toBe(429);
+		expect(getOfferingById).not.toHaveBeenCalled();
 	});
 
 	it('같은 반응 재클릭 결과에서 사용자 반응이 null인 최신 집계를 반환한다', async () => {

@@ -15,9 +15,19 @@ type AdminLoginInput = {
 
 type FindAdmin = (loginId: string) => Promise<AdminCredentialRecord | null>;
 
+const MAX_ADMIN_LOGIN_ID_LENGTH = 80;
+const MAX_ADMIN_PASSWORD_LENGTH = 256;
+
 export async function authenticateAdmin(input: AdminLoginInput, findAdmin: FindAdmin) {
 	const loginId = input.inputId.trim();
-	if (!loginId || !input.inputPassword) return { ok: false } as const;
+	if (
+		!loginId ||
+		loginId.length > MAX_ADMIN_LOGIN_ID_LENGTH ||
+		!input.inputPassword ||
+		input.inputPassword.length > MAX_ADMIN_PASSWORD_LENGTH
+	) {
+		return { ok: false } as const;
+	}
 
 	const admin = await findAdmin(loginId);
 	if (

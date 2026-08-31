@@ -13,9 +13,15 @@ type VoteRequest = {
 	reaction?: 'like' | 'dislike';
 };
 
-export const POST: RequestHandler = async ({ request, locals }) => {
+export const POST: RequestHandler = async ({ request, locals, platform }) => {
 	if (!locals.user) {
 		return json({ error: '로그인이 필요합니다.' }, { status: 401 });
+	}
+	const distributedLimit = await platform?.env?.PUBLIC_WRITE_RATE_LIMITER?.limit({
+		key: `cafeteria-vote:${locals.user.id}`
+	});
+	if (distributedLimit && !distributedLimit.success) {
+		return json({ error: '요청이 너무 많습니다. 잠시 후 다시 시도해 주세요.' }, { status: 429 });
 	}
 
 	let payload: VoteRequest;

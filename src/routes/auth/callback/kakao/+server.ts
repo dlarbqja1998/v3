@@ -5,7 +5,8 @@ import { eq, and } from 'drizzle-orm';
 import type { RequestHandler } from './$types';
 import { createDb } from '$lib/server/db';
 import { users } from '$lib/server/db/schema';
-import { createUserSessionToken } from '$lib/server/user';
+import { createUserSessionToken, SESSION_MAX_AGE_SECONDS } from '$lib/server/user';
+import { isValidOAuthState, normalizeInternalRedirect } from '$lib/server/security';
 
 type KakaoTokenResponse = {
 	access_token?: string;
@@ -24,6 +25,15 @@ type KakaoUserResponse = {
 export const GET: RequestHandler = async ({ url, cookies }) => {
 	if (!env.DATABASE_URL) throw error(500, '데이터베이스 연결 정보가 없습니다.');
 	if (!env.AUTH_KAKAO_ID) throw error(500, '카카오 REST API 키가 없습니다.');
+
+	const expectedState = cookies.get('oauth_state');
+	const receivedState = url.searchParams.get('state');
+	const next = normalizeInternalRedirect(cookies.get('oauth_next'));
+	cookies.delete('oauth_state', { path: '/' });
+	cookies.delete('oauth_next', { path: '/' });
+	if (!isValidOAuthState(expectedState, receivedState)) {
+		throw redirect(303, '/login?error=kakao');
+	}
 
 	const code = url.searchParams.get('code');
 	if (!code) throw error(400, '카카오 인증 코드가 없습니다.');
@@ -98,13 +108,12 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 		httpOnly: true,
 		sameSite: 'lax',
 		secure: !dev,
-		maxAge: 60 * 60 * 24 * 7
+		maxAge: SESSION_MAX_AGE_SECONDS
 	});
 
 	if (!user.isOnboarded) {
-		const next = url.searchParams.get('state');
-		throw redirect(303, next ? `/register?next=${encodeURIComponent(next)}` : '/register');
+		throw redirect(303, `/register?next=${encodeURIComponent(next)}`);
 	}
 
-	throw redirect(303, url.searchParams.get('state') || '/');
+	throw redirect(303, next);
 };

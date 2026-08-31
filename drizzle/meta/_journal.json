@@ -71,6 +71,13 @@
       "when": 1788167917657,
       "tag": "0009_flippant_cable",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1788173652046,
+      "tag": "0010_volatile_winter_soldier",
+      "breakpoints": true
     }
   ]
 }

@@ -43,6 +43,24 @@ export const users = pgTable(
 	]
 );
 
+export const userSessions = pgTable(
+	'user_sessions',
+	{
+		id: uuid('id').defaultRandom().primaryKey(),
+		tokenHash: varchar('token_hash', { length: 64 }).notNull(),
+		userId: integer('user_id')
+			.notNull()
+			.references(() => users.id, { onDelete: 'cascade' }),
+		expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+		createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
+	},
+	(table) => [
+		uniqueIndex('user_sessions_token_hash_unique').on(table.tokenHash),
+		index('user_sessions_user_idx').on(table.userId),
+		index('user_sessions_expires_idx').on(table.expiresAt)
+	]
+);
+
 export const notices = pgTable(
 	'notices',
 	{

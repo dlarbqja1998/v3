@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { hashAdminPassword } from './auth';
 import {
 	authenticateAdmin,
@@ -59,6 +59,18 @@ describe('DB 관리자 로그인', () => {
 				})
 			)
 		).resolves.toEqual({ ok: false });
+	});
+
+	it('F12로 비정상적으로 큰 로그인 값을 보내면 DB와 PBKDF2 처리 전에 거부한다', async () => {
+		const findAdmin = vi.fn();
+
+		await expect(
+			authenticateAdmin({ inputId: 'a'.repeat(81), inputPassword: 'x' }, findAdmin)
+		).resolves.toEqual({ ok: false });
+		await expect(
+			authenticateAdmin({ inputId: 'golabau', inputPassword: 'x'.repeat(257) }, findAdmin)
+		).resolves.toEqual({ ok: false });
+		expect(findAdmin).not.toHaveBeenCalled();
 	});
 
 	it('관리자 등록 명령 입력을 정규화한다', () => {

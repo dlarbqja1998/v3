@@ -5,6 +5,7 @@ import type { Actions, PageServerLoad } from './$types';
 import { validateNickname, validateOnboardingInput } from '$lib/domain/onboarding';
 import { createDb } from '$lib/server/db';
 import { users } from '$lib/server/db/schema';
+import { normalizeInternalRedirect } from '$lib/server/security';
 
 function getOnboardingValues(data: FormData) {
 	return {
@@ -17,17 +18,18 @@ function getOnboardingValues(data: FormData) {
 }
 
 export const load: PageServerLoad = async ({ locals, url }) => {
+	const next = normalizeInternalRedirect(url.searchParams.get('next'));
 	if (!locals.user) {
-		throw redirect(303, `/login?next=${encodeURIComponent(url.searchParams.get('next') || '/')}`);
+		throw redirect(303, `/login?next=${encodeURIComponent(next)}`);
 	}
 
 	if (locals.user.isOnboarded) {
-		throw redirect(303, url.searchParams.get('next') || '/');
+		throw redirect(303, next);
 	}
 
 	return {
 		user: locals.user,
-		next: url.searchParams.get('next') || '/'
+		next
 	};
 };
 
@@ -39,7 +41,7 @@ export const actions: Actions = {
 
 		const data = await request.formData();
 		const values = getOnboardingValues(data);
-		const next = data.get('next')?.toString() || '/';
+		const next = normalizeInternalRedirect(data.get('next'));
 		const nicknameError = validateNickname(values.nickname);
 
 		if (nicknameError) {
@@ -134,6 +136,6 @@ export const actions: Actions = {
 			})
 			.where(eq(users.id, locals.user.id));
 
-		throw redirect(303, data.get('next')?.toString() || url.searchParams.get('next') || '/');
+		throw redirect(303, normalizeInternalRedirect(data.get('next') ?? url.searchParams.get('next')));
 	}
 };

@@ -35,7 +35,14 @@ class MemoryBucket implements EventMediaBucket {
 }
 
 function file(type: string, size: number, name = 'event.png') {
-	return new File([new Uint8Array(size)], name, { type });
+	const bytes = new Uint8Array(size);
+	if (type === 'image/png' && size >= 8) bytes.set([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+	if (type === 'image/jpeg' && size >= 3) bytes.set([0xff, 0xd8, 0xff]);
+	if (type === 'image/webp' && size >= 12) {
+		bytes.set([0x52, 0x49, 0x46, 0x46], 0);
+		bytes.set([0x57, 0x45, 0x42, 0x50], 8);
+	}
+	return new File([bytes], name, { type });
 }
 
 describe('행사 이미지 저장 계층', () => {
@@ -64,19 +71,33 @@ describe('행사 이미지 저장 계층', () => {
 
 	it('업로드한 이미지 바이트와 MIME 형식을 다시 읽을 수 있다', async () => {
 		const bucket = new MemoryBucket();
-		const image = file('image/png', 3);
+		const image = file('image/png', 8);
 
 		await putEventImage(bucket, 'events/e/i.png', image);
 		const stored = await getEventImage(bucket, 'events/e/i.png');
 
 		expect(stored?.httpMetadata?.contentType).toBe('image/png');
-		expect(new Uint8Array(stored?.body as Uint8Array)).toEqual(new Uint8Array([0, 0, 0]));
+		expect(new Uint8Array(stored?.body as Uint8Array).slice(0, 4)).toEqual(
+			new Uint8Array([0x89, 0x50, 0x4e, 0x47])
+		);
+	});
+
+	it('F12로 MIME만 이미지로 속인 파일은 저장하지 않는다', async () => {
+		const bucket = new MemoryBucket();
+		const disguised = new File([new TextEncoder().encode('<script>alert(1)</script>')], 'fake.png', {
+			type: 'image/png'
+		});
+
+		await expect(putEventImage(bucket, 'events/e/fake.png', disguised)).rejects.toThrow(
+			'이미지 파일 내용이 올바르지 않습니다.'
+		);
+		expect(bucket.objects.size).toBe(0);
 	});
 
 	it('여러 이미지 키를 한 번에 삭제한다', async () => {
 		const bucket = new MemoryBucket();
-		await putEventImage(bucket, 'events/e/a.png', file('image/png', 1));
-		await putEventImage(bucket, 'events/e/b.png', file('image/png', 1));
+		await putEventImage(bucket, 'events/e/a.png', file('image/png', 8));
+		await putEventImage(bucket, 'events/e/b.png', file('image/png', 8));
 
 		await deleteEventImages(bucket, ['events/e/a.png', 'events/e/b.png']);
 

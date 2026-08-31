@@ -104,4 +104,18 @@ describe('온보딩 닉네임 중복 확인', () => {
 		expect(actions.complete).toBeTypeOf('function');
 		expect(actions.default).toBeUndefined();
 	});
+
+	it('F12로 외부 next 값을 넣어도 내부 기본 경로로 정규화한다', async () => {
+		findFirst.mockResolvedValue(undefined);
+		const request = createNicknameCheckRequest('골라바유');
+		const form = await request.formData();
+		form.set('next', 'https://evil.example/steal');
+
+		const result = await actions.checkNickname!({
+			request: new Request('http://localhost/register', { method: 'POST', body: form }),
+			locals: { user: { id: 1 } }
+		} as never);
+
+		expect(result).toMatchObject({ next: '/' });
+	});
 });
