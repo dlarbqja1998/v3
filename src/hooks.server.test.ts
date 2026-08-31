@@ -61,6 +61,19 @@ describe('전역 HTTP 보안 경계', () => {
 		expect(response.headers.get('content-security-policy')).toContain("frame-ancestors 'none'");
 	});
 
+	it('네이버 지도 SDK가 사용하는 메타데이터 호스트만 스크립트 출처로 허용한다', async () => {
+		const resolve = vi.fn(async () => new Response('ok'));
+		const response = await handle({
+			event: eventFor('https://golabau.com/') as never,
+			resolve
+		} as never);
+
+		const policy = response.headers.get('content-security-policy') ?? '';
+		expect(policy).toContain('https://nrbe.pstatic.net');
+		expect(policy).toContain('https://map.pstatic.net');
+		expect(policy).not.toContain('https://*.pstatic.net');
+	});
+
 	it('서버 시크릿으로 보호된 캐시 갱신 호출은 Origin이 없어도 라우트 검증으로 넘긴다', async () => {
 		const resolve = vi.fn(async () => new Response('route result', { status: 403 }));
 		const response = await handle({

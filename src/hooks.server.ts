@@ -11,7 +11,7 @@ const CONTENT_SECURITY_POLICY = [
 	"object-src 'none'",
 	"frame-ancestors 'none'",
 	"form-action 'self'",
-	"script-src 'self' 'unsafe-inline' https://oapi.map.naver.com",
+	"script-src 'self' 'unsafe-inline' https://oapi.map.naver.com https://nrbe.pstatic.net https://map.pstatic.net",
 	"style-src 'self' 'unsafe-inline' https://oapi.map.naver.com",
 	"img-src 'self' data: blob: https:",
 	"font-src 'self' data: https:",
