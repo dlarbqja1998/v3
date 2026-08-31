@@ -1,17 +1,40 @@
 <script lang="ts">
 	import { ChevronDown, KeyRound, LogIn, MessageCircle } from '@lucide/svelte';
+	import BottomNavigation from '$lib/navigation/BottomNavigation.svelte';
 	import type { ActionData, PageData } from './$types';
 
 	let { data, form }: { data: PageData; form: ActionData | null } = $props();
 	let showAdminLogin = $state(false);
+	const isMyEntry = $derived(data.next === '/my');
 </script>
 
 <svelte:head>
 	<title>로그인 | 골라바유</title>
 </svelte:head>
 
-<main class="grid min-h-dvh place-items-center bg-brand-bg px-5 py-8 text-brand-text">
-	<section class="w-full max-w-[430px]">
+<main
+	class={isMyEntry
+		? 'min-h-dvh bg-brand-bg text-brand-text md:grid md:place-items-center md:p-6'
+		: 'grid min-h-dvh place-items-center bg-brand-bg px-5 py-8 text-brand-text'}
+>
+	<section
+		class={isMyEntry
+			? 'relative min-h-dvh w-full overflow-hidden bg-white md:min-h-[min(860px,calc(100vh-48px))] md:w-[min(100%,430px)] md:rounded-[28px] md:border md:border-brand-border-strong'
+			: 'w-full max-w-[430px]'}
+		aria-label={isMyEntry ? '마이 로그인' : undefined}
+	>
+		{#if isMyEntry}
+			<header class="sticky top-0 z-10 grid h-14 place-items-center border-b border-brand-border bg-white">
+				<h1 class="m-0 text-lg font-black">마이</h1>
+			</header>
+		{/if}
+
+		<div
+			class={isMyEntry
+				? 'grid h-[calc(100dvh-56px)] place-items-center overflow-y-auto px-5 pb-[calc(var(--bottom-navigation-height)+24px)] pt-6 md:h-[calc(min(860px,100vh-48px)-56px)]'
+				: 'contents'}
+		>
+		<div class="w-full max-w-[430px]">
 		<div class="mb-9 text-center">
 			<p class="m-0 text-sm font-black text-brand-muted">고려대 세종 생활앱</p>
 			<h1 class="m-0 mt-2 text-4xl font-black text-brand">골라바유</h1>
@@ -83,6 +106,16 @@
 					관리자 로그인
 				</button>
 			</form>
+		{/if}
+		</div>
+		</div>
+
+		{#if isMyEntry}
+			<BottomNavigation
+				activeKey="my"
+				containerClass="absolute inset-x-0 bottom-0 z-30"
+				isAuthenticated={false}
+			/>
 		{/if}
 	</section>
 </main>
