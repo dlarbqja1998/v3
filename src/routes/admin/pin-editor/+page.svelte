@@ -18,6 +18,14 @@
 	) {
 		return selectedPinId ? pins.filter((pin) => pin.id !== selectedPinId) : pins;
 	}
+
+	export function getSavedPinIdFromRedirect(location: string, currentPinId: string) {
+		return new URL(location, 'https://golabau.com').searchParams.get('pin') ?? currentPinId;
+	}
+
+	export function canStartPinSave(isSaving: boolean) {
+		return !isSaving;
+	}
 </script>
 
 <script lang="ts">
@@ -208,12 +216,19 @@
 		saveForm?.requestSubmit();
 	}
 
-	const enhanceSaveForm: SubmitFunction = () => {
+	const enhanceSaveForm: SubmitFunction = ({ cancel }) => {
+		if (!canStartPinSave(isSaving)) {
+			cancel();
+			return;
+		}
 		isSaving = true;
 		const destination = pendingNavigationUrl;
 		return async ({ result, update }) => {
 			isSaving = false;
 			if (result.type === 'success' || result.type === 'redirect') {
+				if (result.type === 'redirect') {
+					selectedPinId = getSavedPinIdFromRedirect(result.location, selectedPinId);
+				}
 				hasUnsavedChanges = false;
 				showLeaveDialog = false;
 				pendingNavigationUrl = '';
@@ -366,7 +381,7 @@
 				<label class="flex min-h-12 items-center justify-between gap-4 border-y border-brand-border py-2 text-sm font-black">지도에 표시<input class="h-5 w-10 accent-brand" name="isVisible" type="checkbox" bind:checked={isVisible} /></label>
 
 				<p class="m-0 text-xs font-bold text-brand-muted">지도를 눌러 핀을 만들고, 마커를 드래그해 위치를 조정하세요.</p>
-				<button class="flex h-12 items-center justify-center gap-2 bg-brand text-sm font-black text-white disabled:opacity-40" type="submit" disabled={!hasCoordinate || !name.trim() || !locationGuide.trim()}><Save size={17} />핀 저장</button>
+				<button class="flex h-12 items-center justify-center gap-2 bg-brand text-sm font-black text-white disabled:opacity-40" type="submit" disabled={isSaving || !hasCoordinate || !name.trim() || !locationGuide.trim()}><Save size={17} />{isSaving ? '저장 중…' : '핀 저장'}</button>
 				{#if form?.saveError}<p class="m-0 text-sm font-bold text-red-700">{form.saveError}</p>{/if}
 				{#if data.saved}<p class="m-0 text-sm font-bold text-emerald-700">핀을 저장했습니다.</p>{/if}
 			</form>

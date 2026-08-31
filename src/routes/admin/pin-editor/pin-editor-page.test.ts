@@ -84,6 +84,32 @@ describe('관리자 핀 에디터 화면', () => {
 		expect(getPinEditorLeaveGuard?.(true, false, true)).toBe('native');
 	});
 
+	it('새 핀 저장 후 리다이렉트 주소의 핀 ID로 편집 상태를 전환한다', () => {
+		const getSavedPinIdFromRedirect = (
+			PinEditorPageModule as typeof PinEditorPageModule & {
+				getSavedPinIdFromRedirect?: (location: string, currentPinId: string) => string;
+			}
+		).getSavedPinIdFromRedirect;
+
+		expect(
+			getSavedPinIdFromRedirect?.('/admin/pin-editor?saved=1&pin=new-pin-id', '')
+		).toBe('new-pin-id');
+		expect(getSavedPinIdFromRedirect?.('/admin/pin-editor?saved=1', 'existing-pin-id')).toBe(
+			'existing-pin-id'
+		);
+	});
+
+	it('핀 저장이 진행 중이면 연속 제출을 시작하지 않는다', () => {
+		const canStartPinSave = (
+			PinEditorPageModule as typeof PinEditorPageModule & {
+				canStartPinSave?: (isSaving: boolean) => boolean;
+			}
+		).canStartPinSave;
+
+		expect(canStartPinSave?.(false)).toBe(true);
+		expect(canStartPinSave?.(true)).toBe(false);
+	});
+
 	it('네이버 SDK가 위치 스타일을 바꿔도 지도 높이가 유지되는 내부 컨테이너를 사용한다', () => {
 		const { body } = render(PinEditorPage, { props: { data, form: null } as never });
 
