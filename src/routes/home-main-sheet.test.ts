@@ -42,6 +42,14 @@ describe('메인 첫 바텀시트', () => {
 		expect(body).toContain('aria-label="골라바유 지도 홈"');
 	});
 
+	it('모바일 브라우저의 실제 가변 화면 높이에 메인 지도 홈을 맞춘다', () => {
+		const { body } = render(HomePage, { props: { data } as never });
+
+		expect(body).toMatch(/<main[^>]*data-home-viewport[^>]*class="[^"]*home-viewport[^"]*"/);
+		expect(body).toMatch(/<section[^>]*data-home-app-shell[^>]*class="[^"]*home-app-shell[^"]*"/);
+		expect(body).not.toContain('min-h-screen');
+	});
+
 	it('첫 진입 시 맥락 헤더만 보이는 104px 높이로 접힌다', () => {
 		const { body } = render(HomePage, { props: { data } as never });
 

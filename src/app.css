@@ -44,6 +44,24 @@ body {
 	background: var(--color-brand-bg);
 }
 
+.home-viewport {
+	height: 100vh;
+	height: 100dvh;
+	overflow: hidden;
+}
+
+.home-app-shell {
+	height: 100%;
+	min-height: 0;
+}
+
+@media (min-width: 768px) {
+	.home-app-shell {
+		height: min(860px, calc(100vh - 48px));
+		height: min(860px, calc(100dvh - 48px));
+	}
+}
+
 @layer base {
 	a {
 		text-decoration: none;

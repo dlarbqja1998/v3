@@ -1011,10 +1011,11 @@
 	</div>
 {/snippet}
 
-<main class="min-h-screen bg-brand-bg text-brand-text md:grid md:place-items-center md:p-6">
+<main data-home-viewport class="home-viewport bg-brand-bg text-brand-text md:grid md:place-items-center md:p-6">
 	<section
 		bind:this={appShellElement}
-		class="relative min-h-screen w-full overflow-hidden bg-brand-surface shadow-[0_24px_60px_rgba(103,16,43,0.18)] md:min-h-[min(860px,calc(100vh-48px))] md:w-[min(100%,430px)] md:rounded-[28px] md:border md:border-brand-border-strong"
+		data-home-app-shell
+		class="home-app-shell relative w-full overflow-hidden bg-brand-surface shadow-[0_24px_60px_rgba(103,16,43,0.18)] md:w-[min(100%,430px)] md:rounded-[28px] md:border md:border-brand-border-strong"
 		aria-label="골라바유 지도 홈"
 	>
 		<NaverMap
