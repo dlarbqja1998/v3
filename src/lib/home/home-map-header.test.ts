@@ -81,6 +81,20 @@ describe('메인 지도 헤더', () => {
 		expect(body).not.toContain('고대앞');
 	});
 
+	it('390px 미만에서는 축약명, 이상에서는 전체 캠퍼스명을 보여준다', () => {
+		const { body } = render(HomeMapHeader, {
+			props: {
+				zones,
+				selectedAreaId: 'campus',
+				...handlers
+			}
+		});
+
+		expect(body).toMatch(/min-\[390px\]:hidden[^>]*>고려대 세종</);
+		expect(body).toMatch(/hidden min-\[390px\]:inline[^>]*>고려대학교 세종캠퍼스</);
+		expect(body).toContain('aria-label="지도 구역: 고려대학교 세종캠퍼스"');
+	});
+
 	it('검색을 열면 교내 시설 검색 입력창으로 전환한다', () => {
 		const { body } = render(HomeMapHeader, {
 			props: {

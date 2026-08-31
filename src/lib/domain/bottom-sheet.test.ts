@@ -44,9 +44,9 @@ describe('바텀시트 높이', () => {
 });
 
 describe('바텀시트 스냅', () => {
-	it('시설 결과는 중간 높이로 열고 행사는 기존 접힘 높이를 유지한다', () => {
+	it('시설과 행사 결과는 모두 중간 높이로 연다', () => {
 		expect(getResultPanelInitialDetent('facility')).toBe('medium');
-		expect(getResultPanelInitialDetent('event')).toBe('collapsed');
+		expect(getResultPanelInitialDetent('event')).toBe('medium');
 	});
 
 	it('천천히 놓으면 가장 가까운 단계에 스냅한다', () => {

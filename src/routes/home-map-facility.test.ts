@@ -24,4 +24,23 @@ describe('메인 지도 시설 탐색 연결', () => {
 		expect(source).toContain('bind:this={shuttleScroller}');
 		expect(source.match(/snap-x snap-mandatory/g)?.length).toBeGreaterThanOrEqual(3);
 	});
+
+	it('모든 메인 바텀시트의 제목은 단어 단위로 줄바꿈하고 닫기 버튼은 줄바꿈하지 않는다', () => {
+		expect(source).toMatch(/<h2 class="[^"]*break-keep[^"]*\[overflow-wrap:anywhere\][^"]*"/);
+
+		const closeButtonClasses = [
+			...source.matchAll(
+				/<button\s+class="([^"]*)"[\s\S]{0,180}?onclick=\{closePanel\}[\s\S]{0,40}?>\s*닫기/g
+			)
+		].map((match) => match[1]);
+		expect(closeButtonClasses).toHaveLength(6);
+		for (const className of closeButtonClasses) {
+			expect(className).toContain('shrink-0');
+			expect(className).toContain('whitespace-nowrap');
+		}
+
+		expect(source.match(/<h2 class="[^"]*break-keep[^"]*\[overflow-wrap:anywhere\][^"]*"/g)).toHaveLength(6);
+
+		expect(source).toMatch(/<h3 class="[^"]*line-clamp-2[^"]*break-keep[^"]*"[^>]*>\{event\.title\}/);
+	});
 });

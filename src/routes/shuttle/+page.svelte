@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, untrack } from 'svelte';
 	import { ChevronRight, MapPin } from '@lucide/svelte';
 
 	import BottomNavigation from '$lib/navigation/BottomNavigation.svelte';
@@ -12,13 +12,14 @@
 		getShuttleServiceDay,
 		getShuttleStopLabel,
 		orderShuttleTimeline,
+		shuttleServiceNotices,
 		shuttleStops,
 		type ShuttleStopId
 	} from '$lib/domain/shuttle';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
-	let activeStopId = $state<ShuttleStopId>('campus');
+	let activeStopId = $state<ShuttleStopId>(untrack(() => getInitialShuttleStopId(data)));
 	let currentTime = $state(new Date());
 
 	const serviceDay = $derived(getShuttleServiceDay(currentTime));
@@ -44,7 +45,6 @@
 	const shuttleTabWidth = 100 / shuttleStops.length;
 
 	onMount(() => {
-		activeStopId = getInitialShuttleStopId(data);
 		const timer = window.setInterval(() => (currentTime = new Date()), 30000);
 		return () => window.clearInterval(timer);
 	});
@@ -63,12 +63,6 @@
 		if (stopId === 'campus') return '고려대';
 		if (stopId === 'jochewon-station-back') return '조치원역';
 		return '오송역';
-	}
-
-	function getEstimatedArrivalTime(departureTime: string) {
-		const [hours, minutes] = departureTime.split(':').map(Number);
-		const totalMinutes = (hours ?? 0) * 60 + (minutes ?? 0) + 10;
-		return `${String(Math.floor(totalMinutes / 60) % 24).padStart(2, '0')}:${String(totalMinutes % 60).padStart(2, '0')}`;
 	}
 
 	function getDateKey(date: Date) {
@@ -141,7 +135,7 @@
 					<p class="m-0 mt-2 text-[11px] font-bold text-brand-muted">
 						{nextShuttle.departureTime} {getStopShortName(nextShuttle.from)} 출발
 						<span class="px-1 text-brand-muted/60">|</span>
-						{getEstimatedArrivalTime(nextShuttle.departureTime)} {getStopShortName(nextShuttle.to)} 도착
+						{getStopShortName(nextShuttle.to)} 방향
 					</p>
 				{/if}
 				<a
@@ -154,6 +148,19 @@
 
 			<section class="pt-5" aria-label="셔틀 배차 시간표" data-shuttle-timetable>
 				<h2 class="m-0 text-[17px] font-black tracking-[-0.02em]">배차 시간표</h2>
+				<p class="m-0 mt-1 text-xs font-bold text-brand-muted/80">
+					교통 상황에 따라 출발 시간이 달라질 수 있어요.
+				</p>
+
+				{#if getShuttleServiceDay(timetableDate) === 'weekday'}
+					{@const osongMorning = shuttleServiceNotices.find((notice) => notice.id === 'weekday-osong-0830')}
+					{#if osongMorning}
+						<div class="mt-3 flex items-center justify-between gap-3 border-y border-brand-border px-1 py-2.5" data-shuttle-service-notice>
+							<p class="m-0 text-[13px] font-black text-brand-text">오송역 {osongMorning.time} 출발</p>
+							<p class="m-0 text-right text-[11px] font-bold text-brand-muted">6번 출구 · {osongMorning.note}</p>
+						</div>
+					{/if}
+				{/if}
 
 				{#if timelineSchedules.length > 0}
 					<ul class="m-0 mt-3 max-h-[42dvh] list-none divide-y divide-brand-border overflow-y-auto border-y border-brand-border p-0" data-shuttle-timetable-list>
@@ -169,9 +176,14 @@
 								></span>
 								<div class="min-w-0 flex-1">
 									<div class="flex items-center justify-between gap-2">
-										<p class={`m-0 text-[17px] font-black leading-none ${isNext ? 'text-brand' : ''}`}>
-											{shuttle.departureTime}
-										</p>
+										<div class="flex items-center gap-2">
+											<p class={`m-0 text-[17px] font-black leading-none ${isNext ? 'text-brand' : ''}`}>
+												{shuttle.departureTime}
+											</p>
+											{#if shuttle.vehicleCount && shuttle.vehicleCount > 1}
+												<span class="text-[11px] font-bold text-brand-muted" data-shuttle-vehicle-count>{shuttle.vehicleCount}대 운행</span>
+											{/if}
+										</div>
 										<div class="mr-5 shrink-0">
 											{#if isNext}
 												<span class="text-xs font-black text-brand" data-shuttle-next-label>다음차</span>

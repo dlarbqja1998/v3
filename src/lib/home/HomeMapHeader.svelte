@@ -31,9 +31,11 @@
 	let triggerElement = $state<HTMLButtonElement>();
 	let searchInput = $state<HTMLInputElement>();
 	let areaOptions = $derived(buildMapAreaOptions(zones, { outsideEnabled: false }));
-	let selectedAreaLabel = $derived(
-		areaOptions.find((option) => option.id === selectedAreaId)?.name ?? areaOptions[0]?.name ?? ''
+	let selectedArea = $derived(
+		areaOptions.find((option) => option.id === selectedAreaId) ?? areaOptions[0]
 	);
+	let selectedAreaLabel = $derived(selectedArea?.name ?? '');
+	let selectedAreaShortLabel = $derived(selectedArea?.shortName ?? selectedAreaLabel);
 	let searchPlaceholder = $derived(
 		getFacilitySearchPlaceholder(selectedAreaId === 'campus' ? 'campus' : 'outside', selectedAreaLabel)
 	);
@@ -192,7 +194,10 @@
 					onclick={toggleMenu}
 					onkeydown={handleTriggerKeydown}
 				>
-					<span class="block min-w-0 flex-1 truncate text-center">{selectedAreaLabel}</span>
+					<span class="block min-w-0 flex-1 truncate text-center">
+						<span class="min-[390px]:hidden">{selectedAreaShortLabel}</span>
+						<span class="hidden min-[390px]:inline">{selectedAreaLabel}</span>
+					</span>
 					<AppIcon
 						name="chevron"
 						size={20}
@@ -203,7 +208,7 @@
 				{#if menuOpen}
 					<div
 						id="home-map-area-listbox"
-						class="absolute inset-x-0 top-7 z-10 max-h-[min(360px,58dvh)] overflow-y-auto rounded-b-[18px] bg-white pt-2 shadow-[0_8px_18px_rgba(25,24,26,0.08)]"
+						class="absolute left-0 top-7 z-10 w-[min(260px,calc(100vw-80px))] max-h-[min(360px,58dvh)] overflow-y-auto rounded-b-[18px] bg-white pt-2 shadow-[0_8px_18px_rgba(25,24,26,0.08)]"
 						role="listbox"
 						tabindex="-1"
 						aria-label="지도 구역 선택"
@@ -213,7 +218,11 @@
 						{#each areaOptions as option}
 							<button
 								type="button"
-								class={`grid min-h-10 w-full grid-cols-[1fr_auto_1fr] items-center px-4 py-2 text-center text-[13px] tracking-[-0.01em] outline-none transition-colors duration-150 focus-visible:bg-brand-soft focus-visible:ring-inset focus-visible:ring-2 focus-visible:ring-brand/25 ${
+								class={`grid min-h-10 w-full items-center px-4 py-2 text-[13px] tracking-[-0.01em] outline-none transition-colors duration-150 focus-visible:bg-brand-soft focus-visible:ring-inset focus-visible:ring-2 focus-visible:ring-brand/25 ${
+									option.disabled
+										? 'grid-cols-[minmax(0,1fr)_auto] gap-3 text-left'
+										: 'grid-cols-[1fr_auto_1fr] text-center'
+								} ${
 									selectedAreaId === option.id
 										? 'font-medium text-brand'
 										: option.disabled
@@ -226,13 +235,21 @@
 								disabled={option.disabled}
 								onclick={() => selectArea(option.id)}
 							>
-								<span aria-hidden="true"></span>
-								<span>{option.name}</span>
-								{#if option.badge}
-									<span class="justify-self-end rounded-full bg-brand-map px-2 py-1 text-[10px] font-bold text-brand-muted">
+								{#if option.disabled}
+									<span class="min-w-0">
+										<span class="block font-medium text-brand-text">{option.name}</span>
+										{#if option.description}
+											<span class="mt-0.5 block break-keep text-[11px] leading-4 text-brand-muted">
+												{option.description}
+											</span>
+										{/if}
+									</span>
+									<span class="shrink-0 justify-self-end rounded-full bg-brand-map px-2 py-1 text-[10px] font-bold text-brand-muted">
 										{option.badge}
 									</span>
 								{:else}
+									<span aria-hidden="true"></span>
+									<span>{option.name}</span>
 									<span aria-hidden="true"></span>
 								{/if}
 							</button>

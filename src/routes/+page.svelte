@@ -1074,11 +1074,11 @@
 				{/if}
 			{:else if sheetMode === 'event'}
 				<div class="flex min-h-0 flex-1 flex-col">
-					<div class="mb-2 flex items-center justify-between gap-3"><div><p class="m-0 text-xs font-bold text-brand-muted">교내 행사 · {data.campusEvents.length}개</p><h2 class="m-0 mt-0.5 text-[18px] font-black">{activeEvent?.title ?? '행사'}</h2></div><button class="px-1 py-2 text-[13px] font-bold text-brand-muted" type="button" onclick={closePanel}>닫기</button></div>
+					<div class="mb-2 flex items-start justify-between gap-3"><div class="min-w-0 flex-1"><p class="m-0 text-xs font-bold text-brand-muted">교내 행사 · {data.campusEvents.length}개</p><h2 class="m-0 mt-0.5 break-keep text-[18px] font-black leading-6 [overflow-wrap:anywhere]">{activeEvent?.title ?? '행사'}</h2></div><button class="shrink-0 whitespace-nowrap px-1 py-2 text-[13px] font-bold text-brand-muted" type="button" onclick={closePanel}>닫기</button></div>
 					{#if data.campusEvents.length > 0}
 						<div bind:this={eventScroller} class="-mx-[18px] flex snap-x snap-mandatory overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" onscroll={handleEventScroll}>
 							{#each data.campusEvents as event}
-								<article class="w-full shrink-0 snap-center px-[18px]" aria-label={event.title}><div class="flex items-start gap-3 border-y border-brand-border py-3">{#if event.images[0]}<img class="h-20 w-20 shrink-0 rounded-xl object-cover" src={event.images[0].url} alt="" />{:else}<span class="grid h-20 w-20 shrink-0 place-items-center rounded-xl bg-brand-map text-brand"><CalendarDays size={24} /></span>{/if}<div class="min-w-0 flex-1"><p class="m-0 text-[11px] font-black text-brand">{event.category}</p><h3 class="m-0 mt-1 truncate text-[16px] font-black">{event.title}</h3><p class="m-0 mt-1 text-[12px] text-brand-muted">{formatEventPeriod(event.startsAt, event.endsAt)}</p><p class="m-0 mt-1 truncate text-[12px] text-brand-muted">{event.locationName}</p><a class="mt-2 inline-block text-[12px] font-black text-brand" href={`/today/${event.id}`}>상세 보기</a></div></div></article>
+								<article class="w-full shrink-0 snap-center px-[18px]" aria-label={event.title}><div class="flex items-start gap-3 border-y border-brand-border py-3">{#if event.images[0]}<img class="h-20 w-20 shrink-0 rounded-xl object-cover" src={event.images[0].url} alt="" />{:else}<span class="grid h-20 w-20 shrink-0 place-items-center rounded-xl bg-brand-map text-brand"><CalendarDays size={24} /></span>{/if}<div class="min-w-0 flex-1"><p class="m-0 text-[11px] font-black text-brand">{event.category}</p><h3 class="m-0 mt-1 line-clamp-2 break-keep text-[16px] font-black leading-5 [overflow-wrap:anywhere]">{event.title}</h3><p class="m-0 mt-1 text-[12px] text-brand-muted">{formatEventPeriod(event.startsAt, event.endsAt)}</p><p class="m-0 mt-1 truncate text-[12px] text-brand-muted">{event.locationName}</p><a class="mt-2 inline-block text-[12px] font-black text-brand" href={`/today/${event.id}`}>상세 보기</a></div></div></article>
 							{/each}
 						</div>
 						{#if data.campusEvents.length > 1}<div class="mt-3 flex justify-center gap-1.5">{#each data.campusEvents as event}<button class={`h-2 rounded-full transition-all ${activeEventId === event.id ? 'w-6 bg-brand' : 'w-2 bg-brand-border-strong'}`} type="button" aria-label={`${event.title} 보기`} onclick={() => selectEvent(event.id)}></button>{/each}</div>{/if}
@@ -1086,17 +1086,17 @@
 				</div>
 			{:else if sheetMode === 'facility'}
 				<div class="flex min-h-0 flex-1 flex-col">
-					<div class="mb-2 flex items-center justify-between gap-3">
-						<div>
+					<div class="mb-2 flex items-start justify-between gap-3">
+						<div class="min-w-0 flex-1">
 							<p class="m-0 text-xs font-bold text-brand-muted">
 								{areaMode === 'campus' ? '교내 시설' : '교외 시설'} · {facilityPlaces.length}곳
 							</p>
-							<h2 class="m-0 mt-0.5 text-[18px] font-black">
+							<h2 class="m-0 mt-0.5 break-keep text-[18px] font-black leading-6 [overflow-wrap:anywhere]">
 								{activeFacilityPlace?.categoryName ?? '검색 결과'}
 							</h2>
 						</div>
 						<button
-							class="px-1 py-2 text-[13px] font-bold text-brand-muted"
+							class="shrink-0 whitespace-nowrap px-1 py-2 text-[13px] font-bold text-brand-muted"
 							type="button"
 							onclick={closePanel}
 						>
@@ -1119,7 +1119,7 @@
 											style={`mask:url('/24 icon/${place.icon}.svg') center/contain no-repeat;-webkit-mask:url('/24 icon/${place.icon}.svg') center/contain no-repeat;`}
 										></span>
 										<div class="min-w-0 flex-1">
-											<h3 class="m-0 text-[16px] font-black">{place.name}</h3>
+											<h3 class="m-0 break-keep text-[16px] font-black leading-5 [overflow-wrap:anywhere]">{place.name}</h3>
 											{#if place.locationGuide}
 												<p class="m-0 mt-1 text-[13px] font-bold text-brand-muted">{place.locationGuide}</p>
 											{/if}
@@ -1165,13 +1165,13 @@
 				</div>
 			{:else if sheetMode === 'cafeteria'}
 				<div class="flex min-h-0 flex-1 flex-col">
-					<div class="mb-3 flex items-center justify-between gap-3">
-						<div>
+					<div class="mb-3 flex items-start justify-between gap-3">
+						<div class="min-w-0 flex-1">
 							<p class="m-0 text-xs font-black text-brand-muted">오늘의 학식</p>
-							<h2 class="m-0 mt-0.5 text-xl font-black">{activeCafeteria?.name}</h2>
+							<h2 class="m-0 mt-0.5 break-keep text-xl font-black leading-7 [overflow-wrap:anywhere]">{activeCafeteria?.name}</h2>
 						</div>
 						<button
-							class="rounded-full border border-brand-border bg-white px-3 py-2 text-xs font-black text-brand-muted"
+							class="shrink-0 whitespace-nowrap rounded-full border border-brand-border bg-white px-3 py-2 text-xs font-black text-brand-muted"
 							type="button"
 							onclick={closePanel}
 						>
@@ -1284,20 +1284,20 @@
 			{:else if sheetMode === 'place' && activePlace}
 				<div class="grid min-h-0 flex-1 content-start gap-3 overflow-y-auto pb-2">
 					<div class="flex items-start justify-between gap-3 rounded-[16px] bg-brand-dark p-4 text-white">
-						<div>
+						<div class="min-w-0 flex-1">
 							<p class="m-0 text-xs font-black text-[#f4c7d4]">{activePlace.categoryName}</p>
-							<h2 class="m-0 mt-1 text-[19px] font-black">{activePlace.name}</h2>
-							<p class="m-0 mt-1.5 text-[13px] leading-snug text-[#f7dfe6]">{activePlace.description}</p>
+							<h2 class="m-0 mt-1 break-keep text-[19px] font-black leading-6 [overflow-wrap:anywhere]">{activePlace.name}</h2>
+							<p class="m-0 mt-1.5 break-keep text-[13px] leading-snug text-[#f7dfe6] [overflow-wrap:anywhere]">{activePlace.description}</p>
 						</div>
-						<button class="shrink-0 rounded-full bg-white px-3 py-2 text-xs font-black text-brand-dark" type="button" onclick={closePanel}>닫기</button>
+						<button class="shrink-0 whitespace-nowrap rounded-full bg-white px-3 py-2 text-xs font-black text-brand-dark" type="button" onclick={closePanel}>닫기</button>
 					</div>
 				</div>
 			{:else if sheetMode === 'pin'}
 				<div class="grid min-h-0 flex-1 content-start gap-3 overflow-y-auto pb-2">
-					<div class="flex items-center justify-between gap-3">
-						<h2 class="m-0 text-xl font-black">{activeCampusSpotPanel.title}</h2>
+					<div class="flex items-start justify-between gap-3">
+						<h2 class="m-0 min-w-0 flex-1 break-keep text-xl font-black leading-7 [overflow-wrap:anywhere]">{activeCampusSpotPanel.title}</h2>
 						<button
-							class="rounded-full border border-brand-border bg-white px-3 py-2 text-xs font-black text-brand-muted"
+							class="shrink-0 whitespace-nowrap rounded-full border border-brand-border bg-white px-3 py-2 text-xs font-black text-brand-muted"
 							type="button"
 							onclick={closePanel}
 						>
@@ -1350,15 +1350,15 @@
 				</div>
 			{:else}
 				<div class="flex min-h-0 flex-1 flex-col">
-					<div class="mb-3 flex items-center justify-between gap-3">
-						<div>
+					<div class="mb-3 flex items-start justify-between gap-3">
+						<div class="min-w-0 flex-1">
 							<p class="m-0 text-xs font-black text-brand-muted">셔틀 정류장</p>
-							<h2 class="m-0 mt-0.5 text-xl font-black">
+							<h2 class="m-0 mt-0.5 break-keep text-xl font-black leading-7 [overflow-wrap:anywhere]">
 								{shuttleStops.find((stop) => stop.stopId === activeShuttleStopId)?.name}
 							</h2>
 						</div>
 						<button
-							class="rounded-full border border-brand-border bg-white px-3 py-2 text-xs font-black text-brand-muted"
+							class="shrink-0 whitespace-nowrap rounded-full border border-brand-border bg-white px-3 py-2 text-xs font-black text-brand-muted"
 							type="button"
 							onclick={closePanel}
 						>
@@ -1437,6 +1437,9 @@
 											<div>
 												<p class="m-0 text-sm font-black">
 													{shuttle.departureTime}
+													{#if shuttle.vehicleCount && shuttle.vehicleCount > 1}
+														<span class="ml-1 text-[11px] font-bold text-brand-muted">{shuttle.vehicleCount}대 운행</span>
+													{/if}
 													<span class="text-brand-muted"> · {shuttle.toName} 방향</span>
 												</p>
 												<p class="m-0 mt-1 text-xs font-bold text-brand-muted">

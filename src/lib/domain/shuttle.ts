@@ -16,6 +16,7 @@ export type ShuttleSchedule = {
 	dayType: ShuttleServiceDay;
 	note?: string;
 	tag?: 'first' | 'last';
+	vehicleCount?: number;
 	fridayUnavailable?: boolean;
 };
 
@@ -35,9 +36,9 @@ export type UpcomingShuttle = ShuttleSchedule & {
 };
 
 export const shuttleScheduleSource = {
-	name: '고려대학교 세종캠퍼스 셔틀버스 안내',
+	name: '2026학년도 2학기 학생 셔틀버스 시간표',
 	url: 'https://kusemicon.korea.ac.kr/koreaSejong/7803/subview.do',
-	verifiedAt: '2026-08-25'
+	verifiedAt: '2026-08-31'
 } as const;
 
 export const shuttleStops: ShuttleStop[] = [
@@ -104,7 +105,8 @@ function createScheduleRows({
 	to,
 	times,
 	fridayUnavailableFrom,
-	notesByTime
+	notesByTime,
+	vehicleCountsByTime
 }: {
 	dayType: ShuttleServiceDay;
 	from: ShuttleStopId;
@@ -112,6 +114,7 @@ function createScheduleRows({
 	times: string[];
 	fridayUnavailableFrom?: string;
 	notesByTime?: Record<string, string>;
+	vehicleCountsByTime?: Record<string, number>;
 }): ShuttleSchedule[] {
 	return times.map((departureTime) => ({
 		id: `${dayType}-${from}-${departureTime.replace(':', '')}`,
@@ -120,6 +123,7 @@ function createScheduleRows({
 		departureTime,
 		dayType,
 		note: notesByTime?.[departureTime],
+		vehicleCount: vehicleCountsByTime?.[departureTime],
 		fridayUnavailable: Boolean(
 			fridayUnavailableFrom && timeToMinutes(departureTime) >= timeToMinutes(fridayUnavailableFrom)
 		)
@@ -141,7 +145,6 @@ export const shuttleSchedules: ShuttleSchedule[] = [
 		to: 'osong',
 		departureTime: '18:10',
 		dayType: 'weekday',
-		tag: 'last',
 		note: '조치원역 경유 · 오송역 도착'
 	},
 	...createScheduleRows({
@@ -150,8 +153,8 @@ export const shuttleSchedules: ShuttleSchedule[] = [
 		to: 'campus',
 		times: weekdayStationTimes,
 		fridayUnavailableFrom: '19:20',
-		notesByTime: {
-			'08:30': '오송역 6번 출구 출발 · 조치원역 경유'
+		vehicleCountsByTime: {
+			'08:45': 2
 		}
 	}),
 	...createScheduleRows({
@@ -174,8 +177,8 @@ export const shuttleServiceNotices: ShuttleServiceNotice[] = [
 		id: 'weekday-osong-0830',
 		dayType: 'weekday',
 		time: '08:30',
-		label: '오송역 6번 출구',
-		note: '조치원역 경유 운행'
+		label: '오송역 6번 출구 출발',
+		note: '조치원역 경유'
 	},
 	{
 		id: 'weekday-campus-1810-osong',

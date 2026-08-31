@@ -8,8 +8,8 @@ export const COLLAPSED_HEIGHT = 104;
 const EXPANDED_VIEWPORT_RATIO = 5 / 6;
 const SWIPE_VELOCITY_THRESHOLD = 0.45;
 
-export function getResultPanelInitialDetent(kind: ResultPanelKind): BottomSheetDetent {
-	return kind === 'facility' ? 'medium' : 'collapsed';
+export function getResultPanelInitialDetent(_kind: ResultPanelKind): BottomSheetDetent {
+	return 'medium';
 }
 
 export function getBottomSheetHeights(

@@ -5,6 +5,7 @@ import {
 	getShuttleSchedulesForDate,
 	getUpcomingShuttles,
 	orderShuttleTimeline,
+	shuttleScheduleSource,
 	shuttleServiceNotices
 } from './shuttle';
 
@@ -51,7 +52,7 @@ describe('정적 셔틀 시간표', () => {
 
 	it('오송역의 오전 안내와 18시 10분 종착 운행을 상단 안내용으로 함께 제공한다', () => {
 		expect(shuttleServiceNotices).toMatchObject([
-			{ time: '08:30', label: '오송역 6번 출구', note: '조치원역 경유 운행' },
+			{ time: '08:30', label: '오송역 6번 출구 출발', note: '조치원역 경유' },
 			{ time: '18:10', label: '학교 출발', note: '조치원역 경유 · 오송역 도착' }
 		]);
 	});
@@ -81,14 +82,11 @@ describe('정적 셔틀 시간표', () => {
 		});
 	});
 
-	it('오송역 경유 정보는 해당 출발 시간 행에 붙일 수 있는 문구로 보존한다', () => {
+	it('오송역 경유 정보는 별도 안내와 18시 10분 학교 출발 행으로 나눠 보존한다', () => {
 		const monday = new Date(2026, 7, 24, 12, 0);
 
-		expect(getShuttleSchedulesForDate(monday, 'jochewon-station-back')).toContainEqual(
-			expect.objectContaining({
-				departureTime: '08:30',
-				note: '오송역 6번 출구 출발 · 조치원역 경유'
-			})
+		expect(shuttleServiceNotices).toContainEqual(
+			expect.objectContaining({ time: '08:30', label: '오송역 6번 출구 출발', note: '조치원역 경유' })
 		);
 		expect(getShuttleSchedulesForDate(monday, 'campus')).toContainEqual(
 			expect.objectContaining({
@@ -96,5 +94,36 @@ describe('정적 셔틀 시간표', () => {
 				note: '조치원역 경유 · 오송역 도착'
 			})
 		);
+	});
+
+	it('2학기 공식표의 오송역 별도 운행과 08시 45분 2대 운행을 구분한다', () => {
+		const monday = new Date(2026, 7, 31, 8, 0);
+		const stationSchedules = getShuttleSchedulesForDate(monday, 'jochewon-station-back');
+		const campusSchedules = getShuttleSchedulesForDate(monday, 'campus');
+
+		expect(stationSchedules.find((schedule) => schedule.departureTime === '08:30')?.note).toBeUndefined();
+		expect(stationSchedules.find((schedule) => schedule.departureTime === '08:45')).toMatchObject({
+			vehicleCount: 2
+		});
+		const osongEvening = campusSchedules.find((schedule) => schedule.departureTime === '18:10');
+		expect(osongEvening).toMatchObject({
+			to: 'osong',
+			note: '조치원역 경유 · 오송역 도착'
+		});
+		expect(osongEvening?.tag).toBeUndefined();
+		expect(shuttleServiceNotices).toContainEqual({
+			id: 'weekday-osong-0830',
+			dayType: 'weekday',
+			time: '08:30',
+			label: '오송역 6번 출구 출발',
+			note: '조치원역 경유'
+		});
+	});
+
+	it('첨부된 2026학년도 2학기 공식 시간표를 출처로 기록한다', () => {
+		expect(shuttleScheduleSource).toMatchObject({
+			name: '2026학년도 2학기 학생 셔틀버스 시간표',
+			verifiedAt: '2026-08-31'
+		});
 	});
 });

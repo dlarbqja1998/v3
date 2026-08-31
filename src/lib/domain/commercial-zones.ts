@@ -2,6 +2,7 @@ export type MapAreaMode = 'campus' | 'outside';
 
 export const CAMPUS_AREA_ID = 'campus';
 export const CAMPUS_AREA_NAME = '고려대학교 세종캠퍼스';
+export const CAMPUS_AREA_SHORT_NAME = '고려대 세종';
 
 const PRIORITY_ZONE_NAMES = ['고대앞', '욱일', '홍대사이', '조치원역'] as const;
 
@@ -27,6 +28,8 @@ export type CoordinateBounds = {
 export type MapAreaOption = {
 	id: string;
 	name: string;
+	shortName?: string;
+	description?: string;
 	mode: MapAreaMode;
 	disabled?: boolean;
 	badge?: string;
@@ -38,10 +41,16 @@ export function buildMapAreaOptions(
 ): MapAreaOption[] {
 	if (!outsideEnabled) {
 		return [
-			{ id: CAMPUS_AREA_ID, name: CAMPUS_AREA_NAME, mode: 'campus' },
+			{
+				id: CAMPUS_AREA_ID,
+				name: CAMPUS_AREA_NAME,
+				shortName: CAMPUS_AREA_SHORT_NAME,
+				mode: 'campus'
+			},
 			{
 				id: 'outside-coming-soon',
 				name: '교외 음식점',
+				description: '학교 주변 상권은 준비 중이에요',
 				mode: 'outside',
 				disabled: true,
 				badge: '준비 중'
@@ -60,7 +69,12 @@ export function buildMapAreaOptions(
 	});
 
 	return [
-		{ id: CAMPUS_AREA_ID, name: CAMPUS_AREA_NAME, mode: 'campus' },
+		{
+			id: CAMPUS_AREA_ID,
+			name: CAMPUS_AREA_NAME,
+			shortName: CAMPUS_AREA_SHORT_NAME,
+			mode: 'campus'
+		},
 		...sortedZones.map((zone) => ({ id: zone.id, name: zone.name, mode: 'outside' as const }))
 	];
 }

@@ -109,10 +109,16 @@ describe('지도 생활권 전환', () => {
 
 	it('교외 준비 중 상태에서는 실제 상권 대신 비활성 안내 한 개만 제공한다', () => {
 		expect(buildMapAreaOptions(zones, { outsideEnabled: false })).toEqual([
-			{ id: 'campus', name: '고려대학교 세종캠퍼스', mode: 'campus' },
+			{
+				id: 'campus',
+				name: '고려대학교 세종캠퍼스',
+				shortName: '고려대 세종',
+				mode: 'campus'
+			},
 			{
 				id: 'outside-coming-soon',
 				name: '교외 음식점',
+				description: '학교 주변 상권은 준비 중이에요',
 				mode: 'outside',
 				disabled: true,
 				badge: '준비 중'
