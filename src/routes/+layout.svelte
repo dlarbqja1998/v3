@@ -16,6 +16,8 @@
 
 <svelte:head>
 	<link rel="icon" type="image/png" href="/icon.png" />
+	<link rel="apple-touch-icon" href="/icon.png" />
+	<meta name="apple-mobile-web-app-title" content="골라바유" />
 </svelte:head>
 
 {@render children()}
