@@ -7,9 +7,17 @@
 		type CommercialZone,
 		type MapAreaMode
 	} from '$lib/domain/commercial-zones';
-	import { shouldShowCampusCenterMarker } from '$lib/domain/campus-boundary-visibility';
+	import {
+		getCampusSpotFocusCenter,
+		shouldShowCampusCenterMarker
+	} from '$lib/domain/campus-boundary-visibility';
 	import type { Place } from '$lib/domain/places';
-	import { getSafeMarkerIcon } from '$lib/map/marker-icon';
+	import { getMapMarkerBackground, getSafeMarkerIcon } from '$lib/map/marker-icon';
+	import {
+		enableSecureNaverMapTiles,
+		loadNaverMapSdkWithRetry,
+		waitForRenderableMapSize
+	} from '$lib/map/naver-map-sdk';
 	import { getCampusPolygonStyle } from '$lib/map/campus-polygon';
 	import { cancelMapMotion } from '$lib/map/map-motion';
 	import { getCommercialPolygonStyle } from '$lib/map/commercial-polygon';
@@ -78,6 +86,10 @@
 	let campusPolygons: any[] = [];
 	let commercialPolygons: any[] = [];
 	let mapListeners: any[] = [];
+	let mapResizeObserver: ResizeObserver | null = null;
+	let windowResizeHandler: (() => void) | null = null;
+	let lastMapWidth = 0;
+	let lastMapHeight = 0;
 	let isReady = $state(false);
 	let loadError = $state('');
 	let lastFocusRequestId = -1;
@@ -103,6 +115,7 @@
 	});
 
 	onDestroy(() => {
+		clearMapResize();
 		clearMapListeners();
 		clearMarkers();
 		clearEventMarkers();
@@ -122,7 +135,7 @@
 		syncCampusSpots(campusSpots, activeCampusSpotId, showCampusBoundaries);
 		focusActivePlace(places, activePlaceId, focusMode, focusTargetRatio);
 		focusActiveEvent(events, activeEventId, focusMode, focusTargetRatio);
-		focusActiveCampusSpot(campusSpots, focusCampusSpotId, focusMode);
+		focusActiveCampusSpot(campusSpots, focusCampusSpotId, activeCampusSpotId, focusMode);
 	});
 
 	$effect(() => {
@@ -152,7 +165,11 @@
 		}
 
 		try {
-			await loadNaverMapScript(clientId);
+			await loadNaverMapSdkWithRetry(clientId);
+			const initialSize = await waitForRenderableMapSize(
+				measureMapElement,
+				() => new Promise<void>((resolve) => window.requestAnimationFrame(() => resolve()))
+			);
 
 			const naver = window.naver;
 			if (!naver) throw new Error('Naver map SDK is not available.');
@@ -160,6 +177,7 @@
 			map = new naver.maps.Map(mapElement, {
 				center: new naver.maps.LatLng(initialCenter.latitude, initialCenter.longitude),
 				zoom: initialZoom,
+				size: new naver.maps.Size(initialSize.width, initialSize.height),
 				minZoom: outsideMinZoom,
 				maxZoom,
 				mapDataControl: false,
@@ -169,14 +187,57 @@
 				},
 				zoomControl: false
 			});
+			lastMapWidth = initialSize.width;
+			lastMapHeight = initialSize.height;
+			enableSecureNaverMapTiles(map);
 
 			bindMapGuards();
+			bindMapResize();
 			isReady = true;
 			syncMarkers(places, activePlaceId);
 			syncEventMarkers(events, activeEventId);
 		} catch {
 			loadError = '네이버 지도를 불러오지 못했습니다.';
 		}
+	}
+
+	function measureMapElement() {
+		const bounds = mapElement.getBoundingClientRect();
+		return {
+			width: Math.round(bounds.width),
+			height: Math.round(bounds.height)
+		};
+	}
+
+	function bindMapResize() {
+		if (typeof ResizeObserver !== 'undefined') {
+			mapResizeObserver = new ResizeObserver(resizeMapToContainer);
+			mapResizeObserver.observe(mapElement);
+			return;
+		}
+
+		windowResizeHandler = resizeMapToContainer;
+		window.addEventListener('resize', windowResizeHandler);
+	}
+
+	function resizeMapToContainer() {
+		const naver = window.naver;
+		if (!naver || !map) return;
+
+		const size = measureMapElement();
+		if (size.width <= 0 || size.height <= 0) return;
+		if (size.width === lastMapWidth && size.height === lastMapHeight) return;
+
+		lastMapWidth = size.width;
+		lastMapHeight = size.height;
+		map.setSize(new naver.maps.Size(size.width, size.height));
+	}
+
+	function clearMapResize() {
+		mapResizeObserver?.disconnect();
+		mapResizeObserver = null;
+		if (windowResizeHandler) window.removeEventListener('resize', windowResizeHandler);
+		windowResizeHandler = null;
 	}
 
 	function bindMapGuards() {
@@ -234,7 +295,7 @@
 				map,
 				title: place.name,
 				icon: {
-					content: markerHtml(place.icon, place.categorySlug, isActive),
+					content: markerHtml(place.icon, isActive),
 					size: new naver.maps.Size(32, 32),
 					anchor: new naver.maps.Point(16, 32)
 				}
@@ -398,15 +459,21 @@
 
 	function focusActiveCampusSpot(
 		nextCampusSpots: CampusSpot[],
+		nextFocusCampusSpotId: string,
 		nextActiveCampusSpotId: string,
 		nextFocusMode: MapFocusMode
 	) {
-		if (!nextActiveCampusSpotId) return;
+		if (!nextFocusCampusSpotId) return;
 
-		const activeCampusSpot = nextCampusSpots.find((spot) => spot.id === nextActiveCampusSpotId);
+		const activeCampusSpot = nextCampusSpots.find((spot) => spot.id === nextFocusCampusSpotId);
 		if (!activeCampusSpot) return;
 
-		focusCoordinate(activeCampusSpot.center.latitude, activeCampusSpot.center.longitude, nextFocusMode);
+		const center = getCampusSpotFocusCenter(
+			nextFocusCampusSpotId,
+			activeCampusSpot.center,
+			nextActiveCampusSpotId
+		);
+		focusCoordinate(center.latitude, center.longitude, nextFocusMode);
 	}
 
 	function focusActiveEvent(
@@ -489,9 +556,8 @@
 		mapListeners = [];
 	}
 
-	function markerHtml(icon: string, categorySlug: string, isActive: boolean) {
-		const isShuttle = categorySlug === 'shuttle';
-		const background = isActive ? '#5f0f2d' : isShuttle ? '#1f6f78' : '#a51c45';
+	function markerHtml(icon: string, isActive: boolean) {
+		const background = getMapMarkerBackground(isActive);
 		const outline = isActive ? '0 0 0 5px rgba(165, 28, 69, 0.24),' : '';
 		const safeIcon = getSafeMarkerIcon(icon === '식당' ? 'food' : icon === '버스' ? 'bus' : icon);
 		const content = safeIcon
@@ -535,28 +601,6 @@
 		`;
 	}
 
-	function loadNaverMapScript(nextClientId: string) {
-		if (window.naver?.maps) return Promise.resolve();
-
-		const existingScript = document.querySelector<HTMLScriptElement>('script[data-naver-map-sdk]');
-		if (existingScript) {
-			return new Promise<void>((resolve, reject) => {
-				existingScript.addEventListener('load', () => resolve(), { once: true });
-				existingScript.addEventListener('error', () => reject(), { once: true });
-			});
-		}
-
-		return new Promise<void>((resolve, reject) => {
-			const script = document.createElement('script');
-			script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${encodeURIComponent(nextClientId)}`;
-			script.async = true;
-			script.defer = true;
-			script.dataset.naverMapSdk = 'true';
-			script.addEventListener('load', () => resolve(), { once: true });
-			script.addEventListener('error', () => reject(), { once: true });
-			document.head.appendChild(script);
-		});
-	}
 </script>
 
 <div

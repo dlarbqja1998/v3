@@ -31,7 +31,7 @@ describe('지도 핀 포커스 위치', () => {
 		).toBe(0);
 	});
 
-	it('학식 장소 보기는 바텀시트 위의 남은 지도 영역 중앙에 핀을 두고 기본 확대보다 2단계 가깝게 보여준다', () => {
+	it('학식 장소 보기는 바텀시트 위의 남은 지도 영역 중앙에 핀을 두고 기존 선택 확대 수준을 유지한다', () => {
 		const getPlaceFocusZoom = (mapFocus as unknown as Record<string, unknown>).getPlaceFocusZoom;
 		const getAvailableMapMarkerTargetRatio = (
 			mapFocus as unknown as Record<string, unknown>
@@ -39,7 +39,7 @@ describe('지도 핀 포커스 위치', () => {
 
 		expect(getMarkerTargetRatio('default')).toBe(0.5);
 		expect(getPlaceFocusZoom).toBeTypeOf('function');
-		expect((getPlaceFocusZoom as (homeZoom: number) => number)(17)).toBe(19);
+		expect((getPlaceFocusZoom as (homeZoom: number) => number)(16)).toBe(19);
 		expect(getAvailableMapMarkerTargetRatio).toBeTypeOf('function');
 		expect(
 			(getAvailableMapMarkerTargetRatio as (layout: {

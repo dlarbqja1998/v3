@@ -2,7 +2,7 @@ export type MapFocusMode = 'default' | 'top-band';
 
 const defaultLatitudeOffset = 0;
 const topBandMarkerTargetRatio = 1 / 12;
-const placeFocusZoomOffset = 2;
+const placeFocusZoomOffset = 3;
 const mapCenterBounds = {
 	south: 36.5938,
 	west: 127.2765,

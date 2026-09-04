@@ -14,6 +14,7 @@ declare global {
 					getZoom: () => number;
 					panTo?: (center: unknown) => void;
 					setCenter: (center: unknown) => void;
+					setSize: (size: unknown) => void;
 					setZoom: (zoom: number) => void;
 					fitBounds: (bounds: unknown, options?: Record<string, number>) => void;
 				};

@@ -35,6 +35,15 @@ export type UpcomingShuttle = ShuttleSchedule & {
 	serviceDate: string;
 };
 
+export type ShuttleStopCountdown = {
+	stopId: ShuttleStopId;
+	departureTime: string;
+	minutesLeft: number;
+	minutesLabel: string;
+	directionLabel: string;
+	serviceDate: string;
+};
+
 export const shuttleScheduleSource = {
 	name: '2026학년도 2학기 학생 셔틀버스 시간표',
 	url: 'https://kusemicon.korea.ac.kr/koreaSejong/7803/subview.do',
@@ -81,6 +90,10 @@ export const shuttleStops: ShuttleStop[] = [
 		displayPriority: 2
 	}
 ];
+
+export function addAlwaysVisibleShuttleStops(places: Place[]): Place[] {
+	return [...places.filter((place) => place.type !== 'shuttle_stop'), ...shuttleStops];
+}
 
 const weekdayCampusTimes = [
 	'09:10', '09:30', '09:40', '09:50', '10:10', '10:30', '10:40', '11:00', '11:20',
@@ -278,6 +291,23 @@ export function getNextAvailableShuttle(now: Date, from?: ShuttleStopId): Upcomi
 	}
 
 	return null;
+}
+
+export function getShuttleStopCountdown(
+	now: Date,
+	stopId: ShuttleStopId
+): ShuttleStopCountdown | null {
+	const nextShuttle = getNextAvailableShuttle(now, stopId);
+	if (!nextShuttle) return null;
+
+	return {
+		stopId,
+		departureTime: nextShuttle.departureTime,
+		minutesLeft: nextShuttle.minutesLeft,
+		minutesLabel: formatMinutesLeft(nextShuttle.minutesLeft),
+		directionLabel: getShuttleStopLabel(stopId),
+		serviceDate: nextShuttle.serviceDate
+	};
 }
 
 export function formatMinutesLeft(minutes: number) {

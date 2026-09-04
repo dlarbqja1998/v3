@@ -17,7 +17,11 @@
 		getNextActivePlaceId,
 		getVisibleFacilityPlaces
 	} from '$lib/home/facility-discovery';
-	import { getHomeMapResetState } from '$lib/home/home-map-state';
+	import {
+		getHomeMapResetState,
+		getShuttlePanelInitialDetent,
+		type ShuttlePanelOpenSource
+	} from '$lib/home/home-map-state';
 	import { formatHomeDate } from '$lib/home/home-date';
 	import {
 		CAMPUS_AREA_ID,
@@ -55,8 +59,10 @@
 	import WeatherWidget from '$lib/weather/WeatherWidget.svelte';
 	import type { CafeteriaPanelItem, DailyMenu, MenuDayKey } from '$lib/domain/places';
 	import {
+		addAlwaysVisibleShuttleStops,
 		formatMinutesLeft,
 		getNextAvailableShuttle,
+		getShuttleStopCountdown,
 		getUpcomingShuttles,
 		shuttleSchedules,
 		shuttleStops,
@@ -202,17 +208,19 @@
 	const activeCampusSpotPanel = $derived(getCampusSpotPanelPresentation(activeCampusSpot));
 
 	const mapPlaces = $derived(
-		sheetMode === 'pin'
-			? []
-			: sheetMode === 'shuttle'
-			? shuttleStops
-			: sheetMode === 'facility'
-			? facilityPlaces
-			: sheetMode === 'place' && activePlace
-			? [activePlace]
-			: sheetMode === 'cafeteria'
-			? data.places.filter((place) => data.cafeterias.some((cafeteria) => cafeteria.placeId === place.id))
-			: filteredPlaces
+		addAlwaysVisibleShuttleStops(
+			sheetMode === 'pin' || sheetMode === 'shuttle'
+				? []
+				: sheetMode === 'facility'
+					? facilityPlaces
+					: sheetMode === 'place' && activePlace
+						? [activePlace]
+						: sheetMode === 'cafeteria'
+							? data.places.filter((place) =>
+									data.cafeterias.some((cafeteria) => cafeteria.placeId === place.id)
+								)
+							: filteredPlaces
+		)
 	);
 
 	const activeMapPlaceId = $derived(
@@ -248,6 +256,9 @@
 	const voteLoginHref = $derived(`/login?next=${encodeURIComponent(voteLoginReturnUrl)}`);
 	const upcomingShuttles = $derived(getUpcomingShuttles(currentTime, activeShuttleStopId, 5));
 	const nextShuttle = $derived(getNextAvailableShuttle(currentTime));
+	const activeShuttleCountdown = $derived(
+		getShuttleStopCountdown(currentTime, activeShuttleStopId)
+	);
 
 	onMount(() => {
 		const weatherAbortController = new AbortController();
@@ -336,13 +347,16 @@
 		requestAnimationFrame(() => cafeteriaScroller?.scrollTo({ left: 0, behavior: 'smooth' }));
 	}
 
-	function openShuttlePanel(stopId?: ShuttleStopId) {
+	function openShuttlePanel(
+		stopId?: ShuttleStopId,
+		source: ShuttlePanelOpenSource = 'home_bottom_navigation'
+	) {
 		track(analyticsEvents.clickShuttleMarker, {
-			source: 'home_bottom_navigation',
+			source,
 			shuttle_stop_id: stopId ?? nextShuttle?.from ?? 'campus'
 		});
 		sheetMode = 'shuttle';
-		setSheetDetent('collapsed');
+		setSheetDetent(getShuttlePanelInitialDetent(source));
 		activeCampusSpotId = '';
 		focusCampusSpotId = '';
 		selectedCategory = 'all';
@@ -527,16 +541,16 @@
 	}
 
 	function handleMarkerClick(placeId: string) {
+		const shuttleStop = shuttleStops.find((stop) => stop.id === placeId);
+		if (shuttleStop) {
+			openShuttlePanel(shuttleStop.stopId, 'home_map');
+			return;
+		}
+
 		track(analyticsEvents.clickPlaceMarker, {
 			place_id: placeId,
 			sheet_mode: sheetMode
 		});
-		if (sheetMode === 'shuttle') {
-			const stop = shuttleStops.find((item) => item.id === placeId);
-			if (stop) selectShuttleStop(stop.stopId);
-			return;
-		}
-
 		if (sheetMode === 'cafeteria') {
 			const cafeteriaIndex = data.cafeterias.findIndex((item) => item.placeId === placeId);
 			if (cafeteriaIndex >= 0) selectCafeteria(cafeteriaIndex);
@@ -1432,6 +1446,32 @@
 							닫기
 						</button>
 					</div>
+
+					{#if activeShuttleCountdown}
+						<div
+							class="mb-4 flex min-h-20 items-center justify-between gap-4 border-y border-brand-border py-3"
+							data-shuttle-stop-countdown
+						>
+							<div>
+								<p class="m-0 text-[12px] font-bold text-brand-muted">다음 셔틀까지</p>
+								<strong class="mt-0.5 block text-[24px] font-black tracking-[-0.03em] text-brand">
+									{activeShuttleCountdown.minutesLabel}
+								</strong>
+							</div>
+							<div class="text-right">
+								<p class="m-0 text-[14px] font-black tabular-nums text-brand-text">
+									{activeShuttleCountdown.departureTime} 출발
+								</p>
+								<p class="m-0 mt-1 text-[12px] font-bold text-brand-muted">
+									{activeShuttleCountdown.directionLabel} · 시간표 기준
+								</p>
+							</div>
+						</div>
+					{:else}
+						<p class="m-0 mb-4 border-y border-brand-border py-4 text-[13px] font-bold text-brand-muted">
+							예정된 셔틀 운행이 없습니다.
+						</p>
+					{/if}
 
 					<div
 						bind:this={shuttleScroller}

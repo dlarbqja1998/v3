@@ -1,15 +1,70 @@
 import { describe, expect, it } from 'vitest';
 import {
+	addAlwaysVisibleShuttleStops,
 	getCurrentShuttle,
 	getNextAvailableShuttle,
 	getShuttleSchedulesForDate,
+	getShuttleStopCountdown,
 	getUpcomingShuttles,
 	orderShuttleTimeline,
 	shuttleScheduleSource,
-	shuttleServiceNotices
+	shuttleServiceNotices,
+	shuttleStops
 } from './shuttle';
+import type { Place } from './places';
 
 describe('정적 셔틀 시간표', () => {
+	it('지도 필터와 무관하게 공식 정류장 두 곳을 중복 없이 유지한다', () => {
+		const staleCampusStop = { ...shuttleStops[0], name: '예전 정류장 이름' };
+		const regularPlace: Place = {
+			id: 'library',
+			type: 'facility',
+			name: '학술정보원',
+			categorySlug: 'study',
+			categoryName: '학습',
+			zoneId: 'campus',
+			scope: 'campus',
+			latitude: 36.6,
+			longitude: 127.2,
+			locationGuide: null,
+			operatingHours: null,
+			phone: null,
+			description: '',
+			icon: 'library',
+			isVisible: true,
+			displayPriority: 1
+		};
+
+		const result = addAlwaysVisibleShuttleStops([regularPlace, staleCampusStop]);
+
+		expect(result.filter((place) => place.type === 'shuttle_stop').map((place) => place.id)).toEqual([
+			'shuttle-campus',
+			'shuttle-jochewon-station-back'
+		]);
+		expect(result.find((place) => place.id === 'shuttle-campus')?.name).toBe(
+			'학술정보원 앞 셔틀버스 정류장'
+		);
+	});
+
+	it('두 정류장은 같은 시각에도 각 출발 시간 기준으로 다른 남은 시간을 제공한다', () => {
+		const mondayMorning = new Date(2026, 7, 24, 8, 35);
+
+		expect(getShuttleStopCountdown(mondayMorning, 'campus')).toMatchObject({
+			stopId: 'campus',
+			departureTime: '09:10',
+			minutesLeft: 35,
+			minutesLabel: '35분 후',
+			directionLabel: '조치원역 행'
+		});
+		expect(getShuttleStopCountdown(mondayMorning, 'jochewon-station-back')).toMatchObject({
+			stopId: 'jochewon-station-back',
+			departureTime: '08:45',
+			minutesLeft: 10,
+			minutesLabel: '10분 후',
+			directionLabel: '고려대 행'
+		});
+	});
+
 	it('평일 학교 출발은 공식 시간표의 다음 출발 시간을 순서대로 제공한다', () => {
 		const now = new Date(2026, 7, 24, 14, 5);
 

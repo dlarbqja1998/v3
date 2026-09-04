@@ -3,6 +3,9 @@ import type {
 	OutsideCuisine,
 	OutsidePlaceCategory
 } from '$lib/domain/outside-place-filters';
+import type { BottomSheetDetent } from '$lib/domain/bottom-sheet';
+
+export type ShuttlePanelOpenSource = 'home_map' | 'home_bottom_navigation';
 
 export type HomeMapResetState = {
 	selectedMapAreaId: typeof CAMPUS_AREA_ID;
@@ -20,4 +23,10 @@ export function getHomeMapResetState(): HomeMapResetState {
 		selectedOutsideCategory: 'all',
 		selectedOutsideCuisine: 'all'
 	};
+}
+
+export function getShuttlePanelInitialDetent(
+	source: ShuttlePanelOpenSource
+): BottomSheetDetent {
+	return source === 'home_map' ? 'medium' : 'collapsed';
 }
