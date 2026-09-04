@@ -1,5 +1,5 @@
 import { env } from '$env/dynamic/private';
-import { fail, redirect } from '@sveltejs/kit';
+import { fail } from '@sveltejs/kit';
 
 import {
 	canEditCafeteriaOperatingHours,
@@ -78,7 +78,10 @@ export const actions: Actions = {
 			return fail(500, { operatingHoursError: '운영시간을 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.' });
 		}
 
-		throw redirect(303, '/cafeteria');
+		return {
+			operatingHoursSaved: validation.value,
+			operatingHoursMessage: '운영시간을 저장했어요.'
+		};
 	}
 };
 

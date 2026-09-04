@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
 	canEditCafeteriaOperatingHours,
 	getCafeteriaOperatingStatus,
+	mergeSavedCafeteriaOperatingHours,
 	validateOperatingHoursInput,
 	type CafeteriaOperatingHour
 } from './cafeteria-operating-hours';
@@ -18,6 +19,47 @@ const weekdayBreakfast: CafeteriaOperatingHour = {
 };
 
 describe('학식 운영시간', () => {
+	it('저장 성공 시 해당 식당의 캐시만 새 운영시간으로 교체한다', () => {
+		const result = mergeSavedCafeteriaOperatingHours(
+			[
+				weekdayBreakfast,
+				{
+					id: 'faculty-old',
+					cafeteriaCode: 'faculty',
+					label: '중식',
+					daysOfWeek: [1, 2, 3, 4, 5],
+					opensAt: '11:30',
+					closesAt: '13:30',
+					displayOrder: 1
+				}
+			],
+			{
+				cafeteriaCode: 'faculty',
+				rows: [
+					{
+						label: '중식',
+						daysOfWeek: [1, 2, 3, 4, 5],
+						opensAt: '11:30',
+						closesAt: '14:00'
+					}
+				]
+			}
+		);
+
+		expect(result).toEqual([
+			weekdayBreakfast,
+			{
+				id: 'faculty-saved-1',
+				cafeteriaCode: 'faculty',
+				label: '중식',
+				daysOfWeek: [1, 2, 3, 4, 5],
+				opensAt: '11:30',
+				closesAt: '14:00',
+				displayOrder: 1
+			}
+		]);
+	});
+
 	it('평일 식사 시간에는 영업중을 계산한다', () => {
 		expect(
 			getCafeteriaOperatingStatus([weekdayBreakfast], new Date('2026-08-24T08:00:00+09:00'))

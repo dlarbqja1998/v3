@@ -17,7 +17,7 @@ export type CafeteriaOperatingHoursInput = {
 	rows: Array<Pick<CafeteriaOperatingHour, 'label' | 'daysOfWeek' | 'opensAt' | 'closesAt'>>;
 };
 
-type ValidCafeteriaOperatingHoursInput = Omit<CafeteriaOperatingHoursInput, 'cafeteriaCode'> & {
+export type ValidCafeteriaOperatingHoursInput = Omit<CafeteriaOperatingHoursInput, 'cafeteriaCode'> & {
 	cafeteriaCode: CafeteriaCode;
 };
 
@@ -89,6 +89,26 @@ export function getCafeteriaOperatingStatus(
 	);
 
 	return isOpen ? { kind: 'open', label: '영업중' } : { kind: 'closed', label: '영업 종료' };
+}
+
+export function mergeSavedCafeteriaOperatingHours(
+	currentRows: CafeteriaOperatingHour[],
+	input: ValidCafeteriaOperatingHoursInput
+): CafeteriaOperatingHour[] {
+	const otherCafeteriaRows = currentRows.filter(
+		(row) => row.cafeteriaCode !== input.cafeteriaCode
+	);
+	const savedRows = input.rows.map((row, index) => ({
+		id: `${input.cafeteriaCode}-saved-${index + 1}`,
+		cafeteriaCode: input.cafeteriaCode,
+		label: row.label,
+		daysOfWeek: [...row.daysOfWeek],
+		opensAt: row.opensAt,
+		closesAt: row.closesAt,
+		displayOrder: index + 1
+	}));
+
+	return [...otherCafeteriaRows, ...savedRows];
 }
 
 export function validateOperatingHoursInput(

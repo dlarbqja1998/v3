@@ -14,7 +14,9 @@
 
 	import {
 		getCafeteriaOperatingStatus,
-		type CafeteriaOperatingHour
+		mergeSavedCafeteriaOperatingHours,
+		type CafeteriaOperatingHour,
+		type ValidCafeteriaOperatingHoursInput
 	} from '$lib/domain/cafeteria-operating-hours';
 	import { getCafeteriaMapHref, getInitialCafeteriaIndex } from '$lib/domain/cafeterias';
 	import type { CafeteriaPanelItem, DailyMenu, MenuDayKey } from '$lib/domain/places';
@@ -215,16 +217,56 @@
 		});
 	}
 
-	const enhanceOperatingHours: SubmitFunction = () => {
+	const enhanceOperatingHours: SubmitFunction = ({ formData, cancel }) => {
+		if (!activeCafeteria || isSavingOperatingHours) {
+			cancel();
+			return;
+		}
+
+		formData.set(
+			'operatingHours',
+			JSON.stringify({
+				cafeteriaCode: activeCafeteria.id,
+				rows: operatingHourDrafts
+			})
+		);
 		isSavingOperatingHours = true;
-		return async ({ update }) => {
+		return async ({ result, update }) => {
 			try {
-				await update();
+				await update({ reset: false, invalidateAll: false });
+				if (result.type === 'success' && hasOperatingHoursSaveResult(result.data)) {
+					operatingHours = mergeSavedCafeteriaOperatingHours(
+						operatingHours,
+						result.data.operatingHoursSaved
+					);
+					operatingHoursLoadedFor = result.data.operatingHoursSaved.cafeteriaCode;
+					operatingHoursError = '';
+					isEditingOperatingHours = false;
+					showToast(result.data.operatingHoursMessage ?? '운영시간을 저장했어요.');
+				}
 			} finally {
 				isSavingOperatingHours = false;
 			}
 		};
 	};
+
+	function hasOperatingHoursSaveResult(
+		value: unknown
+	): value is {
+		operatingHoursSaved: ValidCafeteriaOperatingHoursInput;
+		operatingHoursMessage?: string;
+	} {
+		if (!value || typeof value !== 'object') return false;
+		const saved = (value as { operatingHoursSaved?: unknown }).operatingHoursSaved;
+		if (!saved || typeof saved !== 'object') return false;
+		const input = saved as { cafeteriaCode?: unknown; rows?: unknown };
+		return (
+			(input.cafeteriaCode === 'jinri' ||
+				input.cafeteriaCode === 'faculty' ||
+				input.cafeteriaCode === 'foodcourt') &&
+			Array.isArray(input.rows)
+		);
+	}
 
 	function viewOnMap() {
 		if (!activeCafeteria) return;
