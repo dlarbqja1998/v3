@@ -30,6 +30,8 @@ type SessionUser = { id: number; role: string } | null | undefined;
 
 const timePattern = /^([01]\d|2[0-3]):[0-5]\d$/;
 
+// 고려대학교 세종캠퍼스 주간 식단표(8028)에서 2026-09-04 확인한 진리관 운영시간.
+// 교직원식당은 공식 식단표에 시간이 없어 확인 가능한 값만 기본값으로 둔다.
 export const cafeteriaOperatingHourDefaults: CafeteriaOperatingHour[] = [
 	{
 		id: 'jinri-breakfast',
@@ -37,7 +39,7 @@ export const cafeteriaOperatingHourDefaults: CafeteriaOperatingHour[] = [
 		label: '조식',
 		daysOfWeek: [1, 2, 3, 4, 5],
 		opensAt: '07:30',
-		closesAt: '09:30',
+		closesAt: '09:00',
 		displayOrder: 1
 	},
 	{
@@ -57,15 +59,6 @@ export const cafeteriaOperatingHourDefaults: CafeteriaOperatingHour[] = [
 		opensAt: '17:00',
 		closesAt: '18:30',
 		displayOrder: 3
-	},
-	{
-		id: 'faculty-lunch',
-		cafeteriaCode: 'faculty',
-		label: '중식',
-		daysOfWeek: [1, 2, 3, 4, 5],
-		opensAt: '11:30',
-		closesAt: '14:00',
-		displayOrder: 1
 	}
 ];
 

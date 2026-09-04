@@ -277,16 +277,25 @@ export const cafeteriaMenus = pgTable('cafeteria_menus', {
 	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
 });
 
-export const cafeteriaOperatingHours = pgTable('cafeteria_operating_hours', {
-	id: uuid('id').defaultRandom().primaryKey(),
-	cafeteriaCode: varchar('cafeteria_code', { length: 40 }).notNull(),
-	label: varchar('label', { length: 40 }).notNull(),
-	daysOfWeek: jsonb('days_of_week').notNull(),
-	opensAt: time('opens_at').notNull(),
-	closesAt: time('closes_at').notNull(),
-	displayOrder: integer('display_order').notNull().default(0),
-	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
-});
+export const cafeteriaOperatingHours = pgTable(
+	'cafeteria_operating_hours',
+	{
+		id: uuid('id').defaultRandom().primaryKey(),
+		cafeteriaCode: varchar('cafeteria_code', { length: 40 }).notNull(),
+		label: varchar('label', { length: 40 }).notNull(),
+		daysOfWeek: jsonb('days_of_week').notNull(),
+		opensAt: time('opens_at').notNull(),
+		closesAt: time('closes_at').notNull(),
+		displayOrder: integer('display_order').notNull().default(0),
+		updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
+	},
+	(table) => [
+		uniqueIndex('cafeteria_operating_hours_code_order_unique').on(
+			table.cafeteriaCode,
+			table.displayOrder
+		)
+	]
+);
 
 export const cafeteriaMenuItems = pgTable(
 	'cafeteria_menu_items',

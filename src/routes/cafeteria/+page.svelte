@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
+	import type { SubmitFunction } from '@sveltejs/kit';
 	import { onMount, untrack } from 'svelte';
 	import { ChevronDown, ChevronRight, ChevronUp, Clock3, MapPin, Pencil, Plus, Trash2 } from '@lucide/svelte';
 	import {
@@ -69,6 +70,7 @@
 	let operatingHoursLoading = $state(false);
 	let operatingHoursError = $state('');
 	let operatingHoursLoadedFor = $state('');
+	let isSavingOperatingHours = $state(false);
 	let cafeteriaFeedback = $state<CafeteriaFeedbackMap>(
 		untrack(() => ({ ...((data.cafeteriaFeedback ?? {}) as CafeteriaFeedbackMap) }))
 	);
@@ -212,6 +214,17 @@
 			rows: operatingHourDrafts
 		});
 	}
+
+	const enhanceOperatingHours: SubmitFunction = () => {
+		isSavingOperatingHours = true;
+		return async ({ update }) => {
+			try {
+				await update();
+			} finally {
+				isSavingOperatingHours = false;
+			}
+		};
+	};
 
 	function viewOnMap() {
 		if (!activeCafeteria) return;
@@ -515,43 +528,46 @@
 {#if isOperatingHoursOpen && activeCafeteria}
 	<div class="fixed inset-0 z-50 grid place-items-end p-0 md:place-items-center md:p-5">
 		<button class="absolute inset-0 bg-black/45" type="button" aria-label="운영시간 닫기" onclick={closeOperatingHours}></button>
-		<div class="relative max-h-[min(78dvh,680px)] w-full overflow-hidden rounded-t-[26px] bg-brand-surface shadow-[0_-18px_42px_rgba(42,10,20,0.28)] md:max-w-[430px] md:rounded-[26px]" role="dialog" aria-modal="true" aria-label={`${activeCafeteria.name} 운영시간`}>
-			<div class="flex items-center justify-between border-b border-brand-border px-5 py-4">
-				<div><p class="m-0 text-xs font-black text-brand-muted">{activeCafeteria.name}</p><h2 class="m-0 mt-0.5 text-xl font-black">운영시간</h2></div>
-				<button class="rounded-full border border-brand-border bg-white px-3 py-2 text-xs font-black text-brand-muted" type="button" onclick={closeOperatingHours}>닫기</button>
+		<div class="relative max-h-[min(78dvh,680px)] w-full overflow-hidden rounded-t-[14px] border-t border-brand-border bg-white md:max-w-[430px] md:rounded-[14px] md:border" role="dialog" aria-modal="true" aria-label={`${activeCafeteria.name} 운영시간`}>
+			<div class="grid h-14 grid-cols-[48px_1fr_48px] items-center border-b border-brand-border px-3">
+				<span aria-hidden="true"></span>
+				<h2 class="m-0 text-center text-[18px] font-black tracking-[-0.02em]">운영시간</h2>
+				<button class="min-h-11 text-right text-[13px] font-bold text-brand-muted" type="button" onclick={closeOperatingHours}>닫기</button>
 			</div>
-			<div class="max-h-[calc(min(78dvh,680px)-76px)] overflow-y-auto px-5 pb-[max(24px,env(safe-area-inset-bottom))] pt-4">
+			<div class="max-h-[calc(min(78dvh,680px)-56px)] overflow-y-auto px-5 pb-[max(20px,env(safe-area-inset-bottom))] pt-5">
+				<p class="m-0 pb-3 text-[16px] font-black tracking-[-0.015em]">{activeCafeteria.name}</p>
 				{#if form?.operatingHoursError || operatingHoursError}
-					<p class="m-0 mb-3 rounded-[12px] bg-[#fdecee] px-3 py-2.5 text-sm font-bold text-[#a4273f]">{form?.operatingHoursError ?? operatingHoursError}</p>
+					<p class="m-0 border-y border-[#ecc8cf] py-3 text-[13px] font-bold text-[#a4273f]">{form?.operatingHoursError ?? operatingHoursError}</p>
 				{/if}
 				{#if operatingHoursLoading}
-					<p class="m-0 rounded-[15px] bg-brand-map px-4 py-5 text-center text-sm font-bold text-brand-muted">운영시간을 불러오는 중이에요.</p>
+					<p class="m-0 border-y border-brand-border py-5 text-[13px] text-brand-muted">운영시간을 불러오는 중이에요.</p>
 				{:else if operatingHoursError}
-					<button class="flex w-full items-center justify-center rounded-[14px] bg-brand-map px-4 py-3 text-sm font-black text-brand" type="button" onclick={openOperatingHours}>다시 시도</button>
+					<button class="flex min-h-12 w-full items-center justify-between border-b border-brand-border text-left text-[13px] font-bold text-brand" type="button" onclick={openOperatingHours}><span>다시 시도</span><ChevronRight size={15} strokeWidth={2.4} /></button>
 				{:else if !isEditingOperatingHours}
-					<div class={`mb-4 flex items-center justify-between rounded-[14px] px-4 py-3 ${operatingStatus.kind === 'open' ? 'bg-[#e4f6ec] text-[#147344]' : 'bg-brand-map text-brand-muted'}`}><span class="text-sm font-black">현재 상태</span><span class="text-sm font-black">{operatingStatus.label}</span></div>
+					<div class="flex min-h-14 items-center justify-between border-y border-brand-border"><span class="text-[13px] text-brand-muted">현재 상태</span><strong class={`text-[15px] ${operatingStatus.kind === 'open' ? 'text-brand' : 'text-brand-muted'}`}>{operatingStatus.label}</strong></div>
 					{#if activeOperatingHours.length > 0}
-						<div class="grid gap-2.5">{#each activeOperatingHours as row}<div class="flex items-center justify-between gap-3 rounded-[14px] border border-brand-border bg-white px-4 py-3"><div><p class="m-0 text-sm font-black">{row.label}</p><p class="m-0 mt-1 text-xs font-bold text-brand-muted">{formatOperatingDays(row.daysOfWeek)}</p></div><strong class="shrink-0 text-sm">{row.opensAt} – {row.closesAt}</strong></div>{/each}</div>
+						<div class="divide-y divide-brand-border">{#each activeOperatingHours as row}<div class="flex min-h-14 items-center justify-between gap-4"><div><p class="m-0 text-[15px] font-bold">{row.label}</p><p class="m-0 mt-0.5 text-[13px] text-brand-muted">{formatOperatingDays(row.daysOfWeek)}</p></div><strong class="shrink-0 text-[15px] font-bold tabular-nums">{row.opensAt} – {row.closesAt}</strong></div>{/each}</div>
+						<p class="m-0 border-t border-brand-border pt-3 text-[13px] text-brand-muted">학기와 운영 상황에 따라 달라질 수 있어요.</p>
 					{:else}
-						<p class="m-0 rounded-[15px] bg-brand-map px-4 py-5 text-center text-sm font-bold text-brand-muted">운영시간 정보가 아직 없어요.</p>
+						<p class="m-0 border-y border-brand-border py-5 text-[13px] text-brand-muted">운영시간 정보가 아직 없어요.</p>
 					{/if}
 					{#if data.canEditOperatingHours}
-						<button class="mt-4 flex w-full items-center justify-center gap-1.5 rounded-[14px] bg-brand px-4 py-3 text-sm font-black text-white" type="button" onclick={startOperatingHoursEdit}><Pencil size={16} strokeWidth={2.8} /> 운영시간 수정</button>
+						<button class="mt-3 flex min-h-11 w-full items-center justify-end gap-1.5 text-[13px] font-bold text-brand-muted" type="button" onclick={startOperatingHoursEdit}><Pencil size={14} strokeWidth={2.4} /> 운영시간 수정</button>
 					{/if}
 				{:else}
-					<form method="POST" action="?/saveOperatingHours" use:enhance onsubmit={prepareOperatingHoursSubmit}>
+					<form method="POST" action="?/saveOperatingHours" use:enhance={enhanceOperatingHours} onsubmit={prepareOperatingHoursSubmit}>
 						<input type="hidden" name="operatingHours" bind:value={operatingHoursPayload} />
-						<div class="grid gap-3">
+						<div class="border-t border-brand-border">
 							{#each operatingHourDrafts as draft, index}
-								<div class="rounded-[15px] border border-brand-border bg-white p-3.5">
-									<div class="flex items-center gap-2"><input class="min-w-0 flex-1 rounded-[9px] border border-brand-border px-3 py-2 text-sm font-black" aria-label={`운영 항목 ${index + 1}`} bind:value={draft.label} maxlength="40" /><button class="grid h-9 w-9 shrink-0 place-items-center rounded-[9px] border border-brand-border text-brand-muted" type="button" aria-label={`${draft.label} 삭제`} onclick={() => removeOperatingHour(index)}><Trash2 size={16} /></button></div>
-									<div class="mt-3 grid grid-cols-7 gap-1">{#each weekdays as day}<button class={`h-8 rounded-[8px] text-xs font-black ${draft.daysOfWeek.includes(day.value) ? 'bg-brand text-white' : 'bg-brand-map text-brand-muted'}`} type="button" aria-pressed={draft.daysOfWeek.includes(day.value)} onclick={() => toggleDraftDay(index, day.value)}>{day.label}</button>{/each}</div>
-									<div class="mt-3 grid grid-cols-[1fr_auto_1fr] items-center gap-2"><input class="min-w-0 rounded-[9px] border border-brand-border px-2 py-2 text-center text-sm" type="time" aria-label={`${draft.label} 시작 시간`} bind:value={draft.opensAt} /><span class="text-brand-muted">–</span><input class="min-w-0 rounded-[9px] border border-brand-border px-2 py-2 text-center text-sm" type="time" aria-label={`${draft.label} 종료 시간`} bind:value={draft.closesAt} /></div>
+								<div class="border-b border-brand-border py-4">
+									<div class="flex items-center gap-3"><input class="h-10 min-w-0 flex-1 border-b border-brand-border bg-transparent px-1 text-[15px] font-bold outline-none focus:border-brand" aria-label={`운영 항목 ${index + 1}`} bind:value={draft.label} maxlength="40" /><button class="grid h-10 w-10 shrink-0 place-items-center text-brand-muted" type="button" aria-label={`${draft.label} 삭제`} onclick={() => removeOperatingHour(index)}><Trash2 size={16} /></button></div>
+									<div class="mt-3 grid grid-cols-7 gap-1">{#each weekdays as day}<button class={`h-8 border-b-2 text-[12px] font-bold ${draft.daysOfWeek.includes(day.value) ? 'border-brand text-brand' : 'border-transparent text-brand-muted'}`} type="button" aria-pressed={draft.daysOfWeek.includes(day.value)} onclick={() => toggleDraftDay(index, day.value)}>{day.label}</button>{/each}</div>
+									<div class="mt-3 grid grid-cols-[1fr_auto_1fr] items-center gap-3"><input class="h-10 min-w-0 border-b border-brand-border bg-transparent px-1 text-center text-[14px] tabular-nums outline-none focus:border-brand" type="time" aria-label={`${draft.label} 시작 시간`} bind:value={draft.opensAt} /><span class="text-brand-muted">–</span><input class="h-10 min-w-0 border-b border-brand-border bg-transparent px-1 text-center text-[14px] tabular-nums outline-none focus:border-brand" type="time" aria-label={`${draft.label} 종료 시간`} bind:value={draft.closesAt} /></div>
 								</div>
 							{/each}
 						</div>
-						{#if operatingHourDrafts.length < 8}<button class="mt-3 flex w-full items-center justify-center gap-1.5 rounded-[14px] border border-dashed border-brand-border-strong px-4 py-3 text-sm font-black text-brand" type="button" onclick={addOperatingHour}><Plus size={17} strokeWidth={2.8} /> 운영시간 추가</button>{/if}
-						<div class="mt-4 grid grid-cols-2 gap-2"><button class="rounded-[14px] border border-brand-border bg-white px-4 py-3 text-sm font-black" type="button" onclick={() => (isEditingOperatingHours = false)}>취소</button><button class="rounded-[14px] bg-brand px-4 py-3 text-sm font-black text-white" type="submit">저장</button></div>
+						{#if operatingHourDrafts.length < 8}<button class="flex min-h-12 w-full items-center justify-center gap-1.5 border-b border-brand-border text-[13px] font-bold text-brand" type="button" onclick={addOperatingHour}><Plus size={15} strokeWidth={2.4} /> 운영시간 추가</button>{/if}
+						<div class="mt-4 flex items-center justify-end gap-4"><button class="min-h-11 px-2 text-[13px] font-bold text-brand-muted" type="button" onclick={() => (isEditingOperatingHours = false)}>취소</button><button class="min-h-11 rounded-[10px] bg-brand px-5 text-[13px] font-black text-white disabled:opacity-50" type="submit" disabled={isSavingOperatingHours}>{isSavingOperatingHours ? '저장 중' : '저장'}</button></div>
 					</form>
 				{/if}
 			</div>
