@@ -1,9 +1,13 @@
 <script lang="ts">
 	import '../app.css';
 	import { afterNavigate } from '$app/navigation';
+	import { setContext } from 'svelte';
+	import { HOME_MAP_SESSION, HomeMapSession } from '$lib/map/home-map-session.svelte';
+	import PersistentHomeMap from '$lib/map/PersistentHomeMap.svelte';
 	import { syncBrowserAnalyticsUser, trackPageView } from '$lib/analytics/posthog.client';
 
 	let { children, data } = $props();
+	const mapSession = setContext(HOME_MAP_SESSION, new HomeMapSession());
 
 	$effect(() => {
 		syncBrowserAnalyticsUser(data.user);
@@ -21,3 +25,4 @@
 </svelte:head>
 
 {@render children()}
+<PersistentHomeMap session={mapSession} />

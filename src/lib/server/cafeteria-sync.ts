@@ -1,6 +1,6 @@
 import { createDb } from '$lib/server/db';
 import { cafeteriaMenuItems, cafeteriaMenuOfferings } from '$lib/server/db/schema';
-import { and, gte, inArray, lte } from 'drizzle-orm';
+import { and, gte, inArray, lte, sql } from 'drizzle-orm';
 import { staticFoodCourtVendors } from '$lib/domain/cafeterias';
 import {
 	normalizeMenuName,
@@ -94,6 +94,13 @@ export function shouldSyncWeeklyMenu(expectedOfferingCount: number, persistedOff
 	return persistedOfferingCount < expectedOfferingCount;
 }
 
+function offeringIdentity(item: {
+	cafeteriaCode: string; menuDate: string; mealSlot: string; menuSection: string; displayName: string;
+}) {
+	return JSON.stringify([item.cafeteriaCode, item.menuDate, item.mealSlot,
+		item.menuSection, normalizeMenuName(item.displayName)]);
+}
+
 export async function syncWeeklyCafeteriaMenu(databaseUrl: string | undefined, weeklyMenu: WeeklyMenu) {
 	return syncCafeteriaOfferings(databaseUrl, flattenWeeklyMenu(weeklyMenu));
 }
@@ -109,7 +116,13 @@ export async function ensureWeeklyCafeteriaMenu(databaseUrl: string | undefined,
 
 	const db = createDb(databaseUrl);
 	const persistedOfferings = await db
-		.select({ id: cafeteriaMenuOfferings.id })
+		.select({
+			cafeteriaCode: cafeteriaMenuOfferings.cafeteriaCode,
+			menuDate: cafeteriaMenuOfferings.menuDate,
+			mealSlot: cafeteriaMenuOfferings.mealSlot,
+			menuSection: cafeteriaMenuOfferings.menuSection,
+			displayName: cafeteriaMenuOfferings.displayName
+		})
 		.from(cafeteriaMenuOfferings)
 		.where(
 			and(
@@ -119,7 +132,8 @@ export async function ensureWeeklyCafeteriaMenu(databaseUrl: string | undefined,
 			)
 		);
 
-	if (!shouldSyncWeeklyMenu(expectedOfferings.length, persistedOfferings.length)) return 0;
+	const saved = new Set(persistedOfferings.map(offeringIdentity));
+	if (expectedOfferings.every((item) => saved.has(offeringIdentity(item)))) return 0;
 	return syncCafeteriaOfferings(databaseUrl, expectedOfferings);
 }
 
@@ -127,57 +141,48 @@ export async function syncFoodCourtMenu(databaseUrl: string | undefined, menuDat
 	return syncCafeteriaOfferings(databaseUrl, flattenFoodCourtMenu(menuDate));
 }
 
-async function syncCafeteriaOfferings(
+export async function syncCafeteriaOfferings(
 	databaseUrl: string | undefined,
-	offerings: CafeteriaOfferingInput[]
+	offerings: CafeteriaOfferingInput[],
+	db = databaseUrl ? createDb(databaseUrl) : undefined
 ) {
-	if (!databaseUrl) return 0;
-
-	const db = createDb(databaseUrl);
-
-	for (const offering of offerings) {
-		const [menuItem] = await db
-			.insert(cafeteriaMenuItems)
-			.values({
-				cafeteriaCode: offering.cafeteriaCode,
-				normalizedName: offering.normalizedName,
-				displayName: offering.displayName
-			})
-			.onConflictDoUpdate({
-				target: [cafeteriaMenuItems.cafeteriaCode, cafeteriaMenuItems.normalizedName],
-				set: { displayName: offering.displayName }
-			})
-			.returning({ id: cafeteriaMenuItems.id });
-
-		if (!menuItem) continue;
-
-		await db
-			.insert(cafeteriaMenuOfferings)
-			.values({
-				menuItemId: menuItem.id,
-				cafeteriaCode: offering.cafeteriaCode,
-				menuDate: offering.menuDate,
-				mealSlot: offering.mealSlot,
-				menuSection: offering.menuSection,
-				displayName: offering.displayName,
-				isVotable: offering.isVotable,
-				source: 'crawler'
-			})
-			.onConflictDoUpdate({
-				target: [
-					cafeteriaMenuOfferings.menuItemId,
-					cafeteriaMenuOfferings.menuDate,
-					cafeteriaMenuOfferings.mealSlot,
-					cafeteriaMenuOfferings.menuSection
-				],
-				set: {
-					displayName: offering.displayName,
-					isVotable: offering.isVotable,
-					source: 'crawler',
-					updatedAt: new Date()
-				}
-			});
-	}
-
-	return offerings.length;
+	if (!db || offerings.length === 0) return 0;
+	const itemKey = (item: { cafeteriaCode: string; normalizedName: string }) =>
+		JSON.stringify([item.cafeteriaCode, item.normalizedName]);
+	// 같은 메뉴가 여러 날짜에 나와도 한 INSERT에서 같은 행을 두 번 갱신하지 않는다.
+	const uniqueItems = [...new Map(offerings.map((item) => [itemKey(item), {
+		cafeteriaCode: item.cafeteriaCode,
+		normalizedName: item.normalizedName,
+		displayName: item.displayName
+	}])).values()];
+	const menuItems = await db.insert(cafeteriaMenuItems).values(uniqueItems).onConflictDoUpdate({
+		target: [cafeteriaMenuItems.cafeteriaCode, cafeteriaMenuItems.normalizedName],
+		set: { displayName: sql`excluded.display_name` }
+	}).returning({
+		id: cafeteriaMenuItems.id,
+		cafeteriaCode: cafeteriaMenuItems.cafeteriaCode,
+		normalizedName: cafeteriaMenuItems.normalizedName
+	});
+	const ids = new Map(menuItems.map((item) => [itemKey(item), item.id]));
+	const uniqueOfferings = [...new Map(offerings.map((offering) => {
+		const menuItemId = ids.get(itemKey(offering));
+		if (!menuItemId) throw new Error('학식 메뉴 식별자를 찾지 못했습니다.');
+		return [JSON.stringify([menuItemId, offering.menuDate, offering.mealSlot, offering.menuSection]), {
+			menuItemId,
+			cafeteriaCode: offering.cafeteriaCode,
+			menuDate: offering.menuDate,
+			mealSlot: offering.mealSlot,
+			menuSection: offering.menuSection,
+			displayName: offering.displayName,
+			isVotable: offering.isVotable,
+			source: 'crawler'
+		}] as const;
+	})).values()];
+	await db.insert(cafeteriaMenuOfferings).values(uniqueOfferings).onConflictDoUpdate({
+		target: [cafeteriaMenuOfferings.menuItemId, cafeteriaMenuOfferings.menuDate,
+			cafeteriaMenuOfferings.mealSlot, cafeteriaMenuOfferings.menuSection],
+		set: { displayName: sql`excluded.display_name`, isVotable: sql`excluded.is_votable`,
+			source: 'crawler', updatedAt: new Date() }
+	});
+	return uniqueOfferings.length;
 }

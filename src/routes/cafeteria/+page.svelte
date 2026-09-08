@@ -77,6 +77,9 @@
 		untrack(() => ({ ...((data.cafeteriaFeedback ?? {}) as CafeteriaFeedbackMap) }))
 	);
 	let submittingOfferingIds = $state<string[]>([]);
+	let feedbackLoading = $state(false);
+	let feedbackError = $state('');
+	let feedbackController: AbortController | undefined;
 	let isLoginPromptOpen = $state(false);
 	let toastMessage = $state('');
 	let toastTimer: ReturnType<typeof setTimeout> | undefined;
@@ -101,6 +104,7 @@
 	const loginHref = $derived(`/login?next=${encodeURIComponent(loginReturnUrl)}`);
 
 	onMount(() => {
+		void loadFeedback();
 		track(analyticsEvents.openCafeteria, {
 			source: 'cafeteria_page',
 			cafeteria_id: activeCafeteria?.id
@@ -112,11 +116,35 @@
 		};
 		window.addEventListener('keydown', handleKeydown);
 		return () => {
+			feedbackController?.abort();
+			feedbackController = undefined;
 			window.clearInterval(timer);
 			if (toastTimer) window.clearTimeout(toastTimer);
 			window.removeEventListener('keydown', handleKeydown);
 		};
 	});
+
+	async function loadFeedback() {
+		feedbackController?.abort();
+		const controller = new AbortController();
+		feedbackController = controller;
+		feedbackLoading = true;
+		feedbackError = '';
+		const timeout = window.setTimeout(() => controller.abort(), 12_000);
+		try {
+			const response = await fetch('/api/cafeteria/feedback', { signal: controller.signal });
+			const payload = await response.json();
+			if (!response.ok || !payload.feedback || typeof payload.feedback !== 'object') {
+				throw new Error('평가 응답 오류');
+			}
+			if (feedbackController === controller) cafeteriaFeedback = payload.feedback;
+		} catch {
+			if (feedbackController === controller) feedbackError = '평가를 불러오지 못했어요.';
+		} finally {
+			window.clearTimeout(timeout);
+			if (feedbackController === controller) feedbackLoading = false;
+		}
+	}
 
 	function selectCafeteria(index: number) {
 		const cafeteria = data.cafeterias[index];
@@ -457,6 +485,11 @@
 					</div>
 
 					{#if activeCafeteria.source === 'crawler' && activeWeeklyMenu}
+						{#if feedbackLoading}
+							<p class="py-2 text-[13px] text-brand-muted" role="status">평가를 불러오는 중이에요.</p>
+						{:else if feedbackError}
+							<p class="py-2 text-[13px] text-brand-muted" role="status">{feedbackError} <button class="underline" type="button" onclick={() => loadFeedback()}>다시 시도</button></p>
+						{/if}
 						<div class="divide-y divide-brand-border" data-cafeteria-meal-list>
 							{#each activeMeals as meal}
 								{@const isExpanded = expandedMealId === meal.id}
@@ -488,6 +521,7 @@
 														<CafeteriaMenuVoteRow
 															menuName={item}
 															{feedback}
+															isLoading={feedbackLoading}
 															isAuthenticated={Boolean(data.user)}
 															isVoteOpen={availability.isOpen}
 															availableFromDayLabel={availability.availableFromDayLabel}

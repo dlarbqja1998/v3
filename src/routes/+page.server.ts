@@ -13,6 +13,11 @@ import { listPublicCampusEvents } from '$lib/server/campus-events';
 import { getEventSpotlight, getInitialHomeEventId } from '$lib/home/home-events';
 import type { ShuttleStopId } from '$lib/domain/shuttle';
 import { isFacilityCategorySlug } from '$lib/domain/facility-categories';
+import { createPublicDataCache } from '$lib/server/public-data-cache';
+
+const readPublicHome = createPublicDataCache<Awaited<ReturnType<typeof getHomeData>>>(30_000);
+const readPublicEvents = createPublicDataCache<Awaited<ReturnType<typeof listPublicCampusEvents>>>(30_000);
+const readPublicNotice = createPublicDataCache<Awaited<ReturnType<typeof getHomeNotice>>>(30_000);
 
 export async function load({ platform, locals, url }) {
 	const loadPolicy = getHomeLoadPolicy(url.searchParams.get('panel'));
@@ -28,21 +33,19 @@ export async function load({ platform, locals, url }) {
 		scheduleBackgroundTask(platform, syncVisibleCafeteriaData(weeklyMenu));
 	}
 
-	const homeData = await getHomeData(env.DATABASE_URL, weeklyMenu);
-	let campusEvents: Awaited<ReturnType<typeof listPublicCampusEvents>> = [];
-	try {
-		campusEvents = await listPublicCampusEvents(env.DATABASE_URL);
-	} catch (error) {
-		console.error('메인 행사 조회 실패:', error);
-	}
-	let homeNotice = null;
-	if (env.DATABASE_URL) {
-		try {
-			homeNotice = await getHomeNotice(env.DATABASE_URL);
-		} catch (error) {
+	const databaseUrl = env.DATABASE_URL ?? '';
+	const [homeData, campusEvents, homeNotice] = await Promise.all([
+		// 메뉴가 있는 구형 학식 딥링크는 주간 메뉴가 섞인 결과를 공용 캐시에 넣지 않는다.
+		weeklyMenu ? getHomeData(databaseUrl, weeklyMenu) : readPublicHome(databaseUrl, () => getHomeData(databaseUrl)),
+		databaseUrl ? readPublicEvents(databaseUrl, () => listPublicCampusEvents(databaseUrl)).catch((error) => {
+			console.error('메인 행사 조회 실패:', error);
+			return [];
+		}) : Promise.resolve([]),
+		databaseUrl ? readPublicNotice(databaseUrl, () => getHomeNotice(databaseUrl)).catch((error) => {
 			console.error('메인 공지 조회 실패:', error);
-		}
-	}
+			return null;
+		}) : Promise.resolve(null)
+	]);
 	const requestedPlaceId = url.searchParams.get('place') ?? '';
 	const requestedEventId = url.searchParams.get('eventId') ?? '';
 	const requestedFacilityCategory = url.searchParams.get('category') ?? '';

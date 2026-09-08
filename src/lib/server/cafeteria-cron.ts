@@ -1,4 +1,5 @@
 import { refreshTodayMenuCache } from './cafeteria-cache';
+import { syncWeeklyCafeteriaMenu } from './cafeteria-sync';
 
 export const MONDAY_MENU_REFRESH_CRON = '0 2 * * 1';
 
@@ -13,6 +14,7 @@ type ScheduledCache = {
 
 type ScheduledEnv = {
 	GOLABAU_CACHE?: ScheduledCache;
+	DATABASE_URL?: string;
 };
 
 type ScheduledContext = {
@@ -28,7 +30,10 @@ export async function refreshCafeteriaMenuOnSchedule(
 
 	const refresh = refreshTodayMenuCache(
 		{ env, context: ctx },
-		{ force: true }
+		{
+			force: true,
+			onUpdated: (menu) => syncWeeklyCafeteriaMenu(env.DATABASE_URL, menu)
+		}
 	);
 	ctx.waitUntil(refresh);
 	await refresh;

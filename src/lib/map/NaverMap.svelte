@@ -1,3 +1,7 @@
+<script lang="ts" module>
+	let mapInstanceSequence = 0;
+</script>
+
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
 	import type { CampusSpot } from '$lib/domain/campus-spots';
@@ -20,6 +24,7 @@
 	} from '$lib/map/naver-map-sdk';
 	import { getCampusPolygonStyle } from '$lib/map/campus-polygon';
 	import { cancelMapMotion } from '$lib/map/map-motion';
+	import { createMapLayer } from '$lib/map/map-layer';
 	import { getCommercialPolygonStyle } from '$lib/map/commercial-polygon';
 	import {
 		getNaverLogoControlPosition,
@@ -33,6 +38,7 @@
 	} from '$lib/map/focus';
 
 	type Props = {
+		active?: boolean;
 		clientId: string;
 		places: Place[];
 		activePlaceId: string;
@@ -56,6 +62,7 @@
 	};
 
 	let {
+		active = true,
 		clientId,
 		places,
 		activePlaceId,
@@ -80,8 +87,8 @@
 
 	let mapElement: HTMLDivElement;
 	let map: any = null;
-	let markers: any[] = [];
-	let eventMarkers: any[] = [];
+	const markerLayer = createMapLayer<any>(disposeMapObject);
+	const eventLayer = createMapLayer<any>(disposeMapObject);
 	let campusMarkers: any[] = [];
 	let campusPolygons: any[] = [];
 	let commercialPolygons: any[] = [];
@@ -91,8 +98,15 @@
 	let lastMapWidth = 0;
 	let lastMapHeight = 0;
 	let isReady = $state(false);
+	let mapInstanceId = $state(0);
 	let loadError = $state('');
 	let lastFocusRequestId = -1;
+	let mounted = $state(false);
+	let destroyed = false;
+	let initializing = false;
+	let lastAreaKey = '';
+	let lastCampusKey = '';
+	let lastCommercialKey = '';
 
 	const initialTarget = {
 		latitude: 36.608634852584125,
@@ -111,21 +125,33 @@
 	};
 
 	onMount(() => {
-		void initMap();
+		mounted = true;
+	});
+
+	$effect(() => {
+		if (!mounted || !active) {
+			if (map) cancelMapMotion(map);
+			return;
+		}
+		if (!map && !initializing && !loadError) void initMap();
+		else if (map) resizeMapToContainer();
 	});
 
 	onDestroy(() => {
+		destroyed = true;
+		if (map) cancelMapMotion(map);
 		clearMapResize();
 		clearMapListeners();
 		clearMarkers();
 		clearEventMarkers();
 		clearCampusSpots();
 		clearCommercialZones();
+		map?.destroy?.();
 		map = null;
 	});
 
 	$effect(() => {
-		if (!isReady || !map) return;
+		if (!active || !isReady || !map) return;
 		if (focusRequestId !== lastFocusRequestId) {
 			lastFocusRequestId = focusRequestId;
 			if (focusZoom !== undefined) map.setZoom(focusZoom);
@@ -152,24 +178,35 @@
 	});
 
 	$effect(() => {
-		if (!isReady || !map) return;
+		if (!active || !isReady || !map) return;
 		syncCommercialZones(areaMode, commercialZones, selectedCommercialZoneId);
 		if (!shouldFocusMapArea(activePlaceId)) return;
+		const areaKey = JSON.stringify([areaMode, selectedCommercialZoneId,
+			commercialZones.map((zone) => [zone.id, zone.center, zone.boundary])]);
+		if (lastAreaKey === areaKey) return;
+		lastAreaKey = areaKey;
 		focusMapArea(areaMode, commercialZones, selectedCommercialZoneId);
 	});
 
 	async function initMap() {
+		initializing = true;
 		if (!clientId) {
 			loadError = '네이버 지도 Client ID가 설정되지 않았습니다.';
+			initializing = false;
 			return;
 		}
 
 		try {
 			await loadNaverMapSdkWithRetry(clientId);
+			if (destroyed || !active) return;
 			const initialSize = await waitForRenderableMapSize(
 				measureMapElement,
-				() => new Promise<void>((resolve) => window.requestAnimationFrame(() => resolve()))
+				() => new Promise<void>((resolve, reject) => window.requestAnimationFrame(() => {
+					if (destroyed || !active) reject(new Error('지도 표시가 중단되었습니다.'));
+					else resolve();
+				}))
 			);
+			if (destroyed || !active) return;
 
 			const naver = window.naver;
 			if (!naver) throw new Error('Naver map SDK is not available.');
@@ -187,6 +224,7 @@
 				},
 				zoomControl: false
 			});
+			mapInstanceId = ++mapInstanceSequence;
 			lastMapWidth = initialSize.width;
 			lastMapHeight = initialSize.height;
 			enableSecureNaverMapTiles(map);
@@ -194,10 +232,10 @@
 			bindMapGuards();
 			bindMapResize();
 			isReady = true;
-			syncMarkers(places, activePlaceId);
-			syncEventMarkers(events, activeEventId);
 		} catch {
-			loadError = '네이버 지도를 불러오지 못했습니다.';
+			if (!destroyed && active) loadError = '네이버 지도를 불러오지 못했습니다.';
+		} finally {
+			initializing = false;
 		}
 	}
 
@@ -222,7 +260,7 @@
 
 	function resizeMapToContainer() {
 		const naver = window.naver;
-		if (!naver || !map) return;
+		if (!active || !naver || !map) return;
 
 		const size = measureMapElement();
 		if (size.width <= 0 || size.height <= 0) return;
@@ -255,7 +293,7 @@
 	}
 
 	function keepZoomInServiceArea() {
-		if (!map) return;
+		if (!active || !map) return;
 
 		const zoom = map.getZoom();
 		const activeMinZoom = areaMode === 'outside' ? outsideMinZoom : minZoom;
@@ -265,7 +303,7 @@
 	}
 
 	function keepMapInServiceArea() {
-		if (areaMode === 'outside') return;
+		if (!active || areaMode === 'outside') return;
 		const naver = window.naver;
 		if (!naver || !map) return;
 
@@ -283,12 +321,12 @@
 	}
 
 	function syncMarkers(nextPlaces: Place[], nextActivePlaceId: string) {
-		clearMarkers();
-
 		const naver = window.naver;
 		if (!naver) return;
-
-		for (const place of nextPlaces) {
+		markerLayer.sync(nextPlaces, (place) => ({
+			id: place.id,
+			signature: JSON.stringify([place.latitude, place.longitude, place.name, place.icon, place.id === nextActivePlaceId])
+		}), (place) => {
 			const isActive = place.id === nextActivePlaceId;
 			const marker = new naver.maps.Marker({
 				position: new naver.maps.LatLng(place.latitude, place.longitude),
@@ -302,18 +340,20 @@
 			});
 
 			naver.maps.Event.addListener(marker, 'click', () => onMarkerClick(place.id));
-			markers.push(marker);
-		}
+			return marker;
+		});
 	}
 
 	function syncEventMarkers(
 		nextEvents: { id: string; title: string; latitude: number; longitude: number }[],
 		nextActiveEventId: string
 	) {
-		clearEventMarkers();
 		const naver = window.naver;
 		if (!naver) return;
-		for (const event of nextEvents) {
+		eventLayer.sync(nextEvents, (event) => ({
+			id: event.id,
+			signature: JSON.stringify([event.latitude, event.longitude, event.title, event.id === nextActiveEventId])
+		}), (event) => {
 			const isActive = event.id === nextActiveEventId;
 			const marker = new naver.maps.Marker({
 				position: new naver.maps.LatLng(event.latitude, event.longitude),
@@ -328,8 +368,8 @@
 				}
 			});
 			naver.maps.Event.addListener(marker, 'click', () => onEventMarkerClick?.(event.id));
-			eventMarkers.push(marker);
-		}
+			return marker;
+		});
 	}
 
 	function syncCommercialZones(
@@ -337,7 +377,10 @@
 		nextZones: CommercialZone[],
 		nextSelectedZoneId: string
 	) {
+		const key = JSON.stringify([nextAreaMode, nextZones, nextSelectedZoneId]);
+		if (lastCommercialKey === key) return;
 		clearCommercialZones();
+		lastCommercialKey = key;
 		if (nextAreaMode !== 'outside' || !map) return;
 
 		const naver = window.naver;
@@ -407,7 +450,10 @@
 		nextActiveCampusSpotId: string,
 		shouldShowCampusBoundaries: boolean
 	) {
+		const key = JSON.stringify([nextCampusSpots, nextActiveCampusSpotId, shouldShowCampusBoundaries]);
+		if (lastCampusKey === key) return;
 		clearCampusSpots();
+		lastCampusKey = key;
 		if (!shouldShowCampusBoundaries) return;
 
 		const naver = window.naver;
@@ -514,23 +560,26 @@
 		map.setCenter(center);
 	}
 
+	function disposeMapObject(object: any) {
+		(window.naver?.maps.Event as any)?.clearInstanceListeners?.(object);
+		object.setMap(null);
+	}
+
 	function clearMarkers() {
-		for (const marker of markers) {
-			marker.setMap(null);
-		}
-		markers = [];
+		markerLayer.clear();
 	}
 
 	function clearEventMarkers() {
-		for (const marker of eventMarkers) marker.setMap(null);
-		eventMarkers = [];
+		eventLayer.clear();
 	}
 
 	function clearCampusSpots() {
 		for (const polygon of campusPolygons) {
+			(window.naver?.maps.Event as any)?.clearInstanceListeners?.(polygon);
 			polygon.setMap(null);
 		}
 		for (const marker of campusMarkers) {
+			(window.naver?.maps.Event as any)?.clearInstanceListeners?.(marker);
 			marker.setMap(null);
 		}
 		campusPolygons = [];
@@ -606,6 +655,7 @@
 <div
 	class="absolute inset-0"
 	data-map-layer="background"
+	data-map-instance-id={mapInstanceId || undefined}
 	data-map-attribution-bottom-offset={attributionBottomOffset}
 	style="isolation: isolate; z-index: 0;"
 >

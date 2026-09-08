@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { env as publicEnv } from '$env/dynamic/public';
 	import {
@@ -55,7 +55,8 @@
 	import { isWeatherSnapshot, type WeatherSnapshot } from '$lib/domain/weather';
 	import { getCampusSpotPanelPresentation, type CampusSpot } from '$lib/domain/campus-spots';
 	import { getAvailableMapMarkerTargetRatio, getPlaceFocusZoom } from '$lib/map/focus';
-	import NaverMap from '$lib/map/NaverMap.svelte';
+	import HomeMap from '$lib/map/HomeMap.svelte';
+	import { HOME_MAP_SESSION, type HomeMapSession } from '$lib/map/home-map-session.svelte';
 	import WeatherWidget from '$lib/weather/WeatherWidget.svelte';
 	import type { CafeteriaPanelItem, DailyMenu, MenuDayKey } from '$lib/domain/places';
 	import {
@@ -101,6 +102,7 @@
 	const homeDateLabel = formatHomeDate(new Date());
 
 	let { data }: { data: PageData } = $props();
+	const mapSession = getContext<HomeMapSession | undefined>(HOME_MAP_SESSION);
 
 	let selectedZone = $state('all');
 	let areaMode = $state<MapAreaMode>('campus');
@@ -116,7 +118,7 @@
 	let activePlaceId = $state('');
 	let activeEventId = $state('');
 	let activeCampusSpotId = $state('');
-	let focusCampusSpotId = $state(DEFAULT_HOME_CAMPUS_SPOT_ID);
+	let focusCampusSpotId = $state(mapSession?.hasAttached ? '' : DEFAULT_HOME_CAMPUS_SPOT_ID);
 	let homeFocusRequestId = $state(0);
 	let showCampusBoundaries = $state(DEFAULT_CAMPUS_BOUNDARIES_VISIBLE);
 	let campusSpots = $state<CampusSpot[]>([]);
@@ -1032,7 +1034,7 @@
 		class="home-app-shell relative w-full overflow-hidden bg-brand-surface shadow-[0_24px_60px_rgba(103,16,43,0.18)] md:w-[min(100%,430px)] md:rounded-[28px] md:border md:border-brand-border-strong"
 		aria-label="골라바유 지도 홈"
 	>
-		<NaverMap
+		<HomeMap
 			clientId={data.naverMapClientId}
 			places={mapPlaces}
 			activePlaceId={activeMapPlaceId}

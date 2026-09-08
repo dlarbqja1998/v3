@@ -11,6 +11,7 @@
 		isVoteOpen,
 		availableFromDayLabel,
 		isSubmitting,
+		isLoading = false,
 		onVote,
 		onLoginRequired,
 		onFutureVote
@@ -21,6 +22,7 @@
 		isVoteOpen: boolean;
 		availableFromDayLabel: string | null;
 		isSubmitting: boolean;
+		isLoading?: boolean;
 		onVote: (reaction: MenuReaction) => void;
 		onLoginRequired: () => void;
 		onFutureVote: (dayLabel: string | null) => void;
@@ -68,22 +70,22 @@
 			type="button"
 			aria-label={`${menuName} 좋아요 ${occurrenceLikes}개`}
 			aria-pressed={feedback?.myReaction === 'like'}
-			disabled={isSubmitting}
+			disabled={isSubmitting || isLoading || (isAuthenticated && isVoteOpen && !feedback?.isVotable)}
 			onclick={() => handleVote('like')}
 		>
 			<ThumbsUp size={14} strokeWidth={2.4} />
-			<span>{occurrenceLikes}</span>
+			<span>{isLoading || !feedback ? '—' : occurrenceLikes}</span>
 		</button>
 		<button
 			class={`flex min-h-10 min-w-10 items-center justify-center gap-1 rounded-[10px] px-2 text-[11px] font-black transition-colors ${feedback?.myReaction === 'dislike' ? 'bg-brand text-white' : 'bg-brand-map text-brand-muted'}`}
 			type="button"
 			aria-label={`${menuName} 싫어요 ${occurrenceDislikes}개`}
 			aria-pressed={feedback?.myReaction === 'dislike'}
-			disabled={isSubmitting}
+			disabled={isSubmitting || isLoading || (isAuthenticated && isVoteOpen && !feedback?.isVotable)}
 			onclick={() => handleVote('dislike')}
 		>
 			<ThumbsDown size={14} strokeWidth={2.4} />
-			<span>{occurrenceDislikes}</span>
+			<span>{isLoading || !feedback ? '—' : occurrenceDislikes}</span>
 		</button>
 	</div>
 </div>

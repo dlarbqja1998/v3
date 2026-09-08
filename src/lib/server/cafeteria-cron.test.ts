@@ -19,7 +19,7 @@ describe('주간 학식 메뉴 Cron', () => {
 		expect(shouldRunCafeteriaMenuRefresh('*/5 2-6 * * 1')).toBe(false);
 	});
 
-	it('일치하는 Cron에서는 KV 캐시 갱신만 실행한다', async () => {
+	it('일치하는 Cron에서는 메뉴 갱신과 DB 동기화 콜백을 연결한다', async () => {
 		const waitUntil = vi.fn();
 		const env = { GOLABAU_CACHE: { get: vi.fn(), put: vi.fn() } };
 
@@ -27,7 +27,7 @@ describe('주간 학식 메뉴 Cron', () => {
 
 		expect(refreshTodayMenuCache).toHaveBeenCalledWith(
 			{ env, context: { waitUntil } },
-			{ force: true }
+			{ force: true, onUpdated: expect.any(Function) }
 		);
 		expect(waitUntil).toHaveBeenCalledTimes(1);
 	});
