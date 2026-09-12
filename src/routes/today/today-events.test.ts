@@ -29,6 +29,12 @@ function event(overrides: Record<string, unknown> = {}) {
 }
 
 describe('오늘 행사 목록', () => {
+	it('축제는 별도 상세 페이지 대신 지도 바텀시트로 바로 연결한다', () => {
+		const body = render(TodayPage, { props: { data: { user: null, ongoingEvents: [], upcomingEvents: [], initialTab: 'upcoming', festival: { id: 'club-festival-preview', title: '2026 동연제 : POLARIS', status: 'upcoming', dateLabel: '9월 15일 (화)', location: '학생회관 일대', href: '/?panel=festival' } } } as never }).body;
+		expect(body).toContain('2026 동연제 : POLARIS');
+		expect(body).toContain('href="/?panel=festival"');
+		expect(body).not.toContain('예정된 행사가 없어요');
+	});
 	it('학식·셔틀처럼 바깥 화면의 모서리를 강제로 자르지 않는다', () => {
 		const body = render(TodayPage, {
 			props: { data: { user: null, ongoingEvents: [], upcomingEvents: [], initialTab: 'upcoming' } } as never

@@ -1,30 +1,37 @@
 import type { Handle } from '@sveltejs/kit';
+import { dev } from '$app/environment';
+import { usesLocalHttpMapRequests } from '$lib/domain/map-security';
 import { isAllowedMutationOrigin } from '$lib/server/security';
 import { getUserBySessionToken, toSafeUser } from '$lib/server/user';
 
 const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
 const DEFAULT_MUTATION_MAX_BYTES = 256 * 1024;
 const EVENT_UPLOAD_MAX_BYTES = 65 * 1024 * 1024;
-const CONTENT_SECURITY_POLICY = [
-	"default-src 'self'",
-	"base-uri 'self'",
-	"object-src 'none'",
-	"frame-ancestors 'none'",
-	"form-action 'self'",
-	"script-src 'self' 'unsafe-inline' https://oapi.map.naver.com https://nrbe.pstatic.net https://map.pstatic.net https://us-assets.i.posthog.com",
-	"style-src 'self' 'unsafe-inline' https://oapi.map.naver.com",
-	"img-src 'self' data: blob: https:",
-	"font-src 'self' data: https:",
-	"connect-src 'self' https:",
-	"worker-src 'self' blob:",
-	"frame-src 'none'",
-	'upgrade-insecure-requests',
-	'block-all-mixed-content'
-].join('; ');
+function contentSecurityPolicy(localHttpMaps: boolean) {
+	// HTTP 개발 페이지에서 SDK가 선택하는 인증·메타데이터·타일 경로를 함께 허용한다.
+	return [
+		"default-src 'self'",
+		"base-uri 'self'",
+		"object-src 'none'",
+		"frame-ancestors 'none'",
+		"form-action 'self'",
+		"script-src 'self' 'unsafe-inline' https://oapi.map.naver.com https://nrbe.pstatic.net https://map.pstatic.net https://us-assets.i.posthog.com" +
+			(localHttpMaps ? ' http://oapi.map.naver.com/v3/ http://nrbe.map.naver.net/styles/' : ''),
+		"style-src 'self' 'unsafe-inline' https://oapi.map.naver.com",
+		"img-src 'self' data: blob: https:" +
+			(localHttpMaps ? ' http://nrbe.map.naver.net/styles/ http://nrb.map.naver.net/styles/ http://static.naver.net/maps/' : ''),
+		"font-src 'self' data: https:",
+		"connect-src 'self' https:" + (localHttpMaps ? ' http://oapi.map.naver.com/v3/' : ''),
+		"worker-src 'self' blob:",
+		"frame-src 'none'",
+		...(localHttpMaps ? [] : ['upgrade-insecure-requests']),
+		'block-all-mixed-content'
+	].join('; ');
+}
 
-function withSecurityHeaders(response: Response, isHttps: boolean) {
+function withSecurityHeaders(response: Response, isHttps: boolean, localHttpMaps = false) {
 	const secured = new Response(response.body, response);
-	secured.headers.set('Content-Security-Policy', CONTENT_SECURITY_POLICY);
+	secured.headers.set('Content-Security-Policy', contentSecurityPolicy(localHttpMaps));
 	secured.headers.set('X-Content-Type-Options', 'nosniff');
 	secured.headers.set('X-Frame-Options', 'DENY');
 	secured.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
@@ -95,8 +102,8 @@ export const handle: Handle = async ({ event, resolve }) => {
 	}
 
 	const response = await resolve(event);
-	if (sessionToken || path.startsWith('/admin') || path.startsWith('/my') || isAuthPath) {
+	if (dev || sessionToken || path.startsWith('/admin') || path.startsWith('/my') || isAuthPath) {
 		response.headers.set('Cache-Control', 'private, no-store');
 	}
-	return withSecurityHeaders(response, isHttps);
+	return withSecurityHeaders(response, isHttps, usesLocalHttpMapRequests(event.url, dev));
 };

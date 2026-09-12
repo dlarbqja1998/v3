@@ -1,6 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const { getUserBySessionToken } = vi.hoisted(() => ({ getUserBySessionToken: vi.fn() }));
+const environment = vi.hoisted(() => ({ dev: true }));
+vi.mock('$app/environment', () => environment);
 vi.mock('$lib/server/user', () => ({
 	getUserBySessionToken,
 	toSafeUser: (user: unknown) => user
@@ -18,7 +20,33 @@ function eventFor(url: string, init: RequestInit = {}) {
 }
 
 describe('전역 HTTP 보안 경계', () => {
-	beforeEach(() => getUserBySessionToken.mockReset());
+	beforeEach(() => { getUserBySessionToken.mockReset(); environment.dev = true; });
+
+	it.each(['http://127.0.0.1:5173/', 'http://localhost:5173/', 'http://[::1]:5173/'])('로컬 개발 %s에서 지도 인증·설정·이미지를 지정한 경로로 허용한다', async (url) => {
+		const response = await handle({ event: eventFor(url) as never, resolve: async () => new Response('ok') } as never);
+		const policy = response.headers.get('content-security-policy') ?? '';
+		expect(policy).toContain('http://nrbe.map.naver.net/styles/');
+		expect(policy).toContain('http://static.naver.net/maps/');
+		expect(policy.split('; ').find((directive) => directive.startsWith('script-src'))).toContain('http://oapi.map.naver.com/v3/');
+		expect(policy.split('; ').find((directive) => directive.startsWith('connect-src'))).toContain('http://oapi.map.naver.com/v3/');
+		expect(response.headers.get('cache-control')).toBe('private, no-store');
+		expect(policy).not.toContain('upgrade-insecure-requests');
+		expect(policy).not.toMatch(/(?:^|\s)http:(?:\s|;)/);
+		expect(policy).toContain("frame-ancestors 'none'");
+	});
+
+	it.each(['https://golabau.com/', 'http://192.168.0.10:5173/', 'https://localhost:5173/'])('로컬 HTTP가 아닌 %s에서는 HTTPS 강제를 유지한다', async (url) => {
+		const response = await handle({ event: eventFor(url) as never, resolve: async () => new Response('ok') } as never);
+		const policy = response.headers.get('content-security-policy') ?? '';
+		expect(policy).toContain('upgrade-insecure-requests');
+		expect(policy).not.toContain('http://nrbe.map.naver.net');
+	});
+
+	it('운영 빌드는 루프백 주소에서도 HTTP 예외를 열지 않는다', async () => {
+		environment.dev = false;
+		const response = await handle({ event: eventFor('http://localhost:5173/') as never, resolve: async () => new Response('ok') } as never);
+		expect(response.headers.get('content-security-policy')).toContain('upgrade-insecure-requests');
+	});
 
 	it('운영 도메인의 HTTP 요청을 HTTPS로 영구 이동한다', async () => {
 		const resolve = vi.fn();

@@ -52,7 +52,7 @@ declare global {
 			} | null;
 		}
 		// interface PageData {}
-		// interface PageState {}
+		interface PageState { festivalBooth?: string; }
 		interface Platform {
 			env?: {
 				ADMIN_LOGIN_RATE_LIMITER?: {

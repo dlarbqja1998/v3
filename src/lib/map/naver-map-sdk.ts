@@ -1,3 +1,5 @@
+import { usesLocalHttpMapRequests } from '$lib/domain/map-security';
+
 export type NaverMapSdkScript = EventTarget & {
 	src: string;
 	async: boolean;
@@ -56,6 +58,11 @@ export function rewriteNaverMapTileUrls(urls: NaverTileUrls): NaverTileUrls {
 }
 
 export function enableSecureNaverMapTiles(mapValue: unknown): boolean {
+	// HTTP 로컬에서 SDK가 선택한 설정 파일과 타일 호스트를 같은 방식으로 유지한다.
+	if (
+		typeof location !== 'undefined' &&
+		usesLocalHttpMapRequests(new URL(location.href), import.meta.env.DEV)
+	) return false;
 	const map = mapValue as {
 		getMapType?: () => {
 			getMapTypeOptions?: () => {

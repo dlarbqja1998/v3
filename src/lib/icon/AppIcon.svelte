@@ -1,5 +1,6 @@
 <script lang="ts">
 	export type AppIconName =
+		| 'administration'
 		| 'bell'
 		| 'bookstore'
 		| 'bus'
@@ -13,6 +14,7 @@
 		| 'food'
 		| 'gym'
 		| 'home'
+		| 'moon'
 		| 'my'
 		| 'post_office'
 		| 'print'
@@ -20,6 +22,7 @@
 		| 'search'
 		| 'setting'
 		| 'shop'
+		| 'sun'
 		| 'thumbsdown'
 		| 'thumbsup'
 		| 'today';

@@ -17,6 +17,11 @@
 	} from '$lib/domain/campus-boundary-visibility';
 	import type { Place } from '$lib/domain/places';
 	import { getMapMarkerBackground, getSafeMarkerIcon } from '$lib/map/marker-icon';
+	import { shuttleStops } from '$lib/domain/shuttle';
+	import type { Festival } from '$lib/domain/festival';
+	import { createFestivalLayer } from './festival-layer';
+	import { startVisibleClock } from '$lib/browser/visible-clock';
+	import { arrangeShuttleLabels, createShuttleMarker, type ShuttleMarkerView } from './shuttle-marker';
 	import {
 		enableSecureNaverMapTiles,
 		loadNaverMapSdkWithRetry,
@@ -55,6 +60,9 @@
 		events?: { id: string; title: string; latitude: number; longitude: number }[];
 		activeEventId?: string;
 		onEventMarkerClick?: (eventId: string) => void;
+		festival?: Festival | null;
+		festivalSelected?: boolean;
+		onFestivalClick?: () => void;
 		attributionBottomOffset?: number;
 		areaMode?: MapAreaMode;
 		commercialZones?: CommercialZone[];
@@ -79,6 +87,9 @@
 		events = [],
 		activeEventId = '',
 		onEventMarkerClick,
+		festival = null,
+		festivalSelected = false,
+		onFestivalClick = () => {},
 		attributionBottomOffset = 0,
 		areaMode = 'campus',
 		commercialZones = [],
@@ -88,6 +99,7 @@
 	let mapElement: HTMLDivElement;
 	let map: any = null;
 	const markerLayer = createMapLayer<any>(disposeMapObject);
+	const shuttleMarkerViews = new Map<string, ShuttleMarkerView>();
 	const eventLayer = createMapLayer<any>(disposeMapObject);
 	let campusMarkers: any[] = [];
 	let campusPolygons: any[] = [];
@@ -129,6 +141,20 @@
 	});
 
 	$effect(() => {
+		if (!mounted || !active || !isReady) return;
+		return startVisibleClock((now) => {
+			for (const view of shuttleMarkerViews.values()) view.update(now);
+			arrangeShuttleLabels([...shuttleMarkerViews], mapElement.getBoundingClientRect(), activePlaceId);
+		});
+	});
+
+	$effect(() => {
+		if (!active || !isReady || !map || !festival) return;
+		const layer = createFestivalLayer((window.naver as any).maps, map, festival, festivalSelected, onFestivalClick);
+		return () => layer.dispose();
+	});
+
+	$effect(() => {
 		if (!mounted || !active) {
 			if (map) cancelMapMotion(map);
 			return;
@@ -162,6 +188,13 @@
 		focusActivePlace(places, activePlaceId, focusMode, focusTargetRatio);
 		focusActiveEvent(events, activeEventId, focusMode, focusTargetRatio);
 		focusActiveCampusSpot(campusSpots, focusCampusSpotId, activeCampusSpotId, focusMode);
+		if (festival && festivalSelected) {
+			const baseRatio = focusTargetRatio ?? 0.25;
+			const height = mapElement.clientHeight || 844;
+			// 축제 핀 위 제목과 상단 안내가 겹치지 않도록 아래 여백을 확보한다.
+			const ratio = Math.max(0, Math.min(baseRatio * 2 - 16 / height, baseRatio + 44 / height));
+			focusCoordinate(festival.area.latitude, festival.area.longitude, 'default', ratio);
+		}
 	});
 
 	$effect(() => {
@@ -180,6 +213,7 @@
 	$effect(() => {
 		if (!active || !isReady || !map) return;
 		syncCommercialZones(areaMode, commercialZones, selectedCommercialZoneId);
+		if (festivalSelected) return;
 		if (!shouldFocusMapArea(activePlaceId)) return;
 		const areaKey = JSON.stringify([areaMode, selectedCommercialZoneId,
 			commercialZones.map((zone) => [zone.id, zone.center, zone.boundary])]);
@@ -323,17 +357,26 @@
 	function syncMarkers(nextPlaces: Place[], nextActivePlaceId: string) {
 		const naver = window.naver;
 		if (!naver) return;
+		const visibleIds = new Set(nextPlaces.filter((place) => place.type === 'shuttle_stop').map((place) => place.id));
+		for (const id of shuttleMarkerViews.keys()) if (!visibleIds.has(id)) shuttleMarkerViews.delete(id);
 		markerLayer.sync(nextPlaces, (place) => ({
 			id: place.id,
-			signature: JSON.stringify([place.latitude, place.longitude, place.name, place.icon, place.id === nextActivePlaceId])
+			signature: JSON.stringify([place.latitude, place.longitude, place.name, place.icon, place.type, place.id === nextActivePlaceId])
 		}), (place) => {
 			const isActive = place.id === nextActivePlaceId;
+			const stop = place.type === 'shuttle_stop' ? shuttleStops.find((stop) => stop.id === place.id) : undefined;
+			const countdownView = stop ? createShuttleMarker(markerHtml(place.icon, isActive), stop.stopId, () => onMarkerClick(place.id)) : null;
+			if (countdownView) {
+				countdownView.update(new Date());
+				shuttleMarkerViews.set(place.id, countdownView);
+			}
 			const marker = new naver.maps.Marker({
 				position: new naver.maps.LatLng(place.latitude, place.longitude),
 				map,
 				title: place.name,
+				zIndex: stop ? (isActive ? 110 : 100) : (isActive ? 10 : 0),
 				icon: {
-					content: markerHtml(place.icon, isActive),
+					content: countdownView?.element ?? markerHtml(place.icon, isActive),
 					size: new naver.maps.Size(32, 32),
 					anchor: new naver.maps.Point(16, 32)
 				}
@@ -567,6 +610,7 @@
 
 	function clearMarkers() {
 		markerLayer.clear();
+		shuttleMarkerViews.clear();
 	}
 
 	function clearEventMarkers() {

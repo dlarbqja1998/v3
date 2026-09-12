@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { getContext, onMount } from 'svelte';
-	import { goto } from '$app/navigation';
+	import { goto, replaceState } from '$app/navigation';
+	import { page } from '$app/state';
 	import { env as publicEnv } from '$env/dynamic/public';
 	import {
 		CalendarDays,
@@ -58,12 +59,13 @@
 	import HomeMap from '$lib/map/HomeMap.svelte';
 	import { HOME_MAP_SESSION, type HomeMapSession } from '$lib/map/home-map-session.svelte';
 	import WeatherWidget from '$lib/weather/WeatherWidget.svelte';
+	import ShuttleCountdown from '$lib/shuttle/ShuttleCountdown.svelte';
+	import FestivalPanel from '$lib/festival/FestivalPanel.svelte';
 	import type { CafeteriaPanelItem, DailyMenu, MenuDayKey } from '$lib/domain/places';
 	import {
 		addAlwaysVisibleShuttleStops,
 		formatMinutesLeft,
 		getNextAvailableShuttle,
-		getShuttleStopCountdown,
 		getUpcomingShuttles,
 		shuttleSchedules,
 		shuttleStops,
@@ -97,7 +99,7 @@
 		items: MealItem[];
 	};
 
-	type SheetMode = 'home' | 'event' | 'facility' | 'cafeteria' | 'shuttle' | 'pin' | 'place';
+	type SheetMode = 'home' | 'event' | 'festival' | 'facility' | 'cafeteria' | 'shuttle' | 'pin' | 'place';
 	const WEATHER_WIDGET_GAP = 12;
 	const homeDateLabel = formatHomeDate(new Date());
 
@@ -234,7 +236,7 @@
 	);
 
 	const placeFocusTargetRatio = $derived(
-		sheetMode === 'place' || sheetMode === 'facility' || sheetMode === 'shuttle' || sheetMode === 'event'
+		sheetMode === 'festival' || sheetMode === 'place' || sheetMode === 'facility' || sheetMode === 'shuttle' || sheetMode === 'event'
 			? getAvailableMapMarkerTargetRatio({
 					mapHeight: mapViewportHeight,
 					navigationHeight: bottomNavigationHeight,
@@ -258,9 +260,6 @@
 	const voteLoginHref = $derived(`/login?next=${encodeURIComponent(voteLoginReturnUrl)}`);
 	const upcomingShuttles = $derived(getUpcomingShuttles(currentTime, activeShuttleStopId, 5));
 	const nextShuttle = $derived(getNextAvailableShuttle(currentTime));
-	const activeShuttleCountdown = $derived(
-		getShuttleStopCountdown(currentTime, activeShuttleStopId)
-	);
 
 	onMount(() => {
 		const weatherAbortController = new AbortController();
@@ -268,7 +267,9 @@
 
 		if (showCampusBoundaries) void loadCampusSpots();
 
-		if (data.initialPanel === 'cafeteria') {
+		if (data.initialFestival) {
+			openFestivalPanel();
+		} else if (data.initialPanel === 'cafeteria') {
 			openCafeteriaPanel();
 		} else if (data.initialPanel === 'shuttle') {
 			openShuttlePanel(data.initialShuttleStopId ?? undefined);
@@ -453,6 +454,21 @@
 		});
 	}
 
+	function openFestivalPanel() {
+		if (!data.festival) return;
+		areaMode = 'campus';
+		sheetMode = 'festival';
+		selectedFacilityCategory = 'event';
+		hasSelectedPinFilter = false;
+		activePlaceId = '';
+		activeEventId = '';
+		activeCampusSpotId = '';
+		focusCampusSpotId = '';
+		showCampusBoundaries = false;
+		setSheetDetent('medium');
+		homeFocusRequestId += 1;
+	}
+
 	function updateFacilitySearch(query: string) {
 		const hadQuery = Boolean(facilitySearchQuery.trim());
 		facilitySearchQuery = query;
@@ -508,6 +524,7 @@
 	}
 
 	function closePanel() {
+		if (sheetMode === 'festival') replaceState('/', { ...page.state, festivalBooth: undefined });
 		if (sheetMode === 'place') {
 			void goto('/');
 			return;
@@ -715,11 +732,14 @@
 		const viewportHeight = appShellElement?.getBoundingClientRect().height ?? window.innerHeight;
 		const navigationHeight =
 			document.querySelector<HTMLElement>('[data-bottom-navigation]')?.getBoundingClientRect().height ?? 73;
+		const sheetHeights = getBottomSheetHeights(viewportHeight, navigationHeight);
+		// 날짜·세션 탭 아래 첫 부스까지 한 번에 보이도록 축제 중간 높이를 확보한다.
+		if (sheetMode === 'festival') sheetHeights.medium = Math.min(sheetHeights.expanded, Math.max(sheetHeights.medium, 410));
 
 		return {
 			viewportHeight,
 			navigationHeight,
-			sheetHeights: getBottomSheetHeights(viewportHeight, navigationHeight)
+			sheetHeights
 		};
 	}
 
@@ -1041,7 +1061,7 @@
 			focusMode={sheetMode === 'cafeteria' || sheetMode === 'pin' ? 'top-band' : 'default'}
 			focusRequestId={homeFocusRequestId}
 			focusZoom={
-				sheetMode === 'place' || sheetMode === 'facility' || sheetMode === 'shuttle' || sheetMode === 'event'
+				sheetMode === 'festival' ? 17 : sheetMode === 'place' || sheetMode === 'facility' || sheetMode === 'shuttle' || sheetMode === 'event'
 					? getPlaceFocusZoom(DEFAULT_HOME_MAP_ZOOM)
 					: DEFAULT_HOME_MAP_ZOOM
 			}
@@ -1059,7 +1079,14 @@
 			events={sheetMode === 'event' ? data.campusEvents : []}
 			{activeEventId}
 			onEventMarkerClick={selectEvent}
+			festival={areaMode === 'campus' && ['home','event','festival'].includes(sheetMode) ? data.festival : null}
+			festivalSelected={sheetMode === 'festival'}
+			onFestivalClick={openFestivalPanel}
 		/>
+
+		{#if sheetMode === 'festival' && data.festival}
+			<div class="absolute inset-x-0 top-0 z-10 flex items-center justify-between bg-white/95 px-5 pt-[calc(12px+env(safe-area-inset-top))] pb-3 text-[12px] text-brand-muted"><span>{data.festival.area.approximate ? '축제 구역 · 위치 안내 예정' : '축제 구역'}</span>{#if data.user?.role === 'admin'}<a class="min-h-8 content-center text-brand" href="/admin/festival">구역 편집</a>{/if}</div>
+		{/if}
 
 		{#if sheetMode === 'home' || sheetMode === 'facility' || sheetMode === 'event'}
 			<div
@@ -1155,8 +1182,11 @@
 						</p>
 					</div>
 				{/if}
+			{:else if sheetMode === 'festival' && data.festival}
+				<FestivalPanel festival={data.festival} onClose={closePanel} onExpand={() => setSheetDetent('expanded')} collapsed={sheetDetent === 'collapsed'} />
 			{:else if sheetMode === 'event'}
 				<div class="flex min-h-0 flex-1 flex-col">
+					{#if data.festival}<button type="button" class="mb-3 flex w-full items-center justify-between border-b border-brand-border py-3 text-left" onclick={openFestivalPanel}><span><strong class="block text-[15px] font-bold">{data.festival.name}</strong><span class="mt-1 block text-[12px] text-brand-muted">{data.festival.dates[0]?.label} · 부스와 공연 보기</span></span><ChevronRight size={20} /></button>{/if}
 					<div class="mb-2 flex items-start justify-between gap-3"><div class="min-w-0 flex-1"><p class="m-0 text-xs font-bold text-brand-muted">교내 행사 · {data.campusEvents.length}개</p><h2 class="m-0 mt-0.5 break-keep text-[18px] font-black leading-6 [overflow-wrap:anywhere]">{activeEvent?.title ?? '행사'}</h2></div><button class="shrink-0 whitespace-nowrap px-1 py-2 text-[13px] font-bold text-brand-muted" type="button" onclick={closePanel}>닫기</button></div>
 					{#if data.campusEvents.length > 0}
 						<div bind:this={eventScroller} class="-mx-[18px] flex snap-x snap-mandatory overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" onscroll={handleEventScroll}>
@@ -1449,31 +1479,7 @@
 						</button>
 					</div>
 
-					{#if activeShuttleCountdown}
-						<div
-							class="mb-4 flex min-h-20 items-center justify-between gap-4 border-y border-brand-border py-3"
-							data-shuttle-stop-countdown
-						>
-							<div>
-								<p class="m-0 text-[12px] font-bold text-brand-muted">다음 셔틀까지</p>
-								<strong class="mt-0.5 block text-[24px] font-black tracking-[-0.03em] text-brand">
-									{activeShuttleCountdown.minutesLabel}
-								</strong>
-							</div>
-							<div class="text-right">
-								<p class="m-0 text-[14px] font-black tabular-nums text-brand-text">
-									{activeShuttleCountdown.departureTime} 출발
-								</p>
-								<p class="m-0 mt-1 text-[12px] font-bold text-brand-muted">
-									{activeShuttleCountdown.directionLabel} · 시간표 기준
-								</p>
-							</div>
-						</div>
-					{:else}
-						<p class="m-0 mb-4 border-y border-brand-border py-4 text-[13px] font-bold text-brand-muted">
-							예정된 셔틀 운행이 없습니다.
-						</p>
-					{/if}
+					<ShuttleCountdown stopId={activeShuttleStopId} />
 
 					<div
 						bind:this={shuttleScroller}

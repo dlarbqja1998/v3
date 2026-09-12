@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import * as naverMapSdk from './naver-map-sdk';
 import { loadNaverMapSdk, type NaverMapSdkEnvironment } from './naver-map-sdk';
 
@@ -139,6 +139,17 @@ describe('네이버 지도 컨테이너 준비', () => {
 });
 
 describe('네이버 지도 타일 URL', () => {
+	it('HTTP 로컬 개발에서는 SDK의 기본 타일 생성기와 초기 로딩을 유지한다', () => {
+		vi.stubGlobal('location', new URL('http://127.0.0.1:5173/'));
+		const map = { getMapType: vi.fn(), refresh: vi.fn() };
+		try {
+			expect(naverMapSdk.enableSecureNaverMapTiles(map)).toBe(false);
+			expect(map.getMapType).not.toHaveBeenCalled();
+			expect(map.refresh).not.toHaveBeenCalled();
+		} finally {
+			vi.unstubAllGlobals();
+		}
+	});
 	it('HTTP 전용 지도 타일 호스트를 네이버 HTTPS CDN으로 바꾼다', () => {
 		const rewriteTileUrls = (
 			naverMapSdk as Partial<{

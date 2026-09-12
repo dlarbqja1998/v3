@@ -33,6 +33,7 @@
 		</header>
 
 		<div class="px-5 py-5 pb-[calc(40px+env(safe-area-inset-bottom))]">
+			<a class="mb-5 flex min-h-14 items-center justify-between border-b border-brand-border text-[15px] font-bold text-brand" href="/admin/festival">축제 구역 편집 <span class="text-[12px] font-normal text-brand-muted">POLARIS</span></a>
 			<div class="mb-4 flex items-end justify-between gap-4 border-b border-brand-border pb-3">
 				<div><h2 class="m-0 text-[15px] font-black">등록 행사</h2><p class="m-0 mt-1 text-[13px] text-brand-muted">종료 행사도 관리자 목록에는 유지됩니다.</p></div>
 				<a class="text-[13px] font-black text-brand" href="/admin/events/new">새 행사</a>

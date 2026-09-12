@@ -5,17 +5,19 @@
 	import { analyticsEvents } from '$lib/analytics/events';
 	import { track } from '$lib/analytics/posthog.client';
 	import LifestylePageHeader from '$lib/navigation/LifestylePageHeader.svelte';
+	import AppIcon from '$lib/icon/AppIcon.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
 	let activeTab = $state<'ongoing' | 'upcoming'>(untrack(() => data.initialTab));
 	const activeEvents = $derived(activeTab === 'ongoing' ? data.ongoingEvents : data.upcomingEvents);
+	const activeFestival = $derived(data.festival?.status === activeTab ? data.festival : null);
 
 	onMount(() => {
 		track(analyticsEvents.openToday, {
 			source: 'today_page',
-			ongoing_count: data.ongoingEvents.length,
-			upcoming_count: data.upcomingEvents.length
+			ongoing_count: data.ongoingEvents.length + Number(data.festival?.status === 'ongoing'),
+			upcoming_count: data.upcomingEvents.length + Number(data.festival?.status === 'upcoming')
 		});
 	});
 
@@ -55,11 +57,18 @@
 				<span class="absolute bottom-0 left-0 h-0.5 w-1/2 bg-brand transition-transform duration-300" style={`transform:translateX(${activeTab === 'ongoing' ? 0 : 100}%)`} data-today-tab-indicator></span>
 			</div>
 
-			{#if activeEvents.length === 0}
+			{#if activeFestival}
+				<a class="flex min-h-28 items-center gap-3 border-b border-brand-border py-4" href={activeFestival.href} onclick={() => selectEvent(activeFestival.id, 1)}>
+					<span class="grid h-12 w-12 shrink-0 place-items-center text-brand"><AppIcon name="today" size={24} /></span>
+					<span class="min-w-0 flex-1"><span class="block text-[12px] font-bold text-brand">축제</span><strong class="mt-1 block break-keep text-[15px]">{activeFestival.title}</strong><span class="mt-1.5 block text-[12px] text-brand-muted">{activeFestival.dateLabel}</span><span class="mt-1 block text-[12px] text-brand-muted">{activeFestival.location} · 부스와 공연 보기</span></span>
+					<AppIcon name="chevron" size={20} class="rotate-180 text-brand-muted" />
+				</a>
+			{/if}
+			{#if activeEvents.length === 0 && !activeFestival}
 				<section class="grid min-h-64 place-items-center border-b border-brand-border py-10 text-center" aria-live="polite">
 					<div><CalendarDays class="mx-auto text-brand" size={28} /><h2 class="m-0 mt-4 text-base font-black">{activeTab === 'ongoing' ? '지금 진행 중인 행사가 없어요' : '예정된 행사가 없어요'}</h2><p class="m-0 mt-2 text-[13px] leading-5 text-brand-muted">새 행사가 등록되면 이곳에서 바로 알려드릴게요.</p></div>
 				</section>
-			{:else}
+			{:else if activeEvents.length > 0}
 				<div class="divide-y divide-brand-border border-b border-brand-border">
 					{#each activeEvents as event, index (event.id)}
 						<a class="flex min-h-28 items-center gap-3 py-4" href={`/today/${event.id}`} onclick={() => selectEvent(event.id, index + 1)}>
