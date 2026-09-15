@@ -2,6 +2,21 @@ import type { FestivalBooth } from './festival';
 
 /** 2026-09-15 사용자가 모아 준 홍보글 본문·첨부에서 확인한 내용. */
 export const festivalBoothDetails: Record<string, Partial<FestivalBooth>> = {
+	'day-booth-7': {
+		name: '어피처', clubName: 'APERTURE', sourceUrl: 'https://everytime.kr/370457/v/418159464',
+		subtitle: '스냅·인스탁스 촬영과 필름 체험',
+		sessions: { day: { hours: '12:00–17:30', items: [
+			{ name: '1인 스냅 · 3장', price: 1000, section: '스냅 촬영' },
+			{ name: '2인 스냅 · 4장', price: 2000, section: '스냅 촬영' },
+			{ name: '3인 스냅 · 5장', price: 3000, section: '스냅 촬영' },
+			{ name: '4인 스냅 · 6장', price: 4000, section: '스냅 촬영' },
+			{ name: '인스탁스 미니', price: 2000, section: '인스탁스 촬영' },
+			{ name: '인스탁스 와이드', price: 3000, section: '인스탁스 촬영' },
+			{ name: '인스탁스 필름 꾸미기', price: null, section: '전시·체험' },
+			{ name: '슬라이드 필름 실물 전시', price: null, section: '전시·체험' },
+			{ name: '필름카메라 전시·체험', price: null, section: '전시·체험' }
+		] } }
+	},
 	'day-booth-10': {
 		sourceUrl: 'https://everytime.kr/370457/v/418144276', subtitle: 'STARWEAR · 패션 체험과 플리마켓',
 		sessions: { day: { hours: '12:00–17:30', items: [
