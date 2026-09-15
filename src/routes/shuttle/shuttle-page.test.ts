@@ -35,7 +35,7 @@ describe('셔틀 페이지', () => {
 		expect(body).not.toContain('평일 시간표');
 		expect(body).not.toContain('학술정보원 앞 셔틀버스 정류장');
 		expect(body).not.toContain('고려대학교 세종캠퍼스 셔틀버스 안내 기준');
-		expect(body).toContain('18:10');
+		expect(body).toContain('18:00');
 		expect(body).toContain('오송역 도착');
 		expect(body).toContain('지도에서 보기');
 		expect(body).toContain('h-[18px] w-1');
@@ -57,14 +57,14 @@ describe('셔틀 페이지', () => {
 
 	it('오송역행의 공식 도착 시각을 임의로 계산하지 않는다', () => {
 		vi.useFakeTimers();
-		vi.setSystemTime(new Date(2026, 7, 31, 18, 5));
+		vi.setSystemTime(new Date(2026, 7, 31, 17, 55));
 
 		const { body } = render(ShuttlePage, {
 			props: { data: { user: null, initialShuttleStopId: 'campus' } } as never
 		});
 		vi.useRealTimers();
 
-		expect(body).toContain('18:10 고려대 출발');
+		expect(body).toContain('18:00 고려대 출발');
 		expect(body).toContain('오송역 방향');
 		expect(body).not.toContain('18:20 오송역 도착');
 	});

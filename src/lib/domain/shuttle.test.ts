@@ -51,9 +51,9 @@ describe('정적 셔틀 시간표', () => {
 
 		expect(getShuttleStopCountdown(mondayMorning, 'campus')).toMatchObject({
 			stopId: 'campus',
-			departureTime: '09:10',
-			minutesLeft: 35,
-			minutesLabel: '35분 후',
+			departureTime: '09:00',
+			minutesLeft: 25,
+			minutesLabel: '25분 후',
 			directionLabel: '조치원역 행'
 		});
 		expect(getShuttleStopCountdown(mondayMorning, 'jochewon-station-back')).toMatchObject({
@@ -92,23 +92,23 @@ describe('정적 셔틀 시간표', () => {
 		expect(getShuttleSchedulesForDate(saturday)).toEqual([]);
 	});
 
-	it('오송역 경유 18시 10분 운행을 정적 시간표에 보존한다', () => {
+	it('오송역 경유 18시 00분 운행을 정적 시간표에 보존한다', () => {
 		const monday = new Date(2026, 7, 24, 12, 0);
 
 		expect(getShuttleSchedulesForDate(monday)).toContainEqual(
 				expect.objectContaining({
 					from: 'campus',
 					to: 'osong',
-					departureTime: '18:10',
+					departureTime: '18:00',
 					note: '조치원역 경유 · 오송역 도착'
 				})
 			);
 	});
 
-	it('오송역의 오전 안내와 18시 10분 종착 운행을 상단 안내용으로 함께 제공한다', () => {
+	it('오송역의 오전 안내와 18시 00분 종착 운행을 상단 안내용으로 함께 제공한다', () => {
 		expect(shuttleServiceNotices).toMatchObject([
 			{ time: '08:30', label: '오송역 6번 출구 출발', note: '조치원역 경유' },
-			{ time: '18:10', label: '학교 출발', note: '조치원역 경유 · 오송역 도착' }
+			{ time: '18:00', label: '학교 출발', note: '조치원역 경유 · 오송역 도착' }
 		]);
 	});
 
@@ -130,14 +130,14 @@ describe('정적 셔틀 시간표', () => {
 		const schedules = getShuttleSchedulesForDate(now, 'campus');
 
 		expect(getCurrentShuttle(now, 'campus')).toBeNull();
-		expect(orderShuttleTimeline(schedules).at(0)).toMatchObject({ departureTime: '09:10' });
+		expect(orderShuttleTimeline(schedules).at(0)).toMatchObject({ departureTime: '09:00' });
 		expect(getNextAvailableShuttle(now, 'campus')).toMatchObject({
-			departureTime: '09:10',
+			departureTime: '09:00',
 			serviceDate: '2026-08-25'
 		});
 	});
 
-	it('오송역 경유 정보는 별도 안내와 18시 10분 학교 출발 행으로 나눠 보존한다', () => {
+	it('오송역 경유 정보는 별도 안내와 18시 00분 학교 출발 행으로 나눠 보존한다', () => {
 		const monday = new Date(2026, 7, 24, 12, 0);
 
 		expect(shuttleServiceNotices).toContainEqual(
@@ -145,7 +145,7 @@ describe('정적 셔틀 시간표', () => {
 		);
 		expect(getShuttleSchedulesForDate(monday, 'campus')).toContainEqual(
 			expect.objectContaining({
-				departureTime: '18:10',
+				departureTime: '18:00',
 				note: '조치원역 경유 · 오송역 도착'
 			})
 		);
@@ -160,7 +160,7 @@ describe('정적 셔틀 시간표', () => {
 		expect(stationSchedules.find((schedule) => schedule.departureTime === '08:45')).toMatchObject({
 			vehicleCount: 2
 		});
-		const osongEvening = campusSchedules.find((schedule) => schedule.departureTime === '18:10');
+		const osongEvening = campusSchedules.find((schedule) => schedule.departureTime === '18:00');
 		expect(osongEvening).toMatchObject({
 			to: 'osong',
 			note: '조치원역 경유 · 오송역 도착'
@@ -178,7 +178,7 @@ describe('정적 셔틀 시간표', () => {
 	it('첨부된 2026학년도 2학기 공식 시간표를 출처로 기록한다', () => {
 		expect(shuttleScheduleSource).toMatchObject({
 			name: '2026학년도 2학기 학생 셔틀버스 시간표',
-			verifiedAt: '2026-08-31'
+			verifiedAt: '2026-09-15'
 		});
 	});
 });

@@ -47,7 +47,7 @@ export type ShuttleStopCountdown = {
 export const shuttleScheduleSource = {
 	name: '2026학년도 2학기 학생 셔틀버스 시간표',
 	url: 'https://kusemicon.korea.ac.kr/koreaSejong/7803/subview.do',
-	verifiedAt: '2026-08-31'
+	verifiedAt: '2026-09-15'
 } as const;
 
 export const shuttleStops: ShuttleStop[] = [
@@ -96,21 +96,21 @@ export function addAlwaysVisibleShuttleStops(places: Place[]): Place[] {
 }
 
 const weekdayCampusTimes = [
-	'09:10', '09:30', '09:40', '09:50', '10:10', '10:30', '10:40', '11:00', '11:20',
+	'09:00', '09:30', '09:40', '09:50', '10:10', '10:30', '10:40', '11:00', '11:20',
 	'11:40', '12:10', '12:30', '12:40', '13:10', '13:30', '13:50', '14:10', '14:30',
-	'15:00', '15:10', '15:30', '15:50', '16:10', '16:30', '16:50', '17:10', '17:20',
-	'17:40', '18:20', '18:40', '19:10', '19:40', '20:10', '20:50'
+	'15:00', '15:10', '15:30', '15:50', '16:10', '16:30', '16:40', '17:10', '17:20',
+	'17:40', '18:20', '18:40', '19:10', '19:40', '20:00', '20:40'
 ];
 
 const weekdayStationTimes = [
-	'08:30', '08:45', '09:20', '09:40', '09:50', '10:00', '10:20', '10:40', '10:50',
+	'08:30', '08:45', '09:10', '09:40', '09:50', '10:00', '10:20', '10:40', '10:50',
 	'11:10', '11:30', '11:50', '12:20', '12:40', '12:50', '13:20', '13:40', '14:00',
-	'14:20', '14:40', '15:10', '15:20', '15:40', '16:00', '16:20', '16:40', '17:00',
-	'17:20', '17:30', '17:50', '18:30', '18:50', '19:20', '19:50', '20:20', '21:00'
+	'14:20', '14:40', '15:10', '15:20', '15:40', '16:00', '16:20', '16:40', '16:50',
+	'17:20', '17:30', '17:50', '18:30', '18:50', '19:20', '19:50', '20:10', '20:50'
 ];
 
-const sundayCampusTimes = ['17:00', '17:40', '18:40', '19:00', '19:40', '20:20', '21:10'];
-const sundayStationTimes = ['16:30', '17:10', '17:50', '18:50', '19:10', '19:50', '20:35', '21:20'];
+const sundayCampusTimes = ['17:00', '17:40', '18:40', '19:00', '19:40', '20:30', '21:10'];
+const sundayStationTimes = ['16:30', '17:10', '17:50', '18:50', '19:10', '19:50', '20:45', '21:20'];
 
 function createScheduleRows({
 	dayType,
@@ -153,10 +153,10 @@ export const shuttleSchedules: ShuttleSchedule[] = [
 		fridayUnavailableFrom: '19:10'
 	}),
 	{
-		id: 'weekday-campus-1810-osong',
+		id: 'weekday-campus-1800-osong',
 		from: 'campus',
 		to: 'osong',
-		departureTime: '18:10',
+		departureTime: '18:00',
 		dayType: 'weekday',
 		note: '조치원역 경유 · 오송역 도착'
 	},
@@ -194,9 +194,9 @@ export const shuttleServiceNotices: ShuttleServiceNotice[] = [
 		note: '조치원역 경유'
 	},
 	{
-		id: 'weekday-campus-1810-osong',
+		id: 'weekday-campus-1800-osong',
 		dayType: 'weekday',
-		time: '18:10',
+		time: '18:00',
 		label: '학교 출발',
 		note: '조치원역 경유 · 오송역 도착'
 	}
