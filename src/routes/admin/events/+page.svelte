@@ -33,9 +33,14 @@
 		</header>
 
 		<div class="px-5 py-5 pb-[calc(40px+env(safe-area-inset-bottom))]">
-			<a class="mb-5 flex min-h-14 items-center justify-between border-b border-brand-border text-[15px] font-bold text-brand" href="/admin/festival">축제 구역 편집 <span class="text-[12px] font-normal text-brand-muted">POLARIS</span></a>
+			<a class="mb-5 flex min-h-14 items-center justify-between border-b border-brand-border text-[15px] font-bold text-brand" href="/admin/festival">축제 구역 편집 <span class="text-[12px] font-normal text-brand-muted">템플릿 관리</span></a>
+			<nav class="mb-5 flex gap-5 overflow-x-auto border-b border-brand-border" aria-label="행사 기록 연도">
+				{#each data.years as year}
+					<a href={`?year=${year}`} aria-current={data.selectedYear === year ? 'page' : undefined} class={`shrink-0 border-b-2 py-3 text-[16px] transition-colors duration-200 ${data.selectedYear === year ? 'border-brand font-bold text-brand' : 'border-transparent text-brand-muted'}`}>{year}년</a>
+				{/each}
+			</nav>
 			<div class="mb-4 flex items-end justify-between gap-4 border-b border-brand-border pb-3">
-				<div><h2 class="m-0 text-[15px] font-black">등록 행사</h2><p class="m-0 mt-1 text-[13px] text-brand-muted">종료 행사도 관리자 목록에는 유지됩니다.</p></div>
+				<div><h2 class="m-0 text-[15px] font-black">행사 기록 · {data.events.length}건</h2><p class="m-0 mt-1 text-[13px] text-brand-muted">개최 연도별로 종료 행사까지 보관해요.</p></div>
 				<a class="text-[13px] font-black text-brand" href="/admin/events/new">새 행사</a>
 			</div>
 
@@ -43,7 +48,7 @@
 			{#if data.deleted}<p class="mb-3 rounded-xl bg-emerald-50 p-3 text-[13px] font-bold text-emerald-700">행사를 삭제했습니다.</p>{/if}
 
 			{#if data.events.length === 0}
-				<div class="py-16 text-center"><p class="m-0 text-sm font-bold">아직 등록한 행사가 없습니다.</p><a class="mt-3 inline-block text-[13px] font-black text-brand" href="/admin/events/new">첫 행사 등록하기</a></div>
+				<div class="py-16 text-center"><p class="m-0 text-sm font-bold">{data.selectedYear}년에 등록한 행사가 없습니다.</p><a class="mt-3 inline-block text-[13px] font-black text-brand" href="/admin/events/new">행사 등록하기</a></div>
 			{:else}
 				<div class="divide-y divide-brand-border border-b border-brand-border">
 					{#each data.events as event (event.id)}

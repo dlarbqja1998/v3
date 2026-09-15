@@ -1,6 +1,7 @@
 import { env } from '$env/dynamic/private';
 import { fail, redirect } from '@sveltejs/kit';
 import { normalizeCampusEventInput } from '$lib/domain/campus-events';
+import { selectEventHistoryYear } from '$lib/domain/event-history';
 import {
 	deleteCampusEventRows,
 	buildCampusEventValidationFormData,
@@ -15,7 +16,7 @@ import type { Actions, PageServerLoad } from './$types';
 export const load: PageServerLoad = async ({ locals, url }) => {
 	requireEventAdmin(locals.user);
 	return {
-		events: await listAdminCampusEvents(env.DATABASE_URL),
+		...selectEventHistoryYear(await listAdminCampusEvents(env.DATABASE_URL), url.searchParams.get('year')),
 		deleted: url.searchParams.get('deleted') === '1'
 	};
 };

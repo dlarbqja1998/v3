@@ -1,6 +1,6 @@
 import { env } from '$env/dynamic/private';
 import { error, fail, redirect } from '@sveltejs/kit';
-import { parseFestivalArea, readFestivalDraft, saveFestivalArea } from '$lib/server/festival-editor';
+import { festivalPublished, parseFestivalArea, readFestivalDraft, saveFestivalArea } from '$lib/server/festival-editor';
 import type { Actions, PageServerLoad } from './$types';
 
 function requireAdmin(user: App.Locals['user']) {
@@ -11,7 +11,7 @@ function requireAdmin(user: App.Locals['user']) {
 
 export const load: PageServerLoad = async ({ locals, platform }) => {
 	requireAdmin(locals.user);
-	return { draft: await readFestivalDraft(platform?.env?.GOLABAU_CACHE), naverMapClientId: env.NAVER_MAP_CLIENT_ID ?? '' };
+	return { draft: await readFestivalDraft(platform?.env?.GOLABAU_CACHE), published: festivalPublished, naverMapClientId: env.NAVER_MAP_CLIENT_ID ?? '' };
 };
 
 export const actions: Actions = {

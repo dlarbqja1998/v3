@@ -36,7 +36,7 @@
 <main class="min-h-dvh bg-white text-brand-text">
 	<header class="sticky top-0 z-30 border-b border-brand-border bg-white pt-[env(safe-area-inset-top)]"><div class="relative mx-auto flex h-14 max-w-[800px] items-center justify-center px-5"><a href="/admin/events" class="absolute left-4" aria-label="행사 관리로 돌아가기"><AppIcon name="chevron" /></a><h1 class="m-0 text-[18px] font-bold">축제 구역 편집</h1></div></header>
 	<form method="POST" use:enhance={submit} oninput={() => dirty = true} class="mx-auto max-w-[800px] px-5 pt-5 pb-28">
-		<p class="m-0 mb-5 text-[13px] leading-5 text-brand-muted">저장한 설정은 지도와 오늘 탭에 함께 반영돼요. 반영까지 잠시 걸릴 수 있어요.</p>
+		<p class="m-0 mb-5 text-[13px] leading-5 text-brand-muted">{data.published ? '저장한 설정은 지도와 오늘 탭에 함께 반영돼요. 반영까지 잠시 걸릴 수 있어요.' : '현재 축제는 비공개예요. 편집 내용은 저장되며, 공개를 재개하기 전까지 사용자에게 표시되지 않아요.'}</p>
 		{#if data.draft.updatedAt}<p class="mb-5 text-[12px] text-brand-muted">최근 저장 · {new Intl.DateTimeFormat('ko-KR', { dateStyle:'short', timeStyle:'short', timeZone:'Asia/Seoul' }).format(new Date(data.draft.updatedAt))}</p>{/if}
 		<input type="hidden" name="revision" value={revision} /><input type="hidden" name="boundary" value={JSON.stringify(area.boundary)} /><input type="hidden" name="latitude" value={area.latitude} /><input type="hidden" name="longitude" value={area.longitude} />
 		<div class="grid gap-5 sm:grid-cols-2"><label>축제명 · 바텀시트 제목<input name="name" required maxlength="80" value={initial.name} /></label><label>지도 표시 이름<input name="mapLabel" required maxlength="80" value={initial.mapLabel || initial.name} /></label><label>장소명<input name="location" required maxlength="80" bind:value={area.label} /></label></div>
@@ -45,7 +45,7 @@
 			{#each [{id:'day' as const,label:'낮'},{id:'night' as const,label:'밤'}] as session}<div class="mt-4 grid grid-cols-2 gap-4"><label>{session.label} 시작<input type="time" name={`${session.id}Start`} value={times(session.id)[0]} /></label><label>{session.label} 종료<input type="time" name={`${session.id}End`} value={times(session.id)[1]} /></label></div>{/each}
 		</section>
 		{#if form?.message}<p role="status" class={`mt-5 border-t border-brand-border py-4 text-[13px] ${form.saved ? 'text-brand' : 'text-red-700'}`}>{form.message}</p>{/if}
-		<div class="fixed inset-x-0 bottom-0 z-30 border-t border-brand-border bg-white px-5 pt-3 pb-[calc(12px+env(safe-area-inset-bottom))]"><div class="mx-auto flex max-w-[760px] items-center gap-5"><a class="shrink-0 text-[13px] text-brand-muted" href="/?panel=festival">지도 미리보기</a><button class="h-12 flex-1 rounded-[10px] bg-brand text-[14px] font-bold text-white disabled:opacity-50" type="submit" disabled={saving}>{saving ? '저장 중…' : '축제 구역 저장'}</button></div></div>
+		<div class="fixed inset-x-0 bottom-0 z-30 border-t border-brand-border bg-white px-5 pt-3 pb-[calc(12px+env(safe-area-inset-bottom))]"><div class="mx-auto flex max-w-[760px] items-center gap-5">{#if data.published}<a class="shrink-0 text-[13px] text-brand-muted" href="/?panel=festival">지도 미리보기</a>{/if}<button class="h-12 flex-1 rounded-[10px] bg-brand text-[14px] font-bold text-white disabled:opacity-50" type="submit" disabled={saving}>{saving ? '저장 중…' : '축제 구역 저장'}</button></div></div>
 	</form>
 </main>
 <div role="status" aria-live="polite" aria-atomic="true" class="pointer-events-none fixed inset-x-0 bottom-[calc(88px+env(safe-area-inset-bottom))] z-40 flex justify-center px-5">

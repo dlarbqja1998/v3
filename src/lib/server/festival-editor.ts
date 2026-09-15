@@ -8,6 +8,15 @@ const key = dev ? 'local:festival-editor:v1' : 'festival:polaris:2026:v1';
 // 같은 서버 인스턴스의 저장을 직렬화한다. KV는 여러 인스턴스 간 원자적 잠금을 제공하지 않는다.
 let saving: Promise<unknown> = Promise.resolve();
 
+// 동연제 종료로 공개를 중단한다. 다음 축제 자료를 준비한 뒤 공개를 재개한다.
+export const festivalPublished = false;
+
+/** 사용자 화면에는 공개된 축제만 전달하고 관리자 초안은 별도로 보존한다. */
+export async function readPublicFestival(store?: Store): Promise<Festival | null> {
+	if (!festivalPublished) return null;
+	return (await readFestivalDraft(store)).festival;
+}
+
 export async function readFestivalDraft(store?: Store): Promise<FestivalDraft> {
 	const raw = await store?.get(key);
 	if (raw) {

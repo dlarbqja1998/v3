@@ -1,7 +1,7 @@
 import { env } from '$env/dynamic/private';
 
 import { getFestivalTodayEntry } from '$lib/domain/festival';
-import { readFestivalDraft } from '$lib/server/festival-editor';
+import { readPublicFestival } from '$lib/server/festival-editor';
 import { getCampusEventStatus, getInitialCampusEventTab } from '$lib/domain/campus-events';
 import { listPublicCampusEvents } from '$lib/server/campus-events';
 import type { PageServerLoad } from './$types';
@@ -9,7 +9,8 @@ import type { PageServerLoad } from './$types';
 export const load: PageServerLoad = async ({ platform }) => {
 	const now = new Date();
 	const events = await listPublicCampusEvents(env.DATABASE_URL, now);
-	const festival = getFestivalTodayEntry((await readFestivalDraft(platform?.env?.GOLABAU_CACHE)).festival, now);
+	const publicFestival = await readPublicFestival(platform?.env?.GOLABAU_CACHE);
+	const festival = publicFestival ? getFestivalTodayEntry(publicFestival, now) : null;
 	return {
 		festival,
 		ongoingEvents: events.filter((event) => getCampusEventStatus(event, now) === 'ongoing'),

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseFestivalArea, readFestivalDraft, saveFestivalArea } from './festival-editor';
+import { parseFestivalArea, readFestivalDraft, readPublicFestival, saveFestivalArea } from './festival-editor';
 import { festivalPreview } from '$lib/domain/festival';
 
 function form() {
@@ -9,6 +9,13 @@ function form() {
 }
 
 describe('축제 구역 저장 검증', () => {
+	it('공개 중단 중에는 저장된 축제를 숨기고 관리자 초안은 보존한다', async () => {
+		const draft = { festival: structuredClone(festivalPreview), revision: 3, updatedAt: null, updatedBy: 7 };
+		const store = { get: async () => JSON.stringify(draft), put: async () => {} };
+		expect(await readPublicFestival(store)).toBeNull();
+		expect(await readPublicFestival()).toBeNull();
+		expect(await readFestivalDraft(store)).toEqual(draft);
+	});
 	it('기존 구역을 보존하면서 새로 받은 공연표를 이전 저장본에도 반영한다', async () => {
 		const festival = structuredClone(festivalPreview);
 		festival.performances = [];
