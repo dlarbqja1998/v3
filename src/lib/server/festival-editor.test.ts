@@ -20,7 +20,7 @@ describe('축제 구역 저장 검증', () => {
 		expect(draft.revision).toBe(3);
 		expect(draft.festival.performances).toEqual(festivalPreview.performances);
 		const reread = await readFestivalDraft({ ...store, get: async () => JSON.stringify(draft) });
-		expect(reread.festival.performances).toHaveLength(9);
+		expect(reread.festival.performances).toHaveLength(10);
 	});
 	it('전체 운영시간이 미정이어도 구역을 저장할 수 있다', () => { expect(parseFestivalArea(form())).toMatchObject({ok:true,value:{hours:{}}}); });
 	it.each(['2026-02-30','2026-13-01','날짜'])('잘못된 날짜 %s를 거부한다', date => { const input=form();input.set('date',date);expect(parseFestivalArea(input).ok).toBe(false); });

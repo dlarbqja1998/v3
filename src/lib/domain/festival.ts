@@ -1,26 +1,42 @@
+import { festivalBoothDetails } from './festival-booth-details';
+
 export type FestivalSession = 'day' | 'night';
-export type FestivalItem = { name: string; description?: string; price: number | null };
+export type FestivalItem = { name: string; description?: string; price: number | null; priceLabel?: string; section?: string };
 export type FestivalBooth = {
 	id: string; name: string; subtitle: string; number: string; location: string; order: number; date: string;
 	clubName?: string;
 	sourceUrl?: string;
-	sessions: Partial<Record<FestivalSession, { hours?: string; items: FestivalItem[] }>>;
+	sessions: Partial<Record<FestivalSession, { hours?: string; notice?: string; items: FestivalItem[] }>>;
 };
 
-/** 낮 지도에 기재된 1~22번 동아리. 활동·가격은 홍보 자료를 받은 뒤 추가한다. */
+/** 네추럴 2026-09-15 홍보글에서 확인한 낮·밤 공통 음료. */
+const naturalSourceUrl = 'https://everytime.kr/370457/v/418146853';
+const naturalDrinks: FestivalItem[] = [
+	{ name: '복숭아 스파클링 에이드', price: 2500, section: '7성급 근육카페' },
+	{ name: '복숭아 아이스티', price: 2500, section: '7성급 근육카페' },
+	{ name: '청포도 스파클링 에이드', price: 2500, section: '7성급 근육카페' },
+	{ name: '레몬 스파클링 에이드', price: 2500, section: '7성급 근육카페' }
+];
+
+/** 낮 지도에 기재된 1~22번 동아리. 확인된 홍보 자료만 추가한다. */
 const dayBooths: FestivalBooth[] = [
 	'비트앤소울', '극예술연구회 섬', '소리마당', '무단외박', '세미클래식', '콘체르토',
 	'Apeature', '그린맥', '서화회', 'Kloset', '고불당', '다가치', 'CCC', 'K.A.T',
 	'상승기류', '네추럴', 'KUTT', '고농회', 'TIME', 'MMC', '별빛항해', '마나'
 ].map((name, index) => ({
-	id: `day-booth-${index + 1}`, name, subtitle: '', number: String(index + 1), location: '',
-	order: index + 1, date: '2026-09-15', sessions: { day: { hours: '12:00–17:30', items: [] } }
+	id: `day-booth-${index + 1}`, name, clubName: name, subtitle: name === '네추럴' ? '7성급 근육카페 · 체험과 음료' : '', number: String(index + 1), location: '',
+	...(name === '네추럴' ? { sourceUrl: naturalSourceUrl } : {}),
+	order: index + 1, date: '2026-09-15', sessions: { day: { hours: '12:00–17:30', items: name === '네추럴' ? [
+		{ name: '무게 맞추기', description: '안대를 쓰고 랜덤 덤벨·텀블러의 무게를 맞혀보세요. 참가비 500원이에요.', price: 500 },
+		{ name: '원판 잡고 오래 버티기', description: '10kg 또는 15kg 원판을 선택해 손가락을 편 채 악력으로 버텨보세요. 참가비 1,000원이에요.', price: 1000 },
+		...naturalDrinks
+	] : [] } }
 }));
 
 /** 사용자 제공 밤 부스 안내 이미지와 동아리명·운영시간 확인 답변. */
 const nightBooths: FestivalBooth[] = [
 	['포르테시모 라운지', '포르테'],
-	['경성급 근육카페', '네추럴'],
+	['7성급 근육카페', '네추럴'],
 	['극락막창', '고불당'],
 	['STARWEAR', 'Kloset'],
 	['다가치이익', '다가치'],
@@ -34,7 +50,14 @@ const nightBooths: FestivalBooth[] = [
 	['석탑은 핑계고', '석탑회']
 ].map(([name, clubName], index) => ({
 	id: `night-booth-${index + 1}`, name, clubName, subtitle: '', number: String(index + 1),
-	location: '', order: index + 1, date: '2026-09-15', sessions: { night: { hours: '18:00–24:00', items: [] } }
+	...(clubName === '네추럴' ? { sourceUrl: naturalSourceUrl } : {}),
+	location: '', order: index + 1, date: '2026-09-15', sessions: { night: { hours: '18:00–24:00', items: clubName === '네추럴' ? [
+		...naturalDrinks,
+		{ name: '쫀팝', price: 1800, section: '밤 추가 메뉴' },
+		{ name: '쫀팝 + 에이드 1종', price: 4000, section: '밤 추가 메뉴' },
+		{ name: '인스타팅 · 1장', description: '운동이 취미이거나 운동하는 사람이 이상형인 분들을 위한 인스타팅이에요.', price: 300, section: '인스타팅' },
+		{ name: '인스타팅 · 2장', price: 500, section: '인스타팅' }
+	] : [] } }
 }));
 export type Festival = {
 	id: string; name: string; mapLabel?: string; dates: { date: string; label: string; hours: Partial<Record<FestivalSession, string>> }[];
@@ -61,7 +84,7 @@ export const festivalPreview: Festival = {
 			{ name: '모형 비행기 던지기', description: '폼 비행기를 링 안으로 통과시키면 새콤달콤을 받아요.', price: 0 },
 			{ name: '항공 모형 전시', description: '동아리원이 제작한 항공 모형과 설명을 만나보세요.', price: 0 }
 		] } }
-	}, ...dayBooths, ...nightBooths],
+	}, ...[...dayBooths, ...nightBooths].map((booth) => ({ ...booth, ...festivalBoothDetails[booth.id] }))],
 	// 사용자 제공 공연표. 현재 등록된 9월 15일 축제의 밤 일정에 연결한다.
 	performances: [
 		{ id: 'mc-opening', date: '2026-09-15', session: 'night', time: '18:00–18:10', name: 'MC 오프닝', kind: '' },
@@ -71,6 +94,7 @@ export const festivalPreview: Festival = {
 		{ id: 'casting', date: '2026-09-15', session: 'night', time: '20:00–20:20', name: '캐스팅', kind: '' },
 		{ id: 'beat-and-soul', date: '2026-09-15', session: 'night', time: '20:30–20:50', name: '비트앤소울', kind: '' },
 		{ id: 'udf', date: '2026-09-15', session: 'night', time: '21:00–21:20', name: 'UDF', kind: '' },
+		{ id: 'artist-performance', date: '2026-09-15', session: 'night', time: '21:30–22:10', name: '아티스트 공연', kind: '' },
 		{ id: 'mc-closing', date: '2026-09-15', session: 'night', time: '22:10–22:20', name: 'MC 클로징', kind: '' },
 		{ id: 'luters', date: '2026-09-15', session: 'night', time: '22:30–24:00', name: '루터스', kind: '' }
 	]
@@ -78,6 +102,15 @@ export const festivalPreview: Festival = {
 
 export function getFestivalBooths(festival: Festival, date?: string, session?: FestivalSession) {
 	return festival.booths.filter((booth) => (!date || booth.date === date) && (!session || booth.sessions[session])).sort((a, b) => a.order - b.order || a.id.localeCompare(b.id));
+}
+
+/** 같은 동아리의 낮·밤 부스를 연결하되, 날짜가 다른 부스나 공연을 연결하지 않는다. */
+export function getFestivalBoothForSession(festival: Festival, boothId: string, session: FestivalSession, date?: string) {
+	const selected = festival.booths.find((item) => item.id === boothId && (!date || item.date === date));
+	if (!selected) return undefined;
+	if (selected.sessions[session]) return selected;
+	const clubName = selected.clubName || selected.name;
+	return festival.booths.find((item) => item.date === selected.date && (item.clubName || item.name) === clubName && item.sessions[session]);
 }
 
 export function formatFestivalPrice(price: number | null) {

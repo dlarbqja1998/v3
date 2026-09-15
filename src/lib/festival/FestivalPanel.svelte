@@ -3,7 +3,7 @@
 	import { page } from '$app/state';
 	import { pushState } from '$app/navigation';
 	import AppIcon from '$lib/icon/AppIcon.svelte';
-	import { formatFestivalPrice, getFestivalBooths, type Festival, type FestivalSession } from '$lib/domain/festival';
+	import { formatFestivalPrice, getFestivalBooths, getFestivalBoothForSession, type Festival, type FestivalSession } from '$lib/domain/festival';
 	let { festival, onClose, onExpand, collapsed = false }: { festival: Festival; onClose: () => void; onExpand: () => void; collapsed?: boolean } = $props();
 	let session = $state<FestivalSession>('day');
 	let date = $state('');
@@ -13,8 +13,9 @@
 	let previousBooth = '';
 	const selectedDate = $derived(festival.dates.find((item) => item.date === date) ?? festival.dates[0]);
 	const booths = $derived(getFestivalBooths(festival, selectedDate?.date, session));
-	const booth = $derived(festival.booths.find((item) => item.id === boothId && item.date === selectedDate?.date));
+	const booth = $derived(getFestivalBoothForSession(festival, boothId, session, selectedDate?.date));
 	const content = $derived(booth?.sessions[session]);
+	const itemSections = $derived([...new Set(content?.items.map((item) => item.section ?? (session === 'day' ? '여기서 할 수 있어요' : '메뉴와 가격')) ?? [])]);
 	const performances = $derived(festival.performances.filter((item) => item.date === selectedDate?.date && item.session === session).sort((a,b) => a.time.localeCompare(b.time)));
 
 	async function openBooth(id: string) {
@@ -55,20 +56,25 @@
 		</div>
 		<div class="relative grid shrink-0 grid-cols-2 border-b border-brand-border" aria-label="낮과 밤 선택">
 			{#each [{ id: 'day', label: '낮 · 활동' }, { id: 'night', label: '밤 · 주점' }] as tab}
-				<button type="button" aria-label={tab.label} title={tab.label} aria-pressed={session === tab.id} class={`flex h-12 items-center justify-center transition-colors duration-200 motion-reduce:transition-none ${session === tab.id ? 'text-brand' : 'text-brand-muted'}`} onclick={() => { session = tab.id as FestivalSession; if (scrollHost) scrollHost.scrollTop = 0; }}><AppIcon name={tab.id === 'day' ? 'sun' : 'moon'} size={24} /></button>
+				<button type="button" aria-label={tab.label} title={tab.label} aria-pressed={session === tab.id} disabled={Boolean(boothId) && !getFestivalBoothForSession(festival, boothId, tab.id as FestivalSession, selectedDate?.date)} class={`flex h-12 items-center justify-center transition-colors duration-200 motion-reduce:transition-none disabled:opacity-30 ${session === tab.id ? 'text-brand' : 'text-brand-muted'}`} onclick={() => { session = tab.id as FestivalSession; if (scrollHost) scrollHost.scrollTop = 0; }}><AppIcon name={tab.id === 'day' ? 'sun' : 'moon'} size={24} /></button>
 			{/each}
 			<span aria-hidden="true" class="absolute bottom-[-1px] left-0 h-0.5 w-1/2 bg-brand transition-transform duration-[250ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none" style:transform={session === 'night' ? 'translateX(100%)' : 'translateX(0)'}></span>
 		</div>
 		<div bind:this={scrollHost} class="min-h-0 flex-1 overflow-y-auto overscroll-contain pb-5" data-festival-scroll>
 			{#if booth}
 				<div class="border-b border-brand-border py-4">
-					{#if booth.sessions.night}<h3 class="m-0 mb-1 break-keep text-[15px] font-bold">{booth.name}</h3><p class="m-0 mb-4 text-[13px] text-brand-muted">{booth.clubName || '동아리명 확인 중'}</p>{/if}
+					{#if booth.sessions.night}<p class="m-0 mb-4 text-[13px] text-brand-muted">{booth.clubName || '동아리명 확인 중'}</p>{/if}
 					<p class="m-0 text-[15px] font-bold">{content?.hours ?? '운영시간 안내 준비 중'}</p>
-					<p class="m-0 mt-1.5 text-[13px] text-brand-muted">{booth.location || '위치 안내 준비 중'} · {session === 'day' ? '낮부스' : '밤부스'}</p>
+					<p class="m-0 mt-1.5 text-[13px] text-brand-muted">{booth.location || festival.area.label} · {session === 'day' ? '낮부스' : '밤부스'}</p>
+					{#if content?.notice}<p class="m-0 mt-3 text-[13px] leading-6 text-brand-muted">{content.notice}</p>{/if}
 				</div>
-				<h3 class="m-0 pt-5 pb-2 text-[15px] font-bold">{session === 'day' ? '여기서 할 수 있어요' : '메뉴와 가격'}</h3>
 				{#if content?.items.length}
-					{#each content.items as item}<div class="border-b border-brand-border py-4"><div class="flex items-start justify-between gap-3"><span class="text-[13px] font-bold">{item.name}</span><span class={`shrink-0 text-[13px] font-bold ${item.price === 0 ? 'text-brand-muted' : 'text-brand'}`}>{formatFestivalPrice(item.price)}</span></div>{#if item.description}<p class="m-0 mt-2 text-[13px] leading-6 text-brand-muted">{item.description}</p>{/if}</div>{/each}
+					{#each itemSections as section}
+						<section aria-label={section}>
+							<h3 class="m-0 pt-5 pb-2 text-[15px] font-bold">{section}</h3>
+							{#each content.items.filter((item) => (item.section ?? (session === 'day' ? '여기서 할 수 있어요' : '메뉴와 가격')) === section) as item}<div class="border-b border-brand-border py-4"><div class="flex items-start justify-between gap-3"><span class="min-w-0 text-[13px] font-bold">{item.name}</span><span class={`max-w-[48%] shrink-0 text-right text-[13px] font-bold ${item.price === 0 || item.price === null ? 'text-brand-muted' : 'text-brand'}`}>{item.priceLabel ?? formatFestivalPrice(item.price)}</span></div>{#if item.description}<p class="m-0 mt-2 text-[13px] leading-6 text-brand-muted">{item.description}</p>{/if}</div>{/each}
+						</section>
+					{/each}
 				{:else}<div class="py-5"><p class="m-0 text-[13px]">{session === 'night' ? content ? '메뉴와 가격을 준비하고 있어요.' : '밤 운영 여부와 메뉴를 기다리고 있어요.' : '활동 안내를 기다리고 있어요.'}</p><p class="m-0 mt-2 text-[12px] leading-5 text-brand-muted">안내가 확인되면 이곳에 추가할게요.</p></div>{/if}
 			{:else}
 				<p class="m-0 border-b border-brand-border py-3 text-[12px] text-brand-muted">{selectedDate?.hours[session] ?? `${session === 'day' ? '낮' : '밤'} 전체 운영시간 안내 준비 중`}</p>
