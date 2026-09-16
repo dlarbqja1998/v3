@@ -1,0 +1,1283 @@
+[
+  {
+    "id": "FAC-001",
+    "name": "One-stop 서비스센터(세종)",
+    "keywords": [
+      "원스탑센터",
+      "원스톱",
+      "증명서",
+      "학생증",
+      "분실물"
+    ],
+    "purpose": "administration",
+    "sourceCategory": "학생행정·지원",
+    "description": "증명서·학생증·학적 관련 일부 민원을 한 곳에서 처리한다.",
+    "audience": "재학생·졸업생·교직원",
+    "locations": [
+      {
+        "building": "학술정보원",
+        "label": "학술정보원 2층",
+        "floor": "2층"
+      }
+    ],
+    "phone": "044-860-1088~1089",
+    "hours": "평일 09:00~17:30 (12:00~13:00 제외)",
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/7995/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/7995/subview.do",
+    "checkedAt": "2026-09-02",
+    "priority": true
+  },
+  {
+    "id": "FAC-002",
+    "name": "증명서 무인발급기(세종)",
+    "keywords": [
+      "무인발급기",
+      "제증명",
+      "증명서 발급",
+      "학술정보원 2층"
+    ],
+    "purpose": "administration",
+    "sourceCategory": "학생행정·지원",
+    "description": "교내에서 제증명서를 발급하는 무인 발급기다.",
+    "audience": "재학생·졸업생",
+    "locations": [
+      {
+        "building": "학술정보원",
+        "label": "학술정보원 2층",
+        "floor": "2층"
+      }
+    ],
+    "phone": "044-860-1088~1089",
+    "hours": null,
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/7995/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/7995/subview.do",
+    "checkedAt": "2026-09-02",
+    "priority": true
+  },
+  {
+    "id": "FAC-003",
+    "name": "학생생활지원팀",
+    "keywords": [
+      "학생복지처",
+      "장학",
+      "국가근로",
+      "교내장학",
+      "복지",
+      "장학금"
+    ],
+    "purpose": "administration",
+    "sourceCategory": "학생행정·지원",
+    "description": "장학·학생복지·보건기획 등 학생 생활 지원 업무를 맡는다.",
+    "audience": "재학생 중심",
+    "locations": [
+      {
+        "building": "자유관",
+        "label": "호연학사 자유관 1155호",
+        "floor": null
+      }
+    ],
+    "phone": "044-860-1031",
+    "hours": null,
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/7771/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/7771/subview.do",
+    "checkedAt": "2026-09-02",
+    "priority": true
+  },
+  {
+    "id": "FAC-004",
+    "name": "세종학생상담센터",
+    "keywords": [
+      "학생상담",
+      "심리상담",
+      "마음건강",
+      "진로검사",
+      "상담센터"
+    ],
+    "purpose": "care",
+    "sourceCategory": "보건·상담·안전",
+    "description": "개인·집단 심리상담과 심리검사, 대학생활 적응 지원을 제공한다.",
+    "audience": "재학생 중심",
+    "locations": [
+      {
+        "building": "미래관",
+        "label": "미래관 학생식당 내",
+        "floor": null
+      }
+    ],
+    "phone": "044-860-1940",
+    "hours": null,
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/7992/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/7992/subview.do",
+    "checkedAt": "2026-09-02",
+    "priority": true
+  },
+  {
+    "id": "FAC-005",
+    "name": "세종장애학생지원센터",
+    "keywords": [
+      "장애학생지원",
+      "학습도우미",
+      "이동도우미",
+      "장애학생 열람실"
+    ],
+    "purpose": "care",
+    "sourceCategory": "보건·상담·안전",
+    "description": "장애학생의 학습·이동·생활 지원과 보조공학기기 대여를 제공한다.",
+    "audience": "장애학생 및 지원 인력",
+    "locations": [
+      {
+        "building": "공공정책관",
+        "label": "공공정책관 114호",
+        "floor": null
+      }
+    ],
+    "phone": "044-860-1957",
+    "hours": null,
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/7993/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/7993/subview.do",
+    "checkedAt": "2026-09-02",
+    "priority": true
+  },
+  {
+    "id": "FAC-006",
+    "name": "장애학생 열람실",
+    "keywords": [
+      "장애학생 열람실",
+      "도서관 콜 도우미",
+      "학술정보원 129호"
+    ],
+    "purpose": "learning",
+    "sourceCategory": "학습·교수지원",
+    "description": "장애학생 전용 컴퓨터와 학습 보조를 이용할 수 있는 열람 공간이다.",
+    "audience": "장애학생",
+    "locations": [
+      {
+        "building": "학술정보원",
+        "label": "학술정보원 129호",
+        "floor": null
+      }
+    ],
+    "phone": "044-860-1957",
+    "hours": null,
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/7993/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/7993/subview.do",
+    "checkedAt": "2026-09-02",
+    "priority": false
+  },
+  {
+    "id": "FAC-007",
+    "name": "세종인권·성평등센터",
+    "keywords": [
+      "인권센터",
+      "성평등센터",
+      "성폭력 상담",
+      "인권침해 신고"
+    ],
+    "purpose": "care",
+    "sourceCategory": "보건·상담·안전",
+    "description": "인권침해·성적자기결정권 침해 상담, 신고와 예방교육을 지원한다.",
+    "audience": "교내 모든 구성원",
+    "locations": [
+      {
+        "building": "학술정보원",
+        "label": "학술정보원 지하 B101B",
+        "floor": null
+      }
+    ],
+    "phone": "044-860-5833, 044-860-5834",
+    "hours": null,
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/11328/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/11328/subview.do",
+    "checkedAt": "2026-09-02",
+    "priority": true
+  },
+  {
+    "id": "FAC-008",
+    "name": "의료공제 운영실",
+    "keywords": [
+      "의료공제",
+      "진료비",
+      "건강보험",
+      "I-PARK 1층"
+    ],
+    "purpose": "care",
+    "sourceCategory": "보건·상담·안전",
+    "description": "의료공제 가입 재학생의 건강보험 적용 진료비에 대해 본인부담금 지급을 안내하고 신청을 접수해요.",
+    "audience": "해당 학기 의료공제회비를 납부한 재학생",
+    "locations": [
+      {
+        "building": "I-Park관",
+        "label": "I-Park관(휘트니스센터) 1층 운영실",
+        "floor": "1층"
+      }
+    ],
+    "phone": "044-860-1035",
+    "hours": "학기 중 평일 09:00~17:30 (12:00~13:00 제외, 방학 변동)",
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/7998/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/7998/subview.do",
+    "checkedAt": "2026-09-16",
+    "actions": [
+      { "label": "본인부담금 지급신청서 내려받기 · XLS", "url": "https://sejong.korea.ac.kr/sites/koreaSejong/download/(의료공제) 본인부담금 지급신청서.xls" }
+    ],
+    "details": [
+      {
+        "title": "신청 방법",
+        "items": [
+          "진료일로부터 6개월 이내에 I-Park관 1층 운영실을 방문해 신청해요.",
+          "당일 진료비계산서·영수증 원본, 본인 계좌번호와 지급신청서가 필요해요. 진료비 확인서와 카드영수증으로는 처리할 수 없어요.",
+          "신청 후 15~30일 이후 본인 계좌로 지급하며, 실제 지급일은 변동될 수 있어요."
+        ]
+      },
+      {
+        "title": "공제 범위와 가입",
+        "items": [
+          "건강보험이 적용된 요양급여 본인부담금이 대상이며, 비급여·전액본인부담금 등은 제외돼요. 지급액은 영수증 확인 후 산정해요.",
+          "입학 전·휴학 중·의료공제비 미납 기간의 진료는 제외돼요. 질환과 진료 항목별 추가 제한은 공식 안내에서 확인해 주세요.",
+          "등록금 납부 기간에 의료공제회비를 납부해 가입하며, 등록 기간 외에는 가입할 수 없어요.",
+          "국민건강보험 미가입 대상 학생은 별도 절차가 적용돼요. 병원 이용 전 운영실에서 자격확인과 지정 병원 안내를 받아 주세요."
+        ]
+      }
+    ],
+    "priority": true
+  },
+  {
+    "id": "FAC-009",
+    "name": "대학일자리플러스센터",
+    "keywords": [
+      "세종경력개발센터",
+      "취업센터",
+      "진로상담",
+      "JOB스튜디오"
+    ],
+    "purpose": "learning",
+    "sourceCategory": "진로·취업·창업",
+    "description": "진로 설계·취업상담·입사서류·면접 클리닉과 채용 정보를 제공한다.",
+    "audience": "재학생·졸업생·지역 청년",
+    "locations": [
+      {
+        "building": "학술정보원",
+        "label": "학술정보원 1층 127호",
+        "floor": "1층"
+      }
+    ],
+    "phone": "044-860-1131",
+    "hours": null,
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/7991/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/7991/subview.do",
+    "checkedAt": "2026-09-02",
+    "priority": true
+  },
+  {
+    "id": "FAC-010",
+    "name": "세종창업교육센터",
+    "keywords": [
+      "창업센터",
+      "창업동아리",
+      "창업 멘토링",
+      "스타트업"
+    ],
+    "purpose": "learning",
+    "sourceCategory": "진로·취업·창업",
+    "description": "창업 교과·멘토링·컨설팅·창업동아리 육성 프로그램을 운영한다.",
+    "audience": "창업 관심 재학생",
+    "locations": [
+      {
+        "building": "학술정보원",
+        "label": "학술정보원 지하 1층",
+        "floor": "지하 1층"
+      }
+    ],
+    "phone": "044-860-1481",
+    "hours": null,
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/7989/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/7989/subview.do",
+    "checkedAt": "2026-09-02",
+    "priority": true
+  },
+  {
+    "id": "FAC-011",
+    "name": "세종현장실습지원센터",
+    "keywords": [
+      "현장실습",
+      "인턴십",
+      "실습기관 매칭",
+      "산학협력관 617"
+    ],
+    "purpose": "learning",
+    "sourceCategory": "진로·취업·창업",
+    "description": "현장실습기관 매칭과 현장실습 운영을 지원한다.",
+    "audience": "현장실습 참여·희망 학생",
+    "locations": [
+      {
+        "building": "산학협력관",
+        "label": "산학협력관 617호",
+        "floor": null
+      }
+    ],
+    "phone": "044-860-1072~1073, 044-860-5855",
+    "hours": null,
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/7990/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/7990/subview.do",
+    "checkedAt": "2026-09-02",
+    "priority": true
+  },
+  {
+    "id": "FAC-012",
+    "name": "산학교육센터",
+    "keywords": [
+      "캡스톤디자인",
+      "크림슨브레인",
+      "PBL",
+      "산학교육"
+    ],
+    "purpose": "learning",
+    "sourceCategory": "진로·취업·창업",
+    "description": "산학협력 교과·비교과와 캡스톤디자인 등 실무역량 프로그램을 지원한다.",
+    "audience": "재학생",
+    "locations": [
+      {
+        "building": "산학협력관",
+        "label": "산학협력관 607호",
+        "floor": null
+      }
+    ],
+    "phone": "044-860-3871",
+    "hours": null,
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/7896/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/7896/subview.do",
+    "checkedAt": "2026-09-02",
+    "priority": false
+  },
+  {
+    "id": "FAC-013",
+    "name": "교수학습정보센터",
+    "keywords": [
+      "교수학습",
+      "학습지원",
+      "IT지원",
+      "LMS",
+      "PC 장애"
+    ],
+    "purpose": "learning",
+    "sourceCategory": "학습·교수지원",
+    "description": "학습지원과 교육매체·IT 관련 지원 서비스를 제공한다.",
+    "audience": "재학생·교원",
+    "locations": [
+      {
+        "building": "문화스포츠관",
+        "label": "교수학습지원: 문화스포츠관 303호",
+        "floor": null
+      },
+      {
+        "building": "학술정보원",
+        "label": "IT지원: 학술정보원 206A호",
+        "floor": null
+      }
+    ],
+    "phone": "044-860-1473 (학습지원), 044-860-1822 (IT 지원)",
+    "hours": null,
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/7895/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/7771/subview.do",
+    "checkedAt": "2026-09-02",
+    "priority": true
+  },
+  {
+    "id": "FAC-014",
+    "name": "세종교양교육원",
+    "keywords": [
+      "교양교육",
+      "교양영어",
+      "졸업자격영어",
+      "농심국제관 대관"
+    ],
+    "purpose": "learning",
+    "sourceCategory": "학습·교수지원",
+    "description": "공통교양·어학·졸업자격영어와 관련 교육과정을 운영한다.",
+    "audience": "재학생·대학원생",
+    "locations": [
+      {
+        "building": "농심국제관",
+        "label": "농심국제관 111호",
+        "floor": null
+      }
+    ],
+    "phone": "044-860-1901~1903",
+    "hours": null,
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/7897/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/7897/subview.do",
+    "checkedAt": "2026-09-02",
+    "priority": false
+  },
+  {
+    "id": "FAC-015",
+    "name": "세종학술정보원(도서관)",
+    "keywords": [
+      "도서관",
+      "학술정보원",
+      "대출반납",
+      "열람실",
+      "스터디룸"
+    ],
+    "purpose": "learning",
+    "sourceCategory": "학습·교수지원",
+    "description": "도서 대출·반납, 전자자료 검색과 열람실·스터디룸을 이용할 수 있어요. 자료 검색과 좌석 예약은 학술정보원 사이트로 연결해요.",
+    "audience": "교내 구성원",
+    "locations": [
+      {
+        "building": "학술정보원",
+        "label": "학술정보원",
+        "floor": null
+      }
+    ],
+    "phone": "대출·반납: 044-860-1808/1809\n홈페이지·이용교육: 044-860-1811\n전자자료: 044-860-1813",
+    "hours": "자료실(학기 중) 평일 09:00~22:00\n토요일 09:00~15:00 · 공휴일 휴실\n열람실 24시간 (제3열람실은 방학 중 휴실)\n방학·공간별 시간과 임시 변경은 개관시간·공지사항을 확인해 주세요.",
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/9125/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/9125/subview.do",
+    "checkedAt": "2026-09-16",
+    "actions": [
+      { "label": "학술정보원 홈페이지 · 자료 검색", "url": "https://libs.korea.ac.kr/" },
+      { "label": "좌석·시설 예약", "url": "https://libs.korea.ac.kr/hodi_site_link/" },
+      { "label": "공간별 개관시간 확인", "url": "https://libs.korea.ac.kr/about/hours/" }
+    ],
+    "details": [
+      {
+        "title": "이용 안내",
+        "items": [
+          "방문할 때 학생증을 지참해 주세요.",
+          "대출·반납과 이용증 문의는 2층 통합대출반납실에서 안내해요.",
+          "도서관 소장자료·전자자료 검색, 정보이용교육과 연구지원 서비스를 제공해요. 온라인 서비스에 따라 학교 로그인이 필요할 수 있어요."
+        ]
+      }
+    ],
+    "priority": true
+  },
+  {
+    "id": "FAC-016",
+    "name": "국제팀",
+    "keywords": [
+      "국제교류",
+      "교환학생",
+      "외국인 학생",
+      "한국어집중프로그램"
+    ],
+    "purpose": "administration",
+    "sourceCategory": "국제·병무·봉사",
+    "description": "교환 프로그램, 외국인 학생 관리와 국제화 업무를 지원한다.",
+    "audience": "교환학생·외국인 학생·국제교류 참여 학생",
+    "locations": [
+      {
+        "building": "농심국제관",
+        "label": "농심국제관 102호",
+        "floor": null
+      }
+    ],
+    "phone": "044-860-1668",
+    "hours": null,
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/7898/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/7898/subview.do",
+    "checkedAt": "2026-09-02",
+    "priority": true
+  },
+  {
+    "id": "FAC-017",
+    "name": "세종학생군사교육단",
+    "keywords": [
+      "ROTC",
+      "학군단",
+      "군사교육",
+      "학생군사교육단"
+    ],
+    "purpose": "administration",
+    "sourceCategory": "국제·병무·봉사",
+    "description": "학군단 후보생 교육과 행정 지원을 담당한다.",
+    "audience": "학군단 후보생·지원 희망 학생",
+    "locations": [
+      {
+        "building": "세종학생군사교육단",
+        "label": "세종학생군사교육단",
+        "floor": null
+      }
+    ],
+    "phone": "044-860-1861",
+    "hours": null,
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/7994/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/7994/subview.do",
+    "checkedAt": "2026-09-02",
+    "priority": false
+  },
+  {
+    "id": "FAC-018",
+    "name": "세종병무행정팀",
+    "keywords": [
+      "병무",
+      "예비군",
+      "민방위",
+      "군휴학"
+    ],
+    "purpose": "administration",
+    "sourceCategory": "국제·병무·봉사",
+    "description": "학생 병무·예비군·민방위 관련 행정을 지원한다.",
+    "audience": "병역 의무·예비군 대상 학생",
+    "locations": [
+      {
+        "building": "행정관",
+        "label": "행정관 104A호",
+        "floor": null
+      }
+    ],
+    "phone": "044-860-1076",
+    "hours": null,
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/7771/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/7771/subview.do",
+    "checkedAt": "2026-09-02",
+    "priority": false
+  },
+  {
+    "id": "FAC-019",
+    "name": "세종사회봉사단",
+    "keywords": [
+      "사회봉사",
+      "봉사활동",
+      "봉사프로그램"
+    ],
+    "purpose": "administration",
+    "sourceCategory": "국제·병무·봉사",
+    "description": "교내 사회봉사 프로그램과 참여 업무를 운영한다.",
+    "audience": "봉사활동 참여 학생",
+    "locations": [
+      {
+        "building": "행정관",
+        "label": "행정관 308호",
+        "floor": null
+      }
+    ],
+    "phone": "044-860-1405",
+    "hours": null,
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/7771/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/7771/subview.do",
+    "checkedAt": "2026-09-02",
+    "priority": false
+  },
+  {
+    "id": "FAC-020",
+    "name": "I-PARK 휘트니스센터",
+    "keywords": [
+      "휘트니스",
+      "헬스장",
+      "I-PARK",
+      "운동"
+    ],
+    "purpose": "daily",
+    "sourceCategory": "운동·휴게",
+    "description": "학생 건강증진을 위한 운동 시설이다.",
+    "audience": "학생 중심",
+    "locations": [
+      {
+        "building": "I-Park관",
+        "label": "I-Park관(휘트니스센터)",
+        "floor": null
+      }
+    ],
+    "phone": "044-860-1881",
+    "hours": "토요일·공휴일 휴관(공식 안내); 평일 세부 운영시간 확인 필요",
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/8029/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/8029/subview.do",
+    "checkedAt": "2026-09-02",
+    "priority": true
+  },
+  {
+    "id": "FAC-021",
+    "name": "호연학사",
+    "keywords": [
+      "기숙사",
+      "생활관",
+      "호연학사",
+      "자유관"
+    ],
+    "purpose": "daily",
+    "sourceCategory": "주거",
+    "description": "재학생 생활관 운영과 입주 관련 지원을 제공한다.",
+    "audience": "호연학사 입주생·입주 예정 학생",
+    "locations": [
+      {
+        "building": null,
+        "label": "호연학사 (세부 관·운영실 확인 필요)",
+        "floor": null
+      }
+    ],
+    "phone": "044-860-1854",
+    "hours": null,
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/9121/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/7771/subview.do",
+    "checkedAt": "2026-09-02",
+    "priority": true
+  },
+  {
+    "id": "FAC-022",
+    "name": "과학기술대학·융합과학대학원 행정팀",
+    "keywords": [
+      "과기대 행정실",
+      "과학기술대학",
+      "융합과학대학원",
+      "장학",
+      "장학금"
+    ],
+    "purpose": "administration",
+    "sourceCategory": "단과대·학부 행정실",
+    "description": "과학기술대학과 융합과학대학원의 교무·장학·학생 행정을 지원한다.",
+    "audience": "소속 학부·대학원생",
+    "locations": [
+      {
+        "building": "과학기술1관",
+        "label": "과학기술1관 102호",
+        "floor": null
+      }
+    ],
+    "phone": "044-860-1301",
+    "hours": null,
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/7771/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/7771/subview.do",
+    "checkedAt": "2026-09-02",
+    "priority": false
+  },
+  {
+    "id": "FAC-023",
+    "name": "약학대학 행정팀",
+    "keywords": [
+      "약대 행정실",
+      "약학대학",
+      "약학과"
+    ],
+    "purpose": "administration",
+    "sourceCategory": "단과대·학부 행정실",
+    "description": "약학대학의 교무·학적·장학·졸업 등 행정을 지원한다.",
+    "audience": "약학대학 소속 학생",
+    "locations": [
+      {
+        "building": "과학기술2관",
+        "label": "과학기술2관 126호",
+        "floor": null
+      }
+    ],
+    "phone": "044-860-1602",
+    "hours": null,
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/7771/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/7771/subview.do",
+    "checkedAt": "2026-09-02",
+    "priority": false
+  },
+  {
+    "id": "FAC-024",
+    "name": "글로벌비즈니스대학·창업경영대학원 행정팀",
+    "keywords": [
+      "글로벌비즈니스 행정실",
+      "경상대",
+      "창업경영대학원"
+    ],
+    "purpose": "administration",
+    "sourceCategory": "단과대·학부 행정실",
+    "description": "글로벌비즈니스대학과 창업경영대학원의 교무·장학·연구 행정을 지원한다.",
+    "audience": "소속 학부·대학원생",
+    "locations": [
+      {
+        "building": "석원경상관",
+        "label": "석원경상관 1층 101B호",
+        "floor": "1층"
+      }
+    ],
+    "phone": "044-860-1503",
+    "hours": null,
+    "officialUrl": "https://sejong.korea.ac.kr/bbs/kucec/132/258074/artclView.do?layout=unknown",
+    "sourceUrl": "https://sejong.korea.ac.kr/bbs/kucec/132/258074/artclView.do?layout=unknown",
+    "checkedAt": "2026-09-02",
+    "priority": false
+  },
+  {
+    "id": "FAC-025",
+    "name": "공공정책대학 행정팀",
+    "keywords": [
+      "공공정책대 행정실",
+      "공공정책관",
+      "장학",
+      "장학금"
+    ],
+    "purpose": "administration",
+    "sourceCategory": "단과대·학부 행정실",
+    "description": "공공정책대학의 교무·인사·장학·학생 행정을 지원한다.",
+    "audience": "공공정책대학 소속 학생",
+    "locations": [
+      {
+        "building": "공공정책관",
+        "label": "공공정책관 104호",
+        "floor": null
+      }
+    ],
+    "phone": "044-860-3801",
+    "hours": null,
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/7771/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/7771/subview.do",
+    "checkedAt": "2026-09-02",
+    "priority": false
+  },
+  {
+    "id": "FAC-026",
+    "name": "문화스포츠대학·문화스포츠대학원 행정팀",
+    "keywords": [
+      "문화스포츠대 행정실",
+      "문화스포츠관",
+      "특대원"
+    ],
+    "purpose": "administration",
+    "sourceCategory": "단과대·학부 행정실",
+    "description": "문화스포츠대학과 대학원의 교무·학생·대관 행정을 지원한다.",
+    "audience": "소속 학부·대학원생",
+    "locations": [
+      {
+        "building": "문화스포츠관",
+        "label": "문화스포츠관 311호",
+        "floor": null
+      }
+    ],
+    "phone": "044-860-1204",
+    "hours": null,
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/7771/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/7771/subview.do",
+    "checkedAt": "2026-09-02",
+    "priority": false
+  },
+  {
+    "id": "FAC-027",
+    "name": "스마트도시학부 행정팀",
+    "keywords": [
+      "스마트도시 행정실",
+      "스마트시티",
+      "학부 행정"
+    ],
+    "purpose": "administration",
+    "sourceCategory": "단과대·학부 행정실",
+    "description": "스마트도시학부의 행정 업무를 지원한다.",
+    "audience": "스마트도시학부 소속 학생",
+    "locations": [
+      {
+        "building": null,
+        "label": "확인 필요 (공식 조직도에 세부 호수 미게시)",
+        "floor": null
+      }
+    ],
+    "phone": "044-860-1857",
+    "hours": null,
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/7771/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/7771/subview.do",
+    "checkedAt": "2026-09-02",
+    "priority": false
+  },
+  {
+    "id": "FAC-028",
+    "name": "GS25 미래관점",
+    "keywords": [
+      "GS25",
+      "편의점",
+      "미래관",
+      "간식"
+    ],
+    "purpose": "daily",
+    "sourceCategory": "생활 편의",
+    "description": "음료·간식·생활용품을 구매할 수 있는 교내 편의점이다.",
+    "audience": "교내 구성원",
+    "locations": [
+      {
+        "building": "미래관",
+        "label": "미래관 1층",
+        "floor": "1층"
+      }
+    ],
+    "phone": "862-7147 (교내전화 표기)",
+    "hours": null,
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/8025/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/8025/subview.do",
+    "checkedAt": "2026-09-02",
+    "priority": false
+  },
+  {
+    "id": "FAC-029",
+    "name": "GS25 호익플라자점",
+    "keywords": [
+      "GS25",
+      "편의점",
+      "호익플라자",
+      "간식"
+    ],
+    "purpose": "daily",
+    "sourceCategory": "생활 편의",
+    "description": "음료·간식·생활용품을 구매할 수 있는 교내 편의점이다.",
+    "audience": "교내 구성원",
+    "locations": [
+      {
+        "building": "호익플라자",
+        "label": "호익플라자 1층",
+        "floor": "1층"
+      }
+    ],
+    "phone": "867-7147 (교내전화 표기)",
+    "hours": null,
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/8025/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/8025/subview.do",
+    "checkedAt": "2026-09-02",
+    "priority": false
+  },
+  {
+    "id": "FAC-030",
+    "name": "우체국",
+    "keywords": [
+      "우체국",
+      "택배",
+      "우편",
+      "학생회관"
+    ],
+    "purpose": "daily",
+    "sourceCategory": "생활 편의",
+    "description": "우편·택배 등 우체국 서비스를 이용할 수 있는 교내 창구다.",
+    "audience": "교내 구성원",
+    "locations": [
+      {
+        "building": "학생회관",
+        "label": "학생회관 2층",
+        "floor": "2층"
+      }
+    ],
+    "phone": "863-1288 (교내전화 표기)",
+    "hours": null,
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/8025/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/8025/subview.do",
+    "checkedAt": "2026-09-02",
+    "priority": false
+  },
+  {
+    "id": "FAC-031",
+    "name": "크림슨스토어",
+    "keywords": [
+      "크림슨스토어",
+      "서점",
+      "문구",
+      "학술정보원"
+    ],
+    "purpose": "daily",
+    "sourceCategory": "생활 편의",
+    "description": "교재·문구 등 교내 생활용품 구매를 지원하는 매장이다.",
+    "audience": "교내 구성원",
+    "locations": [
+      {
+        "building": "학술정보원",
+        "label": "학술정보원 2층",
+        "floor": "2층"
+      }
+    ],
+    "phone": "860-1893 (교내전화 표기)",
+    "hours": null,
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/8025/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/8025/subview.do",
+    "checkedAt": "2026-09-02",
+    "priority": false
+  },
+  {
+    "id": "FAC-032",
+    "name": "과기관 복사실",
+    "keywords": [
+      "복사실",
+      "프린트",
+      "제1과학기술관",
+      "과기관"
+    ],
+    "purpose": "daily",
+    "sourceCategory": "생활 편의",
+    "description": "출력·복사 이용이 가능한 교내 복사실이다.",
+    "audience": "교내 구성원",
+    "locations": [
+      {
+        "building": "제1과학기술관",
+        "label": "제1과학기술관 1층",
+        "floor": "1층"
+      }
+    ],
+    "phone": "867-0225 (교내전화 표기)",
+    "hours": null,
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/8025/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/8025/subview.do",
+    "checkedAt": "2026-09-02",
+    "priority": false
+  },
+  {
+    "id": "FAC-033",
+    "name": "공공정책관 복사실",
+    "keywords": [
+      "복사실",
+      "프린트",
+      "공공정책관",
+      "출력"
+    ],
+    "purpose": "daily",
+    "sourceCategory": "생활 편의",
+    "description": "출력·복사 이용이 가능한 교내 복사실이다.",
+    "audience": "교내 구성원",
+    "locations": [
+      {
+        "building": "공공정책관",
+        "label": "공공정책관 지하 1층",
+        "floor": "지하 1층"
+      }
+    ],
+    "phone": "860-1899 (교내전화 표기)",
+    "hours": null,
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/8025/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/8025/subview.do",
+    "checkedAt": "2026-09-02",
+    "priority": false
+  },
+  {
+    "id": "FAC-034",
+    "name": "학술정보원 복사실",
+    "keywords": [
+      "복사실",
+      "프린트",
+      "도서관 복사실",
+      "학술정보원"
+    ],
+    "purpose": "daily",
+    "sourceCategory": "생활 편의",
+    "description": "출력·복사 이용이 가능한 교내 복사실이다.",
+    "audience": "교내 구성원",
+    "locations": [
+      {
+        "building": "학술정보원",
+        "label": "학술정보원 1층",
+        "floor": "1층"
+      }
+    ],
+    "phone": "860-1986 (교내전화 표기)",
+    "hours": null,
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/8025/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/8025/subview.do",
+    "checkedAt": "2026-09-02",
+    "priority": false
+  },
+  {
+    "id": "FAC-035",
+    "name": "교직원식당",
+    "keywords": [
+      "교직원식당",
+      "미래관 식당"
+    ],
+    "purpose": "food",
+    "sourceCategory": "식음·카페",
+    "description": "교직원 대상 식사를 제공하는 교내 식당이다.",
+    "audience": "교직원 중심",
+    "locations": [
+      {
+        "building": "미래관",
+        "label": "미래관 2층",
+        "floor": "2층"
+      }
+    ],
+    "phone": "860-1984 (교내전화 표기)",
+    "hours": null,
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/8025/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/8025/subview.do",
+    "checkedAt": "2026-09-02",
+    "priority": false
+  },
+  {
+    "id": "FAC-036",
+    "name": "학생식당(카페)",
+    "keywords": [
+      "학생식당",
+      "진리관 식당",
+      "진리관 카페"
+    ],
+    "purpose": "food",
+    "sourceCategory": "식음·카페",
+    "description": "학생 식사와 카페 이용을 제공하는 교내 식당이다.",
+    "audience": "교내 구성원",
+    "locations": [
+      {
+        "building": "진리관",
+        "label": "진리관 1층",
+        "floor": "1층"
+      }
+    ],
+    "phone": "860-1996 (교내전화 표기)",
+    "hours": null,
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/8025/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/8025/subview.do",
+    "checkedAt": "2026-09-02",
+    "priority": false
+  },
+  {
+    "id": "FAC-037",
+    "name": "김밥전문점",
+    "keywords": [
+      "김밥",
+      "호익플라자",
+      "분식"
+    ],
+    "purpose": "food",
+    "sourceCategory": "식음·카페",
+    "description": "간편식을 제공하는 교내 김밥 전문 매장이다.",
+    "audience": "교내 구성원",
+    "locations": [
+      {
+        "building": "호익플라자",
+        "label": "호익플라자 1층",
+        "floor": "1층"
+      }
+    ],
+    "phone": "860-1986 (교내전화 표기)",
+    "hours": null,
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/8025/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/8025/subview.do",
+    "checkedAt": "2026-09-02",
+    "priority": false
+  },
+  {
+    "id": "FAC-038",
+    "name": "bb.q CHICKEN",
+    "keywords": [
+      "bbq",
+      "치킨",
+      "호익플라자"
+    ],
+    "purpose": "food",
+    "sourceCategory": "식음·카페",
+    "description": "치킨 등 식사를 제공하는 교내 식음 매장이다.",
+    "audience": "교내 구성원",
+    "locations": [
+      {
+        "building": "호익플라자",
+        "label": "호익플라자 2층",
+        "floor": "2층"
+      }
+    ],
+    "phone": "863-9281 (교내전화 표기)",
+    "hours": null,
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/8025/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/8025/subview.do",
+    "checkedAt": "2026-09-02",
+    "priority": false
+  },
+  {
+    "id": "FAC-039",
+    "name": "구시아푸드마켓",
+    "keywords": [
+      "구시아",
+      "푸드마켓",
+      "학생회관 식당"
+    ],
+    "purpose": "food",
+    "sourceCategory": "식음·카페",
+    "description": "식사를 제공하는 학생회관 내 푸드마켓이다.",
+    "audience": "교내 구성원",
+    "locations": [
+      {
+        "building": "학생회관",
+        "label": "학생회관 1층",
+        "floor": "1층"
+      }
+    ],
+    "phone": "확인 필요 (공개 전화 미기재)",
+    "hours": null,
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/8025/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/8025/subview.do",
+    "checkedAt": "2026-09-02",
+    "priority": false
+  },
+  {
+    "id": "FAC-040",
+    "name": "커피마마",
+    "keywords": [
+      "커피마마",
+      "카페",
+      "석원경상관"
+    ],
+    "purpose": "food",
+    "sourceCategory": "식음·카페",
+    "description": "음료를 구매할 수 있는 교내 카페다.",
+    "audience": "교내 구성원",
+    "locations": [
+      {
+        "building": "석원경상관",
+        "label": "석원경상관 2층",
+        "floor": "2층"
+      }
+    ],
+    "phone": "865-0803 (교내전화 표기)",
+    "hours": null,
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/8025/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/8025/subview.do",
+    "checkedAt": "2026-09-02",
+    "priority": false
+  },
+  {
+    "id": "FAC-041",
+    "name": "그라찌에",
+    "keywords": [
+      "그라찌에",
+      "카페",
+      "학술정보원 카페"
+    ],
+    "purpose": "food",
+    "sourceCategory": "식음·카페",
+    "description": "음료·제과를 구매할 수 있는 교내 카페다.",
+    "audience": "교내 구성원",
+    "locations": [
+      {
+        "building": "학술정보원",
+        "label": "학술정보원 1층",
+        "floor": "1층"
+      }
+    ],
+    "phone": "확인 필요 (공개 전화 미기재)",
+    "hours": null,
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/8025/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/8025/subview.do",
+    "checkedAt": "2026-09-02",
+    "priority": false
+  },
+  {
+    "id": "FAC-042",
+    "name": "이디야",
+    "keywords": [
+      "이디야",
+      "카페",
+      "미래관 카페"
+    ],
+    "purpose": "food",
+    "sourceCategory": "식음·카페",
+    "description": "음료를 구매할 수 있는 교내 카페다.",
+    "audience": "교내 구성원",
+    "locations": [
+      {
+        "building": "미래관",
+        "label": "미래관 1층",
+        "floor": "1층"
+      }
+    ],
+    "phone": "확인 필요 (공개 전화 미기재)",
+    "hours": null,
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/8025/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/8025/subview.do",
+    "checkedAt": "2026-09-02",
+    "priority": false
+  },
+  {
+    "id": "FAC-043",
+    "name": "브레댄코",
+    "keywords": [
+      "브레댄코",
+      "베이커리",
+      "미래관"
+    ],
+    "purpose": "food",
+    "sourceCategory": "식음·카페",
+    "description": "제과·음료를 구매할 수 있는 교내 베이커리다.",
+    "audience": "교내 구성원",
+    "locations": [
+      {
+        "building": "미래관",
+        "label": "미래관 1층",
+        "floor": "1층"
+      }
+    ],
+    "phone": "확인 필요 (공개 전화 미기재)",
+    "hours": null,
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/8025/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/8025/subview.do",
+    "checkedAt": "2026-09-02",
+    "priority": false
+  },
+  {
+    "id": "FAC-044",
+    "name": "카페 파스쿠찌",
+    "keywords": [
+      "파스쿠찌",
+      "카페",
+      "학생회관 카페"
+    ],
+    "purpose": "food",
+    "sourceCategory": "식음·카페",
+    "description": "음료·제과를 구매할 수 있는 학생회관 내 카페다.",
+    "audience": "교내 구성원",
+    "locations": [
+      {
+        "building": "학생회관",
+        "label": "학생회관 1층",
+        "floor": "1층"
+      }
+    ],
+    "phone": "확인 필요 (공개 전화 미기재)",
+    "hours": null,
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/8025/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/8025/subview.do",
+    "checkedAt": "2026-09-02",
+    "priority": false
+  },
+  {
+    "id": "FAC-045",
+    "name": "세종시설안전팀",
+    "keywords": [
+      "시설안전",
+      "소방안전",
+      "연구실안전",
+      "시설 신고"
+    ],
+    "purpose": "care",
+    "sourceCategory": "보건·상담·안전",
+    "description": "교내 시설·소방·연구실 안전 관련 행정과 신고 접점을 담당한다.",
+    "audience": "교내 구성원",
+    "locations": [
+      {
+        "building": "행정관",
+        "label": "행정관 104A호",
+        "floor": null
+      }
+    ],
+    "phone": "044-860-1061",
+    "hours": null,
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/7771/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/7771/subview.do",
+    "checkedAt": "2026-09-02",
+    "priority": false
+  },
+  {
+    "id": "FAC-046",
+    "name": "세종캠퍼스 건강센터",
+    "keywords": ["건강센터", "보건실", "진료", "처치", "건강상담", "보건비", "목발", "구급약", "혈압", "체성분"],
+    "purpose": "care",
+    "sourceCategory": "보건·상담·안전",
+    "description": "재학생과 교직원의 건강 상담·기본 처치와 질병 예방을 지원해요. 일반의약품, 안정실과 건강 측정 장비를 이용할 수 있어요.",
+    "audience": "재학생 및 교직원",
+    "locations": [{ "building": "학생회관", "label": "학생회관 222호", "floor": null }],
+    "phone": "044-860-1038",
+    "hours": "학기 중 월~금 09:00~17:30\n점심시간 12:00~13:00\n하계·동계 방학에는 운영시간이 달라질 수 있어요.",
+    "officialUrl": "https://sejong.korea.ac.kr/koreaSejong/7999/subview.do",
+    "sourceUrl": "https://sejong.korea.ac.kr/koreaSejong/7999/subview.do",
+    "checkedAt": "2026-09-16",
+    "priority": true,
+    "details": [
+      {
+        "title": "이용 방법과 비용",
+        "items": [
+          "건강센터 방문 → 학번 입력 → 기록 확인 → 상담·처치 순서로 이용해요.",
+          "당해 학기 보건비를 납부한 학생은 무료예요. 보건비 미납 학생과 교직원은 유료로 이용해요.",
+          "전문 진료는 제공하지 않으며, 필요한 경우 주변 병·의원을 안내해요."
+        ]
+      },
+      {
+        "title": "이용할 수 있는 시설",
+        "items": [
+          "약제실·처치실·안정실과 자동 혈압 측정기, 체중·비만도 측정기, 체성분 검사기를 갖추고 있어요.",
+          "목발, 아이스팩·핫팩, 팔걸이와 구급낭을 대여할 수 있어요.",
+          "재학생·교직원의 단체활동에는 구급의약품을 지원하며 일시납 20,000원으로 운영해요."
+        ]
+      }
+    ]
+  }
+]

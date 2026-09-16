@@ -14,6 +14,7 @@
 		onAreaChange,
 		searchOpen = false,
 		searchQuery = '',
+		campusDirectorySearch = false,
 		onSearchOpenChange = () => undefined,
 		onSearchQueryChange = () => undefined
 	}: {
@@ -22,6 +23,7 @@
 		onAreaChange: (areaId: string) => void;
 		searchOpen?: boolean;
 		searchQuery?: string;
+		campusDirectorySearch?: boolean;
 		onSearchOpenChange?: (open: boolean) => void;
 		onSearchQueryChange?: (query: string) => void;
 	} = $props();
@@ -37,7 +39,7 @@
 	let selectedAreaLabel = $derived(selectedArea?.name ?? '');
 	let selectedAreaShortLabel = $derived(selectedArea?.shortName ?? selectedAreaLabel);
 	let searchPlaceholder = $derived(
-		getFacilitySearchPlaceholder(selectedAreaId === 'campus' ? 'campus' : 'outside', selectedAreaLabel)
+		campusDirectorySearch ? '시설명·이용 목적 검색' : getFacilitySearchPlaceholder(selectedAreaId === 'campus' ? 'campus' : 'outside', selectedAreaLabel)
 	);
 
 	$effect(() => {
@@ -165,7 +167,7 @@
 				/>
 				<input
 					bind:this={searchInput}
-					class="h-9 w-full rounded-[18px] bg-white pl-11 pr-10 text-[12px] font-normal text-brand-text shadow-[0_1px_2px_rgba(25,24,26,0.05)] outline-none placeholder:text-[#c9c6ca] focus-visible:ring-2 focus-visible:ring-brand/25"
+					class={`h-9 w-full rounded-[18px] bg-white pl-11 pr-10 ${campusDirectorySearch ? 'text-[16px]' : 'text-[12px]'} font-normal text-brand-text shadow-[0_1px_2px_rgba(25,24,26,0.05)] outline-none placeholder:text-[#c9c6ca] focus-visible:ring-2 focus-visible:ring-brand/25`}
 					type="search"
 					value={searchQuery}
 					placeholder={searchPlaceholder}

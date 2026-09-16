@@ -6,12 +6,16 @@
 
 	let {
 		selectedCategory,
+		showCampusDirectory = false,
 		onCategoryChange
 	}: {
 		selectedCategory: string;
+		showCampusDirectory?: boolean;
 		onCategoryChange: (category: string) => void;
 	} = $props();
-	const categories = getHomeEventFilterOrder(FACILITY_CATEGORIES);
+	const categories = $derived(showCampusDirectory
+		? [{ slug: 'student-support', name: '학생지원', icon: 'administration' }, ...getHomeEventFilterOrder(FACILITY_CATEGORIES)]
+		: getHomeEventFilterOrder(FACILITY_CATEGORIES));
 </script>
 
 <nav class="pointer-events-auto relative z-20 bg-transparent" aria-label="시설 카테고리">

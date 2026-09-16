@@ -1,4 +1,5 @@
 import { env } from '$env/dynamic/private';
+import { readCampusFacilities } from '$lib/server/campus-facilities';
 import { readPublicFestival } from '$lib/server/festival-editor';
 import { getHomeData } from '$lib/server/db/queries';
 import { getTodayMenuWithRefresh } from '$lib/server/cafeteria-cache';
@@ -90,6 +91,7 @@ export async function load({ platform, locals, url }) {
 	const festival = await readPublicFestival(platform?.env?.GOLABAU_CACHE);
 	return {
 		...homeData,
+		campusFacilities: readCampusFacilities(homeData.places),
 		festival,
 		initialFestival: Boolean(festival) && url.searchParams.get('panel') === 'festival',
 		campusEvents,

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { getContext, onMount } from 'svelte';
-	import { goto, replaceState } from '$app/navigation';
+	import { getContext, onMount, untrack } from 'svelte';
+	import { afterNavigate, goto, pushState, replaceState } from '$app/navigation';
 	import { page } from '$app/state';
 	import { env as publicEnv } from '$env/dynamic/public';
 	import {
@@ -12,6 +12,9 @@
 	} from '@lucide/svelte';
 	import BottomNavigation from '$lib/navigation/BottomNavigation.svelte';
 	import FacilityFilterChips from '$lib/home/FacilityFilterChips.svelte';
+	import CampusFacilityPanel from '$lib/home/CampusFacilityPanel.svelte';
+	import AppIcon from '$lib/icon/AppIcon.svelte';
+	import { filterCampusFacilities, getCampusFacilityMarkers, normalizeBuildingName, type CampusDirectoryView } from '$lib/domain/campus-facilities';
 	import HomeMapHeader from '$lib/home/HomeMapHeader.svelte';
 	import OutsidePlaceFilters from '$lib/home/OutsidePlaceFilters.svelte';
 	import {
@@ -61,7 +64,7 @@
 	import WeatherWidget from '$lib/weather/WeatherWidget.svelte';
 	import ShuttleCountdown from '$lib/shuttle/ShuttleCountdown.svelte';
 	import FestivalPanel from '$lib/festival/FestivalPanel.svelte';
-	import type { CafeteriaPanelItem, DailyMenu, MenuDayKey } from '$lib/domain/places';
+	import type { CafeteriaPanelItem, DailyMenu, MenuDayKey, Place } from '$lib/domain/places';
 	import {
 		addAlwaysVisibleShuttleStops,
 		formatMinutesLeft,
@@ -99,7 +102,7 @@
 		items: MealItem[];
 	};
 
-	type SheetMode = 'home' | 'event' | 'festival' | 'facility' | 'cafeteria' | 'shuttle' | 'pin' | 'place';
+	type SheetMode = 'home' | 'event' | 'festival' | 'facility' | 'campus-facility' | 'cafeteria' | 'shuttle' | 'pin' | 'place';
 	const WEATHER_WIDGET_GAP = 12;
 	const homeDateLabel = formatHomeDate(new Date());
 
@@ -210,11 +213,46 @@
 		campusSpots.find((spot) => spot.id === activeCampusSpotId) ?? null
 	);
 	const activeCampusSpotPanel = $derived(getCampusSpotPanelPresentation(activeCampusSpot));
+	const campusDirectory = $derived(data.campusFacilities ? page.state.campusDirectory : undefined);
+	const directoryFacility = $derived(data.campusFacilities?.find((facility) => facility.id === campusDirectory?.facilityId));
+	const directoryMarkers = $derived(getCampusFacilityMarkers(
+		directoryFacility ? [directoryFacility] : filterCampusFacilities(data.campusFacilities ?? [], campusDirectory),
+		campusSpots, directoryFacility ? '' : campusDirectory?.building ?? ''
+	));
+	const buildingFacilities = $derived(activeCampusSpot
+		? filterCampusFacilities(data.campusFacilities ?? [], { building: activeCampusSpot.name }) : []);
+	let previousDirectory: CampusDirectoryView | undefined;
+	$effect(() => {
+		const view = campusDirectory;
+		untrack(() => {
+			if (view) {
+				sheetMode = 'campus-facility';
+				areaMode = 'campus';
+				selectedFacilityCategory = view.category ?? 'all';
+				facilitySearchQuery = view.query;
+				hasSelectedPinFilter = true;
+				showCampusBoundaries = true;
+				focusCampusSpotId = '';
+				activeCampusSpotId = campusSpots.find((spot) => normalizeBuildingName(spot.name) === view.building)?.id ?? '';
+				if (!previousDirectory || view.facilityId !== previousDirectory.facilityId) {
+					setSheetDetent(view.facilityId || view.listExpanded ? 'expanded' : 'medium');
+				}
+				void loadCampusSpots();
+				homeFocusRequestId += 1;
+			} else if (previousDirectory && sheetMode === 'campus-facility') {
+				if (previousDirectory.returnSpotId) selectCampusSpot(previousDirectory.returnSpotId);
+				else closePanel();
+			}
+			previousDirectory = view;
+		});
+	});
 
 	const mapPlaces = $derived(
 		addAlwaysVisibleShuttleStops(
 			sheetMode === 'pin' || sheetMode === 'shuttle'
 				? []
+				: sheetMode === 'campus-facility'
+					? directoryMarkers
 				: sheetMode === 'facility'
 					? facilityPlaces
 					: sheetMode === 'place' && activePlace
@@ -228,7 +266,9 @@
 	);
 
 	const activeMapPlaceId = $derived(
-		sheetMode === 'pin'
+		sheetMode === 'campus-facility'
+			? (directoryFacility?.place?.id ?? directoryMarkers.find((marker) => marker.id === `campus-facilities:${activeCampusSpotId}`)?.id ?? directoryMarkers[0]?.id ?? '')
+			: sheetMode === 'pin'
 			? ''
 			: sheetMode === 'shuttle'
 			? (shuttleStops.find((stop) => stop.stopId === activeShuttleStopId)?.id ?? '')
@@ -236,7 +276,7 @@
 	);
 
 	const placeFocusTargetRatio = $derived(
-		sheetMode === 'festival' || sheetMode === 'place' || sheetMode === 'facility' || sheetMode === 'shuttle' || sheetMode === 'event'
+		sheetMode === 'festival' || sheetMode === 'place' || sheetMode === 'facility' || sheetMode === 'campus-facility' || sheetMode === 'shuttle' || sheetMode === 'event'
 			? getAvailableMapMarkerTargetRatio({
 					mapHeight: mapViewportHeight,
 					navigationHeight: bottomNavigationHeight,
@@ -261,6 +301,15 @@
 	const upcomingShuttles = $derived(getUpcomingShuttles(currentTime, activeShuttleStopId, 5));
 	const nextShuttle = $derived(getNextAvailableShuttle(currentTime));
 
+	let initialDirectoryOpened = false;
+	afterNavigate(async (navigation) => {
+		if (initialDirectoryOpened || !data.campusFacilities || data.initialPanel !== 'facility') return;
+		initialDirectoryOpened = true;
+		// 첫 수화와 라우터 초기화가 모두 끝난 뒤에 목록·상세 방문 기록을 만든다.
+		await navigation.complete;
+		openCampusDirectory({ category: data.initialFacilityCategory ?? 'all', facilityId: data.initialFacilityPlaceId || undefined });
+	});
+
 	onMount(() => {
 		const weatherAbortController = new AbortController();
 		void loadWeather(weatherAbortController.signal);
@@ -281,7 +330,9 @@
 			openEventPanel(data.initialEventId);
 		} else if (data.initialPanel === 'facility') {
 			selectedFacilityCategory = data.initialFacilityCategory ?? 'all';
-			openFacilityResults(data.initialFacilityPlaceId ?? '');
+			if (!data.campusFacilities) {
+				openFacilityResults(data.initialFacilityPlaceId ?? '');
+			}
 		}
 
 		const timer = window.setInterval(() => {
@@ -337,6 +388,7 @@
 	});
 
 	function openCafeteriaPanel() {
+		clearCampusDirectory();
 		track(analyticsEvents.openCafeteria, { source: 'home_bottom_navigation' });
 		sheetMode = 'cafeteria';
 		setSheetDetent('expanded');
@@ -354,6 +406,7 @@
 		stopId?: ShuttleStopId,
 		source: ShuttlePanelOpenSource = 'home_bottom_navigation'
 	) {
+		clearCampusDirectory();
 		track(analyticsEvents.clickShuttleMarker, {
 			source,
 			shuttle_stop_id: stopId ?? nextShuttle?.from ?? 'campus'
@@ -375,6 +428,7 @@
 	}
 
 	function openPinPanel() {
+		clearCampusDirectory();
 		sheetMode = 'pin';
 		setSheetDetent('collapsed');
 		hasSelectedPinFilter = true;
@@ -388,6 +442,7 @@
 	}
 
 	function openPlacePanel(placeId: string) {
+		clearCampusDirectory();
 		const place = data.places.find((item) => item.id === placeId && item.type === 'cafeteria');
 		if (!place) return;
 		const cafeteriaIndex = data.cafeterias.findIndex((item) => item.placeId === place.id);
@@ -409,6 +464,13 @@
 	}
 
 	function selectFacilityCategory(categorySlug: string) {
+		if (categorySlug !== 'event' && data.campusFacilities && areaMode === 'campus') {
+			facilitySearchOpen = false;
+			track(analyticsEvents.selectCategory, { category_slug: categorySlug, area_mode: areaMode });
+			openCampusDirectory({ category: categorySlug });
+			return;
+		}
+		clearCampusDirectory();
 		track(analyticsEvents.selectCategory, {
 			category_slug: categorySlug,
 			area_mode: areaMode
@@ -423,6 +485,7 @@
 	}
 
 	function openEventPanel(eventId = '') {
+		clearCampusDirectory();
 		track(analyticsEvents.openToday, {
 			source: eventId ? 'deep_link' : 'facility_filter',
 			event_count: data.campusEvents.length
@@ -456,6 +519,7 @@
 
 	function openFestivalPanel() {
 		if (!data.festival) return;
+		clearCampusDirectory();
 		areaMode = 'campus';
 		sheetMode = 'festival';
 		selectedFacilityCategory = 'event';
@@ -470,6 +534,10 @@
 	}
 
 	function updateFacilitySearch(query: string) {
+		if (data.campusFacilities && areaMode === 'campus') {
+			openCampusDirectory({ query });
+			return;
+		}
 		const hadQuery = Boolean(facilitySearchQuery.trim());
 		facilitySearchQuery = query;
 		selectedFacilityCategory = 'all';
@@ -487,6 +555,44 @@
 	function setFacilitySearchOpen(open: boolean) {
 		facilitySearchOpen = open;
 		if (open) track(analyticsEvents.searchOpened, { area_mode: areaMode });
+	}
+
+	function clearCampusDirectory() {
+		if (page.state.campusDirectory) replaceState('', { ...page.state, campusDirectory: undefined });
+	}
+
+	function openCampusDirectory(change: Partial<CampusDirectoryView> = {}) {
+		if (!data.campusFacilities) return;
+		const view: CampusDirectoryView = { purpose: 'all', query: '', building: '', returnSpotId: '', category: 'all', ...change, facilityId: undefined };
+		if (campusDirectory) replaceState('', { ...page.state, campusDirectory: view });
+		else pushState('', { ...page.state, campusDirectory: view });
+		if (change.facilityId && data.campusFacilities.some((facility) => facility.id === change.facilityId)) {
+			pushState('', { ...page.state, campusDirectory: { ...view, facilityId: change.facilityId } });
+		}
+	}
+
+	function changeCampusDirectory(change: Partial<CampusDirectoryView>) {
+		if (!campusDirectory) return;
+		replaceState('', { ...page.state, campusDirectory: { ...campusDirectory, ...change, facilityId: undefined } });
+	}
+
+	function selectCampusFacility(id: string) {
+		if (!campusDirectory) return;
+		facilitySearchOpen = false;
+		if (campusDirectory.facilityId === id) {
+			setSheetDetent('expanded');
+			return;
+		}
+		const listView = { ...campusDirectory, listExpanded: sheetDetent === 'expanded' };
+		replaceState('', { ...page.state, campusDirectory: listView });
+		pushState('', { ...page.state, campusDirectory: { ...listView, facilityId: id } });
+	}
+
+	function showFacilityBuilding(target: CampusSpot | Place) {
+		activeCampusSpotId = 'center' in target ? target.id : '';
+		focusCampusSpotId = '';
+		setSheetDetent('medium');
+		homeFocusRequestId += 1;
 	}
 
 	function openFacilityResults(requestedPlaceId = '') {
@@ -524,6 +630,7 @@
 	}
 
 	function closePanel() {
+		clearCampusDirectory();
 		if (sheetMode === 'festival') replaceState('/', { ...page.state, festivalBooth: undefined });
 		if (sheetMode === 'place') {
 			void goto('/');
@@ -560,6 +667,18 @@
 	}
 
 	function handleMarkerClick(placeId: string) {
+		if (sheetMode === 'campus-facility' && data.campusFacilities?.some((facility) => facility.id === placeId)) {
+			selectCampusFacility(placeId);
+			return;
+		}
+		if (sheetMode === 'campus-facility' && placeId.startsWith('campus-facilities:')) {
+			const spot = campusSpots.find((item) => `campus-facilities:${item.id}` === placeId);
+			if (spot) {
+				if (directoryFacility) showFacilityBuilding(spot);
+				else changeCampusDirectory({ building: normalizeBuildingName(spot.name), category: 'student-support' });
+			}
+			return;
+		}
 		const shuttleStop = shuttleStops.find((stop) => stop.id === placeId);
 		if (shuttleStop) {
 			openShuttlePanel(shuttleStop.stopId, 'home_map');
@@ -605,6 +724,7 @@
 	function selectCampusSpot(spotId: string) {
 		const selectedSpot = campusSpots.find((spot) => spot.id === spotId);
 		if (!selectedSpot) return;
+		clearCampusDirectory();
 		track(analyticsEvents.selectBuilding, { building_id: spotId, source: 'home_map' });
 
 		activeCampusSpotId = spotId;
@@ -621,6 +741,7 @@
 	}
 
 	function selectMapArea(areaId: string) {
+		if (sheetMode === 'campus-facility') closePanel();
 		track(analyticsEvents.selectZone, { area_id: areaId });
 		const nextState = changeSelectedMapArea(areaId);
 		selectedMapAreaId = areaId;
@@ -1061,7 +1182,9 @@
 			focusMode={sheetMode === 'cafeteria' || sheetMode === 'pin' ? 'top-band' : 'default'}
 			focusRequestId={homeFocusRequestId}
 			focusZoom={
-				sheetMode === 'festival' ? 17 : sheetMode === 'place' || sheetMode === 'facility' || sheetMode === 'shuttle' || sheetMode === 'event'
+				sheetMode === 'campus-facility' && !campusDirectory?.building && !campusDirectory?.facilityId
+					? DEFAULT_HOME_MAP_ZOOM
+					: sheetMode === 'festival' ? 17 : sheetMode === 'place' || sheetMode === 'facility' || sheetMode === 'campus-facility' || sheetMode === 'shuttle' || sheetMode === 'event'
 					? getPlaceFocusZoom(DEFAULT_HOME_MAP_ZOOM)
 					: DEFAULT_HOME_MAP_ZOOM
 			}
@@ -1088,7 +1211,7 @@
 			<div class="absolute inset-x-0 top-0 z-10 flex items-center justify-between bg-white/95 px-5 pt-[calc(12px+env(safe-area-inset-top))] pb-3 text-[12px] text-brand-muted"><span>{data.festival.area.approximate ? '축제 구역 · 위치 안내 예정' : '축제 구역'}</span>{#if data.user?.role === 'admin'}<a class="min-h-8 content-center text-brand" href="/admin/festival">구역 편집</a>{/if}</div>
 		{/if}
 
-		{#if sheetMode === 'home' || sheetMode === 'facility' || sheetMode === 'event'}
+		{#if sheetMode === 'home' || sheetMode === 'facility' || sheetMode === 'campus-facility' || sheetMode === 'event'}
 			<div
 				class="pointer-events-none absolute inset-x-0 top-0 z-10 h-[200px]"
 				style="background: linear-gradient(180deg, #f4f3f1 0%, rgba(244, 243, 241, 0.92) 58%, rgba(244, 243, 241, 0) 100%);"
@@ -1101,11 +1224,13 @@
 				onAreaChange={selectMapArea}
 				searchOpen={facilitySearchOpen}
 				searchQuery={facilitySearchQuery}
+				campusDirectorySearch={Boolean(data.campusFacilities) && areaMode === 'campus'}
 				onSearchOpenChange={setFacilitySearchOpen}
 				onSearchQueryChange={updateFacilitySearch}
 			/>
 			<FacilityFilterChips
 				selectedCategory={selectedFacilityCategory}
+				showCampusDirectory={Boolean(data.campusFacilities) && areaMode === 'campus'}
 				onCategoryChange={selectFacilityCategory}
 			/>
 
@@ -1184,6 +1309,11 @@
 				{/if}
 			{:else if sheetMode === 'festival' && data.festival}
 				<FestivalPanel festival={data.festival} onClose={closePanel} onExpand={() => setSheetDetent('expanded')} collapsed={sheetDetent === 'collapsed'} />
+			{:else if sheetMode === 'campus-facility' && campusDirectory && data.campusFacilities}
+				<CampusFacilityPanel facilities={data.campusFacilities} view={campusDirectory} spots={campusSpots}
+					onChange={changeCampusDirectory} onSelect={selectCampusFacility} onBack={() => window.history.back()}
+					onClose={closePanel} onMap={showFacilityBuilding} onExpand={() => setSheetDetent('expanded')}
+					collapsed={sheetDetent === 'collapsed'} />
 			{:else if sheetMode === 'event'}
 				<div class="flex min-h-0 flex-1 flex-col">
 					{#if data.festival}<button type="button" class="mb-3 flex w-full items-center justify-between border-b border-brand-border py-3 text-left" onclick={openFestivalPanel}><span><strong class="block text-[15px] font-bold">{data.festival.name}</strong><span class="mt-1 block text-[12px] text-brand-muted">{data.festival.dates[0]?.label} · 부스와 공연 보기</span></span><ChevronRight size={20} /></button>{/if}
@@ -1417,6 +1547,14 @@
 							닫기
 						</button>
 					</div>
+					{#if data.campusFacilities && activeCampusSpot?.type === 'building'}
+						<button type="button" class="flex min-h-14 w-full items-center gap-3 border-y border-brand-border py-4 text-left"
+							onclick={() => openCampusDirectory({ building: normalizeBuildingName(activeCampusSpot!.name), returnSpotId: activeCampusSpot!.id })}>
+							<AppIcon name="administration" size={24} class="text-brand-muted" />
+							<span class="min-w-0 flex-1"><strong class="block text-[15px] font-bold">시설 안내</strong><span class="mt-1 block text-[13px] text-brand-muted">{buildingFacilities.length ? `건물 안 시설 ${buildingFacilities.length}곳 보기` : '등록된 시설 확인하기'}</span></span>
+							<AppIcon name="chevron" size={20} class="rotate-180 text-brand-muted" />
+						</button>
+					{/if}
 					{#if false}
 						<div class="flex items-center justify-between gap-3 rounded-[8px] border border-brand-border bg-white px-4 py-3">
 						<div class="flex items-center gap-2.5">

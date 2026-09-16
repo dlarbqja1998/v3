@@ -7,6 +7,7 @@ describe('지도 핀 내부 아이콘', () => {
 		expect(getSafeMarkerIcon('print')).toBe('print');
 		expect(getSafeMarkerIcon('food')).toBe('food');
 		expect(getSafeMarkerIcon('bus')).toBe('bus');
+		expect(getSafeMarkerIcon('administration')).toBe('administration');
 		expect(getSafeMarkerIcon('home')).toBe('');
 	});
 

@@ -52,7 +52,10 @@ declare global {
 			} | null;
 		}
 		// interface PageData {}
-		interface PageState { festivalBooth?: string; }
+		interface PageState {
+			festivalBooth?: string;
+			campusDirectory?: import('$lib/domain/campus-facilities').CampusDirectoryView;
+		}
 		interface Platform {
 			env?: {
 				ADMIN_LOGIN_RATE_LIMITER?: {
