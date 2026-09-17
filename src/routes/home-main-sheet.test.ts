@@ -77,11 +77,11 @@ describe('메인 첫 바텀시트', () => {
 		expect(body).not.toContain('메인에서 제거할 행사 홍보');
 	});
 
-	it('상단 헤더부터 필터칩 아래까지 200px 흰색 그라데이션을 겹친다', () => {
+	it('상단 그라데이션은 보조기기에서 장식으로 처리한다', () => {
 		const { body } = render(HomePage, { props: { data } as never });
 
-		expect(body).toContain('data-home-map-top-gradient');
-		expect(body).toMatch(/class="[^"]*h-\[200px\][^"]*"[^>]*data-home-map-top-gradient/);
+		const gradient = body.match(/<div[^>]*data-home-map-top-gradient[^>]*>/)?.[0];
+		expect(gradient).toContain('aria-hidden="true"');
 	});
 
 	it('헤더 컨트롤이 드러나도록 그라데이션 시작점을 옅은 회백색으로 표시한다', () => {

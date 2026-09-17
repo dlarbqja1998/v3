@@ -1,0 +1,3581 @@
+{
+  "schemaVersion": 1,
+  "batchId": "sejong-girls-west-2026-09-18",
+  "checkedOn": "2026-09-18",
+  "scope": "세종여자고등학교 서쪽 모과나무길·모과나무2길·모과나무4길 일대",
+  "note": "기존 원본 863개는 보존하고 추가 수집분만 별도 관리함. 네이버 공개 매장 항목을 기준으로 저장하며 실제 사업장 수·현장 영업 여부는 별도 미확인. 동일 주소의 서로 다른 네이버 ID는 합치지 않고 공유 주소 관계를 기록함.",
+  "collection": {
+    "method": "도로명과 업종 검색, 공개 지도 목록, 개별 네이버 플레이스 원문을 대조함.",
+    "searchesFile": "output/restaurant-west-2026-09-18/searches.json",
+    "queryCount": 15,
+    "completeCensus": false
+  },
+  "entries": [
+    {
+      "source": {
+        "id": 37175970,
+        "placeName": "모과나무골 막국수 이야기",
+        "phone": "044-865-2244",
+        "roadAddressName": "세종특별자치시 조치원읍 모과나무4길 19 1층",
+        "placeUrl": "https://m.place.naver.com/restaurant/37175970/home",
+        "x": 127.286196,
+        "y": 36.6059727,
+        "mainCategory": "향토음식",
+        "zoneId": "front-gate",
+        "zoneName": "고대앞",
+        "openingHours": {
+          "monday": {
+            "isClosed": true,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "매주 월요일 휴무"
+          },
+          "tuesday": {
+            "isClosed": false,
+            "open": "11:00",
+            "close": "20:00",
+            "breakTimes": [
+              {
+                "start": "15:00",
+                "end": "17:00"
+              }
+            ],
+            "lastOrder": "14:20, 19:20",
+            "note": null
+          },
+          "wednesday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "thursday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "friday": {
+            "isClosed": false,
+            "open": "11:00",
+            "close": "20:00",
+            "breakTimes": [
+              {
+                "start": "15:00",
+                "end": "17:00"
+              }
+            ],
+            "lastOrder": "14:20, 19:20",
+            "note": null
+          },
+          "saturday": {
+            "isClosed": false,
+            "open": "11:00",
+            "close": "20:00",
+            "breakTimes": [],
+            "lastOrder": "19:20",
+            "note": null
+          },
+          "sunday": {
+            "isClosed": false,
+            "open": "11:00",
+            "close": "20:00",
+            "breakTimes": [],
+            "lastOrder": "19:20",
+            "note": null
+          }
+        },
+        "regularHolidays": [
+          "매주 월요일 휴무",
+          "2026-09-23 단축 영업 11:00~14:30",
+          "2026-09-24~2026-09-27 추석 연휴 휴무",
+          "재료 소진 등으로 조기 마감될 수 있습니다."
+        ],
+        "businessHoursNotice": null,
+        "menus": [
+          {
+            "category": null,
+            "name": "동치미 메밀막국수",
+            "price": 9000,
+            "priceText": "9,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "unconfirmed"
+          },
+          {
+            "category": null,
+            "name": "메밀 들깨칼국수(2인 이상)",
+            "price": 10000,
+            "priceText": "10,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "unconfirmed"
+          },
+          {
+            "category": null,
+            "name": "메밀소바(3~10월)",
+            "price": 11000,
+            "priceText": "11,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "unconfirmed"
+          },
+          {
+            "category": null,
+            "name": "메밀전병",
+            "price": 7000,
+            "priceText": "7,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "unconfirmed"
+          },
+          {
+            "category": null,
+            "name": "메밀만두",
+            "price": 7000,
+            "priceText": "7,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "unconfirmed"
+          },
+          {
+            "category": null,
+            "name": "메밀 만둣국(10~2월)",
+            "price": 11000,
+            "priceText": "11,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "unconfirmed"
+          },
+          {
+            "category": null,
+            "name": "봉평메밀막걸리(3~10월)",
+            "price": 5000,
+            "priceText": "5,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "unconfirmed"
+          }
+        ],
+        "lastVerifiedAt": "2026-09-18",
+        "distanceInMeters": null,
+        "walkTimeInMinutes": null,
+        "pathCoordinates": []
+      },
+      "basicCheck": {
+        "id": 37175970,
+        "result": "네이버 지역검색과 매장 원문의 상호·주소 대조",
+        "checkedAt": "2026-09-17T15:09:13.985Z",
+        "candidate": {
+          "name": "모과나무골 막국수 이야기",
+          "nameEqual": true,
+          "addressEqual": true,
+          "roadAddress": "세종특별자치시 조치원읍 모과나무4길 19 1층",
+          "address": "세종특별자치시 조치원읍 서창리 132-9 1층",
+          "category": "한식>향토음식",
+          "x": 127.286196,
+          "y": 36.6059727,
+          "distanceMeters": 0
+        }
+      },
+      "detailCheck": {
+        "id": 37175970,
+        "url": "https://m.place.naver.com/restaurant/37175970/home",
+        "checkedAt": "2026-09-17T15:21:26.455Z",
+        "pageStatus": "available",
+        "placeName": "모과나무골 막국수 이야기",
+        "roadAddressName": "세종특별자치시 조치원읍 모과나무4길 19 1층",
+        "phone": "044-865-2244",
+        "openingHours": {
+          "monday": {
+            "isClosed": true,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "매주 월요일 휴무"
+          },
+          "tuesday": {
+            "isClosed": false,
+            "open": "11:00",
+            "close": "20:00",
+            "breakTimes": [
+              {
+                "start": "15:00",
+                "end": "17:00"
+              }
+            ],
+            "lastOrder": "14:20, 19:20",
+            "note": null
+          },
+          "wednesday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "thursday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "friday": {
+            "isClosed": false,
+            "open": "11:00",
+            "close": "20:00",
+            "breakTimes": [
+              {
+                "start": "15:00",
+                "end": "17:00"
+              }
+            ],
+            "lastOrder": "14:20, 19:20",
+            "note": null
+          },
+          "saturday": {
+            "isClosed": false,
+            "open": "11:00",
+            "close": "20:00",
+            "breakTimes": [],
+            "lastOrder": "19:20",
+            "note": null
+          },
+          "sunday": {
+            "isClosed": false,
+            "open": "11:00",
+            "close": "20:00",
+            "breakTimes": [],
+            "lastOrder": "19:20",
+            "note": null
+          }
+        },
+        "regularHolidays": [
+          "매주 월요일 휴무",
+          "2026-09-23 단축 영업 11:00~14:30",
+          "2026-09-24~2026-09-27 추석 연휴 휴무",
+          "재료 소진 등으로 조기 마감될 수 있습니다."
+        ],
+        "closedDates": [
+          {
+            "date": "2026-09-24",
+            "status": "closed",
+            "reason": "추석 연휴 휴무"
+          },
+          {
+            "date": "2026-09-25",
+            "status": "closed",
+            "reason": "추석 연휴 휴무"
+          },
+          {
+            "date": "2026-09-26",
+            "status": "closed",
+            "reason": "추석 연휴 휴무"
+          },
+          {
+            "date": "2026-09-27",
+            "status": "closed",
+            "reason": "추석 연휴 휴무"
+          }
+        ],
+        "specialHours": [
+          {
+            "date": "2026-09-23",
+            "hours": {
+              "isClosed": false,
+              "open": "11:00",
+              "close": "14:30",
+              "breakTimes": [],
+              "lastOrder": null,
+              "note": null
+            },
+            "reason": "추석 연휴 전 단축 영업"
+          }
+        ]
+      },
+      "menuCheck": {
+        "sourceId": 37175970,
+        "url": "https://m.place.naver.com/restaurant/37175970/menu/list",
+        "checkedAt": "2026-09-18",
+        "note": "요일별 원문에 9/23 단축 영업과 9/24 휴무가 표시되어, 확인하지 못한 기본 수·목 시간표는 미확인으로 보존함. 현재 메뉴 탭 7개 확인."
+      },
+      "sameAddressSourceIds": [],
+      "evidence": {
+        "searchQuery": "세종 조치원 모과나무4길 음식점",
+        "searchCheckedAt": "2026-09-17T15:09:13.985Z",
+        "detailCheckedAt": "2026-09-17T15:21:26.455Z",
+        "sourceUrl": "https://m.place.naver.com/restaurant/37175970/home",
+        "note": "요일별 원문에 9/23 단축 영업과 9/24 휴무가 표시되어, 확인하지 못한 기본 수·목 시간표는 미확인으로 보존함. 현재 메뉴 탭 7개 확인."
+      }
+    },
+    {
+      "source": {
+        "id": 1009846997,
+        "placeName": "삼맛카페",
+        "phone": "044-868-1128",
+        "roadAddressName": "세종특별자치시 조치원읍 모과나무길 34",
+        "placeUrl": "https://m.place.naver.com/restaurant/1009846997/home",
+        "x": 127.2847835,
+        "y": 36.6082136,
+        "mainCategory": "카페,디저트",
+        "zoneId": "front-gate",
+        "zoneName": "고대앞",
+        "openingHours": {
+          "monday": {
+            "isClosed": false,
+            "open": "11:00",
+            "close": "24:00",
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": null
+          },
+          "tuesday": {
+            "isClosed": false,
+            "open": "11:00",
+            "close": "24:00",
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": null
+          },
+          "wednesday": {
+            "isClosed": false,
+            "open": "11:00",
+            "close": "24:00",
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": null
+          },
+          "thursday": {
+            "isClosed": false,
+            "open": "11:00",
+            "close": "24:00",
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": null
+          },
+          "friday": {
+            "isClosed": false,
+            "open": "11:00",
+            "close": "24:00",
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": null
+          },
+          "saturday": {
+            "isClosed": false,
+            "open": "11:00",
+            "close": "24:00",
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": null
+          },
+          "sunday": {
+            "isClosed": false,
+            "open": "11:00",
+            "close": "24:00",
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": null
+          }
+        },
+        "regularHolidays": [],
+        "businessHoursNotice": null,
+        "menus": [
+          {
+            "category": null,
+            "name": "씨월드호떡",
+            "price": 2500,
+            "priceText": "2,500원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "이태리호떡",
+            "price": 4500,
+            "priceText": "4,500원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "마늘떡볶이(1인분)",
+            "price": 6500,
+            "priceText": "6,500원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "마늘떡볶이(2인분)",
+            "price": 13000,
+            "priceText": "13,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "이태리떡볶이(1인분)",
+            "price": 7000,
+            "priceText": "7,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "이태리떡볶이(2인분)",
+            "price": 14000,
+            "priceText": "14,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "1L(아이스아메리카노)",
+            "price": 8000,
+            "priceText": "8,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "1L(복숭아아이스티)",
+            "price": 8000,
+            "priceText": "8,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "1L(레몬아이스티)",
+            "price": 8000,
+            "priceText": "8,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "1L(사과아이스티)",
+            "price": 8000,
+            "priceText": "8,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "1L(허니아이스티)",
+            "price": 8000,
+            "priceText": "8,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "1L(크렌베리아이스티)",
+            "price": 8000,
+            "priceText": "8,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "1L(샷아이스티)",
+            "price": 9000,
+            "priceText": "9,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "1L(딸기듬뿍딸기우유)",
+            "price": 11000,
+            "priceText": "11,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "1L(망고듬뿍망고우유)",
+            "price": 11000,
+            "priceText": "11,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "딸기듬뿍딸기우유(L)",
+            "price": 6000,
+            "priceText": "6,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "망고듬뿍망고우유(L)",
+            "price": 6000,
+            "priceText": "6,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "딸기듬뿍요거우유(L)",
+            "price": 7000,
+            "priceText": "7,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "딸기듬뿍홍차우유(L)",
+            "price": 7000,
+            "priceText": "7,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "초코라떼(L)",
+            "price": 5500,
+            "priceText": "5,500원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "녹차라떼(L)",
+            "price": 5500,
+            "priceText": "5,500원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "Royal밀크티라떼(L)",
+            "price": 6000,
+            "priceText": "6,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "아메리카노(L)",
+            "price": 4500,
+            "priceText": "4,500원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "L : 카페라떼",
+            "price": 5000,
+            "priceText": "5,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "L : 카라멜마끼아또",
+            "price": 5500,
+            "priceText": "5,500원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "L : 바닐라라떼",
+            "price": 5500,
+            "priceText": "5,500원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "L : 카페모카",
+            "price": 5500,
+            "priceText": "5,500원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "L : 민트모카라떼",
+            "price": 5500,
+            "priceText": "5,500원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "돌체크림라떼_(Only Ice)(L)",
+            "price": 6000,
+            "priceText": "6,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "코코넛크림라떼(L)",
+            "price": 6000,
+            "priceText": "6,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "별별라떼 (Only ICE)(L)",
+            "price": 5500,
+            "priceText": "5,500원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "블루카페라떼 (Only ICE)(L)",
+            "price": 5500,
+            "priceText": "5,500원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "샷 아이스티(L)",
+            "price": 5000,
+            "priceText": "5,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "샷 페퍼민트티 (Only ICE)(L)",
+            "price": 5000,
+            "priceText": "5,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "샷 녹차라떼 (Only ICE)(L)",
+            "price": 6000,
+            "priceText": "6,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "뿌링클호떡",
+            "price": 4500,
+            "priceText": "4,500원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "누텔라호떡",
+            "price": 4500,
+            "priceText": "4,500원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "꿀치즈호떡",
+            "price": 4500,
+            "priceText": "4,500원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "아이스호떡",
+            "price": 4500,
+            "priceText": "4,500원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "아이스누텔라호떡",
+            "price": 6000,
+            "priceText": "6,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "플레인요거트스무디(L)(L)",
+            "price": 6500,
+            "priceText": "6,500원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "말차쿠키스무디(L)",
+            "price": 6500,
+            "priceText": "6,500원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "민트쿠키스무디(L)",
+            "price": 6000,
+            "priceText": "6,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "쿠키&크림스무디(L)",
+            "price": 6000,
+            "priceText": "6,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "요거트 팜(palm) 스무디(L)",
+            "price": 6000,
+            "priceText": "6,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "코코넛스무디(L)",
+            "price": 6000,
+            "priceText": "6,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "코코넛카페스무디(L)",
+            "price": 6500,
+            "priceText": "6,500원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "코코넛초코스무디(L)",
+            "price": 6500,
+            "priceText": "6,500원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "코코넛딸기스무디(L)",
+            "price": 6500,
+            "priceText": "6,500원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "리얼초코칩스무디(L)",
+            "price": 6000,
+            "priceText": "6,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "모히또톡톡(L)",
+            "price": 5500,
+            "priceText": "5,500원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "레몬톡톡(L)",
+            "price": 5500,
+            "priceText": "5,500원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "블루레몬톡톡(L)",
+            "price": 5500,
+            "priceText": "5,500원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "자몽톡톡(L)",
+            "price": 5500,
+            "priceText": "5,500원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "오렌지톡톡(L)",
+            "price": 5500,
+            "priceText": "5,500원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "딸기톡톡(L)",
+            "price": 5500,
+            "priceText": "5,500원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "아이스티(L)",
+            "price": 4500,
+            "priceText": "4,500원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "과일티(L)",
+            "price": 5000,
+            "priceText": "5,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "허브티(L)",
+            "price": 4500,
+            "priceText": "4,500원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          }
+        ],
+        "lastVerifiedAt": "2026-09-18",
+        "distanceInMeters": null,
+        "walkTimeInMinutes": null,
+        "pathCoordinates": []
+      },
+      "basicCheck": {
+        "id": 1009846997,
+        "result": "네이버 지역검색과 매장 원문의 상호·주소 대조",
+        "checkedAt": "2026-09-17T15:09:13.989Z",
+        "candidate": {
+          "name": "삼맛카페",
+          "nameEqual": true,
+          "addressEqual": true,
+          "roadAddress": "세종특별자치시 조치원읍 모과나무길 34",
+          "address": "세종특별자치시 조치원읍 서창리 221",
+          "category": "음식점>카페,디저트",
+          "x": 127.2847835,
+          "y": 36.6082136,
+          "distanceMeters": 0
+        }
+      },
+      "detailCheck": {
+        "id": 1009846997,
+        "url": "https://m.place.naver.com/restaurant/1009846997/home",
+        "checkedAt": "2026-09-17T15:21:26.455Z",
+        "pageStatus": "available",
+        "placeName": "삼맛카페",
+        "roadAddressName": "세종특별자치시 조치원읍 모과나무길 34",
+        "phone": "044-868-1128",
+        "openingHours": {
+          "monday": {
+            "isClosed": false,
+            "open": "11:00",
+            "close": "24:00",
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": null
+          },
+          "tuesday": {
+            "isClosed": false,
+            "open": "11:00",
+            "close": "24:00",
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": null
+          },
+          "wednesday": {
+            "isClosed": false,
+            "open": "11:00",
+            "close": "24:00",
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": null
+          },
+          "thursday": {
+            "isClosed": false,
+            "open": "11:00",
+            "close": "24:00",
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": null
+          },
+          "friday": {
+            "isClosed": false,
+            "open": "11:00",
+            "close": "24:00",
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": null
+          },
+          "saturday": {
+            "isClosed": false,
+            "open": "11:00",
+            "close": "24:00",
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": null
+          },
+          "sunday": {
+            "isClosed": false,
+            "open": "11:00",
+            "close": "24:00",
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": null
+          }
+        },
+        "regularHolidays": [],
+        "closedDates": [],
+        "specialHours": []
+      },
+      "menuCheck": {
+        "sourceId": 1009846997,
+        "url": "https://m.place.naver.com/restaurant/1009846997/menu/list",
+        "checkedAt": "2026-09-18",
+        "note": "메뉴 탭의 모든 더보기 항목을 펼침. 대표 메뉴의 중복 노출을 제외한 배달 메뉴 59개. 방문 가격은 별도 미확인."
+      },
+      "sameAddressSourceIds": [],
+      "evidence": {
+        "searchQuery": "세종 조치원 모과나무길 음식점",
+        "searchCheckedAt": "2026-09-17T15:09:13.989Z",
+        "detailCheckedAt": "2026-09-17T15:21:26.455Z",
+        "sourceUrl": "https://m.place.naver.com/restaurant/1009846997/home",
+        "note": "메뉴 탭의 모든 더보기 항목을 펼침. 대표 메뉴의 중복 노출을 제외한 배달 메뉴 59개. 방문 가격은 별도 미확인."
+      }
+    },
+    {
+      "source": {
+        "id": 1569309522,
+        "placeName": "샐러디아 조치원점",
+        "phone": "0507-1371-3228",
+        "roadAddressName": "세종특별자치시 조치원읍 모과나무길 15 1층",
+        "placeUrl": "https://m.place.naver.com/restaurant/1569309522/home",
+        "x": 127.2861642,
+        "y": 36.6072464,
+        "mainCategory": "다이어트,샐러드",
+        "zoneId": "front-gate",
+        "zoneName": "고대앞",
+        "openingHours": {
+          "monday": {
+            "isClosed": false,
+            "open": "10:30",
+            "close": "20:00",
+            "breakTimes": [],
+            "lastOrder": "19:40",
+            "note": null
+          },
+          "tuesday": {
+            "isClosed": false,
+            "open": "10:30",
+            "close": "20:00",
+            "breakTimes": [],
+            "lastOrder": "19:40",
+            "note": null
+          },
+          "wednesday": {
+            "isClosed": false,
+            "open": "10:30",
+            "close": "20:00",
+            "breakTimes": [],
+            "lastOrder": "19:40",
+            "note": null
+          },
+          "thursday": {
+            "isClosed": false,
+            "open": "10:30",
+            "close": "20:00",
+            "breakTimes": [],
+            "lastOrder": "19:40",
+            "note": null
+          },
+          "friday": {
+            "isClosed": false,
+            "open": "10:30",
+            "close": "20:00",
+            "breakTimes": [],
+            "lastOrder": "19:40",
+            "note": null
+          },
+          "saturday": {
+            "isClosed": true,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "매주 토요일 휴무"
+          },
+          "sunday": {
+            "isClosed": false,
+            "open": "11:00",
+            "close": "20:00",
+            "breakTimes": [],
+            "lastOrder": "19:40",
+            "note": null
+          }
+        },
+        "regularHolidays": [
+          "매주 토요일 휴무"
+        ],
+        "businessHoursNotice": null,
+        "menus": [
+          {
+            "category": null,
+            "name": "[신선함가득] 그린 샐러드 빅볼",
+            "price": 6900,
+            "priceText": "6,900원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "unconfirmed"
+          }
+        ],
+        "lastVerifiedAt": "2026-09-18",
+        "distanceInMeters": null,
+        "walkTimeInMinutes": null,
+        "pathCoordinates": []
+      },
+      "basicCheck": {
+        "id": 1569309522,
+        "result": "네이버 지역검색과 매장 원문의 상호·주소 대조",
+        "checkedAt": "2026-09-17T15:09:13.989Z",
+        "candidate": {
+          "name": "샐러디아 조치원점",
+          "nameEqual": true,
+          "addressEqual": true,
+          "roadAddress": "세종특별자치시 조치원읍 모과나무길 15 1층",
+          "address": "세종특별자치시 조치원읍 서창리 134-4 1층",
+          "category": "음식점>도시락,컵밥>다이어트,샐러드",
+          "x": 127.2861642,
+          "y": 36.6072464,
+          "distanceMeters": 0
+        }
+      },
+      "detailCheck": {
+        "id": 1569309522,
+        "url": "https://m.place.naver.com/restaurant/1569309522/home",
+        "checkedAt": "2026-09-17T15:21:26.455Z",
+        "pageStatus": "available",
+        "placeName": "샐러디아 조치원점",
+        "roadAddressName": "세종특별자치시 조치원읍 모과나무길 15 1층",
+        "phone": "0507-1371-3228",
+        "openingHours": {
+          "monday": {
+            "isClosed": false,
+            "open": "10:30",
+            "close": "20:00",
+            "breakTimes": [],
+            "lastOrder": "19:40",
+            "note": null
+          },
+          "tuesday": {
+            "isClosed": false,
+            "open": "10:30",
+            "close": "20:00",
+            "breakTimes": [],
+            "lastOrder": "19:40",
+            "note": null
+          },
+          "wednesday": {
+            "isClosed": false,
+            "open": "10:30",
+            "close": "20:00",
+            "breakTimes": [],
+            "lastOrder": "19:40",
+            "note": null
+          },
+          "thursday": {
+            "isClosed": false,
+            "open": "10:30",
+            "close": "20:00",
+            "breakTimes": [],
+            "lastOrder": "19:40",
+            "note": null
+          },
+          "friday": {
+            "isClosed": false,
+            "open": "10:30",
+            "close": "20:00",
+            "breakTimes": [],
+            "lastOrder": "19:40",
+            "note": null
+          },
+          "saturday": {
+            "isClosed": true,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "매주 토요일 휴무"
+          },
+          "sunday": {
+            "isClosed": false,
+            "open": "11:00",
+            "close": "20:00",
+            "breakTimes": [],
+            "lastOrder": "19:40",
+            "note": null
+          }
+        },
+        "regularHolidays": [
+          "매주 토요일 휴무"
+        ],
+        "closedDates": [],
+        "specialHours": []
+      },
+      "menuCheck": {
+        "sourceId": 1569309522,
+        "url": "https://m.place.naver.com/restaurant/1569309522/menu/list",
+        "checkedAt": "2026-09-18",
+        "note": "현재 메뉴 탭에 직접 공개된 1개 항목 확인. 별도 주문 화면의 메뉴는 수집하지 않음."
+      },
+      "sameAddressSourceIds": [
+        1755212465
+      ],
+      "evidence": {
+        "searchQuery": "세종 조치원 모과나무길 음식점",
+        "searchCheckedAt": "2026-09-17T15:09:13.989Z",
+        "detailCheckedAt": "2026-09-17T15:21:26.455Z",
+        "sourceUrl": "https://m.place.naver.com/restaurant/1569309522/home",
+        "note": "현재 메뉴 탭에 직접 공개된 1개 항목 확인. 별도 주문 화면의 메뉴는 수집하지 않음."
+      }
+    },
+    {
+      "source": {
+        "id": 1443057439,
+        "placeName": "진한수육국밥 고대점",
+        "phone": null,
+        "roadAddressName": "세종특별자치시 조치원읍 모과나무길 38",
+        "placeUrl": "https://m.place.naver.com/restaurant/1443057439/home",
+        "x": 127.2843643,
+        "y": 36.6082977,
+        "mainCategory": "국밥",
+        "zoneId": "front-gate",
+        "zoneName": "고대앞",
+        "openingHours": {
+          "monday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "tuesday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "wednesday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "thursday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "friday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "saturday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "sunday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          }
+        },
+        "regularHolidays": [],
+        "businessHoursNotice": null,
+        "menus": [
+          {
+            "category": null,
+            "name": "수육국밥",
+            "price": 7000,
+            "priceText": "7,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "unconfirmed"
+          },
+          {
+            "category": null,
+            "name": "수육국밥 특",
+            "price": 8000,
+            "priceText": "8,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "unconfirmed"
+          },
+          {
+            "category": null,
+            "name": "순대국밥",
+            "price": 7000,
+            "priceText": "7,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "unconfirmed"
+          },
+          {
+            "category": null,
+            "name": "순대국밥 특",
+            "price": 8000,
+            "priceText": "8,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "unconfirmed"
+          },
+          {
+            "category": null,
+            "name": "얼큰수육국밥",
+            "price": 8000,
+            "priceText": "8,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "unconfirmed"
+          },
+          {
+            "category": null,
+            "name": "얼큰순대국밥",
+            "price": 8000,
+            "priceText": "8,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "unconfirmed"
+          },
+          {
+            "category": null,
+            "name": "수육우거지국밥",
+            "price": 8000,
+            "priceText": "8,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "unconfirmed"
+          },
+          {
+            "category": null,
+            "name": "수육순두부국밥",
+            "price": 8000,
+            "priceText": "8,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "unconfirmed"
+          },
+          {
+            "category": null,
+            "name": "얼큰수육우동면",
+            "price": 8000,
+            "priceText": "8,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "unconfirmed"
+          },
+          {
+            "category": null,
+            "name": "갈비만두",
+            "price": 5000,
+            "priceText": "5,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "unconfirmed"
+          },
+          {
+            "category": null,
+            "name": "라면사리",
+            "price": 1000,
+            "priceText": "1,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "unconfirmed"
+          },
+          {
+            "category": null,
+            "name": "순대내장탕",
+            "price": 8000,
+            "priceText": "8,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "unconfirmed"
+          },
+          {
+            "category": null,
+            "name": "제육정식",
+            "price": 8000,
+            "priceText": "8,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "unconfirmed"
+          },
+          {
+            "category": null,
+            "name": "마파두부덮밥",
+            "price": 7000,
+            "priceText": "7,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "unconfirmed"
+          },
+          {
+            "category": null,
+            "name": "보쌈정식",
+            "price": 8000,
+            "priceText": "8,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "unconfirmed"
+          },
+          {
+            "category": null,
+            "name": "닭곰탕",
+            "price": 7000,
+            "priceText": "7,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "unconfirmed"
+          },
+          {
+            "category": null,
+            "name": "닭개장",
+            "price": 7000,
+            "priceText": "7,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "unconfirmed"
+          },
+          {
+            "category": null,
+            "name": "얼큰닭개장",
+            "price": 8000,
+            "priceText": "8,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "unconfirmed"
+          },
+          {
+            "category": null,
+            "name": "제육덮밥",
+            "price": 7000,
+            "priceText": "7,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "unconfirmed"
+          },
+          {
+            "category": null,
+            "name": "생고기김치찌개",
+            "price": 7000,
+            "priceText": "7,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "unconfirmed"
+          },
+          {
+            "category": null,
+            "name": "수육부대찌개",
+            "price": 7000,
+            "priceText": "7,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "unconfirmed"
+          },
+          {
+            "category": null,
+            "name": "뚝배기불고기",
+            "price": 7000,
+            "priceText": "7,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "unconfirmed"
+          },
+          {
+            "category": null,
+            "name": "토종순대",
+            "price": 8000,
+            "priceText": "8,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "unconfirmed"
+          },
+          {
+            "category": null,
+            "name": "토종순대 특",
+            "price": 12000,
+            "priceText": "12,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "unconfirmed"
+          },
+          {
+            "category": null,
+            "name": "야채비빔밥",
+            "price": 6500,
+            "priceText": "6,500원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "unconfirmed"
+          },
+          {
+            "category": null,
+            "name": "제육비빔밥",
+            "price": 7000,
+            "priceText": "7,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "unconfirmed"
+          },
+          {
+            "category": null,
+            "name": "삼겹비빔밥",
+            "price": 7500,
+            "priceText": "7,500원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "unconfirmed"
+          },
+          {
+            "category": null,
+            "name": "소불고기비빔밥",
+            "price": 7000,
+            "priceText": "7,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "unconfirmed"
+          },
+          {
+            "category": null,
+            "name": "소불고기냉면(계절)",
+            "price": 7000,
+            "priceText": "7,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "unconfirmed"
+          }
+        ],
+        "lastVerifiedAt": "2026-09-18",
+        "distanceInMeters": null,
+        "walkTimeInMinutes": null,
+        "pathCoordinates": []
+      },
+      "basicCheck": {
+        "id": 1443057439,
+        "result": "네이버 지역검색과 매장 원문의 상호·주소 대조",
+        "checkedAt": "2026-09-17T15:09:13.989Z",
+        "candidate": {
+          "name": "진한수육국밥 고대점",
+          "nameEqual": true,
+          "addressEqual": true,
+          "roadAddress": "세종특별자치시 조치원읍 모과나무길 38",
+          "address": "세종특별자치시 조치원읍 서창리 223-6",
+          "category": "한식>국밥",
+          "x": 127.2843643,
+          "y": 36.6082977,
+          "distanceMeters": 0
+        }
+      },
+      "detailCheck": {
+        "id": 1443057439,
+        "url": "https://m.place.naver.com/restaurant/1443057439/home",
+        "checkedAt": "2026-09-17T15:21:26.455Z",
+        "pageStatus": "available",
+        "placeName": "진한수육국밥 고대점",
+        "roadAddressName": "세종특별자치시 조치원읍 모과나무길 38",
+        "openingHours": {
+          "monday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "tuesday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "wednesday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "thursday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "friday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "saturday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "sunday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          }
+        },
+        "regularHolidays": [],
+        "closedDates": [],
+        "specialHours": []
+      },
+      "menuCheck": {
+        "sourceId": 1443057439,
+        "url": "https://m.place.naver.com/restaurant/1443057439/menu/list",
+        "checkedAt": "2026-09-18",
+        "note": "현재 네이버 메뉴 탭을 확인함. 더보기 항목은 모두 펼치고 대표 메뉴의 중복 노출은 제외함."
+      },
+      "sameAddressSourceIds": [
+        1187177881,
+        1560158998,
+        1151926386
+      ],
+      "evidence": {
+        "searchQuery": "세종 조치원 모과나무길 음식점",
+        "searchCheckedAt": "2026-09-17T15:09:13.989Z",
+        "detailCheckedAt": "2026-09-17T15:21:26.455Z",
+        "sourceUrl": "https://m.place.naver.com/restaurant/1443057439/home",
+        "note": null
+      }
+    },
+    {
+      "source": {
+        "id": 36522746,
+        "placeName": "쌍둥이식당",
+        "phone": "044-865-0216",
+        "roadAddressName": "세종특별자치시 조치원읍 모과나무길 32-6",
+        "placeUrl": "https://m.place.naver.com/restaurant/36522746/home",
+        "x": 127.2854515,
+        "y": 36.6081273,
+        "mainCategory": "한식",
+        "zoneId": "front-gate",
+        "zoneName": "고대앞",
+        "openingHours": {
+          "monday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "tuesday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "wednesday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "thursday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "friday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "saturday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "sunday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          }
+        },
+        "regularHolidays": [],
+        "businessHoursNotice": null,
+        "menus": [
+          {
+            "category": null,
+            "name": "참치덮밥",
+            "price": 9000,
+            "priceText": "9,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "제육덮밥",
+            "price": 9000,
+            "priceText": "9,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "묵은지김치고기찜",
+            "price": 10000,
+            "priceText": "10,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "육개장",
+            "price": 9000,
+            "priceText": "9,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "갈비탕",
+            "price": 9500,
+            "priceText": "9,500원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "내장탕",
+            "price": 9500,
+            "priceText": "9,500원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "돼지간장불고기",
+            "price": 9000,
+            "priceText": "9,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "콜라",
+            "price": 2500,
+            "priceText": "2,500원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "사이다",
+            "price": 2500,
+            "priceText": "2,500원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "돈까스(1)",
+            "price": 6000,
+            "priceText": "6,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "김치 햄 찌게(1)",
+            "price": 10000,
+            "priceText": "10,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "순두부육개장(1)",
+            "price": 9900,
+            "priceText": "9,900원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "돼지국밥",
+            "price": 9000,
+            "priceText": "9,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "비빔밥",
+            "price": 9000,
+            "priceText": "9,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "제육비빔밥",
+            "price": 9900,
+            "priceText": "9,900원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "공기밥",
+            "price": 1000,
+            "priceText": "1,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          }
+        ],
+        "lastVerifiedAt": "2026-09-18",
+        "distanceInMeters": null,
+        "walkTimeInMinutes": null,
+        "pathCoordinates": []
+      },
+      "basicCheck": {
+        "id": 36522746,
+        "result": "네이버 지역검색과 매장 원문의 상호·주소 대조",
+        "checkedAt": "2026-09-17T15:09:13.989Z",
+        "candidate": {
+          "name": "쌍둥이식당",
+          "nameEqual": true,
+          "addressEqual": true,
+          "roadAddress": "세종특별자치시 조치원읍 모과나무길 32-6",
+          "address": "세종특별자치시 조치원읍 서창리 218-5",
+          "category": "음식점>한식",
+          "x": 127.2854515,
+          "y": 36.6081273,
+          "distanceMeters": 0
+        }
+      },
+      "detailCheck": {
+        "id": 36522746,
+        "url": "https://m.place.naver.com/restaurant/36522746/home",
+        "checkedAt": "2026-09-17T15:21:26.455Z",
+        "pageStatus": "available",
+        "placeName": "쌍둥이식당",
+        "roadAddressName": "세종특별자치시 조치원읍 모과나무길 32-6",
+        "phone": "044-865-0216",
+        "openingHours": {
+          "monday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "tuesday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "wednesday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "thursday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "friday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "saturday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "sunday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          }
+        },
+        "regularHolidays": [],
+        "closedDates": [],
+        "specialHours": []
+      },
+      "menuCheck": {
+        "sourceId": 36522746,
+        "url": "https://m.place.naver.com/restaurant/36522746/menu/list",
+        "checkedAt": "2026-09-18",
+        "note": "현재 네이버 메뉴 탭을 확인함. 더보기 항목은 모두 펼치고 대표 메뉴의 중복 노출은 제외함."
+      },
+      "sameAddressSourceIds": [],
+      "evidence": {
+        "searchQuery": "세종 조치원 모과나무길 음식점",
+        "searchCheckedAt": "2026-09-17T15:09:13.989Z",
+        "detailCheckedAt": "2026-09-17T15:21:26.455Z",
+        "sourceUrl": "https://m.place.naver.com/restaurant/36522746/home",
+        "note": null
+      }
+    },
+    {
+      "source": {
+        "id": 1755212465,
+        "placeName": "카페 솔드아웃",
+        "phone": null,
+        "roadAddressName": "세종특별자치시 조치원읍 모과나무길 15 1층(포스타)",
+        "placeUrl": "https://m.place.naver.com/restaurant/1755212465/home",
+        "x": 127.2861768,
+        "y": 36.6072316,
+        "mainCategory": "카페,디저트",
+        "zoneId": "front-gate",
+        "zoneName": "고대앞",
+        "openingHours": {
+          "monday": {
+            "isClosed": false,
+            "open": "11:00",
+            "close": "22:00",
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": null
+          },
+          "tuesday": {
+            "isClosed": false,
+            "open": "11:00",
+            "close": "22:00",
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": null
+          },
+          "wednesday": {
+            "isClosed": false,
+            "open": "11:00",
+            "close": "22:00",
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": null
+          },
+          "thursday": {
+            "isClosed": false,
+            "open": "11:00",
+            "close": "22:00",
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": null
+          },
+          "friday": {
+            "isClosed": false,
+            "open": "11:00",
+            "close": "22:00",
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": null
+          },
+          "saturday": {
+            "isClosed": false,
+            "open": "11:00",
+            "close": "22:00",
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": null
+          },
+          "sunday": {
+            "isClosed": false,
+            "open": "11:00",
+            "close": "22:00",
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": null
+          }
+        },
+        "regularHolidays": [],
+        "businessHoursNotice": null,
+        "menus": [],
+        "lastVerifiedAt": "2026-09-18",
+        "distanceInMeters": null,
+        "walkTimeInMinutes": null,
+        "pathCoordinates": []
+      },
+      "basicCheck": {
+        "id": 1755212465,
+        "result": "네이버 지역검색과 매장 원문의 상호·주소 대조",
+        "checkedAt": "2026-09-17T15:09:13.989Z",
+        "candidate": {
+          "name": "카페 솔드아웃",
+          "nameEqual": true,
+          "addressEqual": true,
+          "roadAddress": "세종특별자치시 조치원읍 모과나무길 15 1층(포스타)",
+          "address": "세종특별자치시 조치원읍 서창리 134-4 1층(포스타)",
+          "category": "음식점>카페,디저트",
+          "x": 127.2861768,
+          "y": 36.6072316,
+          "distanceMeters": 0
+        }
+      },
+      "detailCheck": {
+        "id": 1755212465,
+        "url": "https://m.place.naver.com/restaurant/1755212465/home",
+        "checkedAt": "2026-09-17T15:21:26.455Z",
+        "pageStatus": "available",
+        "placeName": "카페 솔드아웃",
+        "roadAddressName": "세종특별자치시 조치원읍 모과나무길 15 1층(포스타)",
+        "openingHours": {
+          "monday": {
+            "isClosed": false,
+            "open": "11:00",
+            "close": "22:00",
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": null
+          },
+          "tuesday": {
+            "isClosed": false,
+            "open": "11:00",
+            "close": "22:00",
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": null
+          },
+          "wednesday": {
+            "isClosed": false,
+            "open": "11:00",
+            "close": "22:00",
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": null
+          },
+          "thursday": {
+            "isClosed": false,
+            "open": "11:00",
+            "close": "22:00",
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": null
+          },
+          "friday": {
+            "isClosed": false,
+            "open": "11:00",
+            "close": "22:00",
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": null
+          },
+          "saturday": {
+            "isClosed": false,
+            "open": "11:00",
+            "close": "22:00",
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": null
+          },
+          "sunday": {
+            "isClosed": false,
+            "open": "11:00",
+            "close": "22:00",
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": null
+          }
+        },
+        "regularHolidays": [],
+        "closedDates": [],
+        "specialHours": []
+      },
+      "menuCheck": {
+        "sourceId": 1755212465,
+        "url": "https://m.place.naver.com/restaurant/1755212465/menu/list",
+        "checkedAt": "2026-09-18",
+        "note": "현재 네이버 원문에 메뉴 탭과 전화번호가 없음. 다른 상호의 메뉴·전화번호를 가져오지 않음."
+      },
+      "sameAddressSourceIds": [
+        1569309522
+      ],
+      "evidence": {
+        "searchQuery": "세종 조치원 모과나무길 음식점",
+        "searchCheckedAt": "2026-09-17T15:09:13.989Z",
+        "detailCheckedAt": "2026-09-17T15:21:26.455Z",
+        "sourceUrl": "https://m.place.naver.com/restaurant/1755212465/home",
+        "note": "현재 네이버 원문에 메뉴 탭과 전화번호가 없음. 다른 상호의 메뉴·전화번호를 가져오지 않음."
+      }
+    },
+    {
+      "source": {
+        "id": 17546601,
+        "placeName": "호랑이와 곶감마차",
+        "phone": "0507-1402-2259",
+        "roadAddressName": "세종특별자치시 조치원읍 모과나무길 31",
+        "placeUrl": "https://m.place.naver.com/restaurant/17546601/home",
+        "x": 127.2849964,
+        "y": 36.608019,
+        "mainCategory": "해물,생선요리",
+        "zoneId": "front-gate",
+        "zoneName": "고대앞",
+        "openingHours": {
+          "monday": {
+            "isClosed": false,
+            "open": "10:30",
+            "close": "23:00",
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": null
+          },
+          "tuesday": {
+            "isClosed": false,
+            "open": "10:30",
+            "close": "23:00",
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": null
+          },
+          "wednesday": {
+            "isClosed": false,
+            "open": "10:30",
+            "close": "23:00",
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": null
+          },
+          "thursday": {
+            "isClosed": false,
+            "open": "10:30",
+            "close": "23:00",
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": null
+          },
+          "friday": {
+            "isClosed": false,
+            "open": "10:30",
+            "close": "23:00",
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": null
+          },
+          "saturday": {
+            "isClosed": false,
+            "open": "10:30",
+            "close": "23:00",
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": null
+          },
+          "sunday": {
+            "isClosed": false,
+            "open": "10:30",
+            "close": "23:00",
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": null
+          }
+        },
+        "regularHolidays": [
+          "전화 예약 부탁드립니다."
+        ],
+        "businessHoursNotice": null,
+        "menus": [
+          {
+            "category": null,
+            "name": "양푼제육덮밥",
+            "price": 6000,
+            "priceText": "6,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "unconfirmed"
+          },
+          {
+            "category": null,
+            "name": "양푼제육덮밥(학생현금)",
+            "price": 5000,
+            "priceText": "5,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "unconfirmed"
+          },
+          {
+            "category": null,
+            "name": "주물럭된장",
+            "price": 7000,
+            "priceText": "7,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "unconfirmed"
+          },
+          {
+            "category": null,
+            "name": "새조개샤브샤브",
+            "price": null,
+            "priceText": "가격 변동",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "unconfirmed"
+          },
+          {
+            "category": null,
+            "name": "쭈꾸미샤브샤브",
+            "price": null,
+            "priceText": "가격 변동",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "unconfirmed"
+          }
+        ],
+        "lastVerifiedAt": "2026-09-18",
+        "distanceInMeters": null,
+        "walkTimeInMinutes": null,
+        "pathCoordinates": []
+      },
+      "basicCheck": {
+        "id": 17546601,
+        "result": "네이버 지역검색과 매장 원문의 상호·주소 대조",
+        "checkedAt": "2026-09-17T15:10:41.022Z",
+        "candidate": {
+          "name": "호랑이와 곶감마차",
+          "nameEqual": true,
+          "addressEqual": true,
+          "roadAddress": "세종특별자치시 조치원읍 모과나무길 31",
+          "address": "세종특별자치시 조치원읍 서창리 239",
+          "category": "한식>해물,생선요리",
+          "x": 127.2849964,
+          "y": 36.608019,
+          "distanceMeters": 0
+        }
+      },
+      "detailCheck": {
+        "id": 17546601,
+        "url": "https://m.place.naver.com/restaurant/17546601/home",
+        "checkedAt": "2026-09-17T15:21:26.455Z",
+        "pageStatus": "available",
+        "placeName": "호랑이와 곶감마차",
+        "roadAddressName": "세종특별자치시 조치원읍 모과나무길 31",
+        "phone": "0507-1402-2259",
+        "openingHours": {
+          "monday": {
+            "isClosed": false,
+            "open": "10:30",
+            "close": "23:00",
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": null
+          },
+          "tuesday": {
+            "isClosed": false,
+            "open": "10:30",
+            "close": "23:00",
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": null
+          },
+          "wednesday": {
+            "isClosed": false,
+            "open": "10:30",
+            "close": "23:00",
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": null
+          },
+          "thursday": {
+            "isClosed": false,
+            "open": "10:30",
+            "close": "23:00",
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": null
+          },
+          "friday": {
+            "isClosed": false,
+            "open": "10:30",
+            "close": "23:00",
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": null
+          },
+          "saturday": {
+            "isClosed": false,
+            "open": "10:30",
+            "close": "23:00",
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": null
+          },
+          "sunday": {
+            "isClosed": false,
+            "open": "10:30",
+            "close": "23:00",
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": null
+          }
+        },
+        "regularHolidays": [
+          "전화 예약 부탁드립니다."
+        ],
+        "closedDates": [],
+        "specialHours": []
+      },
+      "menuCheck": {
+        "sourceId": 17546601,
+        "url": "https://m.place.naver.com/restaurant/17546601/menu/list",
+        "checkedAt": "2026-09-18",
+        "note": "현재 네이버 메뉴 탭을 확인함. 더보기 항목은 모두 펼치고 대표 메뉴의 중복 노출은 제외함."
+      },
+      "sameAddressSourceIds": [],
+      "evidence": {
+        "searchQuery": "조치원 호랑이와 곶감마차",
+        "searchCheckedAt": "2026-09-17T15:10:41.022Z",
+        "detailCheckedAt": "2026-09-17T15:21:26.455Z",
+        "sourceUrl": "https://m.place.naver.com/restaurant/17546601/home",
+        "note": null
+      }
+    },
+    {
+      "source": {
+        "id": 1187177881,
+        "placeName": "엄마에 집밥도시락",
+        "phone": "044-862-4013",
+        "roadAddressName": "세종특별자치시 조치원읍 모과나무길 38",
+        "placeUrl": "https://m.place.naver.com/restaurant/1187177881/home",
+        "x": 127.2843255,
+        "y": 36.6083481,
+        "mainCategory": "한식",
+        "zoneId": "front-gate",
+        "zoneName": "고대앞",
+        "openingHours": {
+          "monday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "tuesday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "wednesday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "thursday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "friday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "saturday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "sunday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          }
+        },
+        "regularHolidays": [],
+        "businessHoursNotice": null,
+        "menus": [
+          {
+            "category": null,
+            "name": "삼겹제육도시락",
+            "price": 10000,
+            "priceText": "10,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "소불고기도시락",
+            "price": 10000,
+            "priceText": "10,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "보쌈도시락",
+            "price": 10000,
+            "priceText": "10,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "오리훈제도시락",
+            "price": 10000,
+            "priceText": "10,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "프리미엄도시락(제육+오리훈제)",
+            "price": 15000,
+            "priceText": "15,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "프리미엄도시락(제육+소불고기)",
+            "price": 15000,
+            "priceText": "15,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "오징어볶음 도시락",
+            "price": 10000,
+            "priceText": "10,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "[비빔밥]제육비빔밥",
+            "price": 9000,
+            "priceText": "9,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "[비빔밥]소불고기비빔밥",
+            "price": 9000,
+            "priceText": "9,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "[비빔밥]낙지비빔밥",
+            "price": 10500,
+            "priceText": "10,500원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "육회비빔밥",
+            "price": 11000,
+            "priceText": "11,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "웰치스포도((355ml))",
+            "price": 2000,
+            "priceText": "2,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "환타파인((355ml))",
+            "price": 2000,
+            "priceText": "2,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "스프라이트((355ml))",
+            "price": 2000,
+            "priceText": "2,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "콜라((355ml))",
+            "price": 2000,
+            "priceText": "2,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "생수((500ml))",
+            "price": 1000,
+            "priceText": "1,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "공기밥",
+            "price": 1000,
+            "priceText": "1,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          }
+        ],
+        "lastVerifiedAt": "2026-09-18",
+        "distanceInMeters": null,
+        "walkTimeInMinutes": null,
+        "pathCoordinates": []
+      },
+      "basicCheck": {
+        "id": 1187177881,
+        "result": "네이버 지역검색과 매장 원문의 상호·주소 대조",
+        "checkedAt": "2026-09-17T15:09:13.970Z",
+        "candidate": {
+          "name": "엄마에 집밥도시락",
+          "nameEqual": true,
+          "addressEqual": true,
+          "roadAddress": "세종특별자치시 조치원읍 모과나무길 38",
+          "address": "세종특별자치시 조치원읍 서창리 223-6",
+          "category": "음식점>한식",
+          "x": 127.2843255,
+          "y": 36.6083481,
+          "distanceMeters": 0
+        }
+      },
+      "detailCheck": {
+        "id": 1187177881,
+        "url": "https://m.place.naver.com/restaurant/1187177881/home",
+        "checkedAt": "2026-09-17T15:21:26.455Z",
+        "pageStatus": "available",
+        "placeName": "엄마에 집밥도시락",
+        "roadAddressName": "세종특별자치시 조치원읍 모과나무길 38",
+        "phone": "044-862-4013",
+        "openingHours": {
+          "monday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "tuesday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "wednesday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "thursday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "friday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "saturday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "sunday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          }
+        },
+        "regularHolidays": [],
+        "closedDates": [],
+        "specialHours": []
+      },
+      "menuCheck": {
+        "sourceId": 1187177881,
+        "url": "https://m.place.naver.com/restaurant/1187177881/menu/list",
+        "checkedAt": "2026-09-18",
+        "note": "현재 네이버 메뉴 탭을 확인함. 더보기 항목은 모두 펼치고 대표 메뉴의 중복 노출은 제외함."
+      },
+      "sameAddressSourceIds": [
+        1443057439,
+        1560158998,
+        1151926386
+      ],
+      "evidence": {
+        "searchQuery": "조치원 엄마에 집밥도시락",
+        "searchCheckedAt": "2026-09-17T15:09:13.970Z",
+        "detailCheckedAt": "2026-09-17T15:21:26.455Z",
+        "sourceUrl": "https://m.place.naver.com/restaurant/1187177881/home",
+        "note": null
+      }
+    },
+    {
+      "source": {
+        "id": 1560158998,
+        "placeName": "순수덮밥 조치원점",
+        "phone": "044-862-4013",
+        "roadAddressName": "세종특별자치시 조치원읍 모과나무길 38",
+        "placeUrl": "https://m.place.naver.com/restaurant/1560158998/home",
+        "x": 127.2843309,
+        "y": 36.6083188,
+        "mainCategory": "도시락,컵밥",
+        "zoneId": "front-gate",
+        "zoneName": "고대앞",
+        "openingHours": {
+          "monday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "tuesday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "wednesday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "thursday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "friday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "saturday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "sunday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          }
+        },
+        "regularHolidays": [],
+        "businessHoursNotice": null,
+        "menus": [],
+        "lastVerifiedAt": "2026-09-18",
+        "distanceInMeters": null,
+        "walkTimeInMinutes": null,
+        "pathCoordinates": []
+      },
+      "basicCheck": {
+        "id": 1560158998,
+        "result": "네이버 지역검색과 매장 원문의 상호·주소 대조",
+        "checkedAt": "2026-09-17T15:13:54.092Z",
+        "candidate": {
+          "name": "순수덮밥 조치원점",
+          "nameEqual": true,
+          "addressEqual": true,
+          "roadAddress": "세종특별자치시 조치원읍 모과나무길 38",
+          "address": "세종특별자치시 조치원읍 서창리 223-6",
+          "category": "음식점>도시락,컵밥",
+          "x": 127.2843309,
+          "y": 36.6083188,
+          "distanceMeters": 0
+        }
+      },
+      "detailCheck": {
+        "id": 1560158998,
+        "url": "https://m.place.naver.com/restaurant/1560158998/home",
+        "checkedAt": "2026-09-17T15:21:26.455Z",
+        "pageStatus": "available",
+        "placeName": "순수덮밥 조치원점",
+        "roadAddressName": "세종특별자치시 조치원읍 모과나무길 38",
+        "phone": "044-862-4013",
+        "openingHours": {
+          "monday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "tuesday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "wednesday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "thursday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "friday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "saturday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "sunday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          }
+        },
+        "regularHolidays": [],
+        "closedDates": [],
+        "specialHours": []
+      },
+      "menuCheck": {
+        "sourceId": 1560158998,
+        "url": "https://m.place.naver.com/restaurant/1560158998/menu/list",
+        "checkedAt": "2026-09-18",
+        "note": "현재 메뉴는 이미지로만 제공됨. 원문 이미지를 확인했으나 작은 글자·가격을 정확히 판독하지 못한 항목은 입력하지 않음."
+      },
+      "sameAddressSourceIds": [
+        1443057439,
+        1187177881,
+        1151926386
+      ],
+      "evidence": {
+        "searchQuery": "조치원 순수덮밥",
+        "searchCheckedAt": "2026-09-17T15:13:54.092Z",
+        "detailCheckedAt": "2026-09-17T15:21:26.455Z",
+        "sourceUrl": "https://m.place.naver.com/restaurant/1560158998/home",
+        "note": "현재 메뉴는 이미지로만 제공됨. 원문 이미지를 확인했으나 작은 글자·가격을 정확히 판독하지 못한 항목은 입력하지 않음."
+      }
+    },
+    {
+      "source": {
+        "id": 1151926386,
+        "placeName": "삼시세끼 고대점",
+        "phone": null,
+        "roadAddressName": "세종특별자치시 조치원읍 모과나무길 38",
+        "placeUrl": "https://m.place.naver.com/restaurant/1151926386/home",
+        "x": 127.2842902,
+        "y": 36.6083205,
+        "mainCategory": "종합분식",
+        "zoneId": "front-gate",
+        "zoneName": "고대앞",
+        "openingHours": {
+          "monday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "tuesday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "wednesday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "thursday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "friday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "saturday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "sunday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          }
+        },
+        "regularHolidays": [],
+        "businessHoursNotice": null,
+        "menus": [],
+        "lastVerifiedAt": "2026-09-18",
+        "distanceInMeters": null,
+        "walkTimeInMinutes": null,
+        "pathCoordinates": []
+      },
+      "basicCheck": {
+        "id": 1151926386,
+        "result": "네이버 지역검색과 매장 원문의 상호·주소 대조",
+        "checkedAt": "2026-09-17T15:09:13.973Z",
+        "candidate": {
+          "name": "삼시세끼 고대점",
+          "nameEqual": true,
+          "addressEqual": true,
+          "roadAddress": "세종특별자치시 조치원읍 모과나무길 38",
+          "address": "세종특별자치시 조치원읍 서창리 223-6",
+          "category": "분식>종합분식",
+          "x": 127.2842902,
+          "y": 36.6083205,
+          "distanceMeters": 0
+        }
+      },
+      "detailCheck": {
+        "id": 1151926386,
+        "url": "https://m.place.naver.com/restaurant/1151926386/home",
+        "checkedAt": "2026-09-17T15:21:26.455Z",
+        "pageStatus": "available",
+        "placeName": "삼시세끼 고대점",
+        "roadAddressName": "세종특별자치시 조치원읍 모과나무길 38",
+        "openingHours": {
+          "monday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "tuesday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "wednesday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "thursday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "friday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "saturday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "sunday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          }
+        },
+        "regularHolidays": [],
+        "closedDates": [],
+        "specialHours": []
+      },
+      "menuCheck": {
+        "sourceId": 1151926386,
+        "url": "https://m.place.naver.com/restaurant/1151926386/menu/list",
+        "checkedAt": "2026-09-18",
+        "note": "현재 네이버 원문에 영업시간·메뉴·전화번호가 없음."
+      },
+      "sameAddressSourceIds": [
+        1443057439,
+        1187177881,
+        1560158998
+      ],
+      "evidence": {
+        "searchQuery": "조치원 삼시세끼 고대점",
+        "searchCheckedAt": "2026-09-17T15:09:13.973Z",
+        "detailCheckedAt": "2026-09-17T15:21:26.455Z",
+        "sourceUrl": "https://m.place.naver.com/restaurant/1151926386/home",
+        "note": "현재 네이버 원문에 영업시간·메뉴·전화번호가 없음."
+      }
+    },
+    {
+      "source": {
+        "id": 1937093125,
+        "placeName": "조인해장국",
+        "phone": "044-865-7078",
+        "roadAddressName": "세종특별자치시 조치원읍 모과나무2길 2",
+        "placeUrl": "https://m.place.naver.com/restaurant/1937093125/home",
+        "x": 127.2851179,
+        "y": 36.608235,
+        "mainCategory": "감자탕",
+        "zoneId": "front-gate",
+        "zoneName": "고대앞",
+        "openingHours": {
+          "monday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "tuesday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "wednesday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "thursday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "friday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "saturday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "sunday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          }
+        },
+        "regularHolidays": [],
+        "businessHoursNotice": null,
+        "menus": [
+          {
+            "category": null,
+            "name": "감자탕(공기밥별도)(大)",
+            "price": 35000,
+            "priceText": "35,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "감자탕(공기밥별도)(中)",
+            "price": 30000,
+            "priceText": "30,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "감자탕(공기밥별도)(小)",
+            "price": 25000,
+            "priceText": "25,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "등뼈해장국",
+            "price": 9000,
+            "priceText": "9,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "순대국밥",
+            "price": 9000,
+            "priceText": "9,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "육개장",
+            "price": 9000,
+            "priceText": "9,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "닭도리탕(공기밥별도)(大)",
+            "price": 35000,
+            "priceText": "35,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "닭도리탕(공기밥별도)(中)",
+            "price": 30000,
+            "priceText": "30,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "내장탕",
+            "price": 9000,
+            "priceText": "9,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "갈비탕",
+            "price": 9000,
+            "priceText": "9,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "뚝배기불고기",
+            "price": 9000,
+            "priceText": "9,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "콩나물 해장국",
+            "price": 9000,
+            "priceText": "9,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "고추장불고기",
+            "price": 9000,
+            "priceText": "9,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "공기밥 추가",
+            "price": 1000,
+            "priceText": "1,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "콜라500ml",
+            "price": 2000,
+            "priceText": "2,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          },
+          {
+            "category": null,
+            "name": "사이다500ml",
+            "price": 2000,
+            "priceText": "2,000원",
+            "description": "",
+            "options": [],
+            "status": "확인",
+            "channel": "delivery"
+          }
+        ],
+        "lastVerifiedAt": "2026-09-18",
+        "distanceInMeters": null,
+        "walkTimeInMinutes": null,
+        "pathCoordinates": []
+      },
+      "basicCheck": {
+        "id": 1937093125,
+        "result": "네이버 지역검색과 매장 원문의 상호·주소 대조",
+        "checkedAt": "2026-09-17T15:10:41.019Z",
+        "candidate": {
+          "name": "조인해장국",
+          "nameEqual": true,
+          "addressEqual": true,
+          "roadAddress": "세종특별자치시 조치원읍 모과나무2길 2",
+          "address": "세종특별자치시 조치원읍 서창리 220-1",
+          "category": "한식>감자탕",
+          "x": 127.2851179,
+          "y": 36.608235,
+          "distanceMeters": 0
+        }
+      },
+      "detailCheck": {
+        "id": 1937093125,
+        "url": "https://m.place.naver.com/restaurant/1937093125/home",
+        "checkedAt": "2026-09-17T15:21:26.455Z",
+        "pageStatus": "available",
+        "placeName": "조인해장국",
+        "roadAddressName": "세종특별자치시 조치원읍 모과나무2길 2",
+        "phone": "044-865-7078",
+        "openingHours": {
+          "monday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "tuesday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "wednesday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "thursday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "friday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "saturday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          },
+          "sunday": {
+            "isClosed": null,
+            "open": null,
+            "close": null,
+            "breakTimes": [],
+            "lastOrder": null,
+            "note": "현재 네이버에서 기본 영업시간 미확인"
+          }
+        },
+        "regularHolidays": [],
+        "closedDates": [],
+        "specialHours": []
+      },
+      "menuCheck": {
+        "sourceId": 1937093125,
+        "url": "https://m.place.naver.com/restaurant/1937093125/menu/list",
+        "checkedAt": "2026-09-18",
+        "note": "현재 네이버 메뉴 탭을 확인함. 더보기 항목은 모두 펼치고 대표 메뉴의 중복 노출은 제외함."
+      },
+      "sameAddressSourceIds": [],
+      "evidence": {
+        "searchQuery": "세종 조치원 모과나무2길 음식점",
+        "searchCheckedAt": "2026-09-17T15:10:41.019Z",
+        "detailCheckedAt": "2026-09-17T15:21:26.455Z",
+        "sourceUrl": "https://m.place.naver.com/restaurant/1937093125/home",
+        "note": null
+      }
+    }
+  ]
+}

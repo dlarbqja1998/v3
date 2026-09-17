@@ -1,0 +1,2487 @@
+{
+  "checkedOn": "2026-09-16",
+  "observations": [
+    {
+      "id": 1931680712,
+      "url": "https://m.place.naver.com/restaurant/1931680712/home",
+      "checkedAt": "2026-09-16T04:50:48.805Z",
+      "pageStatus": "available",
+      "placeName": "청담피자 조치원점",
+      "roadAddressName": "세종 조치원읍 세종로 2282 237호",
+      "phone": "044-864-0609",
+      "openingHours": {
+        "monday": {
+          "isClosed": false,
+          "open": "09:00",
+          "close": "22:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "tuesday": {
+          "isClosed": false,
+          "open": "09:00",
+          "close": "22:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "wednesday": {
+          "isClosed": false,
+          "open": "09:00",
+          "close": "22:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "thursday": {
+          "isClosed": false,
+          "open": "09:00",
+          "close": "22:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "friday": {
+          "isClosed": false,
+          "open": "09:00",
+          "close": "22:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "saturday": {
+          "isClosed": true,
+          "open": null,
+          "close": null,
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": "정기휴무 (매주 토요일)"
+        },
+        "sunday": {
+          "isClosed": false,
+          "open": "11:00",
+          "close": "22:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        }
+      },
+      "regularHolidays": [],
+      "hoursEvidence": [
+        "영업 중 22시 0분에 영업 종료",
+        "수 09:00 - 22:00",
+        "목 09:00 - 22:00",
+        "금 09:00 - 22:00",
+        "토 정기휴무 (매주 토요일)",
+        "일 11:00 - 22:00",
+        "월 09:00 - 22:00",
+        "화 09:00 - 22:00"
+      ]
+    },
+    {
+      "id": 1039093824,
+      "url": "https://m.place.naver.com/restaurant/1039093824/home",
+      "checkedAt": "2026-09-16T04:47:28.361Z",
+      "pageStatus": "available",
+      "placeName": "청담피자 조치원점",
+      "roadAddressName": "세종 조치원읍 세종로 2282 럭스스퀘어 237호",
+      "phone": "044-864-0609",
+      "openingHours": {
+        "monday": {
+          "isClosed": false,
+          "open": null,
+          "close": null,
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": "네이버에서 영업시간 미공개"
+        },
+        "tuesday": {
+          "isClosed": false,
+          "open": null,
+          "close": null,
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": "네이버에서 영업시간 미공개"
+        },
+        "wednesday": {
+          "isClosed": true,
+          "open": null,
+          "close": null,
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": "정기휴무 (매주 수요일)"
+        },
+        "thursday": {
+          "isClosed": false,
+          "open": null,
+          "close": null,
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": "네이버에서 영업시간 미공개"
+        },
+        "friday": {
+          "isClosed": false,
+          "open": null,
+          "close": null,
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": "네이버에서 영업시간 미공개"
+        },
+        "saturday": {
+          "isClosed": false,
+          "open": null,
+          "close": null,
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": "네이버에서 영업시간 미공개"
+        },
+        "sunday": {
+          "isClosed": false,
+          "open": null,
+          "close": null,
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": "네이버에서 영업시간 미공개"
+        }
+      },
+      "regularHolidays": [],
+      "hoursEvidence": [
+        "오늘 휴무 매주 수요일 휴무",
+        "수 정기휴무 (매주 수요일)",
+        "목 정보없음",
+        "금 정보없음",
+        "토 정보없음",
+        "일 정보없음",
+        "월 정보없음",
+        "화 정보없음"
+      ]
+    },
+    {
+      "id": 1737679585,
+      "url": "https://m.place.naver.com/restaurant/1737679585/home",
+      "checkedAt": "2026-09-16T04:29:00.973Z",
+      "pageStatus": "available",
+      "placeName": "서창리181",
+      "roadAddressName": "세종 조치원읍 원마루길 31-5",
+      "phone": "0507-1493-0191"
+    },
+    {
+      "id": 1737991199,
+      "url": "https://m.place.naver.com/restaurant/1737991199/home",
+      "checkedAt": "2026-09-16T04:29:00.973Z",
+      "pageStatus": "available",
+      "placeName": "김밥집",
+      "roadAddressName": "세종 조치원읍 대첩로 11 1층 102호"
+    },
+    {
+      "id": 1318562715,
+      "url": "https://m.place.naver.com/restaurant/1318562715/home",
+      "checkedAt": "2026-09-16T04:29:00.973Z",
+      "pageStatus": "unavailable"
+    },
+    {
+      "id": 1394444205,
+      "url": "https://m.place.naver.com/restaurant/1394444205/home",
+      "checkedAt": "2026-09-16T04:50:53.647Z",
+      "pageStatus": "available",
+      "placeName": "중국집",
+      "roadAddressName": "세종 조치원읍 돌마루1길 2 1층 101호",
+      "phone": "044-868-4404",
+      "openingHours": {
+        "monday": {
+          "isClosed": false,
+          "open": "11:30",
+          "close": "20:00",
+          "breakTimes": [
+            {
+              "start": "14:30",
+              "end": "17:00"
+            }
+          ],
+          "lastOrder": "14:00, 19:30",
+          "note": null
+        },
+        "tuesday": {
+          "isClosed": true,
+          "open": null,
+          "close": null,
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": "정기휴무 (매주 화요일)"
+        },
+        "wednesday": {
+          "isClosed": false,
+          "open": "11:30",
+          "close": "20:00",
+          "breakTimes": [
+            {
+              "start": "14:30",
+              "end": "17:00"
+            }
+          ],
+          "lastOrder": "14:00, 19:30",
+          "note": null
+        },
+        "thursday": {
+          "isClosed": false,
+          "open": "11:30",
+          "close": "20:00",
+          "breakTimes": [
+            {
+              "start": "14:30",
+              "end": "17:00"
+            }
+          ],
+          "lastOrder": "14:00, 19:30",
+          "note": null
+        },
+        "friday": {
+          "isClosed": false,
+          "open": "11:30",
+          "close": "20:00",
+          "breakTimes": [
+            {
+              "start": "14:30",
+              "end": "17:00"
+            }
+          ],
+          "lastOrder": "14:00, 19:30",
+          "note": null
+        },
+        "saturday": {
+          "isClosed": false,
+          "open": "11:30",
+          "close": "20:00",
+          "breakTimes": [
+            {
+              "start": "14:30",
+              "end": "17:00"
+            }
+          ],
+          "lastOrder": "14:00, 19:30",
+          "note": null
+        },
+        "sunday": {
+          "isClosed": false,
+          "open": "11:30",
+          "close": "20:00",
+          "breakTimes": [
+            {
+              "start": "14:30",
+              "end": "17:00"
+            }
+          ],
+          "lastOrder": "14:00, 19:30",
+          "note": null
+        }
+      },
+      "regularHolidays": [],
+      "hoursEvidence": [
+        "영업 중 14시 0분에 라스트오더",
+        "수 11:30 - 20:00",
+        "14:30 - 17:00 브레이크타임",
+        "14:00, 19:30 라스트오더",
+        "목 11:30 - 20:00",
+        "14:30 - 17:00 브레이크타임",
+        "14:00, 19:30 라스트오더",
+        "금 11:30 - 20:00",
+        "14:30 - 17:00 브레이크타임",
+        "14:00, 19:30 라스트오더",
+        "토 11:30 - 20:00",
+        "14:30 - 17:00 브레이크타임",
+        "14:00, 19:30 라스트오더",
+        "일 11:30 - 20:00",
+        "14:30 - 17:00 브레이크타임",
+        "14:00, 19:30 라스트오더",
+        "월 11:30 - 20:00",
+        "14:30 - 17:00 브레이크타임",
+        "14:00, 19:30 라스트오더",
+        "화 정기휴무 (매주 화요일)"
+      ]
+    },
+    {
+      "id": 1791946633,
+      "url": "https://m.place.naver.com/restaurant/1791946633/home",
+      "checkedAt": "2026-09-16T04:29:00.973Z",
+      "pageStatus": "unavailable"
+    },
+    {
+      "id": 1137420356,
+      "url": "https://m.place.naver.com/restaurant/1137420356/home",
+      "checkedAt": "2026-09-16T04:29:00.973Z",
+      "pageStatus": "unavailable"
+    },
+    {
+      "id": 1368625396,
+      "url": "https://m.place.naver.com/restaurant/1368625396/home",
+      "checkedAt": "2026-09-16T04:50:54.591Z",
+      "pageStatus": "available",
+      "placeName": "행복길19",
+      "roadAddressName": "세종 조치원읍 행복길 19 2층",
+      "phone": "044-863-8340",
+      "openingHours": {
+        "monday": {
+          "isClosed": false,
+          "open": "11:30",
+          "close": "20:00",
+          "breakTimes": [
+            {
+              "start": "14:00",
+              "end": "16:30"
+            }
+          ],
+          "lastOrder": "13:30, 19:30",
+          "note": null
+        },
+        "tuesday": {
+          "isClosed": false,
+          "open": "11:30",
+          "close": "20:00",
+          "breakTimes": [
+            {
+              "start": "14:00",
+              "end": "16:30"
+            }
+          ],
+          "lastOrder": "13:30, 19:30",
+          "note": null
+        },
+        "wednesday": {
+          "isClosed": false,
+          "open": "11:30",
+          "close": "20:00",
+          "breakTimes": [
+            {
+              "start": "14:00",
+              "end": "16:30"
+            }
+          ],
+          "lastOrder": "13:30, 19:30",
+          "note": null
+        },
+        "thursday": {
+          "isClosed": false,
+          "open": "11:30",
+          "close": "20:00",
+          "breakTimes": [
+            {
+              "start": "14:00",
+              "end": "16:30"
+            }
+          ],
+          "lastOrder": "13:30, 19:30",
+          "note": null
+        },
+        "friday": {
+          "isClosed": false,
+          "open": "11:30",
+          "close": "20:00",
+          "breakTimes": [
+            {
+              "start": "14:00",
+              "end": "16:30"
+            }
+          ],
+          "lastOrder": "13:30, 19:30",
+          "note": null
+        },
+        "saturday": {
+          "isClosed": false,
+          "open": "11:30",
+          "close": "20:00",
+          "breakTimes": [
+            {
+              "start": "14:00",
+              "end": "16:30"
+            }
+          ],
+          "lastOrder": "13:30, 19:30",
+          "note": null
+        },
+        "sunday": {
+          "isClosed": true,
+          "open": null,
+          "close": null,
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": "정기휴무 (매주 일요일)"
+        }
+      },
+      "regularHolidays": [
+        "09/24-09/26 휴무",
+        "- 매월 마지막주 월요일 휴무"
+      ],
+      "closedDates": [
+        {
+          "date": "2026-09-24",
+          "status": "closed",
+          "reason": "09/24-09/26 휴무"
+        },
+        {
+          "date": "2026-09-25",
+          "status": "closed",
+          "reason": "09/24-09/26 휴무"
+        },
+        {
+          "date": "2026-09-26",
+          "status": "closed",
+          "reason": "09/24-09/26 휴무"
+        }
+      ],
+      "hoursEvidence": [
+        "곧 브레이크타임 14시 0분에 브레이크타임",
+        "수 11:30 - 20:00",
+        "14:00 - 16:30 브레이크타임",
+        "13:30, 19:30 라스트오더",
+        "목 11:30 - 20:00",
+        "14:00 - 16:30 브레이크타임",
+        "13:30, 19:30 라스트오더",
+        "금 11:30 - 20:00",
+        "14:00 - 16:30 브레이크타임",
+        "13:30, 19:30 라스트오더",
+        "토 11:30 - 20:00",
+        "14:00 - 16:30 브레이크타임",
+        "13:30, 19:30 라스트오더",
+        "일 정기휴무 (매주 일요일)",
+        "월 11:30 - 20:00",
+        "14:00 - 16:30 브레이크타임",
+        "13:30, 19:30 라스트오더",
+        "화 11:30 - 20:00",
+        "14:00 - 16:30 브레이크타임",
+        "13:30, 19:30 라스트오더",
+        "09/24-09/26 휴무",
+        "- 매월 마지막주 월요일 휴무"
+      ]
+    },
+    {
+      "id": 1530632296,
+      "url": "https://m.place.naver.com/restaurant/1530632296/home",
+      "checkedAt": "2026-09-16T04:29:00.973Z",
+      "pageStatus": "unavailable"
+    },
+    {
+      "id": 1816260113,
+      "url": "https://m.place.naver.com/restaurant/1816260113/home",
+      "checkedAt": "2026-09-16T04:29:00.973Z",
+      "pageStatus": "available",
+      "placeName": "실내포차",
+      "roadAddressName": "세종 조치원읍 새내10길 19",
+      "phone": "044-866-0394",
+      "hoursUnavailable": true
+    },
+    {
+      "id": 2064907290,
+      "url": "https://m.place.naver.com/restaurant/2064907290/home",
+      "checkedAt": "2026-09-16T04:29:00.973Z",
+      "pageStatus": "available",
+      "placeName": "짜장면집",
+      "roadAddressName": "세종 조치원읍 새내10길 61 1층",
+      "phone": "0507-1466-5903"
+    },
+    {
+      "id": 1466867637,
+      "url": "https://m.place.naver.com/restaurant/1466867637/home",
+      "checkedAt": "2026-09-16T04:29:00.973Z",
+      "pageStatus": "available",
+      "placeName": "카페라떼",
+      "roadAddressName": "세종 조치원읍 새내9길 7 1층카페라떼",
+      "phone": "044-862-2327",
+      "hoursUnavailable": true
+    },
+    {
+      "id": 1815933641,
+      "url": "https://m.place.naver.com/restaurant/1815933641/home",
+      "checkedAt": "2026-09-16T04:29:00.973Z",
+      "pageStatus": "unavailable"
+    },
+    {
+      "id": 17536470,
+      "url": "https://m.place.naver.com/restaurant/17536470/home",
+      "checkedAt": "2026-09-16T04:29:00.973Z",
+      "pageStatus": "available",
+      "placeName": "회뜨는집",
+      "roadAddressName": "세종 조치원읍 으뜸길 174 1층",
+      "phone": "044-862-2122"
+    },
+    {
+      "id": 1837798570,
+      "url": "https://m.place.naver.com/restaurant/1837798570/home",
+      "checkedAt": "2026-09-16T04:29:00.973Z",
+      "pageStatus": "available",
+      "placeName": "7번가피자 조치원점",
+      "roadAddressName": "세종 조치원읍 세종로 2282 2층 219호",
+      "phone": "0507-1318-2777"
+    },
+    {
+      "id": 33896302,
+      "url": "https://m.place.naver.com/restaurant/33896302/home",
+      "checkedAt": "2026-09-16T04:50:50.137Z",
+      "pageStatus": "available",
+      "placeName": "커피ANO",
+      "roadAddressName": "세종 조치원읍 죽림로 55",
+      "hoursUnavailable": true
+    },
+    {
+      "id": 1130129928,
+      "url": "https://m.place.naver.com/restaurant/1130129928/home",
+      "checkedAt": "2026-09-16T04:50:49.605Z",
+      "pageStatus": "available",
+      "placeName": "커피아노",
+      "roadAddressName": "세종 조치원읍 죽림로 55 커피아노",
+      "phone": "070-4153-0183",
+      "openingHours": {
+        "monday": {
+          "isClosed": false,
+          "open": "10:00",
+          "close": "21:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "tuesday": {
+          "isClosed": false,
+          "open": "10:00",
+          "close": "21:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "wednesday": {
+          "isClosed": false,
+          "open": "10:00",
+          "close": "21:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "thursday": {
+          "isClosed": false,
+          "open": "10:00",
+          "close": "21:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "friday": {
+          "isClosed": false,
+          "open": "10:00",
+          "close": "22:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "saturday": {
+          "isClosed": false,
+          "open": "10:00",
+          "close": "22:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "sunday": {
+          "isClosed": true,
+          "open": null,
+          "close": null,
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": "정기휴무 (매주 일요일)"
+        }
+      },
+      "regularHolidays": [],
+      "hoursEvidence": [
+        "영업 중 21시 0분에 영업 종료",
+        "수 10:00 - 21:00",
+        "목 10:00 - 21:00",
+        "금 10:00 - 22:00",
+        "토 10:00 - 22:00",
+        "일 정기휴무 (매주 일요일)",
+        "월 10:00 - 21:00",
+        "화 10:00 - 21:00"
+      ]
+    },
+    {
+      "id": 1717268444,
+      "url": "https://m.place.naver.com/restaurant/1717268444/home",
+      "checkedAt": "2026-09-16T04:50:51.075Z",
+      "pageStatus": "available",
+      "placeName": "감동까스 세종조치원점",
+      "roadAddressName": "세종 조치원읍 세종로 2282 럭스스퀘어 230호",
+      "phone": "044-866-3684",
+      "openingHours": {
+        "monday": {
+          "isClosed": false,
+          "open": "09:00",
+          "close": "21:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "tuesday": {
+          "isClosed": false,
+          "open": "09:00",
+          "close": "21:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "wednesday": {
+          "isClosed": false,
+          "open": "09:00",
+          "close": "21:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "thursday": {
+          "isClosed": false,
+          "open": "09:00",
+          "close": "21:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "friday": {
+          "isClosed": false,
+          "open": "09:00",
+          "close": "21:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "saturday": {
+          "isClosed": false,
+          "open": "09:00",
+          "close": "21:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "sunday": {
+          "isClosed": false,
+          "open": "09:00",
+          "close": "21:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        }
+      },
+      "regularHolidays": [],
+      "hoursEvidence": [
+        "영업 중 21시 0분에 영업 종료",
+        "매일 09:00 - 21:00"
+      ]
+    },
+    {
+      "id": 1542715295,
+      "url": "https://m.place.naver.com/restaurant/1542715295/home",
+      "checkedAt": "2026-09-16T04:50:51.725Z",
+      "pageStatus": "available",
+      "placeName": "감동까스&오진당 세종조치원점",
+      "roadAddressName": "세종 조치원읍 세종로 2282 럭스스퀘어 2층 230호",
+      "hoursUnavailable": true
+    },
+    {
+      "id": 20013019,
+      "url": "https://m.place.naver.com/restaurant/20013019/home",
+      "checkedAt": "2026-09-16T04:29:00.973Z",
+      "pageStatus": "available",
+      "placeName": "원미닭갈비고대점",
+      "roadAddressName": "세종 조치원읍 내창1길 19 1층 원미닭갈비 고대점",
+      "phone": "0507-1359-5088",
+      "openingHours": {
+        "monday": {
+          "isClosed": false,
+          "open": "11:00",
+          "close": "22:00",
+          "breakTimes": [],
+          "lastOrder": "21:00",
+          "note": null
+        },
+        "tuesday": {
+          "isClosed": false,
+          "open": "11:00",
+          "close": "22:00",
+          "breakTimes": [],
+          "lastOrder": "21:00",
+          "note": null
+        },
+        "wednesday": {
+          "isClosed": false,
+          "open": "11:00",
+          "close": "22:00",
+          "breakTimes": [],
+          "lastOrder": "21:00",
+          "note": null
+        },
+        "thursday": {
+          "isClosed": false,
+          "open": "11:00",
+          "close": "22:00",
+          "breakTimes": [],
+          "lastOrder": "21:00",
+          "note": null
+        },
+        "friday": {
+          "isClosed": false,
+          "open": "11:00",
+          "close": "22:00",
+          "breakTimes": [],
+          "lastOrder": "21:00",
+          "note": null
+        },
+        "saturday": {
+          "isClosed": true,
+          "open": null,
+          "close": null,
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": "정기휴무 (매주 토요일)"
+        },
+        "sunday": {
+          "isClosed": false,
+          "open": "11:00",
+          "close": "22:00",
+          "breakTimes": [],
+          "lastOrder": "21:00",
+          "note": null
+        }
+      },
+      "regularHolidays": [],
+      "hoursEvidence": [
+        "영업 중 21시 0분에 라스트오더",
+        "수 11:00 - 22:00",
+        "21:00 라스트오더",
+        "목 11:00 - 22:00",
+        "21:00 라스트오더",
+        "금 11:00 - 22:00",
+        "21:00 라스트오더",
+        "토 정기휴무 (매주 토요일)",
+        "일 11:00 - 22:00",
+        "21:00 라스트오더",
+        "월 11:00 - 22:00",
+        "21:00 라스트오더",
+        "화 11:00 - 22:00",
+        "21:00 라스트오더"
+      ]
+    },
+    {
+      "id": 33896262,
+      "url": "https://m.place.naver.com/restaurant/33896262/home",
+      "checkedAt": "2026-09-16T04:29:00.973Z",
+      "pageStatus": "available",
+      "placeName": "크레이지알밥",
+      "roadAddressName": "세종 조치원읍 내창1길 25",
+      "phone": "0502-1910-1299",
+      "openingHours": {
+        "monday": {
+          "isClosed": false,
+          "open": "11:00",
+          "close": "21:00",
+          "breakTimes": [
+            {
+              "start": "15:30",
+              "end": "17:00"
+            }
+          ],
+          "lastOrder": null,
+          "note": null
+        },
+        "tuesday": {
+          "isClosed": false,
+          "open": "11:00",
+          "close": "21:00",
+          "breakTimes": [
+            {
+              "start": "15:30",
+              "end": "17:00"
+            }
+          ],
+          "lastOrder": null,
+          "note": null
+        },
+        "wednesday": {
+          "isClosed": false,
+          "open": "11:00",
+          "close": "21:00",
+          "breakTimes": [
+            {
+              "start": "15:30",
+              "end": "17:00"
+            }
+          ],
+          "lastOrder": null,
+          "note": null
+        },
+        "thursday": {
+          "isClosed": false,
+          "open": "11:00",
+          "close": "21:00",
+          "breakTimes": [
+            {
+              "start": "15:30",
+              "end": "17:00"
+            }
+          ],
+          "lastOrder": null,
+          "note": null
+        },
+        "friday": {
+          "isClosed": false,
+          "open": "11:00",
+          "close": "16:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "saturday": {
+          "isClosed": true,
+          "open": null,
+          "close": null,
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": "정기휴무 (매주 토요일)"
+        },
+        "sunday": {
+          "isClosed": true,
+          "open": null,
+          "close": null,
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": "정기휴무 (매주 일요일)"
+        }
+      },
+      "regularHolidays": [
+        "09/25 추석 휴무"
+      ],
+      "closedDates": [
+        {
+          "date": "2026-09-25",
+          "status": "closed",
+          "reason": "09/25 추석 휴무"
+        }
+      ],
+      "hoursEvidence": [
+        "영업 중 15시 30분에 브레이크타임",
+        "수 11:00 - 21:00",
+        "15:30 - 17:00 브레이크타임",
+        "목 11:00 - 21:00",
+        "15:30 - 17:00 브레이크타임",
+        "금 11:00 - 16:00",
+        "토 정기휴무 (매주 토요일)",
+        "일 정기휴무 (매주 일요일)",
+        "월 11:00 - 21:00",
+        "15:30 - 17:00 브레이크타임",
+        "화 11:00 - 21:00",
+        "15:30 - 17:00 브레이크타임",
+        "09/25 추석 휴무"
+      ]
+    },
+    {
+      "id": 1287015667,
+      "url": "https://m.place.naver.com/restaurant/1287015667/home",
+      "checkedAt": "2026-09-16T04:29:00.973Z",
+      "pageStatus": "available",
+      "placeName": "진미방 마라탕 고대점",
+      "roadAddressName": "세종 조치원읍 내창3길 19 1층 103호",
+      "phone": "0507-1360-5168",
+      "openingHours": {
+        "monday": {
+          "isClosed": false,
+          "open": "11:00",
+          "close": "21:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "tuesday": {
+          "isClosed": false,
+          "open": "11:00",
+          "close": "21:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "wednesday": {
+          "isClosed": false,
+          "open": "11:00",
+          "close": "21:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "thursday": {
+          "isClosed": false,
+          "open": "11:00",
+          "close": "21:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "friday": {
+          "isClosed": false,
+          "open": "11:00",
+          "close": "21:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "saturday": {
+          "isClosed": false,
+          "open": "11:00",
+          "close": "21:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "sunday": {
+          "isClosed": false,
+          "open": "11:00",
+          "close": "21:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        }
+      },
+      "regularHolidays": [],
+      "hoursEvidence": [
+        "영업 중 21시 0분에 영업 종료",
+        "매일 11:00 - 21:00"
+      ]
+    },
+    {
+      "id": 1692855198,
+      "url": "https://m.place.naver.com/restaurant/1692855198/home",
+      "checkedAt": "2026-09-16T04:50:52.666Z",
+      "pageStatus": "available",
+      "placeName": "스타벅스 세종조치원점",
+      "roadAddressName": "세종 조치원읍 문화2길 3",
+      "phone": "1522-3232",
+      "openingHours": {
+        "monday": {
+          "isClosed": false,
+          "open": "07:00",
+          "close": "22:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "tuesday": {
+          "isClosed": false,
+          "open": "07:00",
+          "close": "22:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "wednesday": {
+          "isClosed": false,
+          "open": "07:00",
+          "close": "22:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "thursday": {
+          "isClosed": false,
+          "open": "07:00",
+          "close": "22:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "friday": {
+          "isClosed": false,
+          "open": "07:00",
+          "close": "22:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "saturday": {
+          "isClosed": false,
+          "open": "07:00",
+          "close": "22:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "sunday": {
+          "isClosed": false,
+          "open": "07:00",
+          "close": "22:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        }
+      },
+      "regularHolidays": [],
+      "hoursValidity": {
+        "from": "2026-09-16",
+        "through": "2026-09-22"
+      },
+      "deliveryHours": {
+        "wednesday": {
+          "open": "08:30",
+          "close": "21:30"
+        },
+        "thursday": {
+          "open": "08:30",
+          "close": "21:30"
+        },
+        "friday": {
+          "open": "08:30",
+          "close": "21:30"
+        },
+        "saturday": {
+          "open": "08:30",
+          "close": "21:30"
+        },
+        "sunday": {
+          "open": "08:30",
+          "close": "21:30"
+        },
+        "monday": {
+          "open": "08:30",
+          "close": "21:30"
+        },
+        "tuesday": {
+          "open": "08:30",
+          "close": "21:30"
+        }
+      },
+      "hoursEvidence": [
+        "영업 중",
+        "매장 22:00에 영업 종료",
+        "수(9/16)",
+        "매장 07:00 - 22:00",
+        "드라이브스루 정보없음",
+        "워크스루 정보없음",
+        "딜리버스 08:30 - 21:30",
+        "목(9/17)",
+        "매장 07:00 - 22:00",
+        "드라이브스루 정보없음",
+        "워크스루 정보없음",
+        "딜리버스 08:30 - 21:30",
+        "금(9/18)",
+        "매장 07:00 - 22:00",
+        "드라이브스루 정보없음",
+        "워크스루 정보없음",
+        "딜리버스 08:30 - 21:30",
+        "토(9/19)",
+        "매장 07:00 - 22:00",
+        "드라이브스루 정보없음",
+        "워크스루 정보없음",
+        "딜리버스 08:30 - 21:30",
+        "일(9/20)",
+        "매장 07:00 - 22:00",
+        "드라이브스루 정보없음",
+        "워크스루 정보없음",
+        "딜리버스 08:30 - 21:30",
+        "월(9/21)",
+        "매장 07:00 - 22:00",
+        "드라이브스루 정보없음",
+        "워크스루 정보없음",
+        "딜리버스 08:30 - 21:30",
+        "화(9/22)",
+        "매장 07:00 - 22:00",
+        "드라이브스루 정보없음",
+        "워크스루 정보없음",
+        "딜리버스 08:30 - 21:30"
+      ]
+    },
+    {
+      "id": 1927782481,
+      "url": "https://m.place.naver.com/restaurant/1927782481/home",
+      "checkedAt": "2026-09-16T04:47:23.664Z",
+      "pageStatus": "available",
+      "placeName": "청해막썰어회",
+      "roadAddressName": "세종 조치원읍 대첩로 13 1층",
+      "phone": "044-866-3393",
+      "openingHours": {
+        "monday": {
+          "isClosed": false,
+          "open": null,
+          "close": null,
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": "네이버에서 영업시간 미공개"
+        },
+        "tuesday": {
+          "isClosed": false,
+          "open": null,
+          "close": null,
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": "네이버에서 영업시간 미공개"
+        },
+        "wednesday": {
+          "isClosed": false,
+          "open": null,
+          "close": null,
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": "네이버에서 영업시간 미공개"
+        },
+        "thursday": {
+          "isClosed": false,
+          "open": null,
+          "close": null,
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": "네이버에서 영업시간 미공개"
+        },
+        "friday": {
+          "isClosed": false,
+          "open": null,
+          "close": null,
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": "네이버에서 영업시간 미공개"
+        },
+        "saturday": {
+          "isClosed": false,
+          "open": null,
+          "close": null,
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": "네이버에서 영업시간 미공개"
+        },
+        "sunday": {
+          "isClosed": true,
+          "open": null,
+          "close": null,
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": "정기휴무 (매주 일요일)"
+        }
+      },
+      "regularHolidays": [],
+      "hoursEvidence": [
+        "수 정보없음",
+        "수 정보없음",
+        "목 정보없음",
+        "금 정보없음",
+        "토 정보없음",
+        "일 정기휴무 (매주 일요일)",
+        "월 정보없음",
+        "화 정보없음"
+      ]
+    },
+    {
+      "id": 37578808,
+      "url": "https://m.place.naver.com/restaurant/37578808/home",
+      "checkedAt": "2026-09-16T04:47:24.628Z",
+      "pageStatus": "available",
+      "placeName": "앨스카파이",
+      "roadAddressName": "세종 조치원읍 산책1길 60",
+      "phone": "070-7622-0002",
+      "openingHours": {
+        "monday": {
+          "isClosed": false,
+          "open": "10:00",
+          "close": "18:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "tuesday": {
+          "isClosed": false,
+          "open": "10:00",
+          "close": "18:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "wednesday": {
+          "isClosed": false,
+          "open": "10:00",
+          "close": "18:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "thursday": {
+          "isClosed": false,
+          "open": "10:00",
+          "close": "18:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "friday": {
+          "isClosed": false,
+          "open": "10:00",
+          "close": "18:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "saturday": {
+          "isClosed": false,
+          "open": null,
+          "close": null,
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": "네이버에서 영업시간 미공개"
+        },
+        "sunday": {
+          "isClosed": false,
+          "open": null,
+          "close": null,
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": "네이버에서 영업시간 미공개"
+        }
+      },
+      "regularHolidays": [],
+      "hoursEvidence": [
+        "영업 중 18시 0분에 영업 종료",
+        "수 10:00 - 18:00",
+        "목 10:00 - 18:00",
+        "금 10:00 - 18:00",
+        "토 정보없음",
+        "일 정보없음",
+        "월 10:00 - 18:00",
+        "화 10:00 - 18:00"
+      ]
+    },
+    {
+      "id": 17729218,
+      "url": "https://m.place.naver.com/restaurant/17729218/home",
+      "checkedAt": "2026-09-16T04:47:25.650Z",
+      "pageStatus": "available",
+      "placeName": "먹거리식당",
+      "roadAddressName": "세종 조치원읍 새내로 157",
+      "phone": "044-866-4711",
+      "openingHours": {
+        "monday": {
+          "isClosed": false,
+          "open": "11:00",
+          "close": "20:30",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "tuesday": {
+          "isClosed": false,
+          "open": "11:00",
+          "close": "20:30",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "wednesday": {
+          "isClosed": false,
+          "open": "11:00",
+          "close": "20:30",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "thursday": {
+          "isClosed": false,
+          "open": "11:00",
+          "close": "20:30",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "friday": {
+          "isClosed": false,
+          "open": "11:00",
+          "close": "20:30",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "saturday": {
+          "isClosed": false,
+          "open": null,
+          "close": null,
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": "네이버에서 영업시간 미공개"
+        },
+        "sunday": {
+          "isClosed": true,
+          "open": null,
+          "close": null,
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": "정기휴무 (매주 일요일)"
+        }
+      },
+      "regularHolidays": [
+        "09/24-09/26 추석 연휴, 10/03 개천절 휴무"
+      ],
+      "closedDates": [
+        {
+          "date": "2026-09-24",
+          "status": "closed",
+          "reason": "09/24-09/26 추석 연휴, 10/03 개천절 휴무"
+        },
+        {
+          "date": "2026-09-25",
+          "status": "closed",
+          "reason": "09/24-09/26 추석 연휴, 10/03 개천절 휴무"
+        },
+        {
+          "date": "2026-09-26",
+          "status": "closed",
+          "reason": "09/24-09/26 추석 연휴, 10/03 개천절 휴무"
+        },
+        {
+          "date": "2026-10-03",
+          "status": "closed",
+          "reason": "09/24-09/26 추석 연휴, 10/03 개천절 휴무"
+        }
+      ],
+      "hoursEvidence": [
+        "영업 중 20시 30분에 영업 종료",
+        "수 11:00 - 20:30",
+        "목 11:00 - 20:30",
+        "금 11:00 - 20:30",
+        "토 정보없음",
+        "일 정기휴무 (매주 일요일)",
+        "월 11:00 - 20:30",
+        "화 11:00 - 20:30",
+        "09/24-09/26 추석 연휴, 10/03 개천절 휴무"
+      ]
+    },
+    {
+      "id": 1917453773,
+      "url": "https://m.place.naver.com/restaurant/1917453773/home",
+      "checkedAt": "2026-09-16T04:47:26.470Z",
+      "pageStatus": "available",
+      "placeName": "친구네돈가스",
+      "roadAddressName": "세종 조치원읍 조치원6길 13-3 1, 2층 16호",
+      "phone": "044-865-3849",
+      "openingHours": {
+        "monday": {
+          "isClosed": false,
+          "open": null,
+          "close": null,
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": "네이버에서 영업시간 미공개"
+        },
+        "tuesday": {
+          "isClosed": false,
+          "open": "10:00",
+          "close": "20:30",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "wednesday": {
+          "isClosed": false,
+          "open": "10:00",
+          "close": "20:30",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "thursday": {
+          "isClosed": false,
+          "open": "10:00",
+          "close": "20:30",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "friday": {
+          "isClosed": false,
+          "open": "10:00",
+          "close": "20:30",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "saturday": {
+          "isClosed": false,
+          "open": "10:00",
+          "close": "20:30",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "sunday": {
+          "isClosed": false,
+          "open": "10:00",
+          "close": "20:30",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        }
+      },
+      "regularHolidays": [],
+      "hoursEvidence": [
+        "영업 중 20시 30분에 영업 종료",
+        "수 10:00 - 20:30",
+        "목 10:00 - 20:30",
+        "금 10:00 - 20:30",
+        "토 10:00 - 20:30",
+        "일 10:00 - 20:30",
+        "월 정보없음",
+        "화 10:00 - 20:30"
+      ]
+    },
+    {
+      "id": 34993249,
+      "url": "https://m.place.naver.com/restaurant/34993249/home",
+      "checkedAt": "2026-09-16T04:47:27.542Z",
+      "pageStatus": "available",
+      "placeName": "오가네빵",
+      "roadAddressName": "세종 조치원읍 조치원6길 27",
+      "phone": "044-864-0261",
+      "openingHours": {
+        "monday": {
+          "isClosed": true,
+          "open": null,
+          "close": null,
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": "정기휴무 (매주 월요일)"
+        },
+        "tuesday": {
+          "isClosed": false,
+          "open": null,
+          "close": null,
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": "네이버에서 영업시간 미공개"
+        },
+        "wednesday": {
+          "isClosed": false,
+          "open": null,
+          "close": null,
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": "네이버에서 영업시간 미공개"
+        },
+        "thursday": {
+          "isClosed": false,
+          "open": null,
+          "close": null,
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": "네이버에서 영업시간 미공개"
+        },
+        "friday": {
+          "isClosed": false,
+          "open": null,
+          "close": null,
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": "네이버에서 영업시간 미공개"
+        },
+        "saturday": {
+          "isClosed": false,
+          "open": null,
+          "close": null,
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": "네이버에서 영업시간 미공개"
+        },
+        "sunday": {
+          "isClosed": false,
+          "open": null,
+          "close": null,
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": "네이버에서 영업시간 미공개"
+        }
+      },
+      "regularHolidays": [],
+      "hoursEvidence": [
+        "수 정보없음",
+        "수 정보없음",
+        "목 정보없음",
+        "금 정보없음",
+        "토 정보없음",
+        "일 정보없음",
+        "월 정기휴무 (매주 월요일)",
+        "화 정보없음"
+      ]
+    },
+    {
+      "id": 34281805,
+      "url": "https://m.place.naver.com/restaurant/34281805/home",
+      "checkedAt": "2026-09-16T04:47:29.310Z",
+      "pageStatus": "available",
+      "placeName": "김밥천국 홍대점",
+      "roadAddressName": "세종 조치원읍 섭골길 98",
+      "phone": "044-866-1771",
+      "openingHours": {
+        "monday": {
+          "isClosed": false,
+          "open": "08:30",
+          "close": "22:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "tuesday": {
+          "isClosed": false,
+          "open": "08:30",
+          "close": "22:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "wednesday": {
+          "isClosed": false,
+          "open": "08:30",
+          "close": "22:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "thursday": {
+          "isClosed": false,
+          "open": "08:30",
+          "close": "22:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "friday": {
+          "isClosed": false,
+          "open": "08:30",
+          "close": "22:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "saturday": {
+          "isClosed": false,
+          "open": "08:30",
+          "close": "22:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "sunday": {
+          "isClosed": false,
+          "open": null,
+          "close": null,
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": "네이버에서 영업시간 미공개"
+        }
+      },
+      "regularHolidays": [],
+      "hoursEvidence": [
+        "영업 중 22시 0분에 영업 종료",
+        "수 08:30 - 22:00",
+        "목 08:30 - 22:00",
+        "금 08:30 - 22:00",
+        "토 08:30 - 22:00",
+        "일 정보없음",
+        "월 08:30 - 22:00",
+        "화 08:30 - 22:00"
+      ]
+    },
+    {
+      "id": 33409688,
+      "url": "https://m.place.naver.com/restaurant/33409688/home",
+      "checkedAt": "2026-09-16T04:49:43.765Z",
+      "pageStatus": "available",
+      "placeName": "피자마루 충남조치원점",
+      "roadAddressName": "세종 조치원읍 이화로 26 109호",
+      "phone": "044-865-1082",
+      "openingHours": {
+        "monday": {
+          "isClosed": false,
+          "open": "14:00",
+          "close": "24:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "tuesday": {
+          "isClosed": false,
+          "open": "14:00",
+          "close": "24:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "wednesday": {
+          "isClosed": true,
+          "open": null,
+          "close": null,
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": "정기휴무 (격주 수요일)"
+        },
+        "thursday": {
+          "isClosed": false,
+          "open": "14:00",
+          "close": "24:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "friday": {
+          "isClosed": false,
+          "open": "14:00",
+          "close": "24:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "saturday": {
+          "isClosed": false,
+          "open": "12:00",
+          "close": "24:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "sunday": {
+          "isClosed": false,
+          "open": "12:00",
+          "close": "24:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        }
+      },
+      "regularHolidays": [
+        "격주 수요일 정기 휴무",
+        "09/26 추석 연휴 휴무"
+      ],
+      "closedDates": [
+        {
+          "date": "2026-09-26",
+          "status": "closed",
+          "reason": "09/26 추석 연휴 휴무"
+        }
+      ],
+      "hoursEvidence": [
+        "오늘 휴무 격주 수요일 휴무",
+        "수(9/16) 정기휴무 (격주 수요일)",
+        "목 14:00 - 24:00",
+        "금 14:00 - 24:00",
+        "토 12:00 - 24:00",
+        "일 12:00 - 24:00",
+        "월 14:00 - 24:00",
+        "화 14:00 - 24:00",
+        "격주 수요일 정기 휴무",
+        "09/26 추석 연휴 휴무"
+      ]
+    },
+    {
+      "id": 1472216569,
+      "url": "https://m.place.naver.com/restaurant/1472216569/home",
+      "checkedAt": "2026-09-16T04:49:44.947Z",
+      "pageStatus": "available",
+      "placeName": "태영생막창 조치원점",
+      "roadAddressName": "세종 조치원읍 행복5길 27-5",
+      "phone": "0507-1341-9787",
+      "openingHours": {
+        "monday": {
+          "isClosed": true,
+          "open": null,
+          "close": null,
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": "정기휴무 (매달 1, 3, 5번째 월요일)"
+        },
+        "tuesday": {
+          "isClosed": false,
+          "open": "17:00",
+          "close": "24:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "wednesday": {
+          "isClosed": false,
+          "open": "17:00",
+          "close": "24:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "thursday": {
+          "isClosed": false,
+          "open": "17:00",
+          "close": "24:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "friday": {
+          "isClosed": false,
+          "open": "17:00",
+          "close": "24:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "saturday": {
+          "isClosed": false,
+          "open": "17:00",
+          "close": "24:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "sunday": {
+          "isClosed": false,
+          "open": "17:00",
+          "close": "24:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        }
+      },
+      "regularHolidays": [
+        "매달 1, 3, 5번째 월요일 정기 휴무"
+      ],
+      "hoursEvidence": [
+        "영업 전 17시 0분에 영업 시작",
+        "수 17:00 - 24:00",
+        "목 17:00 - 24:00",
+        "금 17:00 - 24:00",
+        "토 17:00 - 24:00",
+        "일 17:00 - 24:00",
+        "월(9/21) 정기휴무 (매달 1, 3, 5번째 월요일)",
+        "화 17:00 - 24:00",
+        "매달 1, 3, 5번째 월요일 정기 휴무"
+      ]
+    },
+    {
+      "id": 1019285437,
+      "url": "https://m.place.naver.com/restaurant/1019285437/home",
+      "checkedAt": "2026-09-16T04:49:45.924Z",
+      "pageStatus": "available",
+      "placeName": "맛있는수다",
+      "roadAddressName": "세종 조치원읍 새내10길 41",
+      "phone": "044-867-4967",
+      "openingHours": {
+        "monday": {
+          "isClosed": false,
+          "open": "09:00",
+          "close": "20:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "tuesday": {
+          "isClosed": false,
+          "open": "09:00",
+          "close": "20:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "wednesday": {
+          "isClosed": false,
+          "open": "09:00",
+          "close": "20:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "thursday": {
+          "isClosed": false,
+          "open": "09:00",
+          "close": "20:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "friday": {
+          "isClosed": false,
+          "open": "09:00",
+          "close": "20:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "saturday": {
+          "isClosed": false,
+          "open": "09:00",
+          "close": "20:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "sunday": {
+          "isClosed": false,
+          "open": "09:00",
+          "close": "20:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        }
+      },
+      "regularHolidays": [
+        "매달 2, 4번째 목요일 정기 휴무"
+      ],
+      "hoursEvidence": [
+        "영업 중 20시 0분에 영업 종료",
+        "수 09:00 - 20:00",
+        "목 09:00 - 20:00",
+        "금 09:00 - 20:00",
+        "토 09:00 - 20:00",
+        "일 09:00 - 20:00",
+        "월 09:00 - 20:00",
+        "화 09:00 - 20:00",
+        "매달 2, 4번째 목요일 정기 휴무"
+      ]
+    },
+    {
+      "id": 19808231,
+      "url": "https://m.place.naver.com/restaurant/19808231/home",
+      "checkedAt": "2026-09-16T04:49:46.832Z",
+      "pageStatus": "available",
+      "placeName": "죽마고우",
+      "roadAddressName": "세종 조치원읍 조치원3길 34",
+      "phone": "044-862-7931",
+      "openingHours": {
+        "monday": {
+          "isClosed": false,
+          "open": "17:00",
+          "close": "24:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "tuesday": {
+          "isClosed": false,
+          "open": "17:00",
+          "close": "24:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "wednesday": {
+          "isClosed": false,
+          "open": "17:00",
+          "close": "24:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "thursday": {
+          "isClosed": false,
+          "open": "17:00",
+          "close": "24:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "friday": {
+          "isClosed": false,
+          "open": "17:00",
+          "close": "24:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "saturday": {
+          "isClosed": false,
+          "open": "17:00",
+          "close": "24:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "sunday": {
+          "isClosed": true,
+          "open": null,
+          "close": null,
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": "정기휴무 (매달 1, 3, 5번째 일요일)"
+        }
+      },
+      "regularHolidays": [
+        "매달 1, 3, 5번째 일요일 정기 휴무"
+      ],
+      "hoursEvidence": [
+        "영업 전 17시 0분에 영업 시작",
+        "수 17:00 - 24:00",
+        "목 17:00 - 24:00",
+        "금 17:00 - 24:00",
+        "토 17:00 - 24:00",
+        "일(9/20) 정기휴무 (매달 1, 3, 5번째 일요일)",
+        "월 17:00 - 24:00",
+        "화 17:00 - 24:00",
+        "매달 1, 3, 5번째 일요일 정기 휴무"
+      ]
+    },
+    {
+      "id": 2048695680,
+      "url": "https://m.place.naver.com/restaurant/2048695680/home",
+      "checkedAt": "2026-09-16T04:49:47.883Z",
+      "pageStatus": "available",
+      "placeName": "굽네치킨 조치원점",
+      "roadAddressName": "세종 조치원읍 죽림로 37 1층",
+      "phone": "044-865-8292",
+      "openingHours": {
+        "monday": {
+          "isClosed": false,
+          "open": "14:00",
+          "close": "23:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "tuesday": {
+          "isClosed": false,
+          "open": "14:00",
+          "close": "23:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "wednesday": {
+          "isClosed": false,
+          "open": "14:00",
+          "close": "23:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "thursday": {
+          "isClosed": false,
+          "open": "14:00",
+          "close": "23:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "friday": {
+          "isClosed": false,
+          "open": "14:00",
+          "close": "23:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "saturday": {
+          "isClosed": false,
+          "open": "14:00",
+          "close": "23:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        },
+        "sunday": {
+          "isClosed": false,
+          "open": "15:00",
+          "close": "21:00",
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": null
+        }
+      },
+      "regularHolidays": [
+        "매달 2, 4, 5번째 일요일 정기 휴무"
+      ],
+      "hoursEvidence": [
+        "곧 영업 시작 14시 0분에 영업 시작",
+        "수 14:00 - 23:00",
+        "목 14:00 - 23:00",
+        "금 14:00 - 23:00",
+        "토 14:00 - 23:00",
+        "일 15:00 - 21:00",
+        "월 14:00 - 23:00",
+        "화 14:00 - 23:00",
+        "매달 2, 4, 5번째 일요일 정기 휴무"
+      ]
+    },
+    {
+      "id": 31022391,
+      "url": "https://m.place.naver.com/restaurant/31022391/home",
+      "checkedAt": "2026-09-16T04:49:48.844Z",
+      "pageStatus": "available",
+      "placeName": "굴이야기 세종본점",
+      "roadAddressName": "세종 조치원읍 세종로 2346",
+      "phone": "044-867-2009",
+      "openingHours": {
+        "monday": {
+          "isClosed": true,
+          "open": null,
+          "close": null,
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": "정기휴무 (매주 월요일)"
+        },
+        "tuesday": {
+          "isClosed": false,
+          "open": "09:00",
+          "close": "21:00",
+          "breakTimes": [
+            {
+              "start": "15:00",
+              "end": "17:00"
+            }
+          ],
+          "lastOrder": "14:30, 20:30",
+          "note": null
+        },
+        "wednesday": {
+          "isClosed": false,
+          "open": "09:00",
+          "close": "21:00",
+          "breakTimes": [
+            {
+              "start": "15:00",
+              "end": "17:00"
+            }
+          ],
+          "lastOrder": "14:30, 20:30",
+          "note": null
+        },
+        "thursday": {
+          "isClosed": false,
+          "open": "09:00",
+          "close": "21:00",
+          "breakTimes": [
+            {
+              "start": "15:00",
+              "end": "17:00"
+            }
+          ],
+          "lastOrder": "14:30, 20:30",
+          "note": null
+        },
+        "friday": {
+          "isClosed": false,
+          "open": "09:00",
+          "close": "21:00",
+          "breakTimes": [
+            {
+              "start": "15:00",
+              "end": "17:00"
+            }
+          ],
+          "lastOrder": "14:30, 20:30",
+          "note": null
+        },
+        "saturday": {
+          "isClosed": false,
+          "open": "09:00",
+          "close": "21:00",
+          "breakTimes": [
+            {
+              "start": "15:00",
+              "end": "17:00"
+            }
+          ],
+          "lastOrder": "14:30, 20:30",
+          "note": null
+        },
+        "sunday": {
+          "isClosed": false,
+          "open": "09:00",
+          "close": "21:00",
+          "breakTimes": [
+            {
+              "start": "15:00",
+              "end": "17:00"
+            }
+          ],
+          "lastOrder": "14:30, 20:30",
+          "note": null
+        }
+      },
+      "regularHolidays": [],
+      "hoursEvidence": [
+        "영업 중 14시 30분에 라스트오더",
+        "수 09:00 - 21:00",
+        "15:00 - 17:00 브레이크타임",
+        "14:30, 20:30 라스트오더",
+        "목 09:00 - 21:00",
+        "15:00 - 17:00 브레이크타임",
+        "14:30, 20:30 라스트오더",
+        "금 09:00 - 21:00",
+        "15:00 - 17:00 브레이크타임",
+        "14:30, 20:30 라스트오더",
+        "토 09:00 - 21:00",
+        "15:00 - 17:00 브레이크타임",
+        "14:30, 20:30 라스트오더",
+        "일 09:00 - 21:00",
+        "15:00 - 17:00 브레이크타임",
+        "14:30, 20:30 라스트오더",
+        "월 정기휴무 (매주 월요일)",
+        "화 09:00 - 21:00",
+        "15:00 - 17:00 브레이크타임",
+        "14:30, 20:30 라스트오더"
+      ]
+    },
+    {
+      "id": 1599470154,
+      "url": "https://m.place.naver.com/restaurant/1599470154/home",
+      "checkedAt": "2026-09-16T04:49:49.827Z",
+      "pageStatus": "available",
+      "placeName": "1972 송은정 보리밥 본점",
+      "roadAddressName": "세종 조치원읍 세종로 2427 1층",
+      "phone": "0507-1343-0929",
+      "openingHours": {
+        "monday": {
+          "isClosed": false,
+          "open": "09:30",
+          "close": "20:30",
+          "breakTimes": [
+            {
+              "start": "15:30",
+              "end": "17:00"
+            }
+          ],
+          "lastOrder": "15:00, 20:00",
+          "note": null
+        },
+        "tuesday": {
+          "isClosed": false,
+          "open": "09:30",
+          "close": "20:30",
+          "breakTimes": [
+            {
+              "start": "15:30",
+              "end": "17:00"
+            }
+          ],
+          "lastOrder": "15:00, 20:00",
+          "note": null
+        },
+        "wednesday": {
+          "isClosed": false,
+          "open": "09:30",
+          "close": "20:30",
+          "breakTimes": [
+            {
+              "start": "15:30",
+              "end": "17:00"
+            }
+          ],
+          "lastOrder": "15:00, 20:00",
+          "note": null
+        },
+        "thursday": {
+          "isClosed": false,
+          "open": "09:30",
+          "close": "20:30",
+          "breakTimes": [
+            {
+              "start": "15:30",
+              "end": "17:00"
+            }
+          ],
+          "lastOrder": "15:00, 20:00",
+          "note": null
+        },
+        "friday": {
+          "isClosed": false,
+          "open": "09:30",
+          "close": "20:30",
+          "breakTimes": [
+            {
+              "start": "15:30",
+              "end": "17:00"
+            }
+          ],
+          "lastOrder": "15:00, 20:00",
+          "note": null
+        },
+        "saturday": {
+          "isClosed": false,
+          "open": "09:30",
+          "close": "20:30",
+          "breakTimes": [],
+          "lastOrder": "20:00",
+          "note": null
+        },
+        "sunday": {
+          "isClosed": false,
+          "open": "09:30",
+          "close": "20:30",
+          "breakTimes": [],
+          "lastOrder": "20:00",
+          "note": null
+        }
+      },
+      "regularHolidays": [],
+      "hoursEvidence": [
+        "영업 중 15시 0분에 라스트오더",
+        "수 09:30 - 20:30",
+        "15:30 - 17:00 브레이크타임",
+        "15:00, 20:00 라스트오더",
+        "목 09:30 - 20:30",
+        "15:30 - 17:00 브레이크타임",
+        "15:00, 20:00 라스트오더",
+        "금 09:30 - 20:30",
+        "15:30 - 17:00 브레이크타임",
+        "15:00, 20:00 라스트오더",
+        "토 09:30 - 20:30",
+        "20:00 라스트오더",
+        "일 09:30 - 20:30",
+        "20:00 라스트오더",
+        "월 09:30 - 20:30",
+        "15:30 - 17:00 브레이크타임",
+        "15:00, 20:00 라스트오더",
+        "화 09:30 - 20:30",
+        "15:30 - 17:00 브레이크타임",
+        "15:00, 20:00 라스트오더",
+        "- 9시반부터 아침식사 가능합니다!"
+      ]
+    },
+    {
+      "id": 2014592313,
+      "url": "https://m.place.naver.com/restaurant/2014592313/home",
+      "checkedAt": "2026-09-16T04:49:50.845Z",
+      "pageStatus": "available",
+      "placeName": "쿠로텐",
+      "roadAddressName": "세종 조치원읍 새내15길 3 1층 102호",
+      "phone": "0507-1334-7911",
+      "openingHours": {
+        "monday": {
+          "isClosed": false,
+          "open": "11:00",
+          "close": "21:00",
+          "breakTimes": [
+            {
+              "start": "14:30",
+              "end": "17:30"
+            }
+          ],
+          "lastOrder": "14:00, 20:30",
+          "note": null
+        },
+        "tuesday": {
+          "isClosed": false,
+          "open": "11:00",
+          "close": "21:00",
+          "breakTimes": [
+            {
+              "start": "14:30",
+              "end": "17:30"
+            }
+          ],
+          "lastOrder": "14:00, 20:30",
+          "note": null
+        },
+        "wednesday": {
+          "isClosed": false,
+          "open": "11:00",
+          "close": "21:00",
+          "breakTimes": [
+            {
+              "start": "14:30",
+              "end": "17:30"
+            }
+          ],
+          "lastOrder": "14:00, 20:30",
+          "note": null
+        },
+        "thursday": {
+          "isClosed": true,
+          "open": null,
+          "close": null,
+          "breakTimes": [],
+          "lastOrder": null,
+          "note": "정기휴무 (매주 목요일)"
+        },
+        "friday": {
+          "isClosed": false,
+          "open": "11:00",
+          "close": "21:00",
+          "breakTimes": [
+            {
+              "start": "14:30",
+              "end": "17:30"
+            }
+          ],
+          "lastOrder": "14:00, 20:30",
+          "note": null
+        },
+        "saturday": {
+          "isClosed": false,
+          "open": "11:00",
+          "close": "21:00",
+          "breakTimes": [
+            {
+              "start": "14:30",
+              "end": "17:30"
+            }
+          ],
+          "lastOrder": "14:00, 20:30",
+          "note": null
+        },
+        "sunday": {
+          "isClosed": false,
+          "open": "11:00",
+          "close": "21:00",
+          "breakTimes": [
+            {
+              "start": "14:30",
+              "end": "17:30"
+            }
+          ],
+          "lastOrder": "14:00, 20:30",
+          "note": null
+        }
+      },
+      "regularHolidays": [
+        "09/24-09/26 추석 연휴 휴무"
+      ],
+      "closedDates": [
+        {
+          "date": "2026-09-24",
+          "status": "closed",
+          "reason": "09/24-09/26 추석 연휴 휴무"
+        },
+        {
+          "date": "2026-09-25",
+          "status": "closed",
+          "reason": "09/24-09/26 추석 연휴 휴무"
+        },
+        {
+          "date": "2026-09-26",
+          "status": "closed",
+          "reason": "09/24-09/26 추석 연휴 휴무"
+        }
+      ],
+      "hoursEvidence": [
+        "영업 중 14시 0분에 라스트오더",
+        "수 11:00 - 21:00",
+        "14:30 - 17:30 브레이크타임",
+        "14:00, 20:30 라스트오더",
+        "목 정기휴무 (매주 목요일)",
+        "금 11:00 - 21:00",
+        "14:30 - 17:30 브레이크타임",
+        "14:00, 20:30 라스트오더",
+        "토 11:00 - 21:00",
+        "14:30 - 17:30 브레이크타임",
+        "14:00, 20:30 라스트오더",
+        "일 11:00 - 21:00",
+        "14:30 - 17:30 브레이크타임",
+        "14:00, 20:30 라스트오더",
+        "월 11:00 - 21:00",
+        "14:30 - 17:30 브레이크타임",
+        "14:00, 20:30 라스트오더",
+        "화 11:00 - 21:00",
+        "14:30 - 17:30 브레이크타임",
+        "14:00, 20:30 라스트오더",
+        "09/24-09/26 추석 연휴 휴무",
+        "- 라스트오더는 휴게시간&마감시간 30분전까지 입니다"
+      ]
+    },
+    {
+      "id": 2072441369,
+      "url": "https://m.place.naver.com/restaurant/2072441369/home",
+      "checkedAt": "2026-09-16T04:50:47.696Z",
+      "pageStatus": "available",
+      "placeName": "복누룽지삼계탕 조치원점",
+      "roadAddressName": "세종 조치원읍 군청로 43",
+      "phone": "044-865-6044",
+      "openingHours": {
+        "monday": {
+          "isClosed": false,
+          "open": "10:30",
+          "close": "21:00",
+          "breakTimes": [
+            {
+              "start": "14:30",
+              "end": "17:00"
+            }
+          ],
+          "lastOrder": "20:00",
+          "note": null
+        },
+        "tuesday": {
+          "isClosed": false,
+          "open": "10:30",
+          "close": "21:00",
+          "breakTimes": [
+            {
+              "start": "14:30",
+              "end": "17:00"
+            }
+          ],
+          "lastOrder": "20:00",
+          "note": null
+        },
+        "wednesday": {
+          "isClosed": false,
+          "open": "10:30",
+          "close": "21:00",
+          "breakTimes": [
+            {
+              "start": "14:30",
+              "end": "17:00"
+            }
+          ],
+          "lastOrder": "20:00",
+          "note": null
+        },
+        "thursday": {
+          "isClosed": false,
+          "open": "10:30",
+          "close": "21:00",
+          "breakTimes": [
+            {
+              "start": "14:30",
+              "end": "17:00"
+            }
+          ],
+          "lastOrder": "20:00",
+          "note": null
+        },
+        "friday": {
+          "isClosed": false,
+          "open": "10:30",
+          "close": "21:00",
+          "breakTimes": [
+            {
+              "start": "14:30",
+              "end": "17:00"
+            }
+          ],
+          "lastOrder": "20:00",
+          "note": null
+        },
+        "saturday": {
+          "isClosed": false,
+          "open": "10:30",
+          "close": "21:00",
+          "breakTimes": [
+            {
+              "start": "14:30",
+              "end": "17:00"
+            }
+          ],
+          "lastOrder": "20:00",
+          "note": null
+        },
+        "sunday": {
+          "isClosed": false,
+          "open": "10:30",
+          "close": "21:00",
+          "breakTimes": [
+            {
+              "start": "14:30",
+              "end": "17:00"
+            }
+          ],
+          "lastOrder": "20:00",
+          "note": null
+        }
+      },
+      "regularHolidays": [],
+      "hoursEvidence": [
+        "영업 중 14시 30분에 브레이크타임",
+        "매일 10:30 - 21:00",
+        "14:30 - 17:00 브레이크타임",
+        "20:00 라스트오더"
+      ]
+    }
+  ]
+}

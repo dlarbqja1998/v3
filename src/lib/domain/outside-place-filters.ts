@@ -6,6 +6,10 @@ export type OutsideCuisine =
 	| 'chinese'
 	| 'japanese'
 	| 'western'
+	| 'snack'
+	| 'chicken'
+	| 'fastfood'
+	| 'asian'
 	| 'meat'
 	| 'snack-cutlet'
 	| 'chicken-fastfood'
@@ -24,9 +28,10 @@ export const outsideCuisineOptions: { value: OutsideCuisine; label: string }[] =
 	{ value: 'chinese', label: '중식' },
 	{ value: 'japanese', label: '일식' },
 	{ value: 'western', label: '양식' },
-	{ value: 'meat', label: '고기' },
-	{ value: 'snack-cutlet', label: '분식·돈까스' },
-	{ value: 'chicken-fastfood', label: '치킨·패스트푸드' },
+	{ value: 'snack', label: '분식' },
+	{ value: 'chicken', label: '치킨' },
+	{ value: 'fastfood', label: '피자·버거' },
+	{ value: 'asian', label: '아시아' },
 	{ value: 'other', label: '기타' }
 ];
 

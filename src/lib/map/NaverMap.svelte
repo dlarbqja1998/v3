@@ -30,12 +30,16 @@
 	import { getCampusPolygonStyle } from '$lib/map/campus-polygon';
 	import { cancelMapMotion } from '$lib/map/map-motion';
 	import { createMapLayer } from '$lib/map/map-layer';
+	import { clusterOutsidePlaces, createCommercialZoneLabel, createOutsidePlaceMarker } from '$lib/map/outside-markers';
 	import { getCommercialPolygonStyle } from '$lib/map/commercial-polygon';
 	import {
 		getNaverLogoControlPosition,
 		watchNaverAttributionLogo
 	} from '$lib/map/naver-attribution';
 	import {
+		OUTSIDE_OVERVIEW_CAMERA,
+		OUTSIDE_ZONE_CAMERAS,
+		getOutsideMapFocusInsets,
 		getMapCenterBounds,
 		getSheetAwareLatitudeOffset,
 		shouldFocusMapArea,
@@ -67,6 +71,12 @@
 		areaMode?: MapAreaMode;
 		commercialZones?: CommercialZone[];
 		selectedCommercialZoneId?: string;
+		commercialZoneCounts?: Record<string, number>;
+		onCommercialZoneClick?: (zoneId: string) => void;
+		onOutsideClusterClick?: (placeIds: string[]) => void;
+		selectedOutsidePlaceIds?: string[];
+		topOverlayHeight?: number;
+		bottomOverlayHeight?: number;
 	};
 
 	let {
@@ -93,7 +103,13 @@
 		attributionBottomOffset = 0,
 		areaMode = 'campus',
 		commercialZones = [],
-		selectedCommercialZoneId = 'all'
+		selectedCommercialZoneId = 'all',
+		commercialZoneCounts = {},
+		onCommercialZoneClick,
+		onOutsideClusterClick,
+		selectedOutsidePlaceIds = [],
+		topOverlayHeight = 108,
+		bottomOverlayHeight = 177
 	}: Props = $props();
 
 	let mapElement: HTMLDivElement;
@@ -101,6 +117,8 @@
 	const markerLayer = createMapLayer<any>(disposeMapObject);
 	const shuttleMarkerViews = new Map<string, ShuttleMarkerView>();
 	const eventLayer = createMapLayer<any>(disposeMapObject);
+	const outsideMarkerLayer = createMapLayer<any>(disposeMapObject);
+	const commercialLabelLayer = createMapLayer<any>(disposeMapObject);
 	let campusMarkers: any[] = [];
 	let campusPolygons: any[] = [];
 	let commercialPolygons: any[] = [];
@@ -119,6 +137,7 @@
 	let lastAreaKey = '';
 	let lastCampusKey = '';
 	let lastCommercialKey = '';
+	let mapZoom = $state(16);
 
 	const initialTarget = {
 		latitude: 36.608634852584125,
@@ -172,6 +191,8 @@
 		clearEventMarkers();
 		clearCampusSpots();
 		clearCommercialZones();
+		outsideMarkerLayer.clear();
+		commercialLabelLayer.clear();
 		map?.destroy?.();
 		map = null;
 	});
@@ -182,7 +203,7 @@
 			lastFocusRequestId = focusRequestId;
 			if (focusZoom !== undefined) map.setZoom(focusZoom);
 		}
-		syncMarkers(places, activePlaceId);
+		syncMarkers(areaMode === 'outside' ? [] : places, activePlaceId);
 		syncEventMarkers(events, activeEventId);
 		syncCampusSpots(campusSpots, activeCampusSpotId, showCampusBoundaries);
 		focusActivePlace(places, activePlaceId, focusMode, focusTargetRatio);
@@ -195,6 +216,12 @@
 			const ratio = Math.max(0, Math.min(baseRatio * 2 - 16 / height, baseRatio + 44 / height));
 			focusCoordinate(festival.area.latitude, festival.area.longitude, 'default', ratio);
 		}
+	});
+
+	$effect(() => {
+		if (!active || !isReady || !map) return;
+		syncOutsideMarkers(areaMode === 'outside' && selectedCommercialZoneId !== 'all' ? places : [], mapZoom);
+		syncCommercialLabels(areaMode === 'outside' && selectedCommercialZoneId === 'all' ? commercialZones : []);
 	});
 
 	$effect(() => {
@@ -218,8 +245,20 @@
 		const areaKey = JSON.stringify([areaMode, selectedCommercialZoneId,
 			commercialZones.map((zone) => [zone.id, zone.center, zone.boundary])]);
 		if (lastAreaKey === areaKey) return;
-		lastAreaKey = areaKey;
-		focusMapArea(areaMode, commercialZones, selectedCommercialZoneId);
+		// ResizeObserver가 새 상단 높이를 전달한 다음 첫 위치를 맞춘다.
+		const nextMode = areaMode, nextZones = commercialZones, nextZone = selectedCommercialZoneId;
+		const nextTop = topOverlayHeight, nextBottom = bottomOverlayHeight;
+		let layoutFrame: number | undefined;
+		const frame = requestAnimationFrame(() => {
+			layoutFrame = requestAnimationFrame(() => {
+				lastAreaKey = areaKey;
+				focusMapArea(nextMode, nextZones, nextZone, nextTop, nextBottom);
+			});
+		});
+		return () => {
+			cancelAnimationFrame(frame);
+			if (layoutFrame !== undefined) cancelAnimationFrame(layoutFrame);
+		};
 	});
 
 	async function initMap() {
@@ -322,7 +361,7 @@
 			naver.maps.Event.addListener(map, 'touchstart', () => cancelMapMotion(map)),
 			naver.maps.Event.addListener(map, 'dragstart', () => cancelMapMotion(map)),
 			naver.maps.Event.addListener(map, 'dragend', keepMapInServiceArea),
-			naver.maps.Event.addListener(map, 'zoom_changed', keepZoomInServiceArea)
+			naver.maps.Event.addListener(map, 'zoom_changed', () => { keepZoomInServiceArea(); mapZoom = map.getZoom(); })
 		];
 	}
 
@@ -415,6 +454,40 @@
 		});
 	}
 
+	function syncOutsideMarkers(nextPlaces: Place[], zoom: number) {
+		const naver = window.naver;
+		if (!naver || !map) return;
+		const focused = nextPlaces.find(place => place.id === activePlaceId);
+		const groups = clusterOutsidePlaces(nextPlaces.filter(place => place.id !== focused?.id), zoom);
+		if (focused) groups.push({ id: focused.id, latitude: focused.latitude, longitude: focused.longitude, places: [focused] });
+		outsideMarkerLayer.sync(groups, group => ({
+			id: group.id,
+			signature: JSON.stringify([group.latitude, group.longitude, group.places.map(place => [place.id, place.name, place.categorySlug]), group.places.some(place => selectedOutsidePlaceIds.includes(place.id))])
+		}), group => new naver.maps.Marker({
+			map, position: new naver.maps.LatLng(group.latitude, group.longitude),
+			zIndex: group.places.some(place => selectedOutsidePlaceIds.includes(place.id)) ? 20 : 10,
+			icon: {
+				content: createOutsidePlaceMarker(group, group.places.some(place => selectedOutsidePlaceIds.includes(place.id)), () => {
+					if (group.places.length === 1) onMarkerClick(group.places[0].id);
+					else onOutsideClusterClick?.(group.places.map(place => place.id));
+				}),
+				size: new naver.maps.Size(44, 44), anchor: new naver.maps.Point(22, 22)
+			}
+		}));
+	}
+
+	function syncCommercialLabels(zones: CommercialZone[]) {
+		const naver = window.naver;
+		if (!naver || !map) return;
+		commercialLabelLayer.sync(zones, zone => ({ id: zone.id, signature: JSON.stringify([zone.name, zone.center, commercialZoneCounts[zone.id] ?? 0]) }), zone => new naver.maps.Marker({
+			map, position: new naver.maps.LatLng(zone.center.latitude, zone.center.longitude), zIndex: 10,
+			icon: {
+				content: createCommercialZoneLabel(zone.name, commercialZoneCounts[zone.id] ?? 0, () => onCommercialZoneClick?.(zone.id)),
+				size: new naver.maps.Size(100, 44), anchor: new naver.maps.Point(50, 22)
+			}
+		}));
+	}
+
 	function syncCommercialZones(
 		nextAreaMode: MapAreaMode,
 		nextZones: CommercialZone[],
@@ -429,7 +502,7 @@
 		const naver = window.naver;
 		if (!naver) return;
 
-		for (const zone of getVisibleCommercialZones(nextZones, nextSelectedZoneId)) {
+		for (const zone of nextZones.filter(zone => zone.id === nextSelectedZoneId)) {
 			if (zone.boundary.length < 3) continue;
 			const polygon = new naver.maps.Polygon({
 				map,
@@ -445,7 +518,9 @@
 	function focusMapArea(
 		nextAreaMode: MapAreaMode,
 		nextZones: CommercialZone[],
-		nextSelectedZoneId: string
+		nextSelectedZoneId: string,
+		topHeight: number,
+		bottomHeight: number
 	) {
 		const naver = window.naver;
 		if (!naver || !map) return;
@@ -453,6 +528,32 @@
 		if (nextAreaMode === 'campus') {
 			map.setCenter(new naver.maps.LatLng(initialCenter.latitude, initialCenter.longitude));
 			map.setZoom(initialZoom);
+			return;
+		}
+
+		if (nextSelectedZoneId === 'all') {
+			map.setZoom(OUTSIDE_OVERVIEW_CAMERA.zoom);
+			map.setCenter(new naver.maps.LatLng(
+				OUTSIDE_OVERVIEW_CAMERA.latitude,
+				OUTSIDE_OVERVIEW_CAMERA.longitude
+			));
+			return;
+		}
+
+		const selectedZone = nextZones.find((zone) => zone.id === nextSelectedZoneId);
+		const camera = selectedZone && OUTSIDE_ZONE_CAMERAS[selectedZone.name];
+		if (camera) {
+			const height = Math.max(1, mapElement.clientHeight);
+			const targetRatio = Math.max(0, Math.min(1, (topHeight + height - bottomHeight) / (2 * height)));
+			const offset = getSheetAwareLatitudeOffset({
+				latitude: camera.latitude,
+				zoom: camera.zoom,
+				mapHeight: height,
+				focusMode: 'default',
+				markerTargetRatio: targetRatio
+			});
+			map.setZoom(camera.zoom);
+			map.setCenter(new naver.maps.LatLng(camera.latitude - offset, camera.longitude));
 			return;
 		}
 
@@ -470,22 +571,7 @@
 			new naver.maps.LatLng(bounds.south, bounds.west),
 			new naver.maps.LatLng(bounds.north, bounds.east)
 		);
-		map.fitBounds(mapBounds, {
-			top: 170,
-			right: 28,
-			bottom: 250,
-			left: 28,
-			maxZoom: 17
-		});
-
-		if (nextSelectedZoneId !== 'all') {
-			const selectedZone = visibleZones[0];
-			if (selectedZone) {
-				map.setCenter(
-					new naver.maps.LatLng(selectedZone.center.latitude, selectedZone.center.longitude)
-				);
-			}
-		}
+		map.fitBounds(mapBounds, getOutsideMapFocusInsets(mapElement.clientHeight, topHeight, bottomHeight));
 	}
 
 	function syncCampusSpots(
@@ -587,6 +673,7 @@
 		if (!naver || !map) return;
 
 		const sheetAwareLatitudeOffset = getSheetAwareLatitudeOffset({
+			// 상단 필터의 높이도 화면 중앙 계산에 포함한다.
 			latitude,
 			zoom: map.getZoom(),
 			mapHeight: mapElement?.clientHeight || window.innerHeight || 800,
@@ -698,12 +785,13 @@
 
 <div
 	class="absolute inset-0"
+	class:outside-map={areaMode === 'outside'}
 	data-map-layer="background"
 	data-map-instance-id={mapInstanceId || undefined}
 	data-map-attribution-bottom-offset={attributionBottomOffset}
 	style="isolation: isolate; z-index: 0;"
 >
-	<div bind:this={mapElement} class="h-full w-full"></div>
+	<div bind:this={mapElement} class="map-surface h-full w-full"></div>
 
 	{#if !clientId || loadError}
 		<div
@@ -719,3 +807,14 @@
 		</div>
 	{/if}
 </div>
+
+<style>
+	.map-surface {
+		/* 마커 포커스가 SDK의 지도 이동과 별개로 내부 화면을 스크롤하지 않게 한다. */
+		overflow: clip !important;
+	}
+
+	.outside-map :global(img[src*="/styles/basic/"]) {
+		filter: saturate(0.24) brightness(1.035);
+	}
+</style>

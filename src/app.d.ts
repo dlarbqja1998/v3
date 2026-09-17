@@ -55,6 +55,10 @@ declare global {
 		interface PageState {
 			festivalBooth?: string;
 			campusDirectory?: import('$lib/domain/campus-facilities').CampusDirectoryView;
+			outsideDirectory?: import('$lib/domain/restaurants').OutsideDirectoryView;
+			fromOutsideMap?: boolean;
+			restaurantDetail?: import('$lib/domain/restaurants').RestaurantDetail;
+			restaurantPreview?: import('$lib/domain/restaurants').RestaurantSummary;
 		}
 		interface Platform {
 			env?: {

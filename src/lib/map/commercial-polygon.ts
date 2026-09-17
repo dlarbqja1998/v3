@@ -1,9 +1,10 @@
 export function getCommercialPolygonStyle(selected: boolean) {
 	return {
-		strokeColor: selected ? '#7a1237' : '#a51c45',
-		strokeOpacity: selected ? 0.95 : 0.7,
-		strokeWeight: selected ? 3 : 2,
-		fillColor: '#a51c45',
-		fillOpacity: selected ? 0.22 : 0.1
+		strokeColor: '#a61942',
+		strokeStyle: 'shortdash',
+		strokeOpacity: selected ? 0.8 : 0,
+		strokeWeight: selected ? 1.4 : 0,
+		fillColor: '#a61942',
+		fillOpacity: 0
 	};
 }

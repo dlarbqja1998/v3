@@ -50,6 +50,7 @@ describe('교내 시설 탐색', () => {
 	});
 	it('완전한 전화번호만 연결하고 단축 번호를 추측하지 않는다', () => {
 		expect(getFacilityPhoneLinks('860-1984 (교내전화 표기)')).toEqual([]);
+		expect(getFacilityPhoneLinks('0507-1371-3228')).toEqual([{ label: '0507-1371-3228', href: 'tel:050713713228' }]);
 		expect(getFacilityPhoneLinks('044-860-1088~1089')).toEqual([{ label: '044-860-1088', href: 'tel:0448601088' }]);
 		expect(getFacilityPhoneLinks(byId('FAC-013').phone)).toHaveLength(2);
 		expect(getFacilityOfficialUrl('javascript:alert(1)')).toBeNull();

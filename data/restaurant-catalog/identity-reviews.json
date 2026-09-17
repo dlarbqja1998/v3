@@ -1,0 +1,319 @@
+[
+  {
+    "groupId": "place-review-1",
+    "places": [
+      {
+        "id": 1095774526,
+        "name": "사나포차 세종조치원점",
+        "url": "https://m.place.naver.com/restaurant/1095774526/home"
+      },
+      {
+        "id": 36249569,
+        "name": "죽도니보쌈",
+        "url": "https://m.place.naver.com/restaurant/36249569/home"
+      }
+    ],
+    "signals": [
+      {
+        "kind": "phone",
+        "value": "0448655355"
+      },
+      {
+        "kind": "registry",
+        "value": "5690000-101-2007-00008"
+      }
+    ],
+    "decision": "검토 필요. 같은 주소·전화·인허가 번호만으로 자동 병합하지 않음."
+  },
+  {
+    "groupId": "place-review-2",
+    "places": [
+      {
+        "id": 1030227706,
+        "name": "한입 돈가스",
+        "url": "https://m.place.naver.com/restaurant/1030227706/home"
+      },
+      {
+        "id": 1222434359,
+        "name": "흥부네 갈비탕",
+        "url": "https://m.place.naver.com/restaurant/1222434359/home"
+      }
+    ],
+    "signals": [
+      {
+        "kind": "phone",
+        "value": "0448628252"
+      },
+      {
+        "kind": "registry",
+        "value": "5690000-101-2000-00067"
+      }
+    ],
+    "decision": "검토 필요. 같은 주소·전화·인허가 번호만으로 자동 병합하지 않음."
+  },
+  {
+    "groupId": "place-review-3",
+    "places": [
+      {
+        "id": 1343970212,
+        "name": "엄마 생선구이",
+        "url": "https://m.place.naver.com/restaurant/1343970212/home"
+      },
+      {
+        "id": 1642570922,
+        "name": "인생돈까스&한식",
+        "url": "https://m.place.naver.com/restaurant/1642570922/home"
+      }
+    ],
+    "signals": [
+      {
+        "kind": "phone",
+        "value": "0447155238"
+      }
+    ],
+    "decision": "검토 필요. 같은 주소·전화·인허가 번호만으로 자동 병합하지 않음."
+  },
+  {
+    "groupId": "place-review-4",
+    "places": [
+      {
+        "id": 1642287611,
+        "name": "경두치 조치원점",
+        "url": "https://m.place.naver.com/restaurant/1642287611/home"
+      },
+      {
+        "id": 1176653562,
+        "name": "경아두마리치킨 조치원점",
+        "url": "https://m.place.naver.com/restaurant/1176653562/home"
+      }
+    ],
+    "signals": [
+      {
+        "kind": "phone",
+        "value": "0448650999"
+      }
+    ],
+    "decision": "검토 필요. 같은 주소·전화·인허가 번호만으로 자동 병합하지 않음."
+  },
+  {
+    "groupId": "place-review-5",
+    "places": [
+      {
+        "id": 17534759,
+        "name": "부민세숫대야냉면",
+        "url": "https://m.place.naver.com/restaurant/17534759/home"
+      },
+      {
+        "id": 33016591,
+        "name": "한돈삼불구이 본점",
+        "url": "https://m.place.naver.com/restaurant/33016591/home"
+      }
+    ],
+    "signals": [
+      {
+        "kind": "phone",
+        "value": "0448677746"
+      },
+      {
+        "kind": "registry",
+        "value": "5690000-101-1988-00017"
+      }
+    ],
+    "decision": "검토 필요. 같은 주소·전화·인허가 번호만으로 자동 병합하지 않음."
+  },
+  {
+    "groupId": "place-review-6",
+    "places": [
+      {
+        "id": 1931680712,
+        "name": "청담피자 조치원점",
+        "url": "https://m.place.naver.com/restaurant/1931680712/home"
+      },
+      {
+        "id": 1039093824,
+        "name": "청담피자 조치원점",
+        "url": "https://m.place.naver.com/restaurant/1039093824/home"
+      }
+    ],
+    "signals": [
+      {
+        "kind": "phone",
+        "value": "0448640609"
+      },
+      {
+        "kind": "registry",
+        "value": "5690000-101-2020-00427"
+      }
+    ],
+    "decision": "검토 필요. 같은 주소·전화·인허가 번호만으로 자동 병합하지 않음."
+  },
+  {
+    "groupId": "place-review-7",
+    "places": [
+      {
+        "id": 1566886560,
+        "name": "고가네 생선구이전문점",
+        "url": "https://m.place.naver.com/restaurant/1566886560/home"
+      },
+      {
+        "id": 1873691957,
+        "name": "나주진사곰탕&육개장",
+        "url": "https://m.place.naver.com/restaurant/1873691957/home"
+      },
+      {
+        "id": 1118215078,
+        "name": "반찬의역습",
+        "url": "https://m.place.naver.com/restaurant/1118215078/home"
+      },
+      {
+        "id": 1604851266,
+        "name": "엄마손비빔밥&덮밥",
+        "url": "https://m.place.naver.com/restaurant/1604851266/home"
+      },
+      {
+        "id": 1460961775,
+        "name": "제육에 미친 남자",
+        "url": "https://m.place.naver.com/restaurant/1460961775/home"
+      }
+    ],
+    "signals": [
+      {
+        "kind": "phone",
+        "value": "0448646782"
+      }
+    ],
+    "decision": "검토 필요. 같은 주소·전화·인허가 번호만으로 자동 병합하지 않음."
+  },
+  {
+    "groupId": "place-review-8",
+    "places": [
+      {
+        "id": 36936134,
+        "name": "신흥손칼국수",
+        "url": "https://m.place.naver.com/restaurant/36936134/home"
+      },
+      {
+        "id": 1362942521,
+        "name": "소먹방 조치원본점",
+        "url": "https://m.place.naver.com/restaurant/1362942521/home"
+      }
+    ],
+    "signals": [
+      {
+        "kind": "registry",
+        "value": "5690000-101-2015-00072"
+      }
+    ],
+    "decision": "검토 필요. 같은 주소·전화·인허가 번호만으로 자동 병합하지 않음."
+  },
+  {
+    "groupId": "place-review-9",
+    "places": [
+      {
+        "id": 37692431,
+        "name": "모이새해장국",
+        "url": "https://m.place.naver.com/restaurant/37692431/home"
+      },
+      {
+        "id": 1114833498,
+        "name": "송이국수",
+        "url": "https://m.place.naver.com/restaurant/1114833498/home"
+      }
+    ],
+    "signals": [
+      {
+        "kind": "registry",
+        "value": "5690000-101-2001-00119"
+      }
+    ],
+    "decision": "검토 필요. 같은 주소·전화·인허가 번호만으로 자동 병합하지 않음."
+  },
+  {
+    "groupId": "place-review-10",
+    "places": [
+      {
+        "id": 37942305,
+        "name": "작은여유",
+        "url": "https://m.place.naver.com/restaurant/37942305/home"
+      },
+      {
+        "id": 1575291166,
+        "name": "영주식당",
+        "url": "https://m.place.naver.com/restaurant/1575291166/home"
+      }
+    ],
+    "signals": [
+      {
+        "kind": "registry",
+        "value": "5690000-101-1988-00012"
+      }
+    ],
+    "decision": "검토 필요. 같은 주소·전화·인허가 번호만으로 자동 병합하지 않음."
+  },
+  {
+    "groupId": "place-review-11",
+    "places": [
+      {
+        "id": 1565031423,
+        "name": "한우만족",
+        "url": "https://m.place.naver.com/restaurant/1565031423/home"
+      },
+      {
+        "id": 2053361234,
+        "name": "춘향전집",
+        "url": "https://m.place.naver.com/restaurant/2053361234/home"
+      }
+    ],
+    "signals": [
+      {
+        "kind": "registry",
+        "value": "5690000-101-2024-00466"
+      }
+    ],
+    "decision": "검토 필요. 같은 주소·전화·인허가 번호만으로 자동 병합하지 않음."
+  },
+  {
+    "groupId": "place-review-12",
+    "places": [
+      {
+        "id": 1717268444,
+        "name": "감동까스 세종조치원점",
+        "url": "https://m.place.naver.com/restaurant/1717268444/home"
+      },
+      {
+        "id": 1542715295,
+        "name": "감동까스&오진당 세종조치원점",
+        "url": "https://m.place.naver.com/restaurant/1542715295/home"
+      }
+    ],
+    "signals": [
+      {
+        "kind": "registry",
+        "value": "5690000-101-1999-00055"
+      }
+    ],
+    "decision": "검토 필요. 같은 주소·전화·인허가 번호만으로 자동 병합하지 않음."
+  },
+  {
+    "groupId": "place-review-13",
+    "places": [
+      {
+        "id": 33896302,
+        "name": "커피ANO",
+        "url": "https://m.place.naver.com/restaurant/33896302/home"
+      },
+      {
+        "id": 1130129928,
+        "name": "커피아노",
+        "url": "https://m.place.naver.com/restaurant/1130129928/home"
+      }
+    ],
+    "signals": [
+      {
+        "kind": "manual",
+        "value": "동일 주소, 약 2m 거리, 영문·한글 상호 유사; 두 원문 페이지 확인"
+      }
+    ],
+    "decision": "검토 필요. 같은 주소·전화·인허가 번호만으로 자동 병합하지 않음."
+  }
+]

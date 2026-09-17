@@ -1,0 +1,17 @@
+{
+  "zoneOverrides": [
+    {
+      "sourceId": 2072441369,
+      "zoneSlug": "zone-5995e344",
+      "reason": "사용자 결정: 현재 경계 밖이지만 기존 죽림리 소속을 유지함",
+      "basis": "user"
+    }
+  ],
+  "menuChecks": [
+    {"sourceId":20013019,"url":"https://m.place.naver.com/restaurant/20013019/home","checkedAt":"2026-09-16","note":"현재 공개된 닭갈비 대·중·소 세 메뉴의 가격과 원본이 일치함"},
+    {"sourceId":33896262,"url":"https://m.place.naver.com/restaurant/33896262/menu/list","checkedAt":"2026-09-16","note":"현재 공개된 알밥 6개 메뉴의 가격과 원본이 일치함"},
+    {"sourceId":1287015667,"url":"https://m.place.naver.com/restaurant/1287015667/menu/list","checkedAt":"2026-09-16","note":"현재 배달용 사이즈 메뉴와 원본 100g 단가의 단위·채널이 달라 기존 가격을 덮어쓰지 않음"},
+    {"sourceId":1788429517,"url":"https://m.place.naver.com/restaurant/1788429517/menu/list","checkedAt":"2026-09-16","note":"현재 네이버에도 딥체다치즈 베이컨(R)이 17,900원과 11,800원으로 중복됨. 확정 가격 대신 후보를 보존함"},
+    {"sourceId":2007484778,"url":"https://m.place.naver.com/restaurant/2007484778/menu/list","checkedAt":"2026-09-16","note":"현재 메뉴를 펼쳐 확인함. 원본에 중복된 버터떡·두바이쫀득쿠키는 채널·판매 여부를 확정하지 않고 가격 충돌 상태로 관리함"}
+  ]
+}

@@ -19,7 +19,7 @@
 <div bind:this={parking} hidden inert aria-hidden="true">
 	{#if session.props}
 		<div bind:this={container} class="absolute inset-0" data-persistent-home-map>
-			<NaverMap {...session.props} active={Boolean(session.host)} />
+			<NaverMap {...session.props} active={Boolean(session.host) && session.props.active !== false} />
 		</div>
 	{/if}
 </div>

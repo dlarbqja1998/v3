@@ -1,0 +1,6398 @@
+[
+  {
+    "id": "cf986637-1e32-5c76-b390-034210826c69",
+    "naverPlaceId": "1720519319",
+    "name": "술당포",
+    "zone": "고대앞",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "40139907-997f-5c55-9805-69ecca40e4cf",
+    "naverPlaceId": "1287094962",
+    "name": "마라마라",
+    "zone": "고대앞",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "4175cac6-e4c6-5c19-bc19-121c06ebdf5a",
+    "naverPlaceId": "1585674733",
+    "name": "비바리코",
+    "zone": "고대앞",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "6469b5ed-6a02-5ab8-9864-4a0401d111fb",
+    "naverPlaceId": "2026856450",
+    "name": "감성커피 서창고대점",
+    "zone": "고대앞",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "0c1c2b75-54cb-5bb8-bc42-e7bf888b06c6",
+    "naverPlaceId": "17732098",
+    "name": "파랑새분식",
+    "zone": "고대앞",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "7a2d6b10-a274-598f-9ad2-a4a97430f7a3",
+    "naverPlaceId": "1300746560",
+    "name": "바닐라가든",
+    "zone": "고대앞",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "790892d7-8c00-5394-a511-b1be4d95991d",
+    "naverPlaceId": "38443845",
+    "name": "술이야 고대점",
+    "zone": "고대앞",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "afeef3b3-ad84-5d4c-bcf8-4e696dc37144",
+    "naverPlaceId": "1095774526",
+    "name": "사나포차 세종조치원점",
+    "zone": "고대앞",
+    "issues": [
+      {
+        "code": "identity_review",
+        "message": "중복·공유매장 여부를 확인할 후보. 자동 병합하지 않음"
+      }
+    ]
+  },
+  {
+    "id": "d04614d9-4da6-53e6-aa84-a430e5b84d3b",
+    "naverPlaceId": "36249569",
+    "name": "죽도니보쌈",
+    "zone": "고대앞",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "identity_review",
+        "message": "중복·공유매장 여부를 확인할 후보. 자동 병합하지 않음"
+      }
+    ]
+  },
+  {
+    "id": "2717bd3f-a6d0-5d34-9373-602e5e3a6aa9",
+    "naverPlaceId": "1561336673",
+    "name": "에움길",
+    "zone": "고대앞",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "2개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "b5a76a4f-179c-5e6a-bcde-23c39ef6a08e",
+    "naverPlaceId": "2064760781",
+    "name": "하이술",
+    "zone": "고대앞",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "ccfe9e59-dcdf-5ef9-aea8-4cc574f692b7",
+    "naverPlaceId": "17732118",
+    "name": "맛나식당",
+    "zone": "고대앞",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "124fdde6-1aed-542a-be4e-530de5fb0d19",
+    "naverPlaceId": "38520665",
+    "name": "자갈돈돈",
+    "zone": "고대앞",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "9339cd4c-886e-5d95-8afd-eaa571cd46bd",
+    "naverPlaceId": "19730500",
+    "name": "옛촌",
+    "zone": "고대앞",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "c9127727-7cc2-5b1e-8b70-795871ca4543",
+    "naverPlaceId": "1998621520",
+    "name": "힐링푸드",
+    "zone": "고대앞",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "e0de0130-71b3-511f-96d1-e2b976ce9266",
+    "naverPlaceId": "1660567682",
+    "name": "떡통령의 빨간철가방 조치원점",
+    "zone": "고대앞",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "43d9e6b2-c647-57ee-80f5-0edf0bc8618c",
+    "naverPlaceId": "1102037134",
+    "name": "치교치밥&치킨 조치원점",
+    "zone": "고대앞",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "39ae0338-6b85-5ef1-8671-6db733f2f9f7",
+    "naverPlaceId": "1467379215",
+    "name": "더라멘",
+    "zone": "고대앞",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "720eede0-e4ea-5f14-8ab1-d3121ffeef3c",
+    "naverPlaceId": "2142101300",
+    "name": "차코",
+    "zone": "고대앞",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "5fab6ac1-a97b-5a7a-9bf6-46163dbb21a7",
+    "naverPlaceId": "1720209185",
+    "name": "빽다방 세종고대점",
+    "zone": "고대앞",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "d3a17ed7-3e9d-5353-bba0-fded845f43f7",
+    "naverPlaceId": "30857183",
+    "name": "어머님칼국수",
+    "zone": "고대앞",
+    "issues": [
+      {
+        "code": "menu_price_conflict",
+        "message": "1개 메뉴 가격이 충돌하여 확정 가격을 비움"
+      }
+    ]
+  },
+  {
+    "id": "ebc098b5-352e-5f53-ba77-12ae429cf1bf",
+    "naverPlaceId": "1696133156",
+    "name": "치어스건배",
+    "zone": "고대앞",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "898cc81f-ff0f-5b8d-8ba4-1904c3a74ac4",
+    "naverPlaceId": "17547294",
+    "name": "본가식당",
+    "zone": "고대앞",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "ff9a8e92-252c-594a-99ad-26ccc1fa973e",
+    "naverPlaceId": "17546899",
+    "name": "짱분식",
+    "zone": "고대앞",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "07a9a0e6-b664-5f3e-8746-41b16b452979",
+    "naverPlaceId": "1268456730",
+    "name": "필라프에빠지다",
+    "zone": "고대앞",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "96972c6a-fd74-514f-9276-bf2d35d1f732",
+    "naverPlaceId": "2014729784",
+    "name": "오천국수",
+    "zone": "고대앞",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "c5fcc670-1f9d-5383-895d-098d85a5dbe9",
+    "naverPlaceId": "1240859263",
+    "name": "순우리뼈감자탕",
+    "zone": "고대앞",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "ff808954-2515-535e-849a-244a07ec7ba6",
+    "naverPlaceId": "1079511833",
+    "name": "카페수작",
+    "zone": "고대앞",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "fc5790a4-6756-543f-be4a-44a8df1a3063",
+    "naverPlaceId": "1698175998",
+    "name": "코드나인",
+    "zone": "고대앞",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "9970a6e4-89e0-5c06-b187-53f4e995b053",
+    "naverPlaceId": "1341266235",
+    "name": "에클레시아",
+    "zone": "신흥리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "90ea77de-6930-5980-b1c4-0d327a3b3c1b",
+    "naverPlaceId": "1680814407",
+    "name": "아이디어브루 세종점",
+    "zone": "신흥리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "b5472f5f-1827-5432-b441-f1585c1f172d",
+    "naverPlaceId": "1737991199",
+    "name": "김밥집",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "40566dcb-9edc-5bb3-be56-8f39204cdad5",
+    "naverPlaceId": "1927782481",
+    "name": "청해막썰어회",
+    "zone": "신흥리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "6개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "d405bd39-4ce9-5526-9c1a-acf536b1971f",
+    "naverPlaceId": "1117709903",
+    "name": "미사리반반돈까스 조치원점",
+    "zone": "신흥리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "46ca5203-1687-5d55-9249-2d5cefc57758",
+    "naverPlaceId": "2089227176",
+    "name": "아라치 세종 조치원점",
+    "zone": "신흥리",
+    "issues": [
+      {
+        "code": "holiday_anchor_unknown",
+        "message": "격주 휴무의 기준일을 확정하지 않음"
+      }
+    ]
+  },
+  {
+    "id": "3ec3968d-d11b-5673-9064-8da0318b62c0",
+    "naverPlaceId": "1020259466",
+    "name": "마초떡볶이",
+    "zone": "신흥리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "61bce248-b9ff-5563-a844-aed2c929a13e",
+    "naverPlaceId": "1576381084",
+    "name": "적쇠한상불고기",
+    "zone": "신흥리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "13045449-6d05-512b-ba18-af716c19a6db",
+    "naverPlaceId": "1318562715",
+    "name": "커플릭스 조치원점",
+    "zone": "신흥리",
+    "issues": [
+      {
+        "code": "source_unavailable",
+        "message": "네이버 원문을 찾지 못함. 폐업으로 확정하지 않음"
+      }
+    ]
+  },
+  {
+    "id": "12f3f963-9bc8-54af-a573-c50d48311eab",
+    "naverPlaceId": "1030227706",
+    "name": "한입 돈가스",
+    "zone": "신흥리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "identity_review",
+        "message": "중복·공유매장 여부를 확인할 후보. 자동 병합하지 않음"
+      }
+    ]
+  },
+  {
+    "id": "1cd04380-87a8-51eb-9a50-72102878628c",
+    "naverPlaceId": "1222434359",
+    "name": "흥부네 갈비탕",
+    "zone": "신흥리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "identity_review",
+        "message": "중복·공유매장 여부를 확인할 후보. 자동 병합하지 않음"
+      }
+    ]
+  },
+  {
+    "id": "d39a8f00-ab54-520e-bed6-329ef4a47540",
+    "naverPlaceId": "2097978466",
+    "name": "빽다방 조치원신흥점",
+    "zone": "신흥리",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "1bcbad0b-3fb6-55f8-8371-bd973e05eaf7",
+    "naverPlaceId": "17541611",
+    "name": "파리바게뜨 조치원신흥점",
+    "zone": "신흥리",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "88048739-5343-59db-a41c-421c56639809",
+    "naverPlaceId": "1583812034",
+    "name": "홀리데이",
+    "zone": "신흥리",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "932f140a-6e99-59e9-8708-6bd71693bf26",
+    "naverPlaceId": "31129422",
+    "name": "커피베이 조치원점",
+    "zone": "신흥리",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "4675e40f-6a93-5ec7-9874-d437cb7f4041",
+    "naverPlaceId": "1703554617",
+    "name": "훈스돈까스",
+    "zone": "신흥리",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "054c9269-97be-5b6e-a6ff-4cc03d3a9bf6",
+    "naverPlaceId": "1501838982",
+    "name": "꽃보다돼지",
+    "zone": "신흥리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "44f9b66c-53a7-56f5-bb2c-db73a3c15f0f",
+    "naverPlaceId": "878082985",
+    "name": "청춘은바로지금",
+    "zone": "신흥리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "2bc0063c-6ac4-5ddb-8198-66ed2092e4ba",
+    "naverPlaceId": "36936134",
+    "name": "신흥손칼국수",
+    "zone": "신흥리",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "identity_review",
+        "message": "중복·공유매장 여부를 확인할 후보. 자동 병합하지 않음"
+      }
+    ]
+  },
+  {
+    "id": "3addc487-bc59-5f99-b6a7-548240f31023",
+    "naverPlaceId": "1362942521",
+    "name": "소먹방 조치원본점",
+    "zone": "신흥리",
+    "issues": [
+      {
+        "code": "identity_review",
+        "message": "중복·공유매장 여부를 확인할 후보. 자동 병합하지 않음"
+      }
+    ]
+  },
+  {
+    "id": "5d065f8b-62a9-53b8-b83f-7a9172f21d36",
+    "naverPlaceId": "17541521",
+    "name": "무봉리토종순대국 조치원점",
+    "zone": "신흥리",
+    "issues": [
+      {
+        "code": "holiday_anchor_unknown",
+        "message": "격주 휴무의 기준일을 확정하지 않음"
+      }
+    ]
+  },
+  {
+    "id": "0b028006-dfe5-5e74-ac8c-aec7809d64f2",
+    "naverPlaceId": "1580003156",
+    "name": "대명갈비탕 조치원점",
+    "zone": "신흥리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "b94853f7-ce44-517a-aa0e-ae6ab3f40c2d",
+    "naverPlaceId": "1962556787",
+    "name": "곱도리탕전문점 조치원점",
+    "zone": "신흥리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "27507f31-287b-5766-aaed-be0da26cfa1a",
+    "naverPlaceId": "31062455",
+    "name": "이태리하우스 조치원점",
+    "zone": "신흥리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "a0aefbc4-6e47-5390-9583-35df3efd53fe",
+    "naverPlaceId": "33913633",
+    "name": "투다리 신흥점",
+    "zone": "신흥리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "0cceb0e7-3ec3-5c78-a2f2-fd176f74a139",
+    "naverPlaceId": "36096300",
+    "name": "김밥천국 신흥점",
+    "zone": "신흥리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "22de7336-ea98-5e44-9768-1c072a5288b5",
+    "naverPlaceId": "37883389",
+    "name": "술파라다이스",
+    "zone": "신흥리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "918b4178-1269-5eaf-9b48-840126ea1d54",
+    "naverPlaceId": "33409688",
+    "name": "피자마루 충남조치원점",
+    "zone": "신흥리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "1개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "holiday_anchor_unknown",
+        "message": "격주 휴무의 기준일을 확정하지 않음"
+      }
+    ]
+  },
+  {
+    "id": "683da87d-f4c5-5b08-b874-733324849214",
+    "naverPlaceId": "1981462395",
+    "name": "또바기식당",
+    "zone": "신흥리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "eeb0f812-be8a-55e5-840d-92dbbedd9dd6",
+    "naverPlaceId": "1844107783",
+    "name": "모퉁이 감자탕 해장국",
+    "zone": "신흥리",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "91654a62-cc3b-5366-80f4-71ced0269461",
+    "naverPlaceId": "2074118523",
+    "name": "카페내일",
+    "zone": "신흥리",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "07a508be-149e-5782-a511-d24f2c368c8c",
+    "naverPlaceId": "1142898556",
+    "name": "배달의쌀국수 조치원점",
+    "zone": "신흥리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "d6a6e810-4993-53a0-8005-a5041fdf18cc",
+    "naverPlaceId": "2144259520",
+    "name": "이가네",
+    "zone": "신흥리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "8bd3a2e5-c96a-5ba6-b512-97444d583d8f",
+    "naverPlaceId": "481377128",
+    "name": "팡스브레드",
+    "zone": "신흥리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "611400f3-d386-5ad4-bb4c-be8ada5f47fc",
+    "naverPlaceId": "1327409191",
+    "name": "장군네삽다리곱창",
+    "zone": "신흥리",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "911fbacc-e24d-5dda-b572-aeee30180b30",
+    "naverPlaceId": "1046753509",
+    "name": "홍식당",
+    "zone": "신흥리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "5a782f81-abc0-543a-a557-334815563c36",
+    "naverPlaceId": "1861165781",
+    "name": "치교치킨 조치원점",
+    "zone": "신흥리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "b4b3d0d9-eb10-56c2-881a-eefda7c96979",
+    "naverPlaceId": "1908127728",
+    "name": "박가네 소머리국밥",
+    "zone": "신흥리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "3d997b62-7a0b-5c4f-8c22-65b302e84e82",
+    "naverPlaceId": "17542136",
+    "name": "황가네참옻",
+    "zone": "신흥리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "927d0147-9804-54bc-a612-76c13ff2dba9",
+    "naverPlaceId": "1154705001",
+    "name": "브레드마마 조치원점",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "c690d6cc-9a4d-52ea-95ca-e18254caeb0c",
+    "naverPlaceId": "2062290108",
+    "name": "미소감자탕&코다리",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "bb63d844-8614-58ad-a099-dc7cdad38a31",
+    "naverPlaceId": "35494392",
+    "name": "다락",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "1da77993-adf8-5ee8-be95-c8e9a614733b",
+    "naverPlaceId": "1520740396",
+    "name": "코세챠커피",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "460ff377-1e42-5094-ad0d-78d4d83f23cb",
+    "naverPlaceId": "1533455234",
+    "name": "예가807 BAKE CAFE",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "menu_price_conflict",
+        "message": "1개 메뉴 가격이 충돌하여 확정 가격을 비움"
+      }
+    ]
+  },
+  {
+    "id": "dbb6d4a3-8630-5b21-8e7c-664b44ae1e21",
+    "naverPlaceId": "1716136300",
+    "name": "삐아프",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "dcc204c7-6eae-5fc5-bc8f-1d843fefd864",
+    "naverPlaceId": "32415569",
+    "name": "라벨메종",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "30bb5e93-f65f-505e-afd9-8edb89cb37b7",
+    "naverPlaceId": "1791946633",
+    "name": "인생감자탕 세종점",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "source_unavailable",
+        "message": "네이버 원문을 찾지 못함. 폐업으로 확정하지 않음"
+      }
+    ]
+  },
+  {
+    "id": "657fa84a-a767-5a11-8caa-49d07b4aee3e",
+    "naverPlaceId": "17539326",
+    "name": "일호식당",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "cb8dc2b1-2990-5e68-82e0-f523d744624e",
+    "naverPlaceId": "2144371156",
+    "name": "욱일실내포장마차",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "51c8f70f-4ddc-581f-b3b0-82fbc60e3b86",
+    "naverPlaceId": "2054085413",
+    "name": "버터아지토",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "11a482ee-3936-5cab-8455-442df5bc95c1",
+    "naverPlaceId": "1999404984",
+    "name": "나 냉면잘해",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "496c894c-d7db-52aa-929e-d9d8866b836a",
+    "naverPlaceId": "1827751206",
+    "name": "돈나라 참숯구이",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "63919c8f-03b9-5e0d-b379-faf521eb4515",
+    "naverPlaceId": "1452450647",
+    "name": "마산명가아구찜",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "040d0998-b13e-5c20-8111-46caecd01edb",
+    "naverPlaceId": "1569007392",
+    "name": "명가왕족보쌈",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "0429541f-fc6a-5014-a188-e12d4a5eb616",
+    "naverPlaceId": "1343970212",
+    "name": "엄마 생선구이",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "identity_review",
+        "message": "중복·공유매장 여부를 확인할 후보. 자동 병합하지 않음"
+      }
+    ]
+  },
+  {
+    "id": "4a8074e0-5d49-517f-9e68-c160c6ed4366",
+    "naverPlaceId": "17540085",
+    "name": "은하불고기",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "dccd0f53-8388-5843-a6e4-58596b855d84",
+    "naverPlaceId": "1642570922",
+    "name": "인생돈까스&한식",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "identity_review",
+        "message": "중복·공유매장 여부를 확인할 후보. 자동 병합하지 않음"
+      }
+    ]
+  },
+  {
+    "id": "578de4a1-18ec-51b4-8545-fe8d4ace6f00",
+    "naverPlaceId": "17539704",
+    "name": "장기집",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "33f4e0e4-2739-5937-bf01-c19c5a8fbe15",
+    "naverPlaceId": "1689261441",
+    "name": "풍미치킨",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "1bf449dd-00f7-5cf2-8dd4-d062735df5a3",
+    "naverPlaceId": "1295064389",
+    "name": "허니꿀강정",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "eabf5e0a-7873-53e5-9ee2-5ef8b04c22ae",
+    "naverPlaceId": "1837710273",
+    "name": "황제한방보쌈족발",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "2aa171c6-b376-5053-8d73-39b088d28380",
+    "naverPlaceId": "1863556009",
+    "name": "해바라기식당",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "25ac1229-2b77-52a4-843e-0b98449bab7f",
+    "naverPlaceId": "1147450472",
+    "name": "동그리분식",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "9689d283-4ec2-5475-8d3e-fa171921c0ec",
+    "naverPlaceId": "1454468671",
+    "name": "구여사컵밥 조치원점",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "409ad512-8ec9-58a2-a4c6-c964d9d8e935",
+    "naverPlaceId": "11800673",
+    "name": "페리카나 조치원3점",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "aec78711-9ac0-5750-92d7-62aef36ad045",
+    "naverPlaceId": "1531102554",
+    "name": "자매밥상",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "69a46677-8e0c-5074-a47b-00c8cd8184a7",
+    "naverPlaceId": "1875303199",
+    "name": "오륙도식당",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "292607ef-f3e5-5317-93bc-9da3448ce16b",
+    "naverPlaceId": "1137420356",
+    "name": "총각수산",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "source_unavailable",
+        "message": "네이버 원문을 찾지 못함. 폐업으로 확정하지 않음"
+      }
+    ]
+  },
+  {
+    "id": "bbaf20e2-3c89-5cdc-9eb1-5c5d6ae425d1",
+    "naverPlaceId": "1804548263",
+    "name": "배떡 조치원점",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "b93bec0b-d5f7-5a0b-a6d4-231497d4cd50",
+    "naverPlaceId": "2141841889",
+    "name": "최강생갈비찜 조치원점",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "a1e9911c-9a8c-5013-97e7-f1efde80e26a",
+    "naverPlaceId": "2019246721",
+    "name": "이집고기잘하네 세종조치원점",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "009f78c0-50ce-56d9-88db-393b8f251fbf",
+    "naverPlaceId": "31022399",
+    "name": "토종순대국해장국",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "31901702-3165-5ee8-a379-5cbb7a7b7929",
+    "naverPlaceId": "1782539959",
+    "name": "대성각",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "d1200d7a-9cce-517d-b14e-1767e271b510",
+    "naverPlaceId": "1263626152",
+    "name": "색이다",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "8e6e7d60-0f5a-5eeb-9632-276a0eaf81cc",
+    "naverPlaceId": "1037091301",
+    "name": "치비",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "7ef52e23-86b8-529f-ad6a-a0aa2d7ca936",
+    "naverPlaceId": "1544460250",
+    "name": "고돼지 조치원점",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "10530bc9-c957-546a-b28f-e4f276b968dd",
+    "naverPlaceId": "31022791",
+    "name": "궁전손칼국수왕족발보쌈",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "d75a83e7-e9b1-501c-ac59-f1e50c5d10ca",
+    "naverPlaceId": "1010698962",
+    "name": "뚜레쥬르 조치원욱일점",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "bc670619-606d-5c8e-aa00-5cf50420ced3",
+    "naverPlaceId": "1022867801",
+    "name": "청년피자 조치원점",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "f1fbda42-5441-5fb7-b8ab-6a126898892a",
+    "naverPlaceId": "1568610853",
+    "name": "명동왕뚜껑생삼겹살",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "2b046e06-5e96-5538-925a-7b340f45ecfd",
+    "naverPlaceId": "77882582",
+    "name": "닉스호프",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "61b3b67a-1cf7-5f3d-bbc1-b73ca4cbe23a",
+    "naverPlaceId": "1441700169",
+    "name": "빽다방 세종조치원욱일점",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "904d5d67-3829-526b-ad22-908463397803",
+    "naverPlaceId": "30857054",
+    "name": "욱일김밥천국",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "ace1df5e-0a17-501e-82ea-d7fa18705104",
+    "naverPlaceId": "1642287611",
+    "name": "경두치 조치원점",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "identity_review",
+        "message": "중복·공유매장 여부를 확인할 후보. 자동 병합하지 않음"
+      }
+    ]
+  },
+  {
+    "id": "5a7207fb-cc0f-512a-b13f-e0aa26b90afc",
+    "naverPlaceId": "1176653562",
+    "name": "경아두마리치킨 조치원점",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "identity_review",
+        "message": "중복·공유매장 여부를 확인할 후보. 자동 병합하지 않음"
+      }
+    ]
+  },
+  {
+    "id": "38897f32-275b-53c1-9c46-4e572372980d",
+    "naverPlaceId": "1653823500",
+    "name": "카페 윤",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "a3f6cbfb-3785-5cd9-832a-5505c916df34",
+    "naverPlaceId": "1089137395",
+    "name": "푸라닭 세종조치원점",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "b95254f8-09b3-5626-8246-a5c0a9b73dd4",
+    "naverPlaceId": "1223816679",
+    "name": "피엠",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "bf8f5552-7dde-53e6-9cdd-5d4b6dd2b416",
+    "naverPlaceId": "1183348034",
+    "name": "세컨드재뉴어리",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "13b88d93-7c3d-5ff3-98c0-a1c79c83990d",
+    "naverPlaceId": "1082228372",
+    "name": "깡우동 조치원점",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "90c7bd65-f327-5adb-93ec-5762c1babcfe",
+    "naverPlaceId": "1844490447",
+    "name": "원치킨",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "f0570a11-9ee9-5ded-8253-a3832185404a",
+    "naverPlaceId": "1590026262",
+    "name": "대동집 세종조치원점",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "aec2b305-ad7c-530c-a1e0-e475326e5697",
+    "naverPlaceId": "17539762",
+    "name": "산오징어나라",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "6개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "3578e081-edc0-54d5-bb97-01c98ac401e2",
+    "naverPlaceId": "2075730878",
+    "name": "인생역전",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "13d89f70-3d0b-59d4-9783-7d5853c8e5d6",
+    "naverPlaceId": "1029606744",
+    "name": "노랑통닭 조치원점",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "65b9db10-b020-5111-bef0-8316314095f6",
+    "naverPlaceId": "1773700223",
+    "name": "파리바게뜨 세종조치원욱일점",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "27300867-9b78-53cb-8e66-b42c6310cfed",
+    "naverPlaceId": "1910817391",
+    "name": "김여사 호프",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "6abc8163-bb73-50fa-a520-3de759a4d7da",
+    "naverPlaceId": "30857060",
+    "name": "덕이네빈대떡",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "80ffb89c-1b27-5575-a4a7-eaafa0ac06bd",
+    "naverPlaceId": "33896515",
+    "name": "센이자카야 세종본점",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "e49e84ff-1c67-5f54-bede-bcfa8ac79e5b",
+    "naverPlaceId": "2037069575",
+    "name": "하이빙수 조치원점",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "7f54d5ac-ea72-543b-b118-871bad90e8d6",
+    "naverPlaceId": "1636645654",
+    "name": "이스트케밥",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "d852b9f2-ea48-54b0-a1a6-d80a06352a05",
+    "naverPlaceId": "1273856302",
+    "name": "써니포차",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "2c22c0b2-b3da-5adf-a16c-2b99c70eb02e",
+    "naverPlaceId": "1472216569",
+    "name": "태영생막창 조치원점",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "1개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "92805c2d-5d27-5a98-ac4b-3ce708bc5331",
+    "naverPlaceId": "1344330867",
+    "name": "알바라카",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "78389ec8-8031-5e74-ac91-5ca6e3645cf3",
+    "naverPlaceId": "1106441203",
+    "name": "한우 돈 냄새",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "32be251b-24eb-52fd-ae40-dac46ce22b84",
+    "naverPlaceId": "1790155841",
+    "name": "욱일포차",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "5b0575a4-b600-5c00-a764-aa65ddcf1eee",
+    "naverPlaceId": "1530632296",
+    "name": "로스터리 카페인",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      },
+      {
+        "code": "source_unavailable",
+        "message": "네이버 원문을 찾지 못함. 폐업으로 확정하지 않음"
+      }
+    ]
+  },
+  {
+    "id": "020b5843-e4c4-55c1-b194-5c286ebe89f8",
+    "naverPlaceId": "1665644084",
+    "name": "로만플라워카페",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "4daa132f-7d44-5b74-b57e-9ae0a7c220ad",
+    "naverPlaceId": "2034787361",
+    "name": "조치원 뒷돈집",
+    "zone": "욱일",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "3321c876-ae68-5c82-adf7-871c33fd3564",
+    "naverPlaceId": "2098270852",
+    "name": "수암골 쪽갈비마을 세종조치원점",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "holiday_anchor_unknown",
+        "message": "격주 휴무의 기준일을 확정하지 않음"
+      }
+    ]
+  },
+  {
+    "id": "40b0e0c8-4ce0-542d-812b-d2d039dbc6b4",
+    "naverPlaceId": "31071747",
+    "name": "고봉보쌈함흥냉면전문점",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "0c0fd0b4-35c7-5698-a44b-38601d76413b",
+    "naverPlaceId": "1104499906",
+    "name": "원영카페",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "808cd844-a2d4-5133-bad5-10b32f4fe23b",
+    "naverPlaceId": "1648653355",
+    "name": "이스턴가요주점",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "eae2cffb-4866-5682-843f-6730fdc88198",
+    "naverPlaceId": "1208989109",
+    "name": "참새방앗간",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "b780b56d-4fd3-5362-9c1b-7247b26281f8",
+    "naverPlaceId": "37578808",
+    "name": "앨스카파이",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "2개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "a5e65846-7cb1-522d-b0cc-35027c247dbe",
+    "naverPlaceId": "37842430",
+    "name": "전통죽집",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "a933380d-0455-5811-bcba-c08d932ba36c",
+    "naverPlaceId": "1082154883",
+    "name": "골목식당",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "c1a27dfd-717d-54b1-9406-081c3016ef18",
+    "naverPlaceId": "1440876163",
+    "name": "다래식당",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "a1013697-59e6-58ef-b415-920b0c9e7d57",
+    "naverPlaceId": "17530927",
+    "name": "동네식당",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "7c8907f0-dd68-585b-bd44-df987d2d5a6b",
+    "naverPlaceId": "1032561316",
+    "name": "맛난식당",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "f33024cd-f3d4-5f72-bb5f-5cb11908e4ab",
+    "naverPlaceId": "1816260113",
+    "name": "실내포차",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "657a9ec0-908c-58fc-9f2e-3aed9681eb78",
+    "naverPlaceId": "17530139",
+    "name": "돌채다실",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "915eaf14-e1b4-5550-acf6-f3478f2621f2",
+    "naverPlaceId": "31689642",
+    "name": "착한두부",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "cf44e90a-4f14-5bd4-888b-95b9b0b5a4bf",
+    "naverPlaceId": "1795564028",
+    "name": "청춘방앗간",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "c5b5e15b-2f3b-59ea-8eaa-762e52604e30",
+    "naverPlaceId": "1452437929",
+    "name": "선녀와호떡꾼",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "c240f109-fa6a-5439-aaac-87c89e670149",
+    "naverPlaceId": "1949892802",
+    "name": "보스라이브",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "20479467-a2b8-55f7-bd74-c8fdc89d3bb6",
+    "naverPlaceId": "1888130161",
+    "name": "꿀도야떡갈비 세종전통시장점",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "0e6cce86-ea03-577d-b429-3b71a0ce43af",
+    "naverPlaceId": "17534549",
+    "name": "원미당",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "9605905a-c994-53cb-aed9-ac29b7655f66",
+    "naverPlaceId": "1317610756",
+    "name": "츄러스페셜",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "79196ec3-2f19-5d1b-9b92-f2ab398dae92",
+    "naverPlaceId": "1119748917",
+    "name": "다불러",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "a9290670-bc3d-541c-a396-a7d4475f6bd5",
+    "naverPlaceId": "1645309542",
+    "name": "한잔해",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "cdeb5c70-09bd-55d3-9d64-e44d8205bf3a",
+    "naverPlaceId": "1257341445",
+    "name": "복호두 세종조치원점",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "1c82eeae-0a41-5bfe-8b0e-cae99cee4592",
+    "naverPlaceId": "1035581792",
+    "name": "풍성한밥상",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "ffba87d0-7630-5061-b3b6-ab0fc97f0788",
+    "naverPlaceId": "21279435",
+    "name": "백마강단란주점",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "8608fcdb-1570-5544-baa6-269d3be07e96",
+    "naverPlaceId": "17728529",
+    "name": "어순이와돈돌이",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "e4468a84-b2f3-5514-a003-4efb06425ddd",
+    "naverPlaceId": "37882245",
+    "name": "우체국떡볶이",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "62b58eea-ccf2-5dcd-b388-240a603be47f",
+    "naverPlaceId": "1411103223",
+    "name": "아리랑커피호프",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "3e3403bf-bbd4-5391-b7d8-0613353194c6",
+    "naverPlaceId": "21828748",
+    "name": "좋은사람들",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "d3d4aed5-3ff0-5f3f-8dc2-749232a54e8a",
+    "naverPlaceId": "1413258471",
+    "name": "헬로커피",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "04721606-68c5-5f81-8b33-084661b1eb1c",
+    "naverPlaceId": "31062299",
+    "name": "동궁가요터",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "e992bf2c-80df-59b8-9511-c22ad13af521",
+    "naverPlaceId": "17531542",
+    "name": "고가네갈비와냉면",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "31ea486b-e82b-56fa-bf45-c427d78e1f1e",
+    "naverPlaceId": "17530136",
+    "name": "궁전다실",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "8192fd28-53c9-5259-a59a-ded34246500f",
+    "naverPlaceId": "17530906",
+    "name": "복뎅이갈비",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "8e48ef3e-6204-5673-a2b8-acf326f0afeb",
+    "naverPlaceId": "17534523",
+    "name": "조광식당",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "79c0ad81-a9c5-5a8b-a41e-f4ae7825da23",
+    "naverPlaceId": "17534876",
+    "name": "복조갈비",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "e815d82d-6a16-5f5f-ba74-bb90178db15d",
+    "naverPlaceId": "37692885",
+    "name": "써니비어",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "50fc6acd-c13c-5944-84c7-9d16cee2ff63",
+    "naverPlaceId": "31023863",
+    "name": "투다리 조치원2점",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "4fe032d4-6dde-5c85-b9fb-677845dd7911",
+    "naverPlaceId": "37692431",
+    "name": "모이새해장국",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "identity_review",
+        "message": "중복·공유매장 여부를 확인할 후보. 자동 병합하지 않음"
+      }
+    ]
+  },
+  {
+    "id": "1c69a3ab-2e64-555d-a5d8-9427a6da2f80",
+    "naverPlaceId": "1114833498",
+    "name": "송이국수",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "identity_review",
+        "message": "중복·공유매장 여부를 확인할 후보. 자동 병합하지 않음"
+      }
+    ]
+  },
+  {
+    "id": "106ec4e2-3d27-5720-b854-877dc00adede",
+    "naverPlaceId": "21830181",
+    "name": "전가복",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "62e5fdc1-3073-58dd-800c-3f6b4880fd04",
+    "naverPlaceId": "31023050",
+    "name": "두리식당",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "c1afc003-9c16-5664-af3f-5a94f827daa2",
+    "naverPlaceId": "35394043",
+    "name": "여우",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "a386722e-4f80-51a0-aba6-e6eb967ddf31",
+    "naverPlaceId": "1213759125",
+    "name": "원조소머리국밥삼겹살",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "b325561a-1ac4-5f5c-93f5-23a58c6aec91",
+    "naverPlaceId": "17536470",
+    "name": "회뜨는집",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "0a2813b7-6ba9-528e-a9b1-a03992bf8d33",
+    "naverPlaceId": "1466867637",
+    "name": "카페라떼",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "43d8208d-f74b-5e09-8257-8126f801ae83",
+    "naverPlaceId": "1733487130",
+    "name": "베트남 샤브샤브쌀국수",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "07484de8-cd46-5fd8-924d-c2e341b2e582",
+    "naverPlaceId": "1383273628",
+    "name": "얌샘김밥 조치원점",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "f1b5b1b3-d535-57a7-8e6d-1652288a15f8",
+    "naverPlaceId": "17534194",
+    "name": "징기스칸치킨 조치원점",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "76849d96-800e-556d-8cd1-e3210a561a9d",
+    "naverPlaceId": "21399228",
+    "name": "하나시초밥",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "761a501c-69e6-50b0-a85d-018a354b9086",
+    "naverPlaceId": "1508118794",
+    "name": "봉명동내커피 조치원점",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "82ff878b-c784-5fd4-9ef5-42f7652045c8",
+    "naverPlaceId": "1355574239",
+    "name": "옥돌짬뽕칼국수",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "1bfa56db-dac7-5c07-b590-f675d5af37a9",
+    "naverPlaceId": "37434904",
+    "name": "금성한우",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "e0cb68fd-7ece-5d66-a1c2-a59c58ce1111",
+    "naverPlaceId": "33895935",
+    "name": "커피하우스",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "0b657442-7272-5d53-8d8a-c27ae4db2ffe",
+    "naverPlaceId": "17729218",
+    "name": "먹거리식당",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "1개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "f2122d68-8f4a-5b37-bd74-1973fe0ccab2",
+    "naverPlaceId": "31062300",
+    "name": "둥지포장마차",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "c7ecaf90-0503-5553-8d65-e20ca7ab747f",
+    "naverPlaceId": "11800672",
+    "name": "페리카나 조치원2점",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "5e13ab67-5263-5ce5-b782-107a9ca5bdc9",
+    "naverPlaceId": "1608500628",
+    "name": "엄니손맛",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "141baea2-8411-5dfe-bb72-4d6eb6acc0cd",
+    "naverPlaceId": "1513730231",
+    "name": "정동101커피",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "1ec7c0d9-5d5d-52d0-b372-78339a573a5f",
+    "naverPlaceId": "2007484778",
+    "name": "빵집오빠 조치원역점",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "menu_price_conflict",
+        "message": "2개 메뉴 가격이 충돌하여 확정 가격을 비움"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "99bf3e54-1692-59e8-a7e0-92f9d60f517d",
+    "naverPlaceId": "1498532859",
+    "name": "미카페",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "86ac60c7-9a70-582e-8c0d-7e3c35fc6e90",
+    "naverPlaceId": "1435700855",
+    "name": "소풍수제돈까스전문점 세종본점",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "d8012c0b-e56a-55da-8e03-50c3075032ac",
+    "naverPlaceId": "1779255359",
+    "name": "먹보왕만두",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "421dca48-740b-5329-a197-546e56a5e465",
+    "naverPlaceId": "1066151555",
+    "name": "김중만의만두레",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "64f30025-b8ec-5047-868e-f114ebe603af",
+    "naverPlaceId": "37942305",
+    "name": "작은여유",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "identity_review",
+        "message": "중복·공유매장 여부를 확인할 후보. 자동 병합하지 않음"
+      }
+    ]
+  },
+  {
+    "id": "ac5cc398-e160-5339-b3d7-92ad8fa5fae4",
+    "naverPlaceId": "1417587025",
+    "name": "주전부리",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "292e1d92-e22c-55a1-a6c6-2aa46c4b9a11",
+    "naverPlaceId": "1281314523",
+    "name": "화양연화",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "f8b3abd1-af9c-5f03-a7f4-5ef77c510986",
+    "naverPlaceId": "17530594",
+    "name": "유명관",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "5fc77005-a151-53f6-98e1-a67d86ce8936",
+    "naverPlaceId": "2039799839",
+    "name": "디저트테이블냠냠 조치원점",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "fc63903f-f91e-5b66-aac1-6bcb1cc89fb1",
+    "naverPlaceId": "178244714",
+    "name": "전국노래자랑",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "13ec263f-2d25-54ad-8f3b-6747e4f1243f",
+    "naverPlaceId": "1275143057",
+    "name": "국밥집 막내아들 조치원점",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "708890a3-cdf4-5be1-86ff-e3c69b95b96a",
+    "naverPlaceId": "1755470523",
+    "name": "돌솥수육국밥",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "72f82df0-b58b-5798-a0b8-506ef7895ae8",
+    "naverPlaceId": "31023038",
+    "name": "병천순대국밥",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "2ff0fff0-761f-566a-9e41-d6eaa6afb9d3",
+    "naverPlaceId": "1338914996",
+    "name": "역전분식",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "95a9fc2a-ff67-5208-a121-76c92900e6fe",
+    "naverPlaceId": "4866533347",
+    "name": "조치원ㄱ",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "9b37b2b6-c392-504b-a90f-8f3fbc997381",
+    "naverPlaceId": "1751692108",
+    "name": "시크노래주점",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "b8a2f7af-d34b-5f28-93da-e3bdcec9f473",
+    "naverPlaceId": "32979697",
+    "name": "밀마을",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "50195b93-a8c0-5dc9-9b6b-ebe87d931327",
+    "naverPlaceId": "1947346408",
+    "name": "까페장안길",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "398d4971-c811-5ce9-b79d-3e2f0ed852ac",
+    "naverPlaceId": "1490397772",
+    "name": "퀸즈더세종",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "8476b18d-12e0-51e6-9d75-99ad13852878",
+    "naverPlaceId": "13098738",
+    "name": "청향일식",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "3a218b32-dedd-59a3-9d22-73d90aaefcb8",
+    "naverPlaceId": "2012418609",
+    "name": "수고했어 오늘도",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "c5a8d8ed-996e-5b49-b442-5e5594823bc9",
+    "naverPlaceId": "38444486",
+    "name": "금강식당",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "0fbdca91-1c09-5a75-b936-83bfa73611c0",
+    "naverPlaceId": "1693642218",
+    "name": "서울다방",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "48191883-0ebc-58f6-8bab-c68290633923",
+    "naverPlaceId": "2026258804",
+    "name": "설화옥순대",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "9087b171-e0fd-5727-bdf7-46a94fa5d8c1",
+    "naverPlaceId": "31032456",
+    "name": "즐거운인생",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "0025108b-64b0-5144-a67d-2220ded9084b",
+    "naverPlaceId": "31022342",
+    "name": "본전식당",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "cb2b7145-a40f-57dd-bd90-ec0960137f18",
+    "naverPlaceId": "38443839",
+    "name": "공주분식",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "d3e10fa8-b783-5f79-b3a8-4a44793b2067",
+    "naverPlaceId": "1975188201",
+    "name": "장미다방",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "cc6fa394-e7a8-5c07-b83f-0457b01ac5dc",
+    "naverPlaceId": "1744712649",
+    "name": "송이다방",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "f6137089-edff-54d9-b779-586a53306770",
+    "naverPlaceId": "30856729",
+    "name": "김밥나라 조치원점",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "84a3765f-8931-57be-89cf-c295b167e11c",
+    "naverPlaceId": "1372131524",
+    "name": "놀러와",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "f3768d06-484e-5aa8-b578-e405e7f27ac6",
+    "naverPlaceId": "20261902",
+    "name": "프렌치키스",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "4c902d8c-2ca1-5b28-ac21-840c2169d62b",
+    "naverPlaceId": "1917271820",
+    "name": "원조중앙아구찜",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "5a2c2fe7-1c3e-5a20-873d-bce36748b552",
+    "naverPlaceId": "37692712",
+    "name": "청송얼음막걸리 원리점",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "fe33156b-71a1-547a-b305-b8a6c12640e5",
+    "naverPlaceId": "2142290217",
+    "name": "해수네뼈해장국",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "e4a07efe-8cea-58d8-b973-89aaf76accb5",
+    "naverPlaceId": "19808231",
+    "name": "죽마고우",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "1개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "7b53286d-5544-5af8-a0e4-95b9b38640e0",
+    "naverPlaceId": "2146810313",
+    "name": "영동국밥",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "37c209fb-54b0-584a-a00a-e1c9647182d5",
+    "naverPlaceId": "38230161",
+    "name": "용우동 조치원점",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "beb73c2f-ba3e-59dc-8a25-7602325cf63b",
+    "naverPlaceId": "21828774",
+    "name": "안동찜닭",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "08fe911a-6c2c-5eb4-a84d-fff90fefcbde",
+    "naverPlaceId": "17729808",
+    "name": "이모네",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "dbdcf452-19dd-537a-880e-0d29d06b0669",
+    "naverPlaceId": "17532692",
+    "name": "성씨네보리밥",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "8c727aeb-2a19-5932-b6a6-4c0eee86f533",
+    "naverPlaceId": "1118750786",
+    "name": "곤지암소머리국밥 남리점",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "1ddc5b63-a4da-5352-8201-587b63a322a1",
+    "naverPlaceId": "1579503823",
+    "name": "카페순",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "e306dcbc-5c3e-58eb-ae23-d16dbf3e9d0f",
+    "naverPlaceId": "17530841",
+    "name": "나루터민속단란주점",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "76323543-f4a0-54c9-9ee1-b8433c465b18",
+    "naverPlaceId": "1575291166",
+    "name": "영주식당",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      },
+      {
+        "code": "identity_review",
+        "message": "중복·공유매장 여부를 확인할 후보. 자동 병합하지 않음"
+      }
+    ]
+  },
+  {
+    "id": "55ec348e-a82e-5d52-8bc7-bf2d8c8b923b",
+    "naverPlaceId": "31022624",
+    "name": "시골감자탕",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "bc1f99f8-bbd7-5119-ac07-72ae6f4b48e3",
+    "naverPlaceId": "1498964441",
+    "name": "생각이나서",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "67645ea6-14c0-5cda-83a9-1e463b265269",
+    "naverPlaceId": "2026932488",
+    "name": "마선생얼큰국밥 세종조치원역점",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "f30b23d4-756b-5627-9fc3-5f9019446765",
+    "naverPlaceId": "1549098079",
+    "name": "소말뚝",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "a0bb179c-ccf8-582a-8dba-0631ce95aa58",
+    "naverPlaceId": "1320506588",
+    "name": "태백관",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "4492c9e7-5ccd-5e18-a826-1785b09535a5",
+    "naverPlaceId": "17531557",
+    "name": "해와달",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "1833fe2a-ea97-5c5c-9648-7e9c0870d9d6",
+    "naverPlaceId": "1917226044",
+    "name": "술통",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "27224d1a-a1ee-583a-9020-533c6d1ea8e8",
+    "naverPlaceId": "1846049286",
+    "name": "문순이네도시락",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "9822b7e1-0ef9-5fb1-9ac1-31c6c03bafbb",
+    "naverPlaceId": "17534759",
+    "name": "부민세숫대야냉면",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "identity_review",
+        "message": "중복·공유매장 여부를 확인할 후보. 자동 병합하지 않음"
+      }
+    ]
+  },
+  {
+    "id": "bd1b1eab-05ba-5de4-aa3a-ecef53219ca4",
+    "naverPlaceId": "33016591",
+    "name": "한돈삼불구이 본점",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "identity_review",
+        "message": "중복·공유매장 여부를 확인할 후보. 자동 병합하지 않음"
+      }
+    ]
+  },
+  {
+    "id": "6813c411-77b4-5305-8841-f56360c79712",
+    "naverPlaceId": "1183388744",
+    "name": "영주네밥상",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "a2eaa986-a1fb-54b1-a792-0bb96c6a23ea",
+    "naverPlaceId": "1380072179",
+    "name": "복다방",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "39807a63-4b9d-52d9-961c-8b3eb60559b5",
+    "naverPlaceId": "1784906111",
+    "name": "삽다리 주막",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "8875ec36-b8e2-5a3f-85a7-2255fffe6590",
+    "naverPlaceId": "1272106989",
+    "name": "라멘선생&수제돈까스",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "1f095dc7-505e-5bc8-b2cb-22749f29406f",
+    "naverPlaceId": "1853001276",
+    "name": "오리엔탈게이트",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "d9a341dd-e915-5106-b184-8e72320425e2",
+    "naverPlaceId": "17531048",
+    "name": "울산분식",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "b00c9569-65f5-5214-bded-a7e679e8e738",
+    "naverPlaceId": "1023660866",
+    "name": "성시네분식",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "4fc6e72e-cf3a-58d1-b26c-6beed6a46143",
+    "naverPlaceId": "1143112161",
+    "name": "고향순대",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "f9dcb6bc-0024-5380-bee5-1001bfe22e94",
+    "naverPlaceId": "1646781369",
+    "name": "이동엽의즉석강정",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "806f594d-652b-5ba9-acf7-f32ecba23a76",
+    "naverPlaceId": "1881759783",
+    "name": "전과함께",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "afb5fc24-9c26-5fed-92b0-f9bf957ebf40",
+    "naverPlaceId": "17532071",
+    "name": "미래원",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "d1c534b1-0726-5b1d-ac9f-1fd2542fe61f",
+    "naverPlaceId": "1048632557",
+    "name": "남면가공소",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "e597ad82-56ff-54ea-aed1-f5fc32b60d9f",
+    "naverPlaceId": "1067382110",
+    "name": "서면가공소",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "96a1711c-a688-5239-9c7e-503ef680a5e0",
+    "naverPlaceId": "1917453773",
+    "name": "친구네돈가스",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "1개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "14704a37-fc12-59b0-b0af-0465ca941194",
+    "naverPlaceId": "1215727787",
+    "name": "황가네해장국",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "2c3c5fb2-50ae-5e8e-ac27-06b337b3137d",
+    "naverPlaceId": "1654774461",
+    "name": "철판왕만두",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "holiday_anchor_unknown",
+        "message": "격주 휴무의 기준일을 확정하지 않음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "deb7a229-af3f-524d-b185-4694ff6737c4",
+    "naverPlaceId": "34993249",
+    "name": "오가네빵",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "6개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "7e5a3496-00b0-5d4b-8a8e-595e5c16d909",
+    "naverPlaceId": "1072184802",
+    "name": "구구푸드",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "d9fe66d6-d020-59f1-beb0-fa7e225f5488",
+    "naverPlaceId": "1041581953",
+    "name": "모모타코야끼 조치원점",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "1ba5f912-51d4-5930-883c-ed05d49da8af",
+    "naverPlaceId": "31021980",
+    "name": "대추노래궁",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "c508f72a-4fa3-5b6c-9d59-1e1671bbf698",
+    "naverPlaceId": "31021981",
+    "name": "샵단란주점",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "fec9c836-d164-55e3-9691-c7790c14244c",
+    "naverPlaceId": "20532537",
+    "name": "놀이터",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "13b8aeac-9c41-5f34-9917-05ed737044a7",
+    "naverPlaceId": "31021983",
+    "name": "쏠래",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "a29515b4-8018-504f-941f-7a9fee2f8ed2",
+    "naverPlaceId": "38543465",
+    "name": "이브다방",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "3f7b79e9-d5bb-5c5c-9f84-d99969210249",
+    "naverPlaceId": "1944915936",
+    "name": "7080세상만사",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "91865f7a-6f17-59f6-9740-6817b7f56716",
+    "naverPlaceId": "37315303",
+    "name": "대박식당",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "14c52c7b-2b9e-51fe-b67c-d00cee5031e5",
+    "naverPlaceId": "1284831541",
+    "name": "왕천닭집",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "8db68f44-2bb9-5247-9976-5c48bcf90658",
+    "naverPlaceId": "17530192",
+    "name": "태양닭집",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "7822166d-e286-54b3-bf02-92860a07d889",
+    "naverPlaceId": "2014971107",
+    "name": "동산만두 조치원점",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "holiday_anchor_unknown",
+        "message": "격주 휴무의 기준일을 확정하지 않음"
+      }
+    ]
+  },
+  {
+    "id": "675d7b56-de9e-5389-83a2-721a70b390a5",
+    "naverPlaceId": "36132841",
+    "name": "옴마야",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "08e52e64-417e-5caa-ba0f-f344bb74ca2c",
+    "naverPlaceId": "19980358",
+    "name": "연서닭집",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "7abdb73e-2dd4-5ead-a3e9-f8c8c77c1d4f",
+    "naverPlaceId": "1250907417",
+    "name": "흥두깨칼국수",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "22776e32-4d59-5a4e-a0b1-eccbc71677f5",
+    "naverPlaceId": "1381199816",
+    "name": "계룡식당",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "b022dcb7-35cc-56bc-abff-451a8b8395c8",
+    "naverPlaceId": "1815931932",
+    "name": "산골보리밥칼국수",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "d2e2feb9-cda8-5203-9ebb-e28f90b4e7ff",
+    "naverPlaceId": "1454698805",
+    "name": "시장감자탕",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "bcac9c16-6cd3-5da0-aaf3-5226336215ee",
+    "naverPlaceId": "282298942",
+    "name": "파리바게뜨 조치원점",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "365c3869-db38-5a06-aec2-f7ccdeb4e0a8",
+    "naverPlaceId": "1968309100",
+    "name": "땅스부대찌개 조치원점",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "187ee815-f5c6-51ac-afc2-779c559a67ac",
+    "naverPlaceId": "1552096463",
+    "name": "어울림식당",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "700571bc-b8d4-5229-b318-29765374c7c3",
+    "naverPlaceId": "31062269",
+    "name": "에코단란주점",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "767ec443-4e65-5eab-9bc7-062690ceb758",
+    "naverPlaceId": "2098376671",
+    "name": "토핑몬스터피자 조치원점",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "67c5979f-87e7-54b0-8334-497ad42e81c9",
+    "naverPlaceId": "1725766707",
+    "name": "통큰기사식당",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "83f7b151-ae30-534c-94b8-6ebff52f7e80",
+    "naverPlaceId": "37821923",
+    "name": "메네스",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "07e3a74d-f551-561f-a154-b0c0cc4e7836",
+    "naverPlaceId": "17533040",
+    "name": "봉평메밀막국수",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "a9bd4fd5-e211-5b7b-96a5-72761aa5f782",
+    "naverPlaceId": "2140144070",
+    "name": "황가네막걸리",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "59aa00d9-c2f5-53f8-bba5-a75efdb3ca9c",
+    "naverPlaceId": "2010609082",
+    "name": "서진 네팔&인도음식점",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "76185ec2-7022-5f06-98a8-0a6f717583fc",
+    "naverPlaceId": "1619610512",
+    "name": "우리다방",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "2c6af1f9-f0f2-59d9-805b-f3333ec1df02",
+    "naverPlaceId": "1820909879",
+    "name": "기사님식당",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "fa37b700-59be-5d8c-90be-019aaf72ad1f",
+    "naverPlaceId": "30857384",
+    "name": "행운식당",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "acc85c25-77de-5ecf-b80e-321713f2fc75",
+    "naverPlaceId": "1279521180",
+    "name": "동춘정식당",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "849f791e-756f-5334-82ea-b73613411826",
+    "naverPlaceId": "33896635",
+    "name": "옛집식당",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "eab3e6c0-9d4e-572c-928e-2f723978902a",
+    "naverPlaceId": "17532959",
+    "name": "주마등식당",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "1999cc6b-f091-5304-93b3-02563bfc154a",
+    "naverPlaceId": "1098108131",
+    "name": "한돈삼불구이",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "bcbcc180-48ba-5a1c-a2e2-9ed789b9e6b7",
+    "naverPlaceId": "20013172",
+    "name": "소문난생선구이",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "8c9a1df1-7662-5764-b5e6-9f265b48c64c",
+    "naverPlaceId": "17530148",
+    "name": "사랑방다방",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "e439d39b-fc0c-50c2-8c48-23297cae2718",
+    "naverPlaceId": "31022488",
+    "name": "중봉닭집",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "e3a2eb86-b20e-5285-9cab-964d60087d2c",
+    "naverPlaceId": "38543467",
+    "name": "한식이랑중식",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "96709ac4-bdb1-5491-8071-19c609b6a029",
+    "naverPlaceId": "1795418119",
+    "name": "느린하루",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "bf82fad4-a968-5fab-9683-5bb932433546",
+    "naverPlaceId": "17533558",
+    "name": "광진네생삼겹",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "05605459-7e3e-583f-8f40-ee17380a54a6",
+    "naverPlaceId": "31062309",
+    "name": "홍탕 고대조치원점",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "32373418-172c-5768-a7ed-b8f67f069c29",
+    "naverPlaceId": "31062206",
+    "name": "옛날다방",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "b13f98d2-a5ca-5276-aca4-fc2525305192",
+    "naverPlaceId": "1176967347",
+    "name": "역전다방",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "4b973484-33c3-53c7-bc8c-0bf79f5580e3",
+    "naverPlaceId": "37692783",
+    "name": "호프광장",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "437cbd07-290b-5127-a866-751300adf3cf",
+    "naverPlaceId": "17537960",
+    "name": "청학골생고기",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "cad31975-d2e5-5ebc-862d-98f23cc792a8",
+    "naverPlaceId": "17534553",
+    "name": "전원일기",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "4b54cc3c-aa5e-53ba-a1d6-1741b07181aa",
+    "naverPlaceId": "17533085",
+    "name": "초원분식",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "029765d3-c929-5963-b54f-e7fa795b6bef",
+    "naverPlaceId": "17728516",
+    "name": "도화촌",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "7a8aae0c-2d9f-5793-a80c-ee3fcd8cae3d",
+    "naverPlaceId": "17530772",
+    "name": "역전가요터",
+    "zone": "조치원역",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "b0258996-ed6c-5913-9f0d-7e3e1d57b237",
+    "naverPlaceId": "2056854865",
+    "name": "써나우스",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "74ae12ce-2a89-5bad-9a26-09c62c87008b",
+    "naverPlaceId": "1191846040",
+    "name": "아늑카페",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "a7c1e1a2-2e49-5463-9c66-db8b05b20539",
+    "naverPlaceId": "1381395780",
+    "name": "다온coffee",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "a4f94175-44bd-572f-a7a3-26bce5167f06",
+    "naverPlaceId": "13572188",
+    "name": "화이트티벳",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "bf473b03-fd47-5f07-afbc-6465ad0148df",
+    "naverPlaceId": "35263303",
+    "name": "파닥파닭",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "343ca647-f1ca-519d-a0f5-2f480edd01fb",
+    "naverPlaceId": "30857105",
+    "name": "덕이네칼국수",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "64672ed2-f46a-5de1-a806-547132746030",
+    "naverPlaceId": "33020682",
+    "name": "죽림육류백화점식당",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "6a62944f-f58c-564c-a2a1-4ba2bfd672c8",
+    "naverPlaceId": "33276337",
+    "name": "오보만족",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "6a5ea500-9b77-5fa4-a804-24b2f5f8099f",
+    "naverPlaceId": "1943301228",
+    "name": "총각파닭25",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "6fbb4f60-cbb0-56d1-a9a8-614f193015b3",
+    "naverPlaceId": "1302913289",
+    "name": "민보초밥",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "6bea882f-ebeb-5878-9f8d-490fd6cdc195",
+    "naverPlaceId": "1924181642",
+    "name": "빙구카츠",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "1515766b-6964-53e9-9f83-0e3fb4b2fa4b",
+    "naverPlaceId": "1629678713",
+    "name": "빙구포차",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "92e8b202-2cb2-5f4f-9a1d-48a784727e1a",
+    "naverPlaceId": "1435220805",
+    "name": "일미리금계찜닭 조치원점",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "ea961d34-9ce5-5cdc-929e-bdcbfa34f824",
+    "naverPlaceId": "1565031423",
+    "name": "한우만족",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "identity_review",
+        "message": "중복·공유매장 여부를 확인할 후보. 자동 병합하지 않음"
+      }
+    ]
+  },
+  {
+    "id": "de874201-2076-5b09-ad8f-9dfc187bd5ac",
+    "naverPlaceId": "1934182759",
+    "name": "점프카페 조치원점",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "0f0c68be-82a2-58bd-92c1-17026c5c7f1a",
+    "naverPlaceId": "1961946332",
+    "name": "또왔소",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "515d5759-a356-5fed-8fd3-aa82709e5188",
+    "naverPlaceId": "1931680712",
+    "name": "청담피자 조치원점",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "hours_conflict",
+        "message": "청담피자 두 원문의 수요일·토요일 휴무 정보가 충돌함"
+      },
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "identity_review",
+        "message": "중복·공유매장 여부를 확인할 후보. 자동 병합하지 않음"
+      }
+    ]
+  },
+  {
+    "id": "d6ba912b-8516-5eb2-8486-b0a7de0c8f25",
+    "naverPlaceId": "1697043696",
+    "name": "덮덮밥 조치원점",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "52cfd343-f180-50d2-a925-4fabb14ac66f",
+    "naverPlaceId": "2053361234",
+    "name": "춘향전집",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      },
+      {
+        "code": "identity_review",
+        "message": "중복·공유매장 여부를 확인할 후보. 자동 병합하지 않음"
+      }
+    ]
+  },
+  {
+    "id": "4920605c-d129-526b-8efa-36e07ba3acac",
+    "naverPlaceId": "1717268444",
+    "name": "감동까스 세종조치원점",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "identity_review",
+        "message": "중복·공유매장 여부를 확인할 후보. 자동 병합하지 않음"
+      }
+    ]
+  },
+  {
+    "id": "58ecc61d-7139-5e42-a232-162394900350",
+    "naverPlaceId": "1039093824",
+    "name": "청담피자 조치원점",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "hours_conflict",
+        "message": "청담피자 두 원문의 수요일·토요일 휴무 정보가 충돌함"
+      },
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "identity_review",
+        "message": "중복·공유매장 여부를 확인할 후보. 자동 병합하지 않음"
+      }
+    ]
+  },
+  {
+    "id": "29cbcac2-6707-59f2-a2fa-43cdc090c857",
+    "naverPlaceId": "1542715295",
+    "name": "감동까스&오진당 세종조치원점",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      },
+      {
+        "code": "identity_review",
+        "message": "중복·공유매장 여부를 확인할 후보. 자동 병합하지 않음"
+      }
+    ]
+  },
+  {
+    "id": "20863a67-50f9-5a53-b06c-268a93ea43ff",
+    "naverPlaceId": "1300621004",
+    "name": "심플",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "1b3547b0-cb82-501d-84d8-07062413e60b",
+    "naverPlaceId": "1089150753",
+    "name": "죽림12",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "ce464494-2eed-50bb-9e39-bac8788fda21",
+    "naverPlaceId": "1849091000",
+    "name": "무지개 카페",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "de19566a-7efe-56ab-86da-933284af9eba",
+    "naverPlaceId": "2048695680",
+    "name": "굽네치킨 조치원점",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "fa37990e-0ae5-5111-bb7c-f529baf64ec5",
+    "naverPlaceId": "1607162120",
+    "name": "BHC치킨 조치원죽림점",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "232cf806-bc44-543e-b423-32a9313be73c",
+    "naverPlaceId": "31024363",
+    "name": "더블더블",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "802352a7-67b6-5fc6-a53b-23256c548be6",
+    "naverPlaceId": "2147282820",
+    "name": "오늘비어",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "8a61a930-61b4-5518-9e1f-91895c8518ba",
+    "naverPlaceId": "33896302",
+    "name": "커피ANO",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      },
+      {
+        "code": "identity_review",
+        "message": "중복·공유매장 여부를 확인할 후보. 자동 병합하지 않음"
+      }
+    ]
+  },
+  {
+    "id": "ac03458b-4491-5083-a5ba-94c99d7264bc",
+    "naverPlaceId": "1130129928",
+    "name": "커피아노",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "identity_review",
+        "message": "중복·공유매장 여부를 확인할 후보. 자동 병합하지 않음"
+      }
+    ]
+  },
+  {
+    "id": "105d8345-2dae-5292-a651-10dbdc709ce6",
+    "naverPlaceId": "17542470",
+    "name": "두꺼비식당",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "711f5200-0a9b-5211-851f-b38a6f071229",
+    "naverPlaceId": "2147053357",
+    "name": "콩이네분식",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "2c3664a7-f402-52b5-b22d-992037854266",
+    "naverPlaceId": "1926346583",
+    "name": "강릉 교동짬뽕 조치원점",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "8c397489-d81f-5426-8bee-37913a618473",
+    "naverPlaceId": "1879619401",
+    "name": "취하리",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "05a7b8a8-2917-56eb-b741-97243976bf58",
+    "naverPlaceId": "1788429517",
+    "name": "피자스톰 조치원점",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "menu_price_conflict",
+        "message": "1개 메뉴 가격이 충돌하여 확정 가격을 비움"
+      }
+    ]
+  },
+  {
+    "id": "da72d134-393b-5941-a9d4-f3dcf4400f09",
+    "naverPlaceId": "17542711",
+    "name": "삼거리식당",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "222b63a0-d449-56a9-937c-fdd34107c870",
+    "naverPlaceId": "37207437",
+    "name": "갯마을해물포차",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "f6686f66-162d-550f-90c2-1bf050ee61d9",
+    "naverPlaceId": "1424730225",
+    "name": "영심이호프",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "bc67019c-ec2a-53e9-aa69-6a58587a54f6",
+    "naverPlaceId": "19583587",
+    "name": "황금돼지",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "65b7e83c-c825-5b9b-bed2-4e43121403de",
+    "naverPlaceId": "1565122933",
+    "name": "산수골 청계",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "7994defe-b1c1-5c33-9301-a7144b88169f",
+    "naverPlaceId": "31062473",
+    "name": "두집메",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "7b4a292d-3ebc-5a69-8376-a42de0c8a763",
+    "naverPlaceId": "1065443982",
+    "name": "골목집",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "16058d4d-1a3f-550a-99b9-aa555712c78f",
+    "naverPlaceId": "1681109615",
+    "name": "클로버",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "802f8bf9-1a79-5cb9-b720-57c10e2b707c",
+    "naverPlaceId": "31023992",
+    "name": "수와마을",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "6fac6ec9-bc71-5918-a68d-5350823d6250",
+    "naverPlaceId": "17543529",
+    "name": "대청마루",
+    "zone": "죽림리",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "1f751cb6-9df1-5921-ba77-9360e26ba8af",
+    "naverPlaceId": "1321565665",
+    "name": "2번출구 비상구",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "8cfd3a0e-b10e-58cf-8dc0-7fcdee7651c8",
+    "naverPlaceId": "1459280045",
+    "name": "뿅가야채곱창 홍대조치원점",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "d328a4de-04fc-55dc-adce-749863b0bfed",
+    "naverPlaceId": "1509003506",
+    "name": "케로",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "86cf1a25-85c3-532e-a36e-49b606bd9678",
+    "naverPlaceId": "31022797",
+    "name": "북경깐풍기깐치호",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "b3e267c9-930d-5d1d-8ce5-10b432029358",
+    "naverPlaceId": "1173294826",
+    "name": "비상구",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "00b89255-9765-54ca-9e3c-0f53d8f5b515",
+    "naverPlaceId": "1843536625",
+    "name": "커넥트 인 신안리",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "2f34bdf4-4f38-5f76-a923-0788ffaa778b",
+    "naverPlaceId": "1289840446",
+    "name": "메리고라운드",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "40ef83e5-bd78-5a0e-985d-c10bf2b8e9ab",
+    "naverPlaceId": "1247206961",
+    "name": "옛통이모",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "19aad3fd-0e48-57c5-89ac-321f9ced00e4",
+    "naverPlaceId": "31022378",
+    "name": "홍대파전",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "e0e9df3b-f082-5f47-b647-615058bd281f",
+    "naverPlaceId": "1941648081",
+    "name": "세컨로드",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "f5cc9887-4a38-5cb7-8ebe-1756381e4774",
+    "naverPlaceId": "1175107531",
+    "name": "맥스또띠아 홍익대점",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "2b2a3acd-3fcc-5da4-b912-b967ae81f30e",
+    "naverPlaceId": "31022794",
+    "name": "닭나라",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "26881ae4-2958-5c98-b7e6-843792b3d19d",
+    "naverPlaceId": "1508328168",
+    "name": "비스트로이도",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "4b3cb97e-61ed-5dc0-92e0-2f477e01f61d",
+    "naverPlaceId": "37153381",
+    "name": "치킨678 조치원1호점",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "d414760a-6fec-5db2-9d32-4991c1191a32",
+    "naverPlaceId": "1995164432",
+    "name": "뜸들이다 조치원점",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "ac39dd24-08f1-557d-b939-f27a7775d68c",
+    "naverPlaceId": "19900091",
+    "name": "홍카페",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "1d36e775-d4f1-5c77-ba84-56fb3f4d5e6e",
+    "naverPlaceId": "1613059821",
+    "name": "소반정",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "9652fec3-8caf-518f-a806-d14c3ea92a74",
+    "naverPlaceId": "1208585238",
+    "name": "이모네수육국밥 조치원본점",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "a512b269-47b2-5ca7-ad83-1470605f78b5",
+    "naverPlaceId": "1824985627",
+    "name": "명품흑미 쌀 고기냉면",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "6ff4fea1-af9f-5672-804c-655b2bee9dda",
+    "naverPlaceId": "31022374",
+    "name": "손문대구막창갈매기살 조치원점",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "ae52bcb6-eb38-5b43-ae98-90f27c8295a1",
+    "naverPlaceId": "17545092",
+    "name": "별산삼겹살",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "c136cee6-33c0-5dd4-a571-aca1d6686537",
+    "naverPlaceId": "37585225",
+    "name": "분당일품국수",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "d1f7211e-65a3-526c-a599-059229dea2c6",
+    "naverPlaceId": "1529293632",
+    "name": "지린성",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "1c8bd7a9-15a8-5815-80b3-1315d8a3367c",
+    "naverPlaceId": "1815933641",
+    "name": "카페캐롯",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      },
+      {
+        "code": "source_unavailable",
+        "message": "네이버 원문을 찾지 못함. 폐업으로 확정하지 않음"
+      }
+    ]
+  },
+  {
+    "id": "2a4a682b-9846-586d-9ce6-aa263b2ae985",
+    "naverPlaceId": "1730382169",
+    "name": "육앤샤",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "612cccd0-52cc-519b-9cae-41e911af2b3a",
+    "naverPlaceId": "1066408870",
+    "name": "미가",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "00f3c769-89fa-568f-a62d-147741f097b0",
+    "naverPlaceId": "36522739",
+    "name": "노상집",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "4774b2ce-fd32-577e-81e5-7af5167ccb45",
+    "naverPlaceId": "1455623304",
+    "name": "요거프레소 홍대세종점",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "d794ae0d-428d-5822-8840-852d00ad4a60",
+    "naverPlaceId": "1958534821",
+    "name": "영스",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "a19d3159-5094-5c82-99bb-4a912a2d76d8",
+    "naverPlaceId": "2032719355",
+    "name": "칠야",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "68657e79-02f6-555b-8ab1-c461523e4aef",
+    "naverPlaceId": "1807295957",
+    "name": "사카모",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "7808c48f-8473-510f-984e-427f470632cd",
+    "naverPlaceId": "1209971268",
+    "name": "도깨비전",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "371e90f0-d7a8-5c5d-b8ea-c34885209b0e",
+    "naverPlaceId": "1326607141",
+    "name": "가빈 홍대점",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "d7a7de5b-0799-5d93-9493-b7ec4707efb1",
+    "naverPlaceId": "17545522",
+    "name": "먹자집",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "1e7529b4-ea30-55d2-ad51-b45a698a8e84",
+    "naverPlaceId": "35457153",
+    "name": "폼프리츠 세종시 홍대점",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "4edc6da2-2015-5e99-9bf8-eb50bcf1986d",
+    "naverPlaceId": "34281805",
+    "name": "김밥천국 홍대점",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "1개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "44fc77b8-e2fe-5bd4-81e6-b8f4d68f036e",
+    "naverPlaceId": "2066948254",
+    "name": "냉면제작소",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "74a6ac49-4fd6-5b97-bd9f-c7bc99757e67",
+    "naverPlaceId": "1344009529",
+    "name": "덮밥ZIP 조치원점",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "20b6c0b4-8e2f-5379-8007-4c4584937998",
+    "naverPlaceId": "1566886560",
+    "name": "고가네 생선구이전문점",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "identity_review",
+        "message": "중복·공유매장 여부를 확인할 후보. 자동 병합하지 않음"
+      }
+    ]
+  },
+  {
+    "id": "3054f4a6-a39f-5551-b58a-95969f060703",
+    "naverPlaceId": "1873691957",
+    "name": "나주진사곰탕&육개장",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "identity_review",
+        "message": "중복·공유매장 여부를 확인할 후보. 자동 병합하지 않음"
+      }
+    ]
+  },
+  {
+    "id": "cade38c2-f80f-5d01-a696-238b40de6bda",
+    "naverPlaceId": "1118215078",
+    "name": "반찬의역습",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "identity_review",
+        "message": "중복·공유매장 여부를 확인할 후보. 자동 병합하지 않음"
+      }
+    ]
+  },
+  {
+    "id": "d2f1e6bc-4220-58aa-a8b1-763bf5c78adc",
+    "naverPlaceId": "1570027713",
+    "name": "싱글라이프",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "b4a7938c-6184-5d05-9bbe-3446c9de4ae3",
+    "naverPlaceId": "1604851266",
+    "name": "엄마손비빔밥&덮밥",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "identity_review",
+        "message": "중복·공유매장 여부를 확인할 후보. 자동 병합하지 않음"
+      }
+    ]
+  },
+  {
+    "id": "18dfd878-4bd7-5d23-9373-5c78d3bb2072",
+    "naverPlaceId": "1460961775",
+    "name": "제육에 미친 남자",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "identity_review",
+        "message": "중복·공유매장 여부를 확인할 후보. 자동 병합하지 않음"
+      }
+    ]
+  },
+  {
+    "id": "d10b13d9-a506-5934-97cb-4fdbb02da5c6",
+    "naverPlaceId": "1133494926",
+    "name": "세종배터지는갈비탕",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "1cdbf8e1-cd31-50a2-8ca0-f900e3aa550a",
+    "naverPlaceId": "1054758784",
+    "name": "고독한 사냥꾼",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      }
+    ]
+  },
+  {
+    "id": "c5c0e7c5-b16c-547c-a43b-090d62ea4056",
+    "naverPlaceId": "1052684988",
+    "name": "청년돼지집 조치원점",
+    "zone": "홍대사이",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      }
+    ]
+  },
+  {
+    "id": "ed2e7fed-67be-57b2-b4c8-94d0a38c3543",
+    "naverPlaceId": "37175970",
+    "name": "모과나무골 막국수 이야기",
+    "zone": "고대앞",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "2개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "ae60eb4c-d8d8-5195-80bb-a111a97013c6",
+    "naverPlaceId": "1569309522",
+    "name": "샐러디아 조치원점",
+    "zone": "고대앞",
+    "issues": [
+      {
+        "code": "shared_address",
+        "message": "동일 주소에 다른 상호의 네이버 페이지가 함께 있음. 서로 다른 원문 ID와 메뉴는 유지하며 실제 사업장 관계는 미확인"
+      }
+    ]
+  },
+  {
+    "id": "5cb7364f-dbb9-50e3-9ac8-17b078deef4e",
+    "naverPlaceId": "1443057439",
+    "name": "진한수육국밥 고대점",
+    "zone": "고대앞",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      },
+      {
+        "code": "shared_address",
+        "message": "동일 주소에 다른 상호의 네이버 페이지가 함께 있음. 서로 다른 원문 ID와 메뉴는 유지하며 실제 사업장 관계는 미확인"
+      }
+    ]
+  },
+  {
+    "id": "48e44cea-4826-5a99-bca3-39df49c7826f",
+    "naverPlaceId": "36522746",
+    "name": "쌍둥이식당",
+    "zone": "고대앞",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  },
+  {
+    "id": "d064c630-ffd4-5a8a-b28f-4cc07356100e",
+    "naverPlaceId": "1755212465",
+    "name": "카페 솔드아웃",
+    "zone": "고대앞",
+    "issues": [
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      },
+      {
+        "code": "shared_address",
+        "message": "동일 주소에 다른 상호의 네이버 페이지가 함께 있음. 서로 다른 원문 ID와 메뉴는 유지하며 실제 사업장 관계는 미확인"
+      }
+    ]
+  },
+  {
+    "id": "99d42caf-a877-56fe-959e-c618884a361d",
+    "naverPlaceId": "1187177881",
+    "name": "엄마에 집밥도시락",
+    "zone": "고대앞",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "shared_address",
+        "message": "동일 주소에 다른 상호의 네이버 페이지가 함께 있음. 서로 다른 원문 ID와 메뉴는 유지하며 실제 사업장 관계는 미확인"
+      }
+    ]
+  },
+  {
+    "id": "0840cbac-22f5-58e7-8710-d39b7997c4d2",
+    "naverPlaceId": "1560158998",
+    "name": "순수덮밥 조치원점",
+    "zone": "고대앞",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "shared_address",
+        "message": "동일 주소에 다른 상호의 네이버 페이지가 함께 있음. 서로 다른 원문 ID와 메뉴는 유지하며 실제 사업장 관계는 미확인"
+      }
+    ]
+  },
+  {
+    "id": "fe73aed5-8ae5-52f5-88d0-54f0a8d8cadd",
+    "naverPlaceId": "1151926386",
+    "name": "삼시세끼 고대점",
+    "zone": "고대앞",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      },
+      {
+        "code": "menus_unknown",
+        "message": "네이버 원본에 메뉴 정보가 없음"
+      },
+      {
+        "code": "phone_unknown",
+        "message": "전화번호 미확인"
+      },
+      {
+        "code": "shared_address",
+        "message": "동일 주소에 다른 상호의 네이버 페이지가 함께 있음. 서로 다른 원문 ID와 메뉴는 유지하며 실제 사업장 관계는 미확인"
+      }
+    ]
+  },
+  {
+    "id": "d719911a-d2af-50d9-8858-27a131b13bcf",
+    "naverPlaceId": "1937093125",
+    "name": "조인해장국",
+    "zone": "고대앞",
+    "issues": [
+      {
+        "code": "hours_unknown",
+        "message": "7개 요일의 기본 영업시간 미확인"
+      }
+    ]
+  }
+]

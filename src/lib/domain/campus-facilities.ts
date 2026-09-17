@@ -36,6 +36,7 @@ export type CampusFacility = {
 	actions?: Array<{ label: string; url: string }>;
 	/** 기존 관리자 핀과 연결한 장소. ID·좌표·아이콘은 이 레코드를 그대로 사용한다. */
 	place?: Place;
+	membership?: import('./restaurants').KuMembership;
 };
 
 export type CampusDirectoryView = {
@@ -112,7 +113,7 @@ export function getCampusFacilityMarkers(facilities: CampusFacility[], spots: Ca
 
 /** 교내 단축 번호나 범위를 임의로 확장하지 않는다. 완전한 번호만 연결한다. */
 export function getFacilityPhoneLinks(phone: string) {
-	const matches = phone.replace(/-\s+(?=\d)/g, '-').match(/(?<![\d-])0\d{1,2}-\d{3,4}-\d{4}(?!\d)/g) ?? [];
+	const matches = phone.replace(/-\s+(?=\d)/g, '-').match(/(?<![\d-])0(?:50\d|\d{1,2})-\d{3,4}-\d{4}(?!\d)/g) ?? [];
 	return [...new Set(matches)].map((label) => ({ label, href: `tel:${label.replaceAll('-', '')}` }));
 }
 

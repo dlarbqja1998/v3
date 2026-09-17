@@ -37,7 +37,7 @@ export type MapAreaOption = {
 
 export function buildMapAreaOptions(
 	zones: CommercialZone[],
-	{ outsideEnabled = true }: { outsideEnabled?: boolean } = {}
+	{ outsideEnabled = true, includeOutsideAll = false }: { outsideEnabled?: boolean; includeOutsideAll?: boolean } = {}
 ): MapAreaOption[] {
 	if (!outsideEnabled) {
 		return [
@@ -75,6 +75,7 @@ export function buildMapAreaOptions(
 			shortName: CAMPUS_AREA_SHORT_NAME,
 			mode: 'campus'
 		},
+		...(includeOutsideAll ? [{id:'outside-all',name:'교외 전체',mode:'outside' as const}] : []),
 		...sortedZones.map((zone) => ({ id: zone.id, name: zone.name, mode: 'outside' as const }))
 	];
 }
@@ -82,7 +83,7 @@ export function buildMapAreaOptions(
 export function changeSelectedMapArea(areaId: string) {
 	return areaId === CAMPUS_AREA_ID
 		? { mode: 'campus' as const, selectedZoneId: 'all' as const }
-		: { mode: 'outside' as const, selectedZoneId: areaId };
+		: { mode: 'outside' as const, selectedZoneId: areaId === 'outside-all' ? 'all' : areaId };
 }
 
 export function changeMapAreaMode(nextMode: MapAreaMode) {

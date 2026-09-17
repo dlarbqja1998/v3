@@ -1,5 +1,8 @@
 import { env } from '$env/dynamic/private';
 import { readCampusFacilities } from '$lib/server/campus-facilities';
+import { dev } from '$app/environment';
+import { isOutsidePreview, koreanDate } from '$lib/domain/restaurants';
+import { readOutsideCatalog } from '$lib/server/restaurants';
 import { readPublicFestival } from '$lib/server/festival-editor';
 import { getHomeData } from '$lib/server/db/queries';
 import { getTodayMenuWithRefresh } from '$lib/server/cafeteria-cache';
@@ -20,6 +23,7 @@ import { createPublicDataCache } from '$lib/server/public-data-cache';
 const readPublicHome = createPublicDataCache<Awaited<ReturnType<typeof getHomeData>>>(30_000);
 const readPublicEvents = createPublicDataCache<Awaited<ReturnType<typeof listPublicCampusEvents>>>(30_000);
 const readPublicNotice = createPublicDataCache<Awaited<ReturnType<typeof getHomeNotice>>>(30_000);
+const readRestaurants = createPublicDataCache<Awaited<ReturnType<typeof readOutsideCatalog>>>(30_000);
 
 export async function load({ platform, locals, url }) {
 	const loadPolicy = getHomeLoadPolicy(url.searchParams.get('panel'));
@@ -36,7 +40,8 @@ export async function load({ platform, locals, url }) {
 	}
 
 	const databaseUrl = env.DATABASE_URL ?? '';
-	const [homeData, campusEvents, homeNotice] = await Promise.all([
+	const restaurantMode = isOutsidePreview(dev, url.hostname) ? 'preview' : 'public';
+	const [homeData, campusEvents, homeNotice, outsideCatalog, festival] = await Promise.all([
 		// 메뉴가 있는 구형 학식 딥링크는 주간 메뉴가 섞인 결과를 공용 캐시에 넣지 않는다.
 		weeklyMenu ? getHomeData(databaseUrl, weeklyMenu) : readPublicHome(databaseUrl, () => getHomeData(databaseUrl)),
 		databaseUrl ? readPublicEvents(databaseUrl, () => listPublicCampusEvents(databaseUrl)).catch((error) => {
@@ -46,7 +51,9 @@ export async function load({ platform, locals, url }) {
 		databaseUrl ? readPublicNotice(databaseUrl, () => getHomeNotice(databaseUrl)).catch((error) => {
 			console.error('메인 공지 조회 실패:', error);
 			return null;
-		}) : Promise.resolve(null)
+		}) : Promise.resolve(null),
+		readRestaurants(`${databaseUrl}|${restaurantMode}|${koreanDate()}`, () => readOutsideCatalog(databaseUrl, restaurantMode)),
+		readPublicFestival(platform?.env?.GOLABAU_CACHE)
 	]);
 	const requestedPlaceId = url.searchParams.get('place') ?? '';
 	const requestedEventId = url.searchParams.get('eventId') ?? '';
@@ -88,10 +95,12 @@ export async function load({ platform, locals, url }) {
 		}
 	}
 
-	const festival = await readPublicFestival(platform?.env?.GOLABAU_CACHE);
 	return {
 		...homeData,
-		campusFacilities: readCampusFacilities(homeData.places),
+		outsideRestaurants: outsideCatalog.restaurants,
+		initialOutsideZone: url.searchParams.get('outside'),
+		initialOutsidePlaceId: url.searchParams.get('restaurant'),
+		campusFacilities: readCampusFacilities(homeData.places).map(facility=>({...facility,membership:outsideCatalog.memberships[facility.id]})),
 		festival,
 		initialFestival: Boolean(festival) && url.searchParams.get('panel') === 'festival',
 		campusEvents,

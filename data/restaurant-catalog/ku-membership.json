@@ -1,0 +1,317 @@
+{
+  "program": "ku-membership",
+  "periodLabel": "2026학년도 2학기",
+  "sourceUrl": "https://everytime.kr/370457/v/416105224",
+  "sourceLabel": "제38대 총학생회 비범 · KU멤버십 제휴 안내",
+  "sourcePublishedOn": "2026-08-17",
+  "checkedOn": "2026-09-16",
+  "confirmation": "사용자가 2026-09-16 대화에서 2학기에도 동일하게 적용됨을 확인함",
+  "conditions": [
+    "방문·결제 시 고려대학교 세종캠퍼스 학생증을 제시해 주세요. 모바일 학생증도 가능해요."
+  ],
+  "entries": [
+    {
+      "key": "family-jokbal",
+      "sourceName": "가장맛있는족발",
+      "sourceArea": "욱일",
+      "naverPlaceId": "17539773",
+      "placeId": null,
+      "matchStatus": "matched",
+      "summary": "주먹밥 서비스",
+      "benefits": [
+        "테이블당 주먹밥 1회 제공"
+      ]
+    },
+    {
+      "key": "manse",
+      "sourceName": "만세곱창",
+      "sourceArea": "욱일",
+      "naverPlaceId": "1924670460",
+      "placeId": null,
+      "matchStatus": "matched",
+      "summary": "음료수 서비스",
+      "benefits": [
+        "테이블당 음료수 제공"
+      ]
+    },
+    {
+      "key": "dongeupri",
+      "sourceName": "동읍리",
+      "sourceArea": "욱일",
+      "naverPlaceId": "1394142725",
+      "placeId": null,
+      "matchStatus": "matched",
+      "summary": "사이드 메뉴 택 1",
+      "benefits": [
+        "고기 4인분 이상 주문하고 현금·계좌로 결제하면 사이드 메뉴 중 1개 제공"
+      ]
+    },
+    {
+      "key": "galbi",
+      "sourceName": "갈비가좋아",
+      "sourceArea": "욱일",
+      "naverPlaceId": "21230589",
+      "placeId": null,
+      "matchStatus": "matched",
+      "summary": "음료수 서비스",
+      "benefits": [
+        "테이블당 음료수 1개 제공"
+      ]
+    },
+    {
+      "key": "palpal",
+      "sourceName": "팔팔생고기",
+      "sourceArea": "욱일",
+      "naverPlaceId": "1410679958",
+      "placeId": null,
+      "matchStatus": "matched",
+      "summary": "음료수 1~2병",
+      "benefits": [
+        "인원수에 따라 음료수 1~2병 제공"
+      ]
+    },
+    {
+      "key": "daldal",
+      "sourceName": "달달한밤",
+      "sourceArea": "신정문",
+      "naverPlaceId": "1340599744",
+      "placeId": null,
+      "matchStatus": "matched",
+      "summary": "4인 테이블 음료수",
+      "benefits": [
+        "4인 테이블당 음료수 1개 제공"
+      ]
+    },
+    {
+      "key": "suldangpo",
+      "sourceName": "술당포",
+      "sourceArea": "신정문",
+      "naverPlaceId": "1720519319",
+      "placeId": null,
+      "matchStatus": "matched",
+      "summary": "테이블별 서비스",
+      "benefits": [
+        "테이블당 사장님 재량으로 서비스 제공"
+      ]
+    },
+    {
+      "key": "hisul",
+      "sourceName": "HI술",
+      "sourceArea": "신정문",
+      "naverPlaceId": "2064760781",
+      "placeId": null,
+      "matchStatus": "matched",
+      "summary": "4인 이상 안주 또는 주류",
+      "benefits": [
+        "4인 이상 방문하면 모듬감자튀김 또는 맥주·소주 2병 제공"
+      ]
+    },
+    {
+      "key": "mokhwa",
+      "sourceName": "라운지목화",
+      "sourceArea": "욱일",
+      "naverPlaceId": "1775447459",
+      "placeId": null,
+      "matchStatus": "matched",
+      "summary": "인원수만큼 군만두",
+      "benefits": [
+        "인원수당 군만두 1개 제공"
+      ]
+    },
+    {
+      "key": "daedong",
+      "sourceName": "대동집",
+      "sourceArea": "욱일",
+      "naverPlaceId": "1590026262",
+      "placeId": null,
+      "matchStatus": "matched",
+      "summary": "음료수·생일 안주 서비스",
+      "benefits": [
+        "2인당 음료수 1병 제공",
+        "생일자가 신분증을 제시하면 안주 서비스 제공"
+      ]
+    },
+    {
+      "key": "insaeng",
+      "sourceName": "인생맥주",
+      "sourceArea": "욱일",
+      "naverPlaceId": "2049085933",
+      "placeId": null,
+      "matchStatus": "matched",
+      "summary": "음료수 서비스",
+      "benefits": [
+        "테이블당 음료수 1병 제공"
+      ],
+      "matchNote": "2026-09-16 사용자가 같은 매장임을 확인. 화면에는 네이버 매장명을 사용."
+    },
+    {
+      "key": "bbq",
+      "sourceName": "BBQ",
+      "sourceArea": "교내",
+      "naverPlaceId": null,
+      "placeId": "b672293c-2eff-4f83-a9ba-59181e2b5635",
+      "matchStatus": "matched",
+      "summary": "치킨 5% 할인",
+      "benefits": [
+        "치킨 전 메뉴 5% 할인",
+        "교내 배달 무료"
+      ]
+    },
+    {
+      "key": "citypop",
+      "sourceName": "씨티팝",
+      "sourceArea": "신정문",
+      "naverPlaceId": "1600449890",
+      "placeId": null,
+      "matchStatus": "matched",
+      "summary": "4인 테이블 음료수",
+      "benefits": [
+        "4인 테이블당 음료수 1개 제공"
+      ],
+      "matchNote": "2026-09-16 사용자가 같은 매장임을 확인. 화면에는 네이버 매장명을 사용."
+    },
+    {
+      "key": "wonmi",
+      "sourceName": "원미닭갈비",
+      "sourceArea": "신정문",
+      "naverPlaceId": "20013019",
+      "placeId": null,
+      "matchStatus": "matched",
+      "summary": "사리 또는 음료수",
+      "benefits": [
+        "테이블당 사리 또는 음료수 제공"
+      ]
+    },
+    {
+      "key": "eomeonim",
+      "sourceName": "어머님칼국수",
+      "sourceArea": "신정문",
+      "naverPlaceId": "30857183",
+      "placeId": null,
+      "matchStatus": "matched",
+      "summary": "4인 이상 음료수",
+      "benefits": [
+        "4인 이상 한 테이블당 음료수 1병 제공"
+      ]
+    },
+    {
+      "key": "sushi",
+      "sourceName": "초밥발전소",
+      "sourceArea": "신정문",
+      "naverPlaceId": "1137389964",
+      "placeId": null,
+      "matchStatus": "matched",
+      "summary": "초밥 서비스",
+      "benefits": [
+        "초밥 1개 서비스 제공"
+      ]
+    },
+    {
+      "key": "sinjeon",
+      "sourceName": "신전떡볶이",
+      "sourceArea": "욱일",
+      "naverPlaceId": "483910040",
+      "placeId": null,
+      "matchStatus": "matched",
+      "summary": "결제금액별 쿨피스",
+      "benefits": [
+        "15,000원 이상 결제하면 쿨피스 950ml 제공",
+        "12,000원 이상 결제하면 쿨피스 450ml 제공"
+      ]
+    },
+    {
+      "key": "yeokjeon",
+      "sourceName": "인생역전",
+      "sourceArea": "욱일",
+      "naverPlaceId": "2075730878",
+      "placeId": null,
+      "matchStatus": "matched",
+      "summary": "음료수·단체 주류 서비스",
+      "benefits": [
+        "테이블당 음료수 제공",
+        "8인 이상 단체 방문 시 주류 1병 제공"
+      ]
+    },
+    {
+      "key": "chasan",
+      "sourceName": "차산돼지국밥",
+      "sourceArea": "욱일",
+      "naverPlaceId": "2001027369",
+      "placeId": null,
+      "matchStatus": "matched",
+      "summary": "미니순대 서비스",
+      "benefits": [
+        "미니순대 서비스 제공"
+      ]
+    },
+    {
+      "key": "deogyun",
+      "sourceName": "덕윤당",
+      "sourceArea": "조치원역",
+      "naverPlaceId": "1849832034",
+      "placeId": null,
+      "matchStatus": "matched",
+      "summary": "공기밥·면·음료 중 택 1",
+      "benefits": [
+        "공기밥, 면, 음료 중 1개 제공"
+      ]
+    },
+    {
+      "key": "geonyeong",
+      "sourceName": "건영통닭",
+      "sourceArea": "신안리",
+      "naverPlaceId": "1116251520",
+      "placeId": null,
+      "matchStatus": "matched",
+      "summary": "2인당 음료수",
+      "benefits": [
+        "2인당 음료수 1병 제공"
+      ]
+    },
+    {
+      "key": "vanilla",
+      "sourceName": "바닐라가든",
+      "sourceArea": "신정문",
+      "naverPlaceId": "1300746560",
+      "placeId": null,
+      "matchStatus": "matched",
+      "summary": "아메리카노 500원 할인",
+      "benefits": [
+        "아메리카노 500원 할인",
+        "샌드위치 구매 시 휘낭시에 1개 증정",
+        "디카페인 전환 무료"
+      ]
+    },
+    {
+      "key": "angel",
+      "sourceName": "엔젤커피",
+      "sourceArea": "욱일",
+      "naverPlaceId": "33896646",
+      "placeId": null,
+      "matchStatus": "matched",
+      "summary": "포장 음료 최대 50% 할인",
+      "benefits": [
+        "테이크아웃: 아메리카노·아이스티 50%, 아샷추 30% 할인",
+        "매장 주문: 아메리카노·아이스티·아샷추 10% 할인"
+      ],
+      "matchNote": "2026-09-16 사용자가 같은 매장임을 확인. 화면에는 네이버 매장명을 사용."
+    },
+    {
+      "key": "chas",
+      "sourceName": "차스카페",
+      "sourceArea": "욱일",
+      "naverPlaceId": "1649326693",
+      "placeId": null,
+      "matchStatus": "matched",
+      "summary": "주문 음료 10% 할인",
+      "benefits": [
+        "주문 음료 10% 할인 (병음료·제로음료·디저트류 제외)"
+      ]
+    }
+  ],
+  "pendingCandidates": {},
+  "excludedCategories": [
+    "교육·어학·자격증",
+    "문화"
+  ]
+}

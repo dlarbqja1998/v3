@@ -28,6 +28,7 @@
 	--color-brand-muted: #75666a;
 	--color-brand-border: #e7e1e3;
 	--color-brand-border-strong: #d7cdd0;
+	--color-brand-section-border: #c8bec2;
 }
 
 :root {
@@ -42,6 +43,26 @@ body {
 	margin: 0;
 	min-width: 320px;
 	background: var(--color-brand-bg);
+}
+
+/* 큰 정보 묶음은 화면 끝까지, 묶음 안의 행은 본문 너비의 연한 선으로 구분한다. */
+.gb1-section {
+	margin-inline: calc(-1 * var(--gb1-section-inset, 20px));
+	padding: 24px var(--gb1-section-inset, 20px);
+	border-top: 1px solid var(--color-brand-section-border);
+}
+
+.gb1-section-title {
+	margin: 0;
+	font-size: 18px;
+	font-weight: 700;
+	line-height: 26px;
+}
+
+/* 교내 시설과 교외 가게·음식 종류 필터의 표시 크기를 동일하게 유지한다. */
+.map-filter-option {
+	font-size: 16px;
+	line-height: 24px;
 }
 
 .home-viewport {

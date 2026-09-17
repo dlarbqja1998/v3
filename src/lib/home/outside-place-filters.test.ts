@@ -9,7 +9,7 @@ const handlers = {
 };
 
 describe('학교 밖 장소 필터', () => {
-	it('상위 카테고리를 한 줄의 필터칩으로 제공한다', () => {
+	it('상위 카테고리와 KU멤버십 필터를 제공한다', () => {
 		const { body } = render(OutsidePlaceFilters, {
 			props: {
 				selectedCategory: 'all',
@@ -18,12 +18,12 @@ describe('학교 밖 장소 필터', () => {
 			}
 		});
 
-		expect(body).toContain('aria-label="학교 밖 장소 카테고리"');
+		expect(body).toContain('aria-label="교외 가게 종류"');
 		expect(body).toContain('전체');
 		expect(body).toContain('음식점');
 		expect(body).toContain('카페');
 		expect(body).toContain('술집');
-		expect(body).toContain('필터');
+		expect(body).toContain('aria-label="KU멤버십만 보기"');
 	});
 
 	it('음식점에서 선택한 음식 종류를 활성 필터칩에 표시한다', () => {

@@ -17,6 +17,10 @@
 	import { filterCampusFacilities, getCampusFacilityMarkers, normalizeBuildingName, type CampusDirectoryView } from '$lib/domain/campus-facilities';
 	import HomeMapHeader from '$lib/home/HomeMapHeader.svelte';
 	import OutsidePlaceFilters from '$lib/home/OutsidePlaceFilters.svelte';
+	import RestaurantList from '$lib/restaurant/RestaurantList.svelte';
+	import RestaurantDetailView from '$lib/restaurant/RestaurantDetail.svelte';
+	import { EMPTY_OUTSIDE_VIEW, filterRestaurants, getRestaurantMapHref, type OutsideDirectoryView, type RestaurantSummary } from '$lib/domain/restaurants';
+	import { createRestaurantDetailCache } from '$lib/restaurant/detail-cache';
 	import {
 		getNextActivePlaceId,
 		getVisibleFacilityPlaces
@@ -102,12 +106,42 @@
 		items: MealItem[];
 	};
 
-	type SheetMode = 'home' | 'event' | 'festival' | 'facility' | 'campus-facility' | 'cafeteria' | 'shuttle' | 'pin' | 'place';
+	type SheetMode = 'home' | 'event' | 'festival' | 'facility' | 'campus-facility' | 'outside' | 'cafeteria' | 'shuttle' | 'pin' | 'place';
 	const WEATHER_WIDGET_GAP = 12;
 	const homeDateLabel = formatHomeDate(new Date());
 
 	let { data }: { data: PageData } = $props();
 	const mapSession = getContext<HomeMapSession | undefined>(HOME_MAP_SESSION);
+	const shownRestaurant = $derived(data.outsideRestaurants ? page.state.restaurantDetail ?? page.state.restaurantPreview : undefined);
+	const restaurantCache = createRestaurantDetailCache((...args) => fetch(...args));
+	let restaurantOverlay = $state<HTMLDivElement>();
+	let restaurantLoadError = $state('');
+	let restaurantRetry = $state(0);
+	let restaurantReturnFocus: HTMLElement | null = null;
+	let restaurantWasOpen = false;
+	$effect(() => {
+		if (shownRestaurant && restaurantOverlay && !restaurantWasOpen) {
+			restaurantOverlay.focus({ preventScroll: true });
+			restaurantWasOpen = true;
+		} else if (!shownRestaurant && restaurantWasOpen) {
+			restaurantReturnFocus?.focus({ preventScroll: true });
+			restaurantWasOpen = false;
+		}
+	});
+	$effect(() => {
+		const preview = page.state.restaurantPreview;
+		const detail = page.state.restaurantDetail;
+		restaurantRetry;
+		if (!preview || detail) return;
+		let cancelled = false;
+		restaurantLoadError = '';
+		void restaurantCache.get(preview.place.id).then(restaurant => {
+			if (!cancelled) replaceState('', { ...page.state, restaurantDetail: restaurant, restaurantPreview: undefined });
+		}).catch(() => {
+			if (!cancelled) restaurantLoadError = '상세 정보를 불러오지 못했어요. 다시 시도해 주세요.';
+		});
+		return () => { cancelled = true; };
+	});
 
 	let selectedZone = $state('all');
 	let areaMode = $state<MapAreaMode>('campus');
@@ -146,6 +180,8 @@
 	let voteToastTimer: ReturnType<typeof setTimeout> | undefined;
 	let appShellElement = $state<HTMLElement>();
 	let sheetElement = $state<HTMLElement>();
+	let mapControlsElement = $state<HTMLDivElement>();
+	let mapControlsHeight = $state(108);
 	let sheetDetent = $state<BottomSheetDetent>('collapsed');
 	let sheetHeight = $state(COLLAPSED_HEIGHT);
 	let mapViewportHeight = $state(844);
@@ -247,8 +283,36 @@
 		});
 	});
 
+	const outsideDirectory = $derived(data.outsideRestaurants ? page.state.outsideDirectory : undefined);
+	const outsideResults = $derived(filterRestaurants(data.outsideRestaurants??[],outsideDirectory??EMPTY_OUTSIDE_VIEW));
+	const outsideMapResults = $derived(filterRestaurants(data.outsideRestaurants ?? [], { ...(outsideDirectory ?? EMPTY_OUTSIDE_VIEW), clusterPlaceIds: undefined }));
+	const outsideZoneCounts = $derived.by(() => {
+		const counts: Record<string, number> = {};
+		for (const restaurant of filterRestaurants(data.outsideRestaurants ?? [], { ...(outsideDirectory ?? EMPTY_OUTSIDE_VIEW), zone: 'all', clusterPlaceIds: undefined })) {
+			if (restaurant.place.zoneId) counts[restaurant.place.zoneId] = (counts[restaurant.place.zoneId] ?? 0) + 1;
+		}
+		return counts;
+	});
+	const outsideZoneName = $derived(data.commercialZones.find(zone=>zone.id===outsideDirectory?.zone)?.name??'교외 전체');
+	let previousOutside: OutsideDirectoryView | undefined;
+	$effect(()=>{
+		const view=outsideDirectory;
+		untrack(()=>{
+			if(view){
+				sheetMode='outside';areaMode='outside';selectedCommercialZoneId=view.zone;
+				selectedMapAreaId=view.zone==='all'?'outside-all':view.zone;
+				selectedOutsideCategory=view.category;selectedOutsideCuisine=view.cuisine;facilitySearchQuery=view.query;
+				activePlaceId='';activeCampusSpotId='';focusCampusSpotId='';showCampusBoundaries=false;
+				if(!previousOutside||previousOutside.zone!==view.zone) setSheetDetent(view.expanded?'expanded':view.zone==='all'?'collapsed':'medium');
+			}else if(previousOutside&&sheetMode==='outside'){resetHomeMapArea();closePanel();}
+			previousOutside=view;
+		});
+	});
+
 	const mapPlaces = $derived(
-		addAlwaysVisibleShuttleStops(
+		sheetMode === 'outside'
+			? outsideDirectory?.zone === 'all' ? [] : outsideMapResults.map(restaurant => restaurant.place)
+			: addAlwaysVisibleShuttleStops(
 			sheetMode === 'pin' || sheetMode === 'shuttle'
 				? []
 				: sheetMode === 'campus-facility'
@@ -266,7 +330,7 @@
 	);
 
 	const activeMapPlaceId = $derived(
-		sheetMode === 'campus-facility'
+		sheetMode === 'outside' ? outsideDirectory?.focusPlaceId ?? '' : sheetMode === 'campus-facility'
 			? (directoryFacility?.place?.id ?? directoryMarkers.find((marker) => marker.id === `campus-facilities:${activeCampusSpotId}`)?.id ?? directoryMarkers[0]?.id ?? '')
 			: sheetMode === 'pin'
 			? ''
@@ -276,11 +340,12 @@
 	);
 
 	const placeFocusTargetRatio = $derived(
-		sheetMode === 'festival' || sheetMode === 'place' || sheetMode === 'facility' || sheetMode === 'campus-facility' || sheetMode === 'shuttle' || sheetMode === 'event'
+		sheetMode === 'outside' || sheetMode === 'festival' || sheetMode === 'place' || sheetMode === 'facility' || sheetMode === 'campus-facility' || sheetMode === 'shuttle' || sheetMode === 'event'
 			? getAvailableMapMarkerTargetRatio({
 					mapHeight: mapViewportHeight,
 					navigationHeight: bottomNavigationHeight,
-					sheetHeight
+					sheetHeight,
+					topOverlayHeight: sheetMode === 'outside' ? mapControlsHeight : 0
 				})
 			: undefined
 	);
@@ -302,6 +367,16 @@
 	const nextShuttle = $derived(getNextAvailableShuttle(currentTime));
 
 	let initialDirectoryOpened = false;
+	let initialOutsideOpened = false;
+	afterNavigate(async navigation=>{
+		if(initialOutsideOpened||!data.outsideRestaurants||!data.initialOutsideZone||page.state.outsideDirectory)return;
+		initialOutsideOpened=true;
+		await navigation.complete;
+		const zone=data.commercialZones.some(zone=>zone.id===data.initialOutsideZone)?data.initialOutsideZone:'all';
+		const target = data.outsideRestaurants.find(restaurant => restaurant.place.id === data.initialOutsidePlaceId);
+		openOutsideDirectory({zone: target?.place.zoneId ?? zone, clusterPlaceIds: target ? [target.place.id] : undefined, focusPlaceId: target?.place.id});
+		if (target) homeFocusRequestId += 1;
+	});
 	afterNavigate(async (navigation) => {
 		if (initialDirectoryOpened || !data.campusFacilities || data.initialPanel !== 'facility') return;
 		initialDirectoryOpened = true;
@@ -340,7 +415,10 @@
 		}, 30000);
 		const handleViewportResize = () => syncSheetHeight();
 		const handleKeydown = (event: KeyboardEvent) => {
-			if (event.key === 'Escape') isVoteLoginPromptOpen = false;
+			if (event.key === 'Escape' && shownRestaurant) {
+				event.preventDefault();
+				closeRestaurant();
+			} else if (event.key === 'Escape') isVoteLoginPromptOpen = false;
 		};
 
 		window.addEventListener('resize', handleViewportResize);
@@ -534,6 +612,10 @@
 	}
 
 	function updateFacilitySearch(query: string) {
+		if(data.outsideRestaurants&&areaMode==='outside'){
+			changeOutsideDirectory({query});
+			return;
+		}
 		if (data.campusFacilities && areaMode === 'campus') {
 			openCampusDirectory({ query });
 			return;
@@ -558,7 +640,46 @@
 	}
 
 	function clearCampusDirectory() {
-		if (page.state.campusDirectory) replaceState('', { ...page.state, campusDirectory: undefined });
+		if (page.state.campusDirectory || page.state.outsideDirectory) replaceState('', { ...page.state, campusDirectory: undefined, outsideDirectory: undefined });
+	}
+
+	function openOutsideDirectory(change: Partial<OutsideDirectoryView>={}){
+		if(!data.outsideRestaurants)return;
+		const hadView=Boolean(outsideDirectory);
+		const view={...(outsideDirectory??EMPTY_OUTSIDE_VIEW),...change};
+		if (change.zone && change.zone !== outsideDirectory?.zone && !change.focusPlaceId) view.focusPlaceId = undefined;
+		clearCampusDirectory();
+		sheetMode='outside';
+		if(hadView)replaceState('',{...page.state,outsideDirectory:view});
+		else pushState('',{...page.state,outsideDirectory:view});
+	}
+	function changeOutsideDirectory(change:Partial<OutsideDirectoryView>){
+		if(!outsideDirectory)return;
+		replaceState('',{...page.state,outsideDirectory:{...outsideDirectory,clusterPlaceIds:undefined,focusPlaceId:undefined,...change,scrollTop:0}});
+		setSheetDetent('medium');
+	}
+	function openRestaurant(id: string, scrollTop = 0) {
+		const view = outsideDirectory;
+		const preview = data.outsideRestaurants?.find(restaurant => restaurant.place.id === id);
+		if (!view || !preview) return;
+		restaurantReturnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+		restaurantLoadError = '';
+		replaceState('', { ...page.state, outsideDirectory: { ...view, scrollTop, expanded: sheetDetent === 'expanded' } });
+		const detail = restaurantCache.peek(id);
+		// 요청을 기다리지 않고 이미 가진 기본 정보로 상세를 연다. 조회는 위 효과에서 이어 간다.
+		pushState(`/restaurants/${id}`, { ...page.state, fromOutsideMap: true, restaurantDetail: detail, restaurantPreview: detail ? undefined : preview });
+	}
+
+	function closeRestaurant() {
+		window.history.back();
+	}
+	function showRestaurantOnMap(restaurant: RestaurantSummary) {
+		replaceState(getRestaurantMapHref(restaurant), {
+			...page.state, restaurantDetail: undefined, restaurantPreview: undefined, fromOutsideMap: false,
+			outsideDirectory: { ...EMPTY_OUTSIDE_VIEW, zone: restaurant.place.zoneId ?? 'all', clusterPlaceIds: [restaurant.place.id], focusPlaceId: restaurant.place.id }
+		});
+		setSheetDetent('medium');
+		homeFocusRequestId += 1;
 	}
 
 	function openCampusDirectory(change: Partial<CampusDirectoryView> = {}) {
@@ -667,6 +788,9 @@
 	}
 
 	function handleMarkerClick(placeId: string) {
+		if(sheetMode==='outside'&&outsideMapResults.some(restaurant=>restaurant.place.id===placeId)){
+			openRestaurant(placeId);return;
+		}
 		if (sheetMode === 'campus-facility' && data.campusFacilities?.some((facility) => facility.id === placeId)) {
 			selectCampusFacility(placeId);
 			return;
@@ -741,6 +865,12 @@
 	}
 
 	function selectMapArea(areaId: string) {
+		if(data.outsideRestaurants&&areaId!=='campus'){
+			facilitySearchOpen=false;
+			openOutsideDirectory({zone:areaId==='outside-all'?'all':areaId,clusterPlaceIds:undefined,expanded:false,scrollTop:0});
+			return;
+		}
+		if(sheetMode==='outside')closePanel();
 		if (sheetMode === 'campus-facility') closePanel();
 		track(analyticsEvents.selectZone, { area_id: areaId });
 		const nextState = changeSelectedMapArea(areaId);
@@ -856,6 +986,11 @@
 		const sheetHeights = getBottomSheetHeights(viewportHeight, navigationHeight);
 		// 날짜·세션 탭 아래 첫 부스까지 한 번에 보이도록 축제 중간 높이를 확보한다.
 		if (sheetMode === 'festival') sheetHeights.medium = Math.min(sheetHeights.expanded, Math.max(sheetHeights.medium, 410));
+		if (sheetMode === 'outside') {
+			const available = Math.max(sheetHeights.collapsed, viewportHeight - navigationHeight - mapControlsHeight);
+			sheetHeights.expanded = Math.min(sheetHeights.expanded, available);
+			sheetHeights.medium = Math.min(sheetHeights.medium, sheetHeights.expanded);
+		}
 
 		return {
 			viewportHeight,
@@ -867,6 +1002,23 @@
 	function getCurrentSheetHeights() {
 		return getCurrentLayoutMetrics().sheetHeights;
 	}
+
+	$effect(() => {
+		const controls = mapControlsElement;
+		if (!controls || typeof window === 'undefined') return;
+		const measure = () => {
+			mapControlsHeight = controls.getBoundingClientRect().height;
+			syncSheetHeight();
+		};
+		untrack(measure);
+		if (typeof ResizeObserver === 'undefined') {
+			window.addEventListener('resize', measure);
+			return () => window.removeEventListener('resize', measure);
+		}
+		const observer = new ResizeObserver(measure);
+		observer.observe(controls);
+		return () => observer.disconnect();
+	});
 
 	function syncSheetHeight() {
 		if (typeof window === 'undefined') return;
@@ -1116,7 +1268,7 @@
 </script>
 
 <svelte:head>
-	<title>골라바유</title>
+	<title>{shownRestaurant ? `${shownRestaurant.place.name} · 골라바유` : '골라바유'}</title>
 	<meta
 		name="description"
 		content="고려대 세종 학생을 위한 네이버 지도 기반 로컬 생활 플랫폼"
@@ -1168,7 +1320,7 @@
 	</div>
 {/snippet}
 
-<main data-home-viewport class="home-viewport bg-brand-bg text-brand-text md:grid md:place-items-center md:p-6">
+<main data-home-viewport inert={Boolean(shownRestaurant)} aria-hidden={shownRestaurant ? 'true' : undefined} style:visibility={shownRestaurant ? 'hidden' : undefined} class="home-viewport bg-brand-bg text-brand-text md:grid md:place-items-center md:p-6">
 	<section
 		bind:this={appShellElement}
 		data-home-app-shell
@@ -1176,13 +1328,14 @@
 		aria-label="골라바유 지도 홈"
 	>
 		<HomeMap
+			active={!shownRestaurant}
 			clientId={data.naverMapClientId}
 			places={mapPlaces}
 			activePlaceId={activeMapPlaceId}
 			focusMode={sheetMode === 'cafeteria' || sheetMode === 'pin' ? 'top-band' : 'default'}
 			focusRequestId={homeFocusRequestId}
 			focusZoom={
-				sheetMode === 'campus-facility' && !campusDirectory?.building && !campusDirectory?.facilityId
+				sheetMode === 'outside' && outsideDirectory?.focusPlaceId ? 18 : sheetMode === 'campus-facility' && !campusDirectory?.building && !campusDirectory?.facilityId
 					? DEFAULT_HOME_MAP_ZOOM
 					: sheetMode === 'festival' ? 17 : sheetMode === 'place' || sheetMode === 'facility' || sheetMode === 'campus-facility' || sheetMode === 'shuttle' || sheetMode === 'event'
 					? getPlaceFocusZoom(DEFAULT_HOME_MAP_ZOOM)
@@ -1193,10 +1346,16 @@
 			activeCampusSpotId={activeCampusSpotId}
 			focusCampusSpotId={focusCampusSpotId}
 			showCampusBoundaries={showCampusBoundaries}
-			attributionBottomOffset={mapAttributionBottom}
+			attributionBottomOffset={areaMode === 'outside' ? bottomNavigationHeight + sheetHeight : mapAttributionBottom}
 			{areaMode}
 			commercialZones={data.commercialZones}
 			{selectedCommercialZoneId}
+			commercialZoneCounts={outsideZoneCounts}
+				onCommercialZoneClick={(zone) => openOutsideDirectory({zone, clusterPlaceIds: undefined, focusPlaceId: undefined, expanded: false, scrollTop: 0})}
+			onOutsideClusterClick={(clusterPlaceIds) => changeOutsideDirectory({clusterPlaceIds})}
+			selectedOutsidePlaceIds={outsideDirectory?.clusterPlaceIds ?? []}
+			topOverlayHeight={mapControlsHeight}
+			bottomOverlayHeight={bottomNavigationHeight + sheetHeight}
 			onMarkerClick={handleMarkerClick}
 			onCampusSpotClick={selectCampusSpot}
 			events={sheetMode === 'event' ? data.campusEvents : []}
@@ -1211,13 +1370,14 @@
 			<div class="absolute inset-x-0 top-0 z-10 flex items-center justify-between bg-white/95 px-5 pt-[calc(12px+env(safe-area-inset-top))] pb-3 text-[12px] text-brand-muted"><span>{data.festival.area.approximate ? '축제 구역 · 위치 안내 예정' : '축제 구역'}</span>{#if data.user?.role === 'admin'}<a class="min-h-8 content-center text-brand" href="/admin/festival">구역 편집</a>{/if}</div>
 		{/if}
 
-		{#if sheetMode === 'home' || sheetMode === 'facility' || sheetMode === 'campus-facility' || sheetMode === 'event'}
+		{#if sheetMode === 'home' || sheetMode === 'outside' || sheetMode === 'facility' || sheetMode === 'campus-facility' || sheetMode === 'event'}
 			<div
-				class="pointer-events-none absolute inset-x-0 top-0 z-10 h-[200px]"
-				style="background: linear-gradient(180deg, #f4f3f1 0%, rgba(244, 243, 241, 0.92) 58%, rgba(244, 243, 241, 0) 100%);"
+				class="pointer-events-none absolute inset-x-0 top-0 z-10"
+				style={`height: ${mapControlsHeight + 100}px; background: linear-gradient(180deg, #f4f3f1 0px, rgba(244, 243, 241, 0.92) ${mapControlsHeight + 16}px, rgba(244, 243, 241, 0) 100%);`}
 				data-home-map-top-gradient
 				aria-hidden="true"
 			></div>
+			<div bind:this={mapControlsElement} class="relative z-30" data-home-map-controls>
 			<HomeMapHeader
 				zones={data.commercialZones}
 				selectedAreaId={selectedMapAreaId}
@@ -1225,14 +1385,15 @@
 				searchOpen={facilitySearchOpen}
 				searchQuery={facilitySearchQuery}
 				campusDirectorySearch={Boolean(data.campusFacilities) && areaMode === 'campus'}
+				outsideEnabled={Boolean(data.outsideRestaurants)}
 				onSearchOpenChange={setFacilitySearchOpen}
 				onSearchQueryChange={updateFacilitySearch}
 			/>
-			<FacilityFilterChips
+			{#if areaMode==='campus'}<FacilityFilterChips
 				selectedCategory={selectedFacilityCategory}
 				showCampusDirectory={Boolean(data.campusFacilities) && areaMode === 'campus'}
 				onCategoryChange={selectFacilityCategory}
-			/>
+			/>{/if}
 
 			{#if data.homeNotice && sheetMode === 'home'}
 				<a
@@ -1245,27 +1406,32 @@
 				</a>
 			{/if}
 
-			{#if areaMode === 'outside' && sheetMode === 'home'}
+			{#if areaMode === 'outside' && outsideDirectory}
 				<OutsidePlaceFilters
 					selectedCategory={selectedOutsideCategory}
 					selectedCuisine={selectedOutsideCuisine}
-					onCategoryChange={(category) => (selectedOutsideCategory = category)}
-					onCuisineChange={(cuisine) => (selectedOutsideCuisine = cuisine)}
+					membershipOnly={outsideDirectory.membershipOnly}
+					onCategoryChange={(category) => changeOutsideDirectory({category})}
+					onCuisineChange={(cuisine) => changeOutsideDirectory({cuisine})}
+					onMembershipChange={(membershipOnly)=>changeOutsideDirectory({membershipOnly})}
 				/>
 			{/if}
+			</div>
 		{/if}
 
+		{#if areaMode === 'campus'}
 		<WeatherWidget
 			{weather}
 			loading={weatherLoading}
 			error={weatherError}
 			bottom={weatherWidgetBottom}
 		/>
+		{/if}
 
 		<section
 			bind:this={sheetElement}
-			class={`pointer-events-auto absolute inset-x-0 z-20 flex overflow-hidden rounded-t-[26px] bg-brand-surface/95 px-[18px] pb-5 shadow-[0_-18px_40px_rgba(103,16,43,0.16)] backdrop-blur ${
-				isSheetDragging ? '' : 'transition-[height] duration-300 ease-out'
+			class={`pointer-events-auto absolute inset-x-0 z-20 flex overflow-hidden rounded-t-[26px] border-t border-brand-border bg-white px-[18px] shadow-[0_-6px_20px_rgba(36,19,24,0.04)] ${sheetMode === 'outside' ? 'pb-[14px]' : 'pb-5'} ${
+				isSheetDragging ? '' : 'transition-[height] duration-300 ease-out motion-reduce:transition-none'
 			}`}
 			style={`bottom: var(--bottom-navigation-height); height: ${sheetHeight}px;`}
 			aria-label="오늘의 생활 정보"
@@ -1290,7 +1456,14 @@
 					<span class="h-1 w-[42px] rounded-full bg-[#dcc3ca] outline-offset-4 group-focus-visible:outline-2 group-focus-visible:outline-brand"></span>
 				</button>
 
-			{#if sheetMode === 'home'}
+			{#if sheetMode === 'outside' && outsideDirectory}
+				{#key `${outsideDirectory.zone}|${outsideDirectory.category}|${outsideDirectory.cuisine}|${outsideDirectory.membershipOnly}|${outsideDirectory.query}|${outsideDirectory.clusterPlaceIds?.join(',') ?? ''}`}
+				<RestaurantList restaurants={outsideResults} zoneName={outsideZoneName} membershipOnly={outsideDirectory.membershipOnly} query={outsideDirectory.query}
+					category={outsideDirectory.category} cuisine={outsideDirectory.cuisine} clusterSelected={Boolean(outsideDirectory.clusterPlaceIds)}
+					collapsed={sheetDetent==='collapsed'} onCollapse={()=>setSheetDetent('collapsed')} onClearCluster={()=>changeOutsideDirectory({clusterPlaceIds:undefined})} onOpen={openRestaurant} onWarm={restaurantCache.warm}
+					onReset={()=>changeOutsideDirectory({...EMPTY_OUTSIDE_VIEW,zone:outsideDirectory.zone})} initialScroll={outsideDirectory.scrollTop??0}/>
+				{/key}
+			{:else if sheetMode === 'home'}
 				<div class="mb-2 flex items-center justify-between gap-4">
 					<h2 class="m-0 text-left text-[18px] font-black leading-5 tracking-[-0.01em]">지금, 고려대학교</h2>
 					<span
@@ -1734,6 +1907,13 @@
 		/>
 	</section>
 </main>
+
+{#if shownRestaurant}
+	<div bind:this={restaurantOverlay} class="fixed inset-0 z-40 overflow-y-auto overscroll-contain bg-brand-bg outline-none" role="dialog" aria-modal="true" aria-label="음식점 상세 안내" tabindex="-1" data-restaurant-detail-overlay>
+		<RestaurantDetailView restaurant={shownRestaurant} isAuthenticated={Boolean(data.user)} onBack={closeRestaurant} onHome={closeRestaurant}
+			onMap={() => showRestaurantOnMap(shownRestaurant)} loading={!page.state.restaurantDetail && !restaurantLoadError} loadError={restaurantLoadError} onRetry={() => restaurantRetry++} />
+	</div>
+{/if}
 
 {#if voteToastMessage}
 	<div

@@ -4,6 +4,18 @@ import { getMapCenterBounds, getMarkerTargetRatio, getSheetAwareLatitudeOffset }
 import { shuttleStops } from '$lib/domain/shuttle';
 
 describe('지도 핀 포커스 위치', () => {
+	it('교외 상세에서 돌아오면 핀이 상단 필터와 시트 사이의 중앙에 놓인다', () => {
+		const ratio = mapFocus.getAvailableMapMarkerTargetRatio({ mapHeight: 720, navigationHeight: 73, sheetHeight: 300, topOverlayHeight: 146 });
+		expect(ratio * 720).toBeCloseTo((146 + 720 - 73 - 300) / 2);
+		expect(ratio * 720).toBeGreaterThan(146 + 22);
+	});
+	it('첫 교외 구역 위치는 상단과 시트를 피하고 좁은 화면에도 지도 공간을 남긴다', () => {
+		const regular = mapFocus.getOutsideMapFocusInsets(844, 188, 458);
+		expect(regular.top).toBeGreaterThan(188);
+		expect(regular.bottom).toBeGreaterThan(458);
+		const compact = mapFocus.getOutsideMapFocusInsets(500, 188, 350);
+		expect(500 - compact.top - compact.bottom).toBeGreaterThanOrEqual(120);
+	});
 	it('바텀시트 모드에서는 상단 1/6 영역의 중앙에 핀이 오도록 목표 비율을 잡는다', () => {
 		expect(getMarkerTargetRatio('top-band')).toBeCloseTo(1 / 12, 6);
 	});

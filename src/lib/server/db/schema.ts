@@ -230,12 +230,37 @@ export const restaurantProfiles = pgTable('restaurant_profiles', {
 	priceLevel: integer('price_level'),
 	openingHours: jsonb('opening_hours'),
 	menuSummary: text('menu_summary'),
+	cuisine: varchar('cuisine', { length: 40 }).notNull().default('other'),
+	sourceCategory: text('source_category').notNull().default(''),
+	menus: jsonb('menus').notNull().default([]),
+	catalogStatus: varchar('catalog_status', { length: 40 }).notNull().default('review_required'),
+	catalogManaged: boolean('catalog_managed').notNull().default(false),
 	naverPlaceUrl: text('naver_place_url'),
 	kakaoPlaceUrl: text('kakao_place_url'),
 	ratingAvg: doublePrecision('rating_avg'),
 	reviewCount: integer('review_count').notNull().default(0),
 	lastVerifiedAt: timestamp('last_verified_at', { withTimezone: true })
 });
+
+export const placeMemberships = pgTable('place_memberships', {
+	id: varchar('id', { length: 160 }).primaryKey(),
+	placeId: uuid('place_id').notNull().references(() => places.id),
+	program: varchar('program', { length: 40 }).notNull().default('ku-membership'),
+	periodLabel: varchar('period_label', { length: 80 }).notNull(),
+	sourceName: text('source_name').notNull(),
+	summary: text('summary').notNull(),
+	benefits: jsonb('benefits').notNull(),
+	conditions: jsonb('conditions').notNull(),
+	sourceUrl: text('source_url').notNull(),
+	sourceLabel: text('source_label').notNull(),
+	checkedOn: date('checked_on').notNull(),
+	status: varchar('status', { length: 20 }).notNull().default('active'),
+	validFrom: date('valid_from'),
+	validThrough: date('valid_through'),
+	isPublished: boolean('is_published').notNull().default(false),
+	verificationNote: text('verification_note').notNull(),
+	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
+}, (table) => [index('place_memberships_place_idx').on(table.placeId)]);
 
 export const shuttleStops = pgTable('shuttle_stops', {
 	placeId: uuid('place_id')

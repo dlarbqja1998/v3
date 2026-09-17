@@ -2,6 +2,8 @@
 	import { tick } from 'svelte';
 	import AppIcon from '$lib/icon/AppIcon.svelte';
 	import CampusBuildingPicker from '$lib/home/CampusBuildingPicker.svelte';
+	import KuMembershipBenefits from '$lib/restaurant/KuMembershipBenefits.svelte';
+	import { membershipIsActive } from '$lib/domain/restaurants';
 	import {
 		CAMPUS_FACILITY_PURPOSES, filterCampusFacilities, getFacilityBuildingSpots,
 		getFacilityOfficialUrl, getFacilityPhoneLinks, getCampusDirectoryTitle, normalizeBuildingName,
@@ -90,9 +92,9 @@
 			</nav>
 			{/if}
 		{/if}
-		<div bind:this={scrollHost} class="min-h-0 flex-1 overflow-y-auto overscroll-contain pb-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" data-campus-facility-scroll>
+		<div bind:this={scrollHost} class="-mx-[18px] min-h-0 flex-1 overflow-y-auto overscroll-contain px-[18px] pb-5 [--gb1-section-inset:18px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" data-campus-facility-scroll>
 			{#if facility}
-				<div class="border-b border-brand-border pt-5 pb-4">
+				<div class="pt-5 pb-6">
 					<p class="m-0 text-[12px] text-brand-muted">{facility.place?.categoryName ?? CAMPUS_FACILITY_PURPOSES.find((tab) => tab.id === facility.purpose)?.label}</p>
 					<h3 class="m-0 mt-2 break-keep text-[20px] font-bold leading-7">{facility.name}</h3>
 					{#if facility.description}<p class="m-0 mt-3 whitespace-pre-line break-keep text-[13px] leading-6 text-brand-muted">{facility.description}</p>{/if}
@@ -106,8 +108,9 @@
 						</nav>
 					{/if}
 				</div>
-				<section class="border-b border-brand-border py-4" aria-label="시설 위치">
-					<h4 class="m-0 mb-2 text-[15px] font-bold">찾아가는 곳</h4>
+				{#if membershipIsActive(facility.membership)}<KuMembershipBenefits membership={facility.membership!}/>{/if}
+				<section class="gb1-section" aria-label="시설 위치">
+					<h4 class="gb1-section-title mb-2">찾아가는 곳</h4>
 					{#each facility.locations as location}
 						{@const spot = location.building ? getFacilityBuildingSpots({ ...facility, locations: [location] }, spots)[0] : undefined}
 						<div class="flex items-center justify-between gap-3 py-2">
@@ -117,14 +120,14 @@
 					{/each}
 					{#if !facility.place}<p class="m-0 mt-1 text-[12px] leading-5 text-brand-muted">{getFacilityBuildingSpots(facility, spots).length ? '지도는 시설이 있는 건물의 위치를 안내해요.' : '지도 위치는 확인 중이에요.'}</p>{/if}
 				</section>
-				<dl class="m-0 text-[13px] leading-6">
-					<div class="grid grid-cols-[72px_1fr] gap-3 border-b border-brand-border py-4"><dt class="text-brand-muted">운영시간</dt><dd class="m-0 whitespace-pre-line break-keep">{facility.hours ?? '운영시간 확인 중'}{#if !facility.hours}<span class="mt-1 block text-[12px] text-brand-muted">방문 전 공식 안내나 전화로 확인해 주세요.</span>{/if}</dd></div>
+				<section class="gb1-section" aria-label="시설 운영시간"><h4 class="gb1-section-title">운영시간</h4><p class="m-0 mt-3 whitespace-pre-line break-keep text-[13px] leading-6">{facility.hours ?? '운영시간 확인 중'}{#if !facility.hours}<span class="mt-1 block text-[12px] text-brand-muted">방문 전 공식 안내나 전화로 확인해 주세요.</span>{/if}</p></section>
+				<dl class="gb1-section text-[13px] leading-6">
 					{#if facility.audience}<div class="grid grid-cols-[72px_1fr] gap-3 border-b border-brand-border py-4"><dt class="text-brand-muted">이용 대상</dt><dd class="m-0 break-keep">{facility.audience}</dd></div>{/if}
-					<div class="grid grid-cols-[72px_1fr] gap-3 border-b border-brand-border py-4"><dt class="text-brand-muted">문의</dt><dd class="m-0 whitespace-pre-line break-keep">{facility.phone || '연락처 확인 중'}{#each phoneLinks as phone}<a class="flex min-h-11 items-center text-brand" href={phone.href}>{phoneLinks.length > 1 ? `${phone.label} 전화하기` : '전화하기'}</a>{/each}</dd></div>
+					<div class="grid grid-cols-[72px_1fr] gap-3 py-4"><dt class="text-brand-muted">문의</dt><dd class="m-0 whitespace-pre-line break-keep">{facility.phone || '연락처 확인 중'}{#each phoneLinks as phone}<a class="flex min-h-11 items-center text-brand" href={phone.href}>{phoneLinks.length > 1 ? `${phone.label} 전화하기` : '전화하기'}</a>{/each}</dd></div>
 				</dl>
 				{#each facility.details ?? [] as section}
-					<section class="border-b border-brand-border py-4" aria-label={section.title}>
-						<h4 class="m-0 mb-3 text-[15px] font-bold">{section.title}</h4>
+					<section class="gb1-section" aria-label={section.title}>
+						<h4 class="gb1-section-title mb-3">{section.title}</h4>
 						<ul class="m-0 list-disc space-y-2 pl-4 text-[13px] leading-6 marker:text-brand-muted">
 							{#each section.items as item}<li class="break-keep pl-0.5">{item}</li>{/each}
 						</ul>
@@ -139,6 +142,7 @@
 				{#each results as item (item.id)}
 					<button type="button" class="flex min-h-14 w-full items-center gap-3 border-b border-brand-border py-4 text-left" onclick={() => selectFacility(item.id)}>
 						<span class="min-w-0 flex-1"><strong class="block break-keep text-[15px] font-bold leading-6">{item.name}</strong><span class="mt-1 block break-keep text-[13px] leading-5 text-brand-muted">{item.locations.filter((location) => !view.building || (location.building && normalizeBuildingName(location.building) === view.building)).map((location) => location.label).join(' · ')}</span></span>
+						{#if membershipIsActive(item.membership)}<span class="shrink-0 text-[11px] font-bold text-brand">KU멤버십</span>{/if}
 						<AppIcon name="chevron" size={20} class="rotate-180 text-brand-muted" />
 					</button>
 				{:else}

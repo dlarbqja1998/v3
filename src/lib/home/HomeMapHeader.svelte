@@ -15,6 +15,7 @@
 		searchOpen = false,
 		searchQuery = '',
 		campusDirectorySearch = false,
+		outsideEnabled = false,
 		onSearchOpenChange = () => undefined,
 		onSearchQueryChange = () => undefined
 	}: {
@@ -24,6 +25,7 @@
 		searchOpen?: boolean;
 		searchQuery?: string;
 		campusDirectorySearch?: boolean;
+		outsideEnabled?: boolean;
 		onSearchOpenChange?: (open: boolean) => void;
 		onSearchQueryChange?: (query: string) => void;
 	} = $props();
@@ -32,14 +34,17 @@
 	let dropdownElement = $state<HTMLDivElement>();
 	let triggerElement = $state<HTMLButtonElement>();
 	let searchInput = $state<HTMLInputElement>();
-	let areaOptions = $derived(buildMapAreaOptions(zones, { outsideEnabled: false }));
+	let areaOptions = $derived(buildMapAreaOptions(zones, { outsideEnabled, includeOutsideAll: true }));
 	let selectedArea = $derived(
 		areaOptions.find((option) => option.id === selectedAreaId) ?? areaOptions[0]
 	);
 	let selectedAreaLabel = $derived(selectedArea?.name ?? '');
 	let selectedAreaShortLabel = $derived(selectedArea?.shortName ?? selectedAreaLabel);
+	let searchLabel = $derived(selectedArea?.mode === 'outside' && outsideEnabled ? '음식점 검색' : '시설 검색');
 	let searchPlaceholder = $derived(
-		campusDirectorySearch ? '시설명·이용 목적 검색' : getFacilitySearchPlaceholder(selectedAreaId === 'campus' ? 'campus' : 'outside', selectedAreaLabel)
+		selectedArea?.mode === 'outside' && outsideEnabled
+			? '매장명·주소 검색'
+			: campusDirectorySearch ? '시설명·이용 목적 검색' : getFacilitySearchPlaceholder('campus', selectedAreaLabel)
 	);
 
 	$effect(() => {
@@ -158,7 +163,7 @@
 			<div
 				class="relative min-w-0 flex-1"
 				role="search"
-				aria-label="시설 검색"
+				aria-label={searchLabel}
 			>
 				<AppIcon
 					name="search"
@@ -167,17 +172,17 @@
 				/>
 				<input
 					bind:this={searchInput}
-					class={`h-9 w-full rounded-[18px] bg-white pl-11 pr-10 ${campusDirectorySearch ? 'text-[16px]' : 'text-[12px]'} font-normal text-brand-text shadow-[0_1px_2px_rgba(25,24,26,0.05)] outline-none placeholder:text-[#c9c6ca] focus-visible:ring-2 focus-visible:ring-brand/25`}
+					class={`h-9 w-full rounded-[18px] bg-white pl-11 pr-10 ${campusDirectorySearch || selectedArea?.mode === 'outside' ? 'text-[16px]' : 'text-[12px]'} font-normal text-brand-text shadow-[0_1px_2px_rgba(25,24,26,0.05)] outline-none placeholder:text-[#c9c6ca] focus-visible:ring-2 focus-visible:ring-brand/25`}
 					type="search"
 					value={searchQuery}
 					placeholder={searchPlaceholder}
-					aria-label="시설 검색어"
+					aria-label={`${searchLabel}어`}
 					oninput={(event) => onSearchQueryChange(event.currentTarget.value)}
 				/>
 				<button
 					class="absolute right-1 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full text-brand-muted transition-colors hover:bg-brand-surface hover:text-brand focus-visible:ring-2 focus-visible:ring-brand/25"
 					type="button"
-					aria-label="시설 검색 닫기"
+					aria-label={`${searchLabel} 닫기`}
 					onclick={closeSearch}
 				>
 					<AppIcon name="clear" size={20} />
@@ -271,7 +276,7 @@
 				<button
 					class="grid h-9 w-9 place-items-center rounded-full bg-white text-brand-text shadow-[0_1px_2px_rgba(25,24,26,0.05)] transition-colors hover:text-brand focus-visible:ring-2 focus-visible:ring-brand/25"
 					type="button"
-					aria-label="시설 검색"
+					aria-label={searchLabel}
 					onclick={() => onSearchOpenChange(true)}
 				>
 					<AppIcon name="search" size={20} />

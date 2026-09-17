@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "preparedOn": "2026-09-18",
+  "sourceHash": "e14157e843ae125f9a4fb2329e051b978aa49667292c6669f9cbef3523ead1a7",
+  "supplementHash": "560b770d7f8901cb03a1ace6590d2be98bee2c7645e708ce983e073470f05bc5",
+  "zoneSnapshotAt": "2026-09-16T04:46:48.205Z",
+  "note": "검토용 데이터. 네이버 최신 확인 범위는 각 필드에 기록하며 학생 평가·제휴는 별도 자료로 연결한다.",
+  "summary": {
+    "originalInputCount": 863,
+    "supplementCount": 11,
+    "inputCount": 874,
+    "outputCount": 874,
+    "sourceIdCount": 874,
+    "internalIdCount": 874,
+    "zones": {
+      "고대앞": 68,
+      "신흥리": 97,
+      "죽림리": 108,
+      "욱일": 193,
+      "조치원역": 311,
+      "홍대사이": 97
+    },
+    "categories": {
+      "술집": 87,
+      "음식점": 614,
+      "카페": 173
+    },
+    "cuisines": {
+      "other": 263,
+      "chinese": 45,
+      "korean": 386,
+      "snack": 54,
+      "fastfood": 24,
+      "japanese": 29,
+      "chicken": 47,
+      "western": 19,
+      "asian": 7
+    },
+    "publication": {
+      "prepared": 840,
+      "review_required": 34
+    },
+    "completeness": {
+      "partial": 406,
+      "complete": 468
+    },
+    "detailPagesChecked": 50,
+    "weeklyHoursRechecked": 30,
+    "changes": {
+      "roadAddress": 800,
+      "openingHours": 21,
+      "menuCount": 8,
+      "zoneId": 6,
+      "name": 2,
+      "coordinates": 6
+    },
+    "menuEntriesBefore": 7843,
+    "menuEntriesAfter": 7832,
+    "menuPriceConflicts": 5,
+    "kuMembershipVerified": 0,
+    "studentReviewsImported": 0
+  }
+}
