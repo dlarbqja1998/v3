@@ -1,8 +1,10 @@
-import type { Festival } from '$lib/domain/festival';
+import { getFestivalMapPoint, type Festival } from '$lib/domain/festival';
 
 /** 축제 경계와 진입 핀은 한 레이어로 함께 생성·정리한다. */
 export function createFestivalLayer(maps: any, map: any, festival: Festival, selected: boolean, onSelect: () => void) {
 	const area = festival.area;
+	const point = getFestivalMapPoint(area);
+	if (!point) return { dispose() {} };
 	const polygon = new maps.Polygon({ map, paths: area.boundary.map((p) => new maps.LatLng(p.latitude,p.longitude)), fillColor:'#a61942',fillOpacity:selected?0.14:0.08,strokeColor:'#a61942',strokeWeight:2,strokeOpacity:0.7,strokeStyle:area.approximate?'shortdash':'solid',zIndex:5 });
 	const element = document.createElement('button');
 	element.type = 'button';
@@ -13,7 +15,7 @@ export function createFestivalLayer(maps: any, map: any, festival: Festival, sel
 	element.setAttribute('aria-label',`${festival.name} · 부스와 공연 보기`); element.append(pin);
 	if (!selected) element.append(title);
 	element.addEventListener('click',(event)=>{event.stopPropagation();onSelect();});
-	const marker = new maps.Marker({map,position:new maps.LatLng(area.latitude,area.longitude),zIndex:150,icon:{content:element,size:new maps.Size(46,46),anchor:new maps.Point(23,43)}});
+	const marker = new maps.Marker({map,position:new maps.LatLng(point.latitude,point.longitude),zIndex:150,icon:{content:element,size:new maps.Size(46,46),anchor:new maps.Point(23,43)}});
 	maps.Event.addListener(polygon,'click',onSelect);
 	return { dispose() { for(const item of [polygon,marker]) { maps.Event.clearInstanceListeners(item);item.setMap(null); } } };
 }

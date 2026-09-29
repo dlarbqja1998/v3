@@ -1,6 +1,7 @@
 import { env } from '$env/dynamic/private';
 import { error, fail, redirect } from '@sveltejs/kit';
 import { normalizeCampusEventInput } from '$lib/domain/campus-events';
+import { listCampusSpots } from '$lib/server/campus-spots';
 import {
 	deleteCampusEventImageRows,
 	getAdminCampusEvent,
@@ -40,6 +41,7 @@ export const actions: Actions = {
 		});
 		if (!imagePlan.ok) return fail(400, { message: imagePlan.message });
 		const parsed = normalizeCampusEventInput(formData, {
+			campusSpots: await listCampusSpots(env.DATABASE_URL, platform?.env?.GOLABAU_CACHE),
 			coverImageCount: imagePlan.value.coverTarget ? 1 : 0
 		});
 		if (!parsed.ok) return fail(400, { message: parsed.message });

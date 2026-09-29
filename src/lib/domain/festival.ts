@@ -6,7 +6,16 @@ export type FestivalBooth = {
 	id: string; name: string; subtitle: string; number: string; location: string; order: number; date: string;
 	clubName?: string;
 	sourceUrl?: string;
+	locationSourceUrl?: string;
 	sessions: Partial<Record<FestivalSession, { hours?: string; notice?: string; items: FestivalItem[] }>>;
+};
+export type FestivalPerformance = {
+	id: string; date: string; session: FestivalSession; time: string; name: string; kind: string;
+	startsAt?: string; endsAt?: string; notice?: string; location?: string; sourceUrl?: string;
+};
+export type FestivalBenefit = {
+	id: string; date: string; sessions: FestivalSession[]; title: string; description: string;
+	timeLabel?: string; notice?: string; sourceUrl?: string;
 };
 
 /** 네추럴 2026-09-15 홍보글에서 확인한 낮·밤 공통 음료. */
@@ -61,9 +70,15 @@ const nightBooths: FestivalBooth[] = [
 }));
 export type Festival = {
 	id: string; name: string; mapLabel?: string; dates: { date: string; label: string; hours: Partial<Record<FestivalSession, string>> }[];
-	area: { latitude: number; longitude: number; boundary: { latitude: number; longitude: number }[]; label: string; approximate: boolean };
+	area: { latitude?: number; longitude?: number; boundary: { latitude: number; longitude: number }[]; label: string; approximate: boolean };
 	booths: FestivalBooth[];
-	performances: { id: string; date: string; session: FestivalSession; time: string; name: string; kind: string }[];
+	performances: FestivalPerformance[];
+	benefits?: FestivalBenefit[];
+	sourceUrl?: string;
+	checkedAt?: string;
+	notice?: string;
+	preview?: boolean;
+	eventId?: string;
 };
 
 /** 사용자 제공 행사 자료와 관리자가 확인·저장한 축제 구역. */
@@ -117,6 +132,51 @@ export function formatFestivalPrice(price: number | null) {
 	return price === null ? '가격 안내 예정' : price === 0 ? '무료' : `${price.toLocaleString('ko-KR')}원`;
 }
 
+/** 장소 이름만 확인한 축제에는 좌표나 예전 축제 경계를 대신 사용하지 않는다. */
+export function getFestivalMapPoint(area: Festival['area']) {
+	return typeof area.latitude === 'number' && typeof area.longitude === 'number' &&
+		Number.isFinite(area.latitude) && Number.isFinite(area.longitude)
+		? { latitude: area.latitude, longitude: area.longitude } : null;
+}
+
+function festivalTime(date: string, time: string) {
+	const match = /^(다음 날 )?(\d{2}):(\d{2})$/.exec(time.trim());
+	if (!match) return NaN;
+	return Date.parse(`${date}T00:00:00+09:00`) +
+		(Number(match[2]) * 60 + Number(match[3]) + (match[1] ? 1440 : 0)) * 60_000;
+}
+
+/** 첫 진입에만 적용한다. 사용자가 고른 날짜·세션은 시계 갱신으로 바꾸지 않는다. */
+export function getInitialFestivalSelection(festival: Festival, now = new Date()) {
+	const sessions = festival.dates.flatMap((date) => (['day', 'night'] as const).flatMap((session) => {
+		const hours = date.hours[session];
+		if (!hours) return [];
+		const [start, end] = hours.split('–');
+		return [{ date: date.date, session, start: festivalTime(date.date, start), end: festivalTime(date.date, end ?? '') }];
+	})).filter((item) => Number.isFinite(item.start) && Number.isFinite(item.end)).sort((a,b) => a.start - b.start);
+	const selected = sessions.find((item) => item.start <= now.getTime() && now.getTime() < item.end) ??
+		sessions.find((item) => item.start > now.getTime()) ?? sessions.at(-1);
+	return { date: selected?.date ?? festival.dates[0]?.date ?? '', session: selected?.session ?? 'day' };
+}
+
+function performanceStart(performance: FestivalPerformance) {
+	return performance.startsAt ? Date.parse(performance.startsAt) : festivalTime(performance.date, performance.time.split('–')[0]);
+}
+
+export function getNextFestivalPerformance(performances: FestivalPerformance[], now = new Date()) {
+	return performances.filter((item) => performanceStart(item) > now.getTime())
+		.sort((a,b) => performanceStart(a) - performanceStart(b))[0];
+}
+
+export function getFestivalPerformanceStatus(performance: FestivalPerformance, now = new Date()) {
+	const start = performanceStart(performance);
+	const end = performance.endsAt ? Date.parse(performance.endsAt) : festivalTime(performance.date, performance.time.split('–')[1] ?? '');
+	if (!Number.isFinite(start) || now.getTime() < start) return 'upcoming';
+	// '약 30분'처럼 추정 길이만 있는 공연은 종료 시각을 만들어내지 않는다.
+	if (!Number.isFinite(end)) return 'started';
+	return now.getTime() < end ? 'ongoing' : 'ended';
+}
+
 /** 지도와 같은 축제 자료를 오늘 목록의 진행 상태·진입 링크로 사용한다. */
 export function getFestivalTodayEntry(festival: Festival, now = new Date()) {
 	const ranges = festival.dates.map((date) => {
@@ -138,6 +198,7 @@ export function getFestivalTodayEntry(festival: Festival, now = new Date()) {
 	return {
 		id: festival.id, title: festival.name, location: festival.area.label,
 		dateLabel: festival.dates.map((date) => date.label).join(' · '),
+		hoursLabel: festival.dates.length === 1 ? Object.entries(festival.dates[0].hours).map(([session, hours]) => `${session === 'day' ? '낮' : '밤'} ${hours}`).join(' · ') : '',
 		status: now.getTime() < startsAt ? 'upcoming' as const : 'ongoing' as const,
 		href: '/?panel=festival'
 	};

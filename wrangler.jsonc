@@ -3,7 +3,7 @@
 	"name": "v3",
 	"main": "worker/index.ts",
 	"compatibility_date": "2026-07-08",
-	"compatibility_flags": ["nodejs_als"],
+	"compatibility_flags": ["nodejs_compat"],
 	"routes": [
 		{
 			"pattern": "golabau.com",

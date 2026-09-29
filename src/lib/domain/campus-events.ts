@@ -1,3 +1,6 @@
+import type { CampusSpot } from './campus-spots';
+import { getEventAreaCenter, parseCampusEventLocation, type CampusEventLocation } from './event-locations';
+
 export const EVENT_CATEGORIES = ['축제', '공연', '전시', '박람회', '강연', '체험', '기타'] as const;
 
 export type CampusEventCategory = (typeof EVENT_CATEGORIES)[number];
@@ -23,6 +26,7 @@ export type CampusEventInput = {
 	locationName: string;
 	latitude: number;
 	longitude: number;
+	location: CampusEventLocation | null;
 	isVisible: boolean;
 };
 
@@ -103,7 +107,7 @@ function parseExternalUrl(value: FormDataEntryValue | null) {
 
 export function normalizeCampusEventInput(
 	formData: FormData,
-	options: { coverImageCount?: number } = {}
+	options: { coverImageCount?: number; campusSpots?: CampusSpot[] } = {}
 ): EventInputResult {
 	const title = String(formData.get('title') ?? '').trim();
 	const category = String(formData.get('category') ?? '').trim();
@@ -113,8 +117,22 @@ export function normalizeCampusEventInput(
 	const startsAt = parseDate(formData.get('startsAt'));
 	const endsAt = parseDate(formData.get('endsAt'));
 	const locationName = String(formData.get('locationName') ?? '').trim();
-	const latitude = parseCoordinate(formData.get('latitude'));
-	const longitude = parseCoordinate(formData.get('longitude'));
+	let latitude = parseCoordinate(formData.get('latitude'));
+	let longitude = parseCoordinate(formData.get('longitude'));
+	let location: CampusEventLocation | null = null;
+	const rawLocation = String(formData.get('location') ?? '').trim();
+	if (rawLocation) {
+		try { location = parseCampusEventLocation(JSON.parse(rawLocation)); } catch { /* 입력 오류를 아래에서 안내한다. */ }
+		if (!location) return { ok: false, message: '행사 위치를 확인해 주세요. 범위는 겹치지 않는 꼭짓점 3개 이상으로 지정해 주세요.' };
+		if (location.type === 'building') {
+			const ids = location.buildingIds;
+			const buildings = options.campusSpots?.filter((spot) => spot.type === 'building' && ids.includes(spot.id)) ?? [];
+			if (buildings.length !== location.buildingIds.length) return { ok: false, message: '등록할 건물을 다시 선택해 주세요.' };
+			({ latitude, longitude } = buildings[0].center);
+		} else if (location.type === 'area') {
+			({ latitude, longitude } = getEventAreaCenter(location.boundary));
+		}
+	}
 	const isVisible = ['on', 'true', '1'].includes(String(formData.get('isVisible') ?? ''));
 
 	if (title.length < 2 || title.length > 120) {
@@ -161,6 +179,7 @@ export function normalizeCampusEventInput(
 			locationName,
 			latitude,
 			longitude,
+			location,
 			isVisible
 		}
 	};

@@ -60,7 +60,7 @@
 			{#if activeFestival}
 				<a class="flex min-h-28 items-center gap-3 border-b border-brand-border py-4" href={activeFestival.href} onclick={() => selectEvent(activeFestival.id, 1)}>
 					<span class="grid h-12 w-12 shrink-0 place-items-center text-brand"><AppIcon name="today" size={24} /></span>
-					<span class="min-w-0 flex-1"><span class="block text-[12px] font-bold text-brand">축제</span><strong class="mt-1 block break-keep text-[15px]">{activeFestival.title}</strong><span class="mt-1.5 block text-[12px] text-brand-muted">{activeFestival.dateLabel}</span><span class="mt-1 block text-[12px] text-brand-muted">{activeFestival.location} · 부스와 공연 보기</span></span>
+					<span class="min-w-0 flex-1"><span class="block text-[12px] font-bold text-brand">{activeFestival.status === 'ongoing' ? '오늘의 축제' : '다가오는 축제'}</span><strong class="mt-1 block break-keep text-[16px]">{activeFestival.title}</strong><span class="mt-1.5 block text-[13px]">{activeFestival.dateLabel} · {activeFestival.location}</span>{#if activeFestival.hoursLabel}<span class="mt-1 block text-[12px] leading-5 text-brand-muted">{activeFestival.hoursLabel}</span>{/if}<span class="mt-2 block text-[12px] text-brand-muted">부스 · 공연 · 참여 혜택 보기</span></span>
 					<AppIcon name="chevron" size={20} class="rotate-180 text-brand-muted" />
 				</a>
 			{/if}

@@ -82,7 +82,7 @@
 	let feedbackController: AbortController | undefined;
 	let isLoginPromptOpen = $state(false);
 	let toastMessage = $state('');
-	let toastTimer: ReturnType<typeof setTimeout> | undefined;
+	let toastTimer: number | undefined;
 
 	const activeCafeteria = $derived(data.cafeterias[activeCafeteriaIndex] ?? data.cafeterias[0] ?? null);
 	const activeWeeklyMenu = $derived(activeCafeteria?.weeklyMenu ?? null);

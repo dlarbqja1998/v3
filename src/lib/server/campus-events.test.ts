@@ -1,10 +1,13 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
 	buildCampusEventValidationFormData,
 	listPublicCampusEvents,
 	selectCampusEventSpotlight,
 	toCampusEventDto
 } from './campus-events';
+import { createCampusEvent, updateCampusEvent } from './campus-events';
+import { normalizeCampusEventInput } from '$lib/domain/campus-events';
+import type { CampusEventLocation } from '$lib/domain/event-locations';
 
 const now = new Date('2026-08-30T03:00:00.000Z');
 
@@ -19,6 +22,7 @@ function row(overrides: Record<string, unknown> = {}) {
 		startsAt: new Date('2026-08-30T02:00:00.000Z'),
 		endsAt: new Date('2026-08-30T05:00:00.000Z'),
 		locationName: '중앙광장',
+		location: null,
 		latitude: 36.6101,
 		longitude: 127.2872,
 		isVisible: true,
@@ -30,6 +34,32 @@ function row(overrides: Record<string, unknown> = {}) {
 }
 
 describe('교내 행사 저장소 변환', () => {
+	it('위치 컬럼 적용 전에는 기존 행사 조회를 유지한다', async () => {
+		const findMany = vi.fn().mockRejectedValueOnce(Object.assign(new Error('위치 컬럼 없음'), { code: '42703' })).mockResolvedValueOnce([row()]);
+		const db = { query: { campusEvents: { findMany }, campusEventImages: { findMany: async () => [] } } };
+		const events = await listPublicCampusEvents('', now, db as never);
+		expect(events[0].location).toBeNull();
+		expect(findMany.mock.calls[1][0].columns).toEqual({ location: false });
+	});
+	it('DB 연결 오류를 빈 행사 목록으로 숨기지 않는다', async () => {
+		const db = { query: { campusEvents: { findMany: async () => { throw new Error('연결 오류'); } } } };
+		await expect(listPublicCampusEvents('', now, db as never)).rejects.toThrow('연결 오류');
+	});
+	it('등록·수정·재조회·공개 검증에서 범위 정보를 보존한다', async () => {
+		const location: CampusEventLocation = { type: 'area', boundary: [{ latitude: 36, longitude: 127 }, { latitude: 36, longitude: 128 }, { latitude: 37, longitude: 127 }] };
+		const saved = { ...row(), location };
+		const input = normalizeCampusEventInput(buildCampusEventValidationFormData(saved), { coverImageCount: 1 });
+		if (!input.ok) throw new Error(input.message);
+		const values = vi.fn(() => ({ returning: async () => [saved] }));
+		const set = vi.fn(() => ({ where: () => ({ returning: async () => [saved] }) }));
+		const db = { insert: () => ({ values }), update: () => ({ set }) };
+		await createCampusEvent('', 1, input.value, db as never, saved.id);
+		await updateCampusEvent('', saved.id, input.value, db as never, now);
+		expect(values.mock.calls[0]).toEqual([expect.objectContaining({ location })]);
+		expect(set.mock.calls[0]).toEqual([expect.objectContaining({ location })]);
+		expect(toCampusEventDto(saved, []).location).toEqual(location);
+		expect(JSON.parse(String(buildCampusEventValidationFormData(saved).get('location')))).toEqual(location);
+	});
 	it('링크가 없는 기존 행사를 공개 검증할 때 빈 링크 값으로 변환한다', () => {
 		const formData = buildCampusEventValidationFormData(row({ externalUrl: null }));
 

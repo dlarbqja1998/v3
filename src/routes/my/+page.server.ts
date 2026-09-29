@@ -5,6 +5,7 @@ import { APP_VERSION } from '$lib/config/app-version';
 import { buildMyPageRows } from '$lib/domain/my-page';
 import { countUnreadInquiryAnswers } from '$lib/server/support-inquiries';
 import { revokeUserSessionToken } from '$lib/server/user';
+import { countPendingEventCandidates } from '$lib/server/event-candidates';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	if (!locals.user) {
@@ -20,11 +21,13 @@ export const load: PageServerLoad = async ({ locals }) => {
 		}
 	}
 
+	const pendingEventCount = locals.user.role === 'admin' ? await countPendingEventCandidates(env.DATABASE_URL).catch(() => 0) : 0;
 	return {
 		user: locals.user,
 		rows: buildMyPageRows(locals.user),
 		appVersion: APP_VERSION,
-		unreadInquiryCount
+		unreadInquiryCount,
+		pendingEventCount
 	};
 };
 

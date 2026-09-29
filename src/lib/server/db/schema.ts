@@ -14,6 +14,9 @@ import {
 	uuid,
 	varchar
 } from 'drizzle-orm/pg-core';
+import type { CampusEventLocation } from '$lib/domain/event-locations';
+import type { CandidateCover, CandidateSource, EventCandidateDraft } from '$lib/domain/event-candidates';
+import { sql } from 'drizzle-orm';
 
 export const users = pgTable(
 	'users',
@@ -93,6 +96,7 @@ export const campusEvents = pgTable(
 		startsAt: timestamp('starts_at', { withTimezone: true }).notNull(),
 		endsAt: timestamp('ends_at', { withTimezone: true }).notNull(),
 		locationName: varchar('location_name', { length: 160 }).notNull(),
+		location: jsonb('location').$type<CampusEventLocation>(),
 		latitude: doublePrecision('latitude').notNull(),
 		longitude: doublePrecision('longitude').notNull(),
 		isVisible: boolean('is_visible').notNull().default(false),
@@ -122,6 +126,57 @@ export const campusEventImages = pgTable(
 		index('campus_event_images_event_order_idx').on(table.eventId, table.displayOrder)
 	]
 );
+
+export const eventCandidates = pgTable('event_candidates', {
+	id: uuid('id').defaultRandom().primaryKey(),
+	dedupKey: text('dedup_key').unique(),
+	draft: jsonb('draft').$type<EventCandidateDraft>().notNull(),
+	suggestedDraft: jsonb('suggested_draft').$type<EventCandidateDraft>(),
+	sources: jsonb('sources').$type<CandidateSource[]>().notNull().default([]),
+	state: varchar('state', { length: 20 }).notNull().default('pending'),
+	version: integer('version').notNull().default(1),
+	coverImage: jsonb('cover_image').$type<CandidateCover>(),
+	coverApproved: boolean('cover_approved').notNull().default(false),
+	reviewFlags: jsonb('review_flags').$type<string[]>().notNull().default([]),
+	manuallyEdited: boolean('manually_edited').notNull().default(false),
+	publishedEventId: uuid('published_event_id').references(() => campusEvents.id, { onDelete: 'set null' }),
+	publishedAt: timestamp('published_at', { withTimezone: true }),
+	reviewedBy: integer('reviewed_by').references(() => users.id, { onDelete: 'set null' }),
+	createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+	updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow()
+}, (table) => [index('event_candidates_state_updated_idx').on(table.state, table.updatedAt)]);
+
+export const eventCandidateSources = pgTable('event_candidate_sources', {
+	identity: text('identity').primaryKey(),
+	candidateId: uuid('candidate_id').notNull().references(() => eventCandidates.id, { onDelete: 'cascade' }),
+	contentHash: text('content_hash').notNull(),
+	updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow()
+});
+
+export const eventImportRuns = pgTable('event_import_runs', {
+	id: uuid('id').defaultRandom().primaryKey(),
+	slot: text('slot').notNull().unique(),
+	status: varchar('status', { length: 20 }).notNull().default('running'),
+	startedAt: timestamp('started_at', { withTimezone: true }).notNull().defaultNow(),
+	finishedAt: timestamp('finished_at', { withTimezone: true }),
+	newCount: integer('new_count').notNull().default(0),
+	changedCount: integer('changed_count').notNull().default(0),
+	message: text('message').notNull().default(''),
+	checkedBoards: jsonb('checked_boards').$type<string[]>().notNull().default([]),
+	checkpoint: jsonb('checkpoint').$type<import('../../domain/event-candidates').EventCollectionCheckpoint>()
+}, (table) => [
+	index('event_import_runs_started_idx').on(table.startedAt),
+	uniqueIndex('event_import_runs_one_active').on(sql`(1)`).where(sql`${table.status} = 'running'`)
+]);
+
+export const eventNotificationSubscriptions = pgTable('event_notification_subscriptions', {
+	id: uuid('id').defaultRandom().primaryKey(),
+	userId: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+	endpoint: text('endpoint').notNull().unique(),
+	p256dh: text('p256dh').notNull(),
+	auth: text('auth').notNull(),
+	createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow()
+}, (table) => [index('event_notification_subscriptions_user_idx').on(table.userId)]);
 
 export const supportInquiries = pgTable(
 	'support_inquiries',

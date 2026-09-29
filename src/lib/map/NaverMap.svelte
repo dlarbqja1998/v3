@@ -5,6 +5,8 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
 	import type { CampusSpot } from '$lib/domain/campus-spots';
+	import { getStandaloneCampusEvents, type LocatedCampusEvent } from '$lib/domain/event-locations';
+	import { createCampusEventBadge } from './event-marker';
 	import {
 		getCommercialZoneBounds,
 		getVisibleCommercialZones,
@@ -18,7 +20,7 @@
 	import type { Place } from '$lib/domain/places';
 	import { getMapMarkerBackground, getSafeMarkerIcon } from '$lib/map/marker-icon';
 	import { shuttleStops } from '$lib/domain/shuttle';
-	import type { Festival } from '$lib/domain/festival';
+	import { getFestivalMapPoint, type Festival } from '$lib/domain/festival';
 	import { createFestivalLayer } from './festival-layer';
 	import { startVisibleClock } from '$lib/browser/visible-clock';
 	import { arrangeShuttleLabels, createShuttleMarker, type ShuttleMarkerView } from './shuttle-marker';
@@ -61,7 +63,8 @@
 		showCampusBoundaries?: boolean;
 		onMarkerClick: (placeId: string) => void;
 		onCampusSpotClick?: (spotId: string) => void;
-		events?: { id: string; title: string; latitude: number; longitude: number }[];
+		events?: (LocatedCampusEvent & { title: string })[];
+		campusEventCounts?: Record<string, number>;
 		activeEventId?: string;
 		onEventMarkerClick?: (eventId: string) => void;
 		festival?: Festival | null;
@@ -95,6 +98,7 @@
 		onMarkerClick,
 		onCampusSpotClick,
 		events = [],
+		campusEventCounts = {},
 		activeEventId = '',
 		onEventMarkerClick,
 		festival = null,
@@ -205,16 +209,17 @@
 		}
 		syncMarkers(areaMode === 'outside' ? [] : places, activePlaceId);
 		syncEventMarkers(events, activeEventId);
-		syncCampusSpots(campusSpots, activeCampusSpotId, showCampusBoundaries);
+		syncCampusSpots(campusSpots, activeCampusSpotId, showCampusBoundaries, areaMode === 'campus' ? campusEventCounts : {});
 		focusActivePlace(places, activePlaceId, focusMode, focusTargetRatio);
 		focusActiveEvent(events, activeEventId, focusMode, focusTargetRatio);
 		focusActiveCampusSpot(campusSpots, focusCampusSpotId, activeCampusSpotId, focusMode);
-		if (festival && festivalSelected) {
+		const festivalPoint = festival ? getFestivalMapPoint(festival.area) : null;
+		if (festivalPoint && festivalSelected) {
 			const baseRatio = focusTargetRatio ?? 0.25;
 			const height = mapElement.clientHeight || 844;
 			// 축제 핀 위 제목과 상단 안내가 겹치지 않도록 아래 여백을 확보한다.
 			const ratio = Math.max(0, Math.min(baseRatio * 2 - 16 / height, baseRatio + 44 / height));
-			focusCoordinate(festival.area.latitude, festival.area.longitude, 'default', ratio);
+			focusCoordinate(festivalPoint.latitude, festivalPoint.longitude, 'default', ratio);
 		}
 	});
 
@@ -427,12 +432,13 @@
 	}
 
 	function syncEventMarkers(
-		nextEvents: { id: string; title: string; latitude: number; longitude: number }[],
+		nextEvents: (LocatedCampusEvent & { title: string })[],
 		nextActiveEventId: string
 	) {
 		const naver = window.naver;
 		if (!naver) return;
-		eventLayer.sync(nextEvents, (event) => ({
+		const pins = getStandaloneCampusEvents(nextEvents, campusSpots);
+		eventLayer.sync(pins, (event) => ({
 			id: event.id,
 			signature: JSON.stringify([event.latitude, event.longitude, event.title, event.id === nextActiveEventId])
 		}), (event) => {
@@ -577,13 +583,14 @@
 	function syncCampusSpots(
 		nextCampusSpots: CampusSpot[],
 		nextActiveCampusSpotId: string,
-		shouldShowCampusBoundaries: boolean
+		shouldShowCampusBoundaries: boolean,
+		eventCounts: Record<string, number>
 	) {
-		const key = JSON.stringify([nextCampusSpots, nextActiveCampusSpotId, shouldShowCampusBoundaries]);
+		const key = JSON.stringify([nextCampusSpots, nextActiveCampusSpotId, shouldShowCampusBoundaries, eventCounts]);
 		if (lastCampusKey === key) return;
 		clearCampusSpots();
 		lastCampusKey = key;
-		if (!shouldShowCampusBoundaries) return;
+		if (!shouldShowCampusBoundaries && !Object.keys(eventCounts).length) return;
 
 		const naver = window.naver;
 		if (!naver) return;
@@ -591,28 +598,33 @@
 
 		for (const spot of nextCampusSpots) {
 			const isActive = shouldShowCampusCenterMarker(nextActiveCampusSpotId, spot.id);
-			const polygon = new maps.Polygon({
-				map,
-				paths: spot.boundary.map(
-					({ latitude, longitude }) => new naver.maps.LatLng(latitude, longitude)
-				),
-				...getCampusPolygonStyle(isActive)
-			});
-			naver.maps.Event.addListener(polygon, 'click', () => onCampusSpotClick?.(spot.id));
-			campusPolygons.push(polygon);
+			const count = eventCounts[spot.id] ?? 0;
+			if (shouldShowCampusBoundaries) {
+				const polygon = new maps.Polygon({
+					map,
+					paths: spot.boundary.map(
+						({ latitude, longitude }) => new naver.maps.LatLng(latitude, longitude)
+					),
+					...getCampusPolygonStyle(isActive),
+					zIndex: 3
+				});
+				naver.maps.Event.addListener(polygon, 'click', () => onCampusSpotClick?.(spot.id));
+				campusPolygons.push(polygon);
+			}
 
-			if (isActive) {
+			if (isActive || count > 0) {
 				const marker = new naver.maps.Marker({
 					position: new naver.maps.LatLng(spot.center.latitude, spot.center.longitude),
 					map,
-					title: spot.name,
+					title: count > 0 ? `${spot.name} 행사 ${count}개` : spot.name,
+					zIndex: count > 0 ? 320 : 200,
 					icon: {
-						content: campusMarkerHtml(true),
-						size: new naver.maps.Size(24, 24),
-						anchor: new naver.maps.Point(12, 12)
+						content: count > 0 ? createCampusEventBadge(spot.name, count, isActive, () => onCampusSpotClick?.(spot.id)) : campusMarkerHtml(true),
+						size: new naver.maps.Size(count > 0 ? 44 : 24, count > 0 ? 44 : 24),
+						anchor: new naver.maps.Point(count > 0 ? 22 : 12, count > 0 ? 22 : 12)
 					}
 				});
-				naver.maps.Event.addListener(marker, 'click', () => onCampusSpotClick?.(spot.id));
+				if (!count) naver.maps.Event.addListener(marker, 'click', () => onCampusSpotClick?.(spot.id));
 				campusMarkers.push(marker);
 			}
 		}

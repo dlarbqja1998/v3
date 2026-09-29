@@ -15,6 +15,9 @@
 		"db:campus-spots:seed": "tsx scripts/seed-campus-spots.ts",
 		"db:campus-events:seed": "wrangler r2 object put golabau-media/events/00000000-0000-4000-8000-000000000001/10000000-0000-4000-8000-000000000001.png --file static/icon.png --content-type image/png --remote && wrangler r2 object put golabau-media/events/00000000-0000-4000-8000-000000000002/10000000-0000-4000-8000-000000000002.png --file static/icon.png --content-type image/png --remote && tsx scripts/seed-campus-events.ts",
 		"db:admin:upsert": "tsx scripts/upsert-admin.ts",
+		"events:setup": "tsx scripts/apply-event-inbox.ts",
+		"events:status": "tsx scripts/import-event-candidates.ts --status",
+		"events:import": "tsx scripts/import-event-candidates.ts",
 		"db:facility-pins:prepare": "tsx scripts/prepare-facility-pins.ts",
 		"db:seed": "tsx scripts/seed.ts",
 		"naver:local": "tsx scripts/naver-local-search.ts",
@@ -26,11 +29,13 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
 	},
 	"devDependencies": {
+		"@electric-sql/pglite": "^0.5.8",
 		"@sveltejs/adapter-auto": "^7.0.1",
 		"@sveltejs/adapter-cloudflare": "^7.2.9",
 		"@sveltejs/kit": "^2.70.3",
 		"@sveltejs/vite-plugin-svelte": "^7.3.0",
 		"@tailwindcss/vite": "^4.3.3",
+		"@types/web-push": "^3.6.4",
 		"dotenv": "^17.4.2",
 		"drizzle-kit": "^0.31.10",
 		"svelte": "^5.57.0",
@@ -46,6 +51,7 @@
 		"@lucide/svelte": "^1.38.0",
 		"@neondatabase/serverless": "^1.1.0",
 		"cheerio": "^1.2.0",
-		"drizzle-orm": "^0.45.2"
+		"drizzle-orm": "^0.45.2",
+		"web-push": "^3.6.7"
 	}
 }

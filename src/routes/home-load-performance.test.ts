@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 const mocks = vi.hoisted(() => ({ home: vi.fn(), events: vi.fn(), notice: vi.fn(), restaurants: vi.fn() }));
 vi.mock('$env/dynamic/private', () => ({ env: { DATABASE_URL: 'test' } }));
 vi.mock('$lib/server/db/queries', () => ({ getHomeData: mocks.home }));
-vi.mock('$lib/server/campus-events', () => ({ listPublicCampusEvents: mocks.events }));
+vi.mock('$lib/server/campus-events', () => ({ listPublicCampusEvents: mocks.events, getPublicCampusEvent: async () => null }));
 vi.mock('$lib/server/notices', () => ({ getHomeNotice: mocks.notice }));
 vi.mock('$lib/server/restaurants', () => ({ readOutsideCatalog: mocks.restaurants }));
 import { load } from './+page.server';

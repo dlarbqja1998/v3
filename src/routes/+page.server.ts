@@ -3,7 +3,7 @@ import { readCampusFacilities } from '$lib/server/campus-facilities';
 import { dev } from '$app/environment';
 import { isOutsidePreview, koreanDate } from '$lib/domain/restaurants';
 import { readOutsideCatalog } from '$lib/server/restaurants';
-import { readPublicFestival } from '$lib/server/festival-editor';
+import { readFestivalForPage } from '$lib/server/festival-catalog';
 import { getHomeData } from '$lib/server/db/queries';
 import { getTodayMenuWithRefresh } from '$lib/server/cafeteria-cache';
 import {
@@ -15,6 +15,8 @@ import { getWeeklyCafeteriaFeedback } from '$lib/server/cafeteria-feedback';
 import { getHomeLoadPolicy } from '$lib/server/home-load-policy';
 import { getHomeNotice } from '$lib/server/notices';
 import { listPublicCampusEvents } from '$lib/server/campus-events';
+import { readLocalEventPreviews } from '$lib/server/event-preview';
+import { getPublicCampusEvents } from '$lib/domain/campus-events';
 import { getEventSpotlight, getInitialHomeEventId } from '$lib/home/home-events';
 import type { ShuttleStopId } from '$lib/domain/shuttle';
 import { isFacilityCategorySlug } from '$lib/domain/facility-categories';
@@ -41,7 +43,7 @@ export async function load({ platform, locals, url }) {
 
 	const databaseUrl = env.DATABASE_URL ?? '';
 	const restaurantMode = isOutsidePreview(dev, url.hostname) ? 'preview' : 'public';
-	const [homeData, campusEvents, homeNotice, outsideCatalog, festival] = await Promise.all([
+	const [homeData, publicEvents, homeNotice, outsideCatalog, festival, previewEvents] = await Promise.all([
 		// 메뉴가 있는 구형 학식 딥링크는 주간 메뉴가 섞인 결과를 공용 캐시에 넣지 않는다.
 		weeklyMenu ? getHomeData(databaseUrl, weeklyMenu) : readPublicHome(databaseUrl, () => getHomeData(databaseUrl)),
 		databaseUrl ? readPublicEvents(databaseUrl, () => listPublicCampusEvents(databaseUrl)).catch((error) => {
@@ -53,8 +55,11 @@ export async function load({ platform, locals, url }) {
 			return null;
 		}) : Promise.resolve(null),
 		readRestaurants(`${databaseUrl}|${restaurantMode}|${koreanDate()}`, () => readOutsideCatalog(databaseUrl, restaurantMode)),
-		readPublicFestival(platform?.env?.GOLABAU_CACHE)
+		readFestivalForPage(url.hostname, platform?.env?.GOLABAU_CACHE, databaseUrl),
+		readLocalEventPreviews(databaseUrl, url.hostname, locals.user?.role === 'admin')
 	]);
+	// 승인 전 개별 미리보기는 공용 캐시 밖에서 합친다.
+	const campusEvents = getPublicCampusEvents([...publicEvents, ...previewEvents]);
 	const requestedPlaceId = url.searchParams.get('place') ?? '';
 	const requestedEventId = url.searchParams.get('eventId') ?? '';
 	const requestedFacilityCategory = url.searchParams.get('category') ?? '';

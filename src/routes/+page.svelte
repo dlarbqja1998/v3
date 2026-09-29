@@ -14,6 +14,9 @@
 	import FacilityFilterChips from '$lib/home/FacilityFilterChips.svelte';
 	import CampusFacilityPanel from '$lib/home/CampusFacilityPanel.svelte';
 	import AppIcon from '$lib/icon/AppIcon.svelte';
+	import BuildingEvents from '$lib/events/BuildingEvents.svelte';
+	import { getPublicCampusEvents } from '$lib/domain/campus-events';
+	import { getCampusEventSpots, groupCampusEventsBySpot } from '$lib/domain/event-locations';
 	import { filterCampusFacilities, getCampusFacilityMarkers, normalizeBuildingName, type CampusDirectoryView } from '$lib/domain/campus-facilities';
 	import HomeMapHeader from '$lib/home/HomeMapHeader.svelte';
 	import OutsidePlaceFilters from '$lib/home/OutsidePlaceFilters.svelte';
@@ -163,6 +166,7 @@
 	let campusSpots = $state<CampusSpot[]>([]);
 	let campusSpotsLoading = $state(false);
 	let campusSpotsError = $state('');
+	let campusSpotsRequest: Promise<void> | null = null;
 	let sheetMode = $state<SheetMode>('home');
 	let activeCafeteriaIndex = $state(0);
 	let activeDayKey = $state<MenuDayKey>('mon');
@@ -173,11 +177,16 @@
 	let shuttleScroller = $state<HTMLDivElement>();
 	let activeShuttleStopId = $state<ShuttleStopId>('campus');
 	let currentTime = $state(new Date());
+	const visibleEvents = $derived(getPublicCampusEvents(data.campusEvents, currentTime));
+	const mappedEvents = $derived(visibleEvents.filter((event) => event.id !== data.festival?.eventId));
+	const eventsBySpot = $derived(groupCampusEventsBySpot(mappedEvents, campusSpots));
+	const campusEventCounts = $derived(Object.fromEntries(Object.entries(eventsBySpot).map(([id, events]) => [id, events.length])));
+	const buildingEvents = $derived(eventsBySpot[activeCampusSpotId] ?? []);
 	let cafeteriaFeedback = $state<CafeteriaFeedbackMap>({});
 	let submittingOfferingIds = $state<string[]>([]);
 	let isVoteLoginPromptOpen = $state(false);
 	let voteToastMessage = $state('');
-	let voteToastTimer: ReturnType<typeof setTimeout> | undefined;
+	let voteToastTimer: number | undefined;
 	let appShellElement = $state<HTMLElement>();
 	let sheetElement = $state<HTMLElement>();
 	let mapControlsElement = $state<HTMLDivElement>();
@@ -242,8 +251,9 @@
 						null)
 	);
 	const activeEvent = $derived(
-		data.campusEvents.find((event) => event.id === activeEventId) ?? data.campusEvents[0] ?? null
+		visibleEvents.find((event) => event.id === activeEventId) ?? visibleEvents[0] ?? null
 	);
+	const activeEventSpots = $derived(activeEvent ? getCampusEventSpots(activeEvent, campusSpots) : []);
 
 	const activeCampusSpot = $derived<CampusSpot | null>(
 		campusSpots.find((spot) => spot.id === activeCampusSpotId) ?? null
@@ -345,7 +355,7 @@
 					mapHeight: mapViewportHeight,
 					navigationHeight: bottomNavigationHeight,
 					sheetHeight,
-					topOverlayHeight: sheetMode === 'outside' ? mapControlsHeight : 0
+					topOverlayHeight: sheetMode === 'outside' || sheetMode === 'event' ? mapControlsHeight : 0
 				})
 			: undefined
 	);
@@ -563,12 +573,16 @@
 	}
 
 	function openEventPanel(eventId = '') {
+		if (eventId && eventId === data.festival?.eventId) { openFestivalPanel(); return; }
 		clearCampusDirectory();
+		areaMode = 'campus';
+		showCampusBoundaries = true;
+		void loadCampusSpots();
 		track(analyticsEvents.openToday, {
 			source: eventId ? 'deep_link' : 'facility_filter',
-			event_count: data.campusEvents.length
+			event_count: visibleEvents.length
 		});
-		if (data.campusEvents.length === 0) {
+		if (visibleEvents.length === 0) {
 			selectedFacilityCategory = 'event';
 			sheetMode = 'event';
 			setSheetDetent(getResultPanelInitialDetent('event'));
@@ -582,12 +596,12 @@
 		activeCampusSpotId = '';
 		focusCampusSpotId = '';
 		activePlaceId = '';
-		activeEventId = data.campusEvents.some((event) => event.id === eventId)
+		activeEventId = visibleEvents.some((event) => event.id === eventId)
 			? eventId
-			: data.campusEvents[0].id;
+			: visibleEvents[0].id;
 		homeFocusRequestId += 1;
 		requestAnimationFrame(() => {
-			const index = data.campusEvents.findIndex((event) => event.id === activeEventId);
+			const index = visibleEvents.findIndex((event) => event.id === activeEventId);
 			eventScroller?.scrollTo({
 				left: Math.max(0, index) * eventScroller.clientWidth,
 				behavior: 'instant'
@@ -733,10 +747,12 @@
 		});
 	}
 
-	async function loadCampusSpots() {
-		if (campusSpotsLoading || campusSpots.length > 0) return;
+	function loadCampusSpots(): Promise<void> {
+		if (campusSpotsRequest) return campusSpotsRequest;
+		if (campusSpots.length > 0) return Promise.resolve();
 		campusSpotsLoading = true;
 		campusSpotsError = '';
+		campusSpotsRequest = (async () => {
 		try {
 			const response = await fetch('/api/map/campus-spots');
 			if (!response.ok) throw new Error('campus spots request failed');
@@ -747,7 +763,10 @@
 			campusSpotsError = '캠퍼스 구역 정보를 불러오지 못했습니다.';
 		} finally {
 			campusSpotsLoading = false;
+			campusSpotsRequest = null;
 		}
+		})();
+		return campusSpotsRequest;
 	}
 
 	function closePanel() {
@@ -828,7 +847,7 @@
 	}
 
 	function selectEvent(eventId: string) {
-		const index = data.campusEvents.findIndex((event) => event.id === eventId);
+		const index = visibleEvents.findIndex((event) => event.id === eventId);
 		if (index < 0) return;
 		track(analyticsEvents.selectEvent, { event_id: eventId, source: 'home_map' });
 		activeEventId = eventId;
@@ -839,7 +858,7 @@
 	function handleEventScroll() {
 		if (!eventScroller) return;
 		const nextIndex = Math.round(eventScroller.scrollLeft / eventScroller.clientWidth);
-		const nextEvent = data.campusEvents[nextIndex];
+		const nextEvent = visibleEvents[nextIndex];
 		if (!nextEvent || nextEvent.id === activeEventId) return;
 		activeEventId = nextEvent.id;
 		homeFocusRequestId += 1;
@@ -852,11 +871,23 @@
 		track(analyticsEvents.selectBuilding, { building_id: spotId, source: 'home_map' });
 
 		activeCampusSpotId = spotId;
+		activeEventId = '';
+		activePlaceId = '';
+		homeFocusRequestId += 1;
 		focusCampusSpotId = spotId;
 		sheetMode = 'pin';
 		setSheetDetent(getCampusSpotPanelPresentation(selectedSpot).detent);
 		showCampusBoundaries = true;
 	}
+
+	// 상세 화면에서 뒤로 돌아오면 선택한 건물·행사와 시트 높이를 복원한다.
+	export const snapshot = {
+		capture: () => ({ spotId: sheetMode === 'pin' ? activeCampusSpotId : '', eventId: sheetMode === 'event' ? activeEventId : '', detent: sheetDetent }),
+		restore: (state: { spotId: string; eventId: string; detent: BottomSheetDetent }) => {
+			if (state.spotId) void loadCampusSpots().then(() => { selectCampusSpot(state.spotId); setSheetDetent(state.detent); });
+			else if (state.eventId) { openEventPanel(state.eventId); setSheetDetent(state.detent); }
+		}
+	};
 
 	function toggleCampusBoundaries() {
 		showCampusBoundaries = !showCampusBoundaries;
@@ -1358,16 +1389,17 @@
 			bottomOverlayHeight={bottomNavigationHeight + sheetHeight}
 			onMarkerClick={handleMarkerClick}
 			onCampusSpotClick={selectCampusSpot}
-			events={sheetMode === 'event' ? data.campusEvents : []}
-			{activeEventId}
-			onEventMarkerClick={selectEvent}
+			events={areaMode === 'campus' ? mappedEvents : []}
+			{campusEventCounts}
+			activeEventId={sheetMode === 'event' ? activeEventId : ''}
+			onEventMarkerClick={(id) => sheetMode === 'event' ? selectEvent(id) : openEventPanel(id)}
 			festival={areaMode === 'campus' && ['home','event','festival'].includes(sheetMode) ? data.festival : null}
 			festivalSelected={sheetMode === 'festival'}
 			onFestivalClick={openFestivalPanel}
 		/>
 
 		{#if sheetMode === 'festival' && data.festival}
-			<div class="absolute inset-x-0 top-0 z-10 flex items-center justify-between bg-white/95 px-5 pt-[calc(12px+env(safe-area-inset-top))] pb-3 text-[12px] text-brand-muted"><span>{data.festival.area.approximate ? '축제 구역 · 위치 안내 예정' : '축제 구역'}</span>{#if data.user?.role === 'admin'}<a class="min-h-8 content-center text-brand" href="/admin/festival">구역 편집</a>{/if}</div>
+			<div class="absolute inset-x-0 top-0 z-10 flex items-center justify-between bg-white/95 px-5 pt-[calc(12px+env(safe-area-inset-top))] pb-3 text-[12px] text-brand-muted"><span>{data.festival.area.label}{data.festival.area.approximate ? ' · 상세 위치 확인 중' : ''}</span>{#if data.user?.role === 'admin' && !data.festival.preview}<a class="min-h-8 content-center text-brand" href={data.festival.eventId ? `/admin/events/locations?event=${data.festival.eventId}` : '/admin/festival'}>구역 편집</a>{/if}</div>
 		{/if}
 
 		{#if sheetMode === 'home' || sheetMode === 'outside' || sheetMode === 'facility' || sheetMode === 'campus-facility' || sheetMode === 'event'}
@@ -1490,14 +1522,15 @@
 			{:else if sheetMode === 'event'}
 				<div class="flex min-h-0 flex-1 flex-col">
 					{#if data.festival}<button type="button" class="mb-3 flex w-full items-center justify-between border-b border-brand-border py-3 text-left" onclick={openFestivalPanel}><span><strong class="block text-[15px] font-bold">{data.festival.name}</strong><span class="mt-1 block text-[12px] text-brand-muted">{data.festival.dates[0]?.label} · 부스와 공연 보기</span></span><ChevronRight size={20} /></button>{/if}
-					<div class="mb-2 flex items-start justify-between gap-3"><div class="min-w-0 flex-1"><p class="m-0 text-xs font-bold text-brand-muted">교내 행사 · {data.campusEvents.length}개</p><h2 class="m-0 mt-0.5 break-keep text-[18px] font-black leading-6 [overflow-wrap:anywhere]">{activeEvent?.title ?? '행사'}</h2></div><button class="shrink-0 whitespace-nowrap px-1 py-2 text-[13px] font-bold text-brand-muted" type="button" onclick={closePanel}>닫기</button></div>
-					{#if data.campusEvents.length > 0}
+					<div class="mb-2 flex items-start justify-between gap-3"><div class="min-w-0 flex-1"><p class="m-0 text-xs font-bold text-brand-muted">교내 행사 · {visibleEvents.length}개</p><h2 class="m-0 mt-0.5 break-keep text-[18px] font-black leading-6 [overflow-wrap:anywhere]">{activeEvent?.title ?? '행사'}</h2></div><button class="shrink-0 whitespace-nowrap px-1 py-2 text-[13px] font-bold text-brand-muted" type="button" onclick={closePanel}>닫기</button></div>
+					{#if visibleEvents.length > 0}
 						<div bind:this={eventScroller} class="-mx-[18px] flex snap-x snap-mandatory overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" onscroll={handleEventScroll}>
-							{#each data.campusEvents as event}
+							{#each visibleEvents as event}
 								<article class="w-full shrink-0 snap-center px-[18px]" aria-label={event.title}><div class="flex items-start gap-3 border-y border-brand-border py-3">{#if event.images[0]}<img class="h-20 w-20 shrink-0 rounded-xl object-cover" src={event.images[0].url} alt="" />{:else}<span class="grid h-20 w-20 shrink-0 place-items-center rounded-xl bg-brand-map text-brand"><CalendarDays size={24} /></span>{/if}<div class="min-w-0 flex-1"><p class="m-0 text-[11px] font-black text-brand">{event.category}</p><h3 class="m-0 mt-1 line-clamp-2 break-keep text-[16px] font-black leading-5 [overflow-wrap:anywhere]">{event.title}</h3><p class="m-0 mt-1 text-[12px] text-brand-muted">{formatEventPeriod(event.startsAt, event.endsAt)}</p><p class="m-0 mt-1 truncate text-[12px] text-brand-muted">{event.locationName}</p><a class="mt-2 inline-block text-[12px] font-black text-brand" href={`/today/${event.id}`}>상세 보기</a></div></div></article>
 							{/each}
 						</div>
-						{#if data.campusEvents.length > 1}<div class="mt-3 flex justify-center gap-1.5">{#each data.campusEvents as event}<button class={`h-2 rounded-full transition-all ${activeEventId === event.id ? 'w-6 bg-brand' : 'w-2 bg-brand-border-strong'}`} type="button" aria-label={`${event.title} 보기`} onclick={() => selectEvent(event.id)}></button>{/each}</div>{/if}
+						{#if visibleEvents.length > 1}<div class="mt-3 flex justify-center gap-1.5">{#each visibleEvents as event}<button class={`h-2 rounded-full transition-all ${activeEventId === event.id ? 'w-6 bg-brand' : 'w-2 bg-brand-border-strong'}`} type="button" aria-label={`${event.title} 보기`} onclick={() => selectEvent(event.id)}></button>{/each}</div>{/if}
+						{#if activeEventSpots.length}<div class="mt-3 flex flex-wrap gap-x-4 border-t border-brand-border">{#each activeEventSpots as spot}<button type="button" class="min-h-11 text-[13px] text-brand-muted" onclick={() => selectCampusSpot(spot.id)}>{spot.name} 행사 {eventsBySpot[spot.id]?.length ?? 0}개 보기</button>{/each}</div>{/if}
 					{:else}<p class="m-0 border-y border-brand-border py-6 text-center text-sm font-bold text-brand-muted">진행 중이거나 7일 이내 예정된 행사가 없습니다.</p>{/if}
 				</div>
 			{:else if sheetMode === 'facility'}
@@ -1709,9 +1742,9 @@
 					</div>
 				</div>
 			{:else if sheetMode === 'pin'}
-				<div class="grid min-h-0 flex-1 content-start gap-3 overflow-y-auto pb-2">
+				<div class="-mx-[18px] grid min-h-0 min-w-0 flex-1 content-start gap-3 overflow-x-hidden overflow-y-auto px-[18px] pb-2">
 					<div class="flex items-start justify-between gap-3">
-						<h2 class="m-0 min-w-0 flex-1 break-keep text-xl font-black leading-7 [overflow-wrap:anywhere]">{activeCampusSpotPanel.title}</h2>
+						<h2 class="m-0 min-w-0 flex-1 break-keep text-[18px] font-bold leading-7 [overflow-wrap:anywhere]">{activeCampusSpotPanel.title}</h2>
 						<button
 							class="shrink-0 whitespace-nowrap rounded-full border border-brand-border bg-white px-3 py-2 text-xs font-black text-brand-muted"
 							type="button"
@@ -1721,13 +1754,14 @@
 						</button>
 					</div>
 					{#if data.campusFacilities && activeCampusSpot?.type === 'building'}
-						<button type="button" class="flex min-h-14 w-full items-center gap-3 border-y border-brand-border py-4 text-left"
+						<button type="button" class="flex min-h-14 w-full items-center gap-3 border-t border-brand-border py-4 text-left"
 							onclick={() => openCampusDirectory({ building: normalizeBuildingName(activeCampusSpot!.name), returnSpotId: activeCampusSpot!.id })}>
 							<AppIcon name="administration" size={24} class="text-brand-muted" />
 							<span class="min-w-0 flex-1"><strong class="block text-[15px] font-bold">시설 안내</strong><span class="mt-1 block text-[13px] text-brand-muted">{buildingFacilities.length ? `건물 안 시설 ${buildingFacilities.length}곳 보기` : '등록된 시설 확인하기'}</span></span>
 							<AppIcon name="chevron" size={20} class="rotate-180 text-brand-muted" />
 						</button>
 					{/if}
+					{#if activeCampusSpot}<BuildingEvents events={buildingEvents} now={currentTime} placeName={activeCampusSpot.name} />{/if}
 					{#if false}
 						<div class="flex items-center justify-between gap-3 rounded-[8px] border border-brand-border bg-white px-4 py-3">
 						<div class="flex items-center gap-2.5">

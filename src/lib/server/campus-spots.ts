@@ -1,4 +1,6 @@
 import type { CampusCoordinate, CampusSpot, CampusSpotSource, CampusSpotType } from '$lib/domain/campus-spots';
+import { createDb } from '$lib/server/db';
+import { campusSpots } from '$lib/server/db/schema';
 
 export const CAMPUS_SPOTS_CACHE_KEY = 'campus_spots:v1';
 export const CAMPUS_SPOTS_CACHE_TTL = 60 * 60 * 24 * 30;
@@ -12,6 +14,15 @@ type CampusSpotCache = {
 	get(key: string): Promise<string | null>;
 	put(key: string, value: string, options?: { expirationTtl?: number }): Promise<void>;
 };
+
+export async function listCampusSpots(databaseUrl: string, cache?: CampusSpotCache) {
+	const cached = await readCachedCampusSpots(cache);
+	if (cached) return cached;
+	const rows = await createDb(databaseUrl).select().from(campusSpots);
+	const spots = rows.map(toCampusSpot);
+	await writeCachedCampusSpots(cache, spots);
+	return spots;
+}
 
 export function normalizeCampusBoundary(value: unknown): CampusCoordinate[] {
 	if (!Array.isArray(value)) return [];

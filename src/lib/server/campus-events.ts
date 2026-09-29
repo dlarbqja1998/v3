@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, gte, inArray, lte } from 'drizzle-orm';
+import { and, asc, desc, eq, gte, inArray, lte, sql } from 'drizzle-orm';
 import type { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
 	getCampusEventStatus,
@@ -8,6 +8,8 @@ import {
 } from '$lib/domain/campus-events';
 import { createDb, type Db } from '$lib/server/db';
 import { campusEventImages, campusEvents } from '$lib/server/db/schema';
+import { parseCampusEventLocation } from '$lib/domain/event-locations';
+import type { EventLocationInput } from '$lib/domain/event-location-editor';
 
 export type CampusEventRow = InferSelectModel<typeof campusEvents>;
 export type CampusEventImageRow = InferSelectModel<typeof campusEventImages>;
@@ -26,6 +28,21 @@ export type CampusEventDto = Omit<CampusEventRow, 'category'> & {
 
 type CampusEventDb = Pick<Db, 'query' | 'insert' | 'update' | 'delete'>;
 
+/** 컬럼 적용 전에도 기존 행사 조회를 유지한다. 저장은 새 컬럼 적용 뒤에만 가능하다. */
+async function readEventRows(db: CampusEventDb, query: Parameters<Db['query']['campusEvents']['findMany']>[0]) {
+	try { return await db.query.campusEvents.findMany(query); }
+	catch (error) {
+		if (!hasDatabaseErrorCode(error, '42703')) throw error;
+		const rows = await db.query.campusEvents.findMany({ ...query, columns: { location: false } });
+		return rows.map((row) => ({ ...row, location: null }));
+	}
+}
+
+function hasDatabaseErrorCode(error: unknown, code: string): boolean {
+	if (typeof error !== 'object' || error === null) return false;
+	return ('code' in error && error.code === code) || ('cause' in error && hasDatabaseErrorCode(error.cause, code));
+}
+
 export function buildCampusEventValidationFormData(event: CampusEventRow) {
 	const values = new FormData();
 	for (const key of ['title', 'category', 'organizer', 'description', 'locationName'] as const) {
@@ -36,6 +53,7 @@ export function buildCampusEventValidationFormData(event: CampusEventRow) {
 	values.set('endsAt', event.endsAt.toISOString());
 	values.set('latitude', String(event.latitude));
 	values.set('longitude', String(event.longitude));
+	values.set('location', event.location ? JSON.stringify(event.location) : '');
 	values.set('isVisible', 'on');
 	return values;
 }
@@ -62,6 +80,7 @@ export function toCampusEventDto(
 
 	return {
 		...row,
+		location: parseCampusEventLocation(row.location),
 		category: row.category as CampusEventCategory,
 		coverImageId: sortedImages.find((image) => image.isCover)?.id ?? null,
 		images: sortedImages
@@ -95,7 +114,7 @@ export async function listPublicCampusEvents(
 	const latestUpcomingStart = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
 	let rows: CampusEventRow[];
 	try {
-		rows = await db.query.campusEvents.findMany({
+		rows = await readEventRows(db, {
 			where: and(
 				eq(campusEvents.isVisible, true),
 				gte(campusEvents.endsAt, now),
@@ -124,8 +143,8 @@ export async function getPublicCampusEvent(
 	providedDb?: CampusEventDb
 ) {
 	const db = getDb(databaseUrl, providedDb);
-	const row = await db.query.campusEvents.findFirst({
-		where: and(eq(campusEvents.id, id), eq(campusEvents.isVisible, true))
+	const [row] = await readEventRows(db, {
+		where: and(eq(campusEvents.id, id), eq(campusEvents.isVisible, true)), limit: 1
 	});
 	if (!row) return null;
 	const [event] = getPublicCampusEvents(
@@ -137,7 +156,7 @@ export async function getPublicCampusEvent(
 
 export async function listAdminCampusEvents(databaseUrl: string, providedDb?: CampusEventDb) {
 	const db = getDb(databaseUrl, providedDb);
-	const rows = await db.query.campusEvents.findMany({ orderBy: [desc(campusEvents.updatedAt)] });
+	const rows = await readEventRows(db, { orderBy: [desc(campusEvents.updatedAt)] });
 	const images = await listImagesForEvents(db, rows.map((row) => row.id));
 	return attachImages(rows, images);
 }
@@ -148,9 +167,17 @@ export async function getAdminCampusEvent(
 	providedDb?: CampusEventDb
 ) {
 	const db = getDb(databaseUrl, providedDb);
-	const row = await db.query.campusEvents.findFirst({ where: eq(campusEvents.id, id) });
+	const [row] = await readEventRows(db, { where: eq(campusEvents.id, id), limit: 1 });
 	if (!row) return null;
 	return toCampusEventDto(row, await listImagesForEvents(db, [row.id]));
+}
+
+/** 다른 행사 정보와 공개 상태는 유지하고, 읽은 버전의 위치만 수정한다. */
+export async function saveCampusEventLocation(databaseUrl: string, id: string, updatedAt: Date, input: EventLocationInput) {
+	const [saved] = await createDb(databaseUrl).update(campusEvents)
+		.set({ ...input, updatedAt: new Date() })
+		.where(and(eq(campusEvents.id, id), sql`date_trunc('milliseconds', ${campusEvents.updatedAt}) = ${updatedAt.toISOString()}::timestamptz`)).returning();
+	return saved ?? null;
 }
 
 export async function createCampusEvent(
@@ -252,7 +279,7 @@ export async function getCampusEventImageRecord(
 	providedDb?: CampusEventDb
 ) {
 	const db = getDb(databaseUrl, providedDb);
-	const event = await db.query.campusEvents.findFirst({ where: eq(campusEvents.id, eventId) });
+	const [event] = await readEventRows(db, { where: eq(campusEvents.id, eventId), limit: 1 });
 	if (!event) return null;
 	const image = await db.query.campusEventImages.findFirst({
 		where: and(eq(campusEventImages.eventId, eventId), eq(campusEventImages.id, imageId))

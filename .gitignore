@@ -18,6 +18,9 @@ Thumbs.db
 !.env.example
 !.env.test
 
+# 비공개 행사 수집 작업 자료
+/.local/event-inbox/
+
 # Docs
 *.md
 

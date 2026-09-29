@@ -1,7 +1,9 @@
 import { env } from '$env/dynamic/private';
 import { fail, redirect } from '@sveltejs/kit';
 import { normalizeCampusEventInput } from '$lib/domain/campus-events';
-import { selectEventHistoryYear } from '$lib/domain/event-history';
+import { listCampusSpots } from '$lib/server/campus-spots';
+import { getEventHistoryYear, selectEventHistoryYear } from '$lib/domain/event-history';
+import { readEventInbox } from '$lib/server/event-candidates';
 import {
 	deleteCampusEventRows,
 	buildCampusEventValidationFormData,
@@ -15,8 +17,15 @@ import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals, url }) => {
 	requireEventAdmin(locals.user);
+	const [events, inbox] = await Promise.all([listAdminCampusEvents(env.DATABASE_URL), readEventInbox(env.DATABASE_URL)]);
+	const pending = inbox.candidates.filter((candidate) => candidate.state === 'pending' && !candidate.publishedEventId);
+	const dated = [...events.map((event) => ({ startsAt: event.startsAt })), ...pending.map((candidate) => ({ startsAt: candidate.draft.startsAt ? new Date(candidate.draft.startsAt) : candidate.createdAt }))];
+	const { years, selectedYear } = selectEventHistoryYear(dated, url.searchParams.get('year'));
 	return {
-		...selectEventHistoryYear(await listAdminCampusEvents(env.DATABASE_URL), url.searchParams.get('year')),
+		years, selectedYear,
+		events: events.filter((event) => getEventHistoryYear(event.startsAt) === selectedYear).toSorted((a, b) => b.startsAt.getTime() - a.startsAt.getTime()),
+		pendingCandidates: pending.filter((candidate) => getEventHistoryYear(candidate.draft.startsAt ? new Date(candidate.draft.startsAt) : candidate.createdAt) === selectedYear)
+			.map((candidate) => ({ id: candidate.id, title: candidate.draft.title, category: candidate.draft.category, startsAt: candidate.draft.startsAt ? new Date(candidate.draft.startsAt) : null, endsAt: candidate.draft.endsAt ? new Date(candidate.draft.endsAt) : null, locationName: candidate.draft.locationName })),
 		deleted: url.searchParams.get('deleted') === '1'
 	};
 };
@@ -31,6 +40,7 @@ export const actions: Actions = {
 		if (!event) return fail(404, { message: '행사를 찾지 못했습니다.' });
 		if (isVisible) {
 			const parsed = normalizeCampusEventInput(buildCampusEventValidationFormData(event), {
+				campusSpots: event.location?.type === 'building' ? await listCampusSpots(env.DATABASE_URL) : [],
 				coverImageCount: event.coverImageId ? 1 : 0
 			});
 			if (!parsed.ok) return fail(400, { message: parsed.message });

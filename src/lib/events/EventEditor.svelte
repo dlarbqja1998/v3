@@ -5,6 +5,7 @@
 	import { untrack } from 'svelte';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { EVENT_CATEGORIES } from '$lib/domain/campus-events';
+	import type { CampusEventLocation } from '$lib/domain/event-locations';
 	import type { CampusEventDto } from '$lib/server/campus-events';
 	import EventImageManager from './EventImageManager.svelte';
 	import EventMapPicker from './EventMapPicker.svelte';
@@ -25,6 +26,8 @@
 
 	let latitude = $state(untrack(() => event?.latitude ?? 36.6095));
 	let longitude = $state(untrack(() => event?.longitude ?? 127.287));
+	let location = $state<CampusEventLocation | null>(untrack(() => event?.location ?? null));
+	let locationName = $state(untrack(() => event?.locationName ?? ''));
 	let isVisible = $state(untrack(() => event?.isVisible ?? false));
 	let hasUnsavedChanges = $state(false);
 	let allowNextNavigation = $state(false);
@@ -101,10 +104,10 @@
 					<label class="field-label">시작<input class="field-input" name="startsAt" type="datetime-local" value={formatKoreanDateTime(event?.startsAt)} required /></label>
 					<label class="field-label">종료<input class="field-input" name="endsAt" type="datetime-local" value={formatKoreanDateTime(event?.endsAt)} required /></label>
 				</div>
-				<label class="field-label">장소명<input class="field-input" name="locationName" maxlength="160" value={event?.locationName ?? ''} placeholder="예: 중앙광장" required /></label>
+				<label class="field-label">장소명<input class="field-input" name="locationName" maxlength="160" bind:value={locationName} placeholder="예: 농심국제관 101호" required /></label>
 			</section>
 
-			<EventMapPicker clientId={naverMapClientId} bind:latitude bind:longitude onchange={markDirty} />
+			<EventMapPicker clientId={naverMapClientId} bind:latitude bind:longitude bind:location bind:locationName onchange={markDirty} />
 			<EventImageManager existingImages={event?.images ?? []} onchange={markDirty} />
 
 			<section class="border-y border-brand-border py-3">

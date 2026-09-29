@@ -33,12 +33,26 @@
 		</header>
 
 		<div class="px-5 py-5 pb-[calc(40px+env(safe-area-inset-bottom))]">
+			<a class="mb-3 flex min-h-14 items-center justify-between border-b border-brand-section-border text-[15px] font-bold" href="/admin/events/inbox">행사 승인함 <span class="text-[12px] font-normal text-brand-muted">후보 확인·게시</span></a>
+			<a class="mb-3 flex min-h-14 items-center justify-between gap-4 border-b border-brand-border text-[15px] font-bold text-brand" href="/admin/events/locations">행사 구역·핀 설정 <span class="text-right text-[12px] font-normal text-brand-muted">일반 행사·등록 대기</span></a>
 			<a class="mb-5 flex min-h-14 items-center justify-between border-b border-brand-border text-[15px] font-bold text-brand" href="/admin/festival">축제 구역 편집 <span class="text-[12px] font-normal text-brand-muted">템플릿 관리</span></a>
 			<nav class="mb-5 flex gap-5 overflow-x-auto border-b border-brand-border" aria-label="행사 기록 연도">
 				{#each data.years as year}
 					<a href={`?year=${year}`} aria-current={data.selectedYear === year ? 'page' : undefined} class={`shrink-0 border-b-2 py-3 text-[16px] transition-colors duration-200 ${data.selectedYear === year ? 'border-brand font-bold text-brand' : 'border-transparent text-brand-muted'}`}>{year}년</a>
 				{/each}
 			</nav>
+			{#if data.pendingCandidates.length}
+				<section class="mb-6 border-b border-brand-section-border" aria-label="검토 대기 행사">
+					<h2 class="m-0 pb-3 text-[15px] font-bold">검토 대기 · {data.pendingCandidates.length}건</h2>
+					<p class="m-0 pb-3 text-[13px] leading-6 text-brand-muted">위치와 내용을 보완한 뒤 승인함에서 게시할 수 있어요.</p>
+					{#each data.pendingCandidates as candidate}
+						<article class="border-t border-brand-border py-4">
+							<a href={`/admin/events/inbox/${candidate.id}`} class="block"><span class="text-[12px] text-brand-muted">{candidate.category} · 검토 대기</span><h3 class="m-0 mt-1 text-[15px] font-bold leading-6">{candidate.title}</h3><p class="m-0 mt-2 text-[12px] leading-5 text-brand-muted">{candidate.startsAt && candidate.endsAt ? formatPeriod(candidate.startsAt, candidate.endsAt) : '일정 확인 필요'} · {candidate.locationName || '장소 확인 필요'}</p></a>
+							<a class="inline-flex min-h-11 items-center text-[13px] text-brand" href={`/admin/events/locations?candidate=${candidate.id}`}>구역·핀 설정</a>
+						</article>
+					{/each}
+				</section>
+			{/if}
 			<div class="mb-4 flex items-end justify-between gap-4 border-b border-brand-border pb-3">
 				<div><h2 class="m-0 text-[15px] font-black">행사 기록 · {data.events.length}건</h2><p class="m-0 mt-1 text-[13px] text-brand-muted">개최 연도별로 종료 행사까지 보관해요.</p></div>
 				<a class="text-[13px] font-black text-brand" href="/admin/events/new">새 행사</a>
