@@ -3,7 +3,7 @@
 	import { ArrowLeft, CalendarDays, ExternalLink, MapPin, X } from '@lucide/svelte';
 	import { analyticsEvents } from '$lib/analytics/events';
 	import { track } from '$lib/analytics/posthog.client';
-	import { getCampusEventStatus } from '$lib/domain/campus-events';
+	import { getCampusEventExternalLinkLabel, getCampusEventStatus } from '$lib/domain/campus-events';
 	import EventImageGallery from '$lib/events/EventImageGallery.svelte';
 	import type { PageData } from './$types';
 
@@ -50,7 +50,7 @@
 				<p class="m-0 mt-3 whitespace-pre-wrap text-sm leading-7">{event.description}</p>
 				{#if event.externalUrl}
 					<a class="mt-4 flex min-h-12 items-center justify-between border-y border-brand-border text-[13px] font-bold text-brand" href={event.externalUrl} target="_blank" rel="noreferrer">
-						<span>행사 홈페이지</span><ExternalLink size={16} />
+						<span>{getCampusEventExternalLinkLabel(event.externalUrl)}</span><ExternalLink size={16} />
 					</a>
 				{/if}
 			</section>

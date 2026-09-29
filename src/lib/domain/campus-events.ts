@@ -76,6 +76,14 @@ export function getInitialCampusEventTab(
 		: 'upcoming';
 }
 
+export function getCampusEventExternalLinkLabel(value: string): string {
+	try {
+		const url = new URL(value);
+		if (url.hostname === 'form.naver.com' && url.pathname.startsWith('/response/')) return '신청';
+	} catch { /* 주소를 해석할 수 없으면 기본 안내 문구를 사용한다. */ }
+	return '행사 홈페이지';
+}
+
 function isCampusEventCategory(value: string): value is CampusEventCategory {
 	return EVENT_CATEGORIES.includes(value as CampusEventCategory);
 }
