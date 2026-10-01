@@ -55,7 +55,7 @@ describe('기존 핀과 시설 안내의 장소 통합', () => {
 			place({ id: links['FAC-042'], isVisible: false }),
 			place({ id: links['FAC-043'], scope: 'outside' })
 		]);
-		expect(catalog).toHaveLength(28);
+		expect(catalog).toHaveLength(29);
 		expect(catalog.every((item) => !item.place)).toBe(true);
 		expect(catalog.some((item) => item.id === 'FAC-044')).toBe(false);
 	});

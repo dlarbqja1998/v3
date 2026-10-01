@@ -10,9 +10,9 @@ const facilities = fixture as CampusFacility[];
 const byId = (id: string) => facilities.find((facility) => facility.id === id)!;
 
 describe('교내 시설 탐색', () => {
-	it('공식 자료로 추가한 건강센터를 포함해 시설을 중복 없이 유지한다', () => {
-		expect(facilities).toHaveLength(46);
-		expect(new Set(facilities.map((item) => item.id)).size).toBe(46);
+	it('공식 자료로 추가한 건강센터와 택배 보관소를 포함해 시설을 중복 없이 유지한다', () => {
+		expect(facilities).toHaveLength(47);
+		expect(new Set(facilities.map((item) => item.id)).size).toBe(47);
 	});
 	it('이름을 몰라도 증명서·장학금·프린트와 건물명으로 찾는다', () => {
 		expect(filterCampusFacilities(facilities, { query: '증명서' }).map((item) => item.id).sort()).toEqual(['FAC-001', 'FAC-002']);
@@ -24,6 +24,14 @@ describe('교내 시설 탐색', () => {
 		const matches = filterCampusFacilities(facilities, { purpose: 'administration', building: '학술정보원' });
 		expect(matches.map((item) => item.id).sort()).toEqual(['FAC-001', 'FAC-002']);
 		expect(filterCampusFacilities(facilities, { query: '없는시설검색' })).toEqual([]);
+	});
+	it('택배 보관소는 정의관 시설 목록과 지도에 연결하고 진리관에는 표시하지 않는다', () => {
+		const matches = filterCampusFacilities(facilities, { building: '정의관', purpose: 'daily', query: '택배' });
+		expect(matches.map((item) => item.name)).toEqual(['기숙사 택배 보관소']);
+		expect(filterCampusFacilities(facilities, { building: '진리관', query: '택배' })).toEqual([]);
+		expect(getFacilityBuildingSpots(matches[0], campusSpots).map((spot) => spot.name)).toEqual(['정의관']);
+		expect(getCampusFacilityMarkers(matches, campusSpots, '정의관').map((marker) => marker.id))
+			.toEqual(['campus-facilities:building-정의관']);
 	});
 	it('건물 별칭을 연결하되 불확실한 기숙사 운영실에는 좌표를 만들지 않는다', () => {
 		expect(getFacilityBuildingSpots(byId('FAC-029'), campusSpots)[0].name).toBe('호익프라자');
