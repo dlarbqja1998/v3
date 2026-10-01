@@ -6,6 +6,8 @@
 	import { getRestaurantMapHref, membershipIsActive, type RestaurantDetail, type RestaurantSummary } from '$lib/domain/restaurants';
 	import { restaurantWeekdays } from '$lib/domain/restaurant-catalog';
 	import { getFacilityOfficialUrl, getFacilityPhoneLinks } from '$lib/domain/campus-facilities';
+	import { analyticsEvents } from '$lib/analytics/events';
+	import { track } from '$lib/analytics/posthog.client';
 
 	let { restaurant, isAuthenticated, onBack, onHome, onMap, loading = false, loadError = '', onRetry }: {
 		restaurant: RestaurantSummary | RestaurantDetail;
@@ -28,6 +30,15 @@
 	let menusOpen = $state(false);
 	const hoursId = $derived(`restaurant-hours-${restaurant.place.id}`);
 	const menusId = $derived(`restaurant-menus-${restaurant.place.id}`);
+	function trackAction(action: string) {
+		track(analyticsEvents.clickPlaceAction, { place_id: restaurant.place.id, place_name: restaurant.place.name,
+			area_mode: 'outside', source: 'restaurant_detail', action });
+	}
+	function toggleSection(section: 'hours' | 'menus') {
+		if (section === 'hours') hoursOpen = !hoursOpen; else menusOpen = !menusOpen;
+		track(analyticsEvents.togglePlaceSection, { place_id: restaurant.place.id, section,
+			expanded: section === 'hours' ? hoursOpen : menusOpen, source: 'restaurant_detail' });
+	}
 </script>
 
 <main class="min-h-dvh bg-brand-bg text-brand-text md:py-6">
@@ -47,17 +58,17 @@
 				</div>
 				<p class="m-0 mt-3 break-keep text-[13px] leading-6 text-brand-muted">{restaurant.roadAddress}</p>
 				<a class="inline-flex min-h-11 items-center gap-1 text-[13px] text-brand" href={getRestaurantMapHref(restaurant)} data-sveltekit-preload-data="off"
-					onclick={(event) => { if (onMap && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) { event.preventDefault(); onMap(); } }}>
+					onclick={(event) => { trackAction('map'); if (onMap && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) { event.preventDefault(); onMap(); } }}>
 					골라바유 지도에서 보기<AppIcon name="chevron" size={20} class="rotate-180" />
 				</a>
 				<div class="flex min-h-11 flex-wrap items-center justify-between gap-x-4 text-[13px]">
-					{#if phone}<a class="flex min-h-11 items-center text-brand" href={phone.href} aria-label={`${phone.label} 전화 연결`}>{phone.label}</a>{:else}<span class="text-brand-muted">전화번호 확인 중</span>{/if}
-					{#if naverUrl}<a class="flex min-h-11 items-center gap-1 text-brand-muted" href={naverUrl} target="_blank" rel="noopener noreferrer">네이버지도<AppIcon name="chevron" size={20} class="rotate-180" /></a>{/if}
+					{#if phone}<a class="flex min-h-11 items-center text-brand" href={phone.href} aria-label={`${phone.label} 전화 연결`} onclick={() => trackAction('phone')}>{phone.label}</a>{:else}<span class="text-brand-muted">전화번호 확인 중</span>{/if}
+					{#if naverUrl}<a class="flex min-h-11 items-center gap-1 text-brand-muted" href={naverUrl} target="_blank" rel="noopener noreferrer" onclick={() => trackAction('naver_map')}>네이버지도<AppIcon name="chevron" size={20} class="rotate-180" /></a>{/if}
 				</div>
 			</section>
 			{#if membershipIsActive(restaurant.membership)}<KuMembershipBenefits membership={restaurant.membership!} />{/if}
 			<section class="gb1-section" aria-label="운영시간" aria-busy={loading}>
-				<DetailSectionHeading title="운영시간" expanded={hoursOpen} controls={hoursId} onToggle={() => hoursOpen = !hoursOpen} />
+				<DetailSectionHeading title="운영시간" expanded={hoursOpen} controls={hoursId} onToggle={() => toggleSection('hours')} />
 				<p class="m-0 mt-3 text-[16px] font-bold">{restaurant.todayHours}</p>
 				{#if loading}
 					<p class="m-0 mt-3 text-[13px] text-brand-muted" role="status">상세 정보 불러오는 중</p>
@@ -85,7 +96,7 @@
 				</div>
 			</section>
 			<section class="gb1-section" aria-label="메뉴와 가격" aria-busy={loading}>
-				<DetailSectionHeading title="메뉴" expanded={menusOpen} controls={menusId} onToggle={() => menusOpen = !menusOpen}
+				<DetailSectionHeading title="메뉴" expanded={menusOpen} controls={menusId} onToggle={() => toggleSection('menus')}
 					meta={detail ? `${deliveryMenusOnly ? '배달 기준 · ' : ''}${menus.length}개` : '확인 중'} />
 				<div id={menusId} hidden={!menusOpen} data-restaurant-menu>
 					{#if detail}

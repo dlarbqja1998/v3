@@ -49,12 +49,14 @@
 				<h3 id="event-description-title" class="m-0 text-[15px] font-black">행사 안내</h3>
 				<p class="m-0 mt-3 whitespace-pre-wrap text-sm leading-7">{event.description}</p>
 				{#if event.externalUrl}
-					<a class="mt-4 flex min-h-12 items-center justify-between border-y border-brand-border text-[13px] font-bold text-brand" href={event.externalUrl} target="_blank" rel="noreferrer">
+					<a class="mt-4 flex min-h-12 items-center justify-between border-y border-brand-border text-[13px] font-bold text-brand" href={event.externalUrl} target="_blank" rel="noreferrer"
+						onclick={() => track(analyticsEvents.clickEventAction, { event_id: event.id, action: 'external_link', source: 'event_detail' })}>
 						<span>{getCampusEventExternalLinkLabel(event.externalUrl)}</span><ExternalLink size={16} />
 					</a>
 				{/if}
 			</section>
-			<a class="mt-8 flex h-12 items-center justify-center gap-2 rounded-xl bg-brand text-sm font-black text-white" href={`/?panel=event&eventId=${event.id}`}><MapPin size={17} />지도에서 보기</a>
+			<a class="mt-8 flex h-12 items-center justify-center gap-2 rounded-xl bg-brand text-sm font-black text-white" href={`/?panel=event&eventId=${event.id}`}
+				onclick={() => track(analyticsEvents.clickEventAction, { event_id: event.id, action: 'map', source: 'event_detail' })}><MapPin size={17} />지도에서 보기</a>
 			<p class="m-0 mt-3 flex items-center justify-center gap-1 text-[12px] text-brand-muted"><CalendarDays size={13} />행사는 종료 시 오늘 목록에서 자동으로 숨겨집니다.</p>
 		</div>
 	</article>

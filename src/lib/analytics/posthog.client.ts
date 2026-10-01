@@ -26,7 +26,11 @@ export function captureEvent(
 	eventName: AnalyticsEventName,
 	properties: Record<string, unknown> = {}
 ) {
-	client?.capture(eventName, properties);
+	try {
+		client?.capture(eventName, properties);
+	} catch {
+		// 분석 전송 실패가 검색·클릭·화면 이동을 막지 않도록 한다.
+	}
 }
 
 export function createPageViewProperties(url: URL) {

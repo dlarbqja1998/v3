@@ -14,7 +14,7 @@
 
 				window.posthog.init('phc_urFSzFCkXNzyHkQKei2y3LS6zjsVcNBgR3vveoJLb2yR', {
 					api_host: 'https://us.i.posthog.com',
-					autocapture: false,
+					autocapture: { dom_event_allowlist: ['click'] },
 					capture_pageview: false,
 					disable_session_recording: true,
 					person_profiles: 'identified_only'

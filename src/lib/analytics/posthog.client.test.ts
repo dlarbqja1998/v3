@@ -76,4 +76,10 @@ describe('PostHog 클라이언트 연결', () => {
 			path: '/search'
 		});
 	});
+	it('SDK 전송이 실패해도 사용자 클릭 동작을 중단하지 않는다', () => {
+		const client = createClient();
+		vi.mocked(client.capture).mockImplementation(() => { throw new Error('전송 실패'); });
+		expect(() => captureEvent(client, 'open_place_sheet', { place_id: 'FAC-047' })).not.toThrow();
+		expect(() => captureEvent(undefined, 'open_place_sheet')).not.toThrow();
+	});
 });

@@ -2,6 +2,8 @@
 	import AppIcon from '$lib/icon/AppIcon.svelte';
 	import { getCampusEventStatus } from '$lib/domain/campus-events';
 	import type { CampusEventDto } from '$lib/server/campus-events';
+	import { analyticsEvents } from '$lib/analytics/events';
+	import { track } from '$lib/analytics/posthog.client';
 
 	let { events, now, placeName }: { events: CampusEventDto[]; now: Date; placeName: string } = $props();
 	const date = new Intl.DateTimeFormat('ko-KR', { timeZone: 'Asia/Seoul', month: 'numeric', day: 'numeric' });
@@ -16,7 +18,8 @@
 	<p class="m-0 mb-3 text-[12px] text-brand-muted">진행 중 · 7일 이내 예정</p>
 	{#each events as event (event.id)}
 		{@const ongoing = getCampusEventStatus(event, now) === 'ongoing'}
-		<a href={`/today/${event.id}`} class="flex min-h-14 items-center gap-3 border-b border-brand-border py-4">
+		<a href={`/today/${event.id}`} class="flex min-h-14 items-center gap-3 border-b border-brand-border py-4"
+			onclick={() => track(analyticsEvents.selectEvent, { event_id: event.id, source: 'building_panel', building_name: placeName })}>
 			<span class="min-w-0 flex-1">
 				<span class={`text-[11px] font-bold ${ongoing ? 'text-brand' : 'text-brand-muted'}`}>{ongoing ? '진행 중' : '진행 예정'} · {event.category}</span>
 				<strong class="mt-1 block break-keep text-[15px] font-bold leading-6">{event.title}</strong>

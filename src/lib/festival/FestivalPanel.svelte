@@ -4,6 +4,8 @@
 	import { pushState } from '$app/navigation';
 	import AppIcon from '$lib/icon/AppIcon.svelte';
 	import { startVisibleClock } from '$lib/browser/visible-clock';
+	import { analyticsEvents } from '$lib/analytics/events';
+	import { track } from '$lib/analytics/posthog.client';
 	import { formatFestivalPrice, getFestivalBooths, getFestivalBoothForSession, getInitialFestivalSelection, getNextFestivalPerformance, getFestivalPerformanceStatus, type Festival, type FestivalSession } from '$lib/domain/festival';
 	let { festival, onClose, onExpand, collapsed = false }: { festival: Festival; onClose: () => void; onExpand: () => void; collapsed?: boolean } = $props();
 	const initialSelection = untrack(() => getInitialFestivalSelection(festival));
@@ -26,11 +28,13 @@
 	const benefits = $derived(festival.benefits?.filter((item) => item.date === selectedDate?.date && item.sessions.includes(session)) ?? []);
 	const checkedLabel = $derived(festival.checkedAt ? new Intl.DateTimeFormat('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Seoul' }).format(new Date(festival.checkedAt)) : '');
 	function selectSession(value: FestivalSession) {
+		track(analyticsEvents.selectFestivalSession, { festival_id: festival.id, session: value, date });
 		session = value;
 		if (scrollHost) scrollHost.scrollTop = 0;
 	}
 
 	async function openBooth(id: string) {
+		track(analyticsEvents.selectFestivalBooth, { festival_id: festival.id, booth_id: id, session, date });
 		listScroll = scrollHost?.scrollTop ?? 0;
 		pushState('', { ...page.state, festivalBooth: id });
 		onExpand();
@@ -62,7 +66,8 @@
 	{#if !collapsed}
 		<div class="flex shrink-0 items-center justify-between gap-3 pt-4 pb-2">
 			{#if festival.dates.length > 1}
-				<select aria-label="축제 날짜" class="bg-transparent text-[16px] font-bold" bind:value={date}>{#each festival.dates as item}<option value={item.date}>{item.label}</option>{/each}</select>
+				<select aria-label="축제 날짜" class="bg-transparent text-[16px] font-bold" bind:value={date}
+					onchange={(event) => track(analyticsEvents.selectFestivalDate, { festival_id: festival.id, date: event.currentTarget.value, session })}>{#each festival.dates as item}<option value={item.date}>{item.label}</option>{/each}</select>
 			{:else}<p class="m-0 text-[16px] font-bold">{selectedDate?.label}</p>{/if}
 			<span class="text-right text-[12px] text-brand-muted">{booth ? booth.number ? `${booth.number}번 부스` : '부스 안내' : festival.area.label}</span>
 		</div>

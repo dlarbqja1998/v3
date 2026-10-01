@@ -12,6 +12,8 @@
 	import type { CampusSpot } from '$lib/domain/campus-spots';
 	import type { Place } from '$lib/domain/places';
 	import { getCafeteriaPageHref } from '$lib/domain/cafeterias';
+	import { analyticsEvents } from '$lib/analytics/events';
+	import { track } from '$lib/analytics/posthog.client';
 
 	let { facilities, view, spots, onChange, onSelect, onBack, onClose, onMap, onExpand, collapsed = false }: {
 		facilities: CampusFacility[];
@@ -59,6 +61,11 @@
 		listScroll = scrollHost?.scrollTop ?? 0;
 		onSelect(id);
 	}
+	function trackAction(action: string, label?: string) {
+		if (!facility) return;
+		track(analyticsEvents.clickPlaceAction, { place_id: facility.id, place_name: facility.name,
+			area_mode: 'campus', source: 'facility_detail', action, action_label: label });
+	}
 	function handleKeydown(event: KeyboardEvent) {
 		if (event.key !== 'Escape' || event.defaultPrevented) return;
 		if (facility || view.returnSpotId) onBack(); else onClose();
@@ -98,12 +105,12 @@
 					<p class="m-0 text-[12px] text-brand-muted">{facility.place?.categoryName ?? CAMPUS_FACILITY_PURPOSES.find((tab) => tab.id === facility.purpose)?.label}</p>
 					<h3 class="m-0 mt-2 break-keep text-[20px] font-bold leading-7">{facility.name}</h3>
 					{#if facility.description}<p class="m-0 mt-3 whitespace-pre-line break-keep text-[13px] leading-6 text-brand-muted">{facility.description}</p>{/if}
-					{#if menuHref}<a class="mt-3 flex min-h-11 items-center justify-between text-[13px] text-brand" href={menuHref}>학식 메뉴 보기<AppIcon name="chevron" size={20} class="rotate-180" /></a>{/if}
+					{#if menuHref}<a class="mt-3 flex min-h-11 items-center justify-between text-[13px] text-brand" href={menuHref} onclick={() => trackAction('cafeteria_menu')}>학식 메뉴 보기<AppIcon name="chevron" size={20} class="rotate-180" /></a>{/if}
 					{#if facility.actions?.length}
 						<nav class="mt-3" aria-label="시설 온라인 서비스">
 							{#each facility.actions as action}
 								{@const href = getFacilityOfficialUrl(action.url)}
-								{#if href}<a class="flex min-h-11 items-center justify-between gap-3 text-[13px] font-medium text-brand" {href} target="_blank" rel="noopener noreferrer">{action.label}<AppIcon name="chevron" size={20} class="rotate-180" /></a>{/if}
+								{#if href}<a class="flex min-h-11 items-center justify-between gap-3 text-[13px] font-medium text-brand" {href} target="_blank" rel="noopener noreferrer" onclick={() => trackAction('online_service', action.label)}>{action.label}<AppIcon name="chevron" size={20} class="rotate-180" /></a>{/if}
 							{/each}
 						</nav>
 					{/if}
@@ -115,7 +122,7 @@
 						{@const spot = location.building ? getFacilityBuildingSpots({ ...facility, locations: [location] }, spots)[0] : undefined}
 						<div class="flex items-center justify-between gap-3 py-2">
 							<p class="m-0 break-keep text-[16px] font-bold leading-6">{location.label}</p>
-							{#if facility.place || spot}<button type="button" class="min-h-11 shrink-0 text-[13px] text-brand" onclick={() => onMap(facility.place ?? spot!)}>지도 보기</button>{/if}
+							{#if facility.place || spot}<button type="button" class="min-h-11 shrink-0 text-[13px] text-brand" onclick={() => { trackAction('map'); onMap(facility.place ?? spot!); }}>지도 보기</button>{/if}
 						</div>
 					{/each}
 					{#if !facility.place}<p class="m-0 mt-1 text-[12px] leading-5 text-brand-muted">{getFacilityBuildingSpots(facility, spots).length ? '지도는 시설이 있는 건물의 위치를 안내해요.' : '지도 위치는 확인 중이에요.'}</p>{/if}
@@ -123,7 +130,7 @@
 				<section class="gb1-section" aria-label="시설 운영시간"><h4 class="gb1-section-title">운영시간</h4><p class="m-0 mt-3 whitespace-pre-line break-keep text-[13px] leading-6">{facility.hours ?? '운영시간 확인 중'}{#if !facility.hours}<span class="mt-1 block text-[12px] text-brand-muted">방문 전 공식 안내나 전화로 확인해 주세요.</span>{/if}</p></section>
 				<dl class="gb1-section text-[13px] leading-6">
 					{#if facility.audience}<div class="grid grid-cols-[72px_1fr] gap-3 border-b border-brand-border py-4"><dt class="text-brand-muted">이용 대상</dt><dd class="m-0 break-keep">{facility.audience}</dd></div>{/if}
-					<div class="grid grid-cols-[72px_1fr] gap-3 py-4"><dt class="text-brand-muted">문의</dt><dd class="m-0 whitespace-pre-line break-keep">{facility.phone || '연락처 확인 중'}{#each phoneLinks as phone}<a class="flex min-h-11 items-center text-brand" href={phone.href}>{phoneLinks.length > 1 ? `${phone.label} 전화하기` : '전화하기'}</a>{/each}</dd></div>
+					<div class="grid grid-cols-[72px_1fr] gap-3 py-4"><dt class="text-brand-muted">문의</dt><dd class="m-0 whitespace-pre-line break-keep">{facility.phone || '연락처 확인 중'}{#each phoneLinks as phone}<a class="flex min-h-11 items-center text-brand" href={phone.href} onclick={() => trackAction('phone')}>{phoneLinks.length > 1 ? `${phone.label} 전화하기` : '전화하기'}</a>{/each}</dd></div>
 				</dl>
 				{#each facility.details ?? [] as section}
 					<section class="gb1-section" aria-label={section.title}>
@@ -135,7 +142,7 @@
 				{/each}
 				<div class="flex items-center justify-between gap-3 pt-4 text-[12px] text-brand-muted">
 					<span>{facility.checkedAt ? `${facility.checkedAt.replaceAll('-', '.')} 시설 안내 확인` : ''}</span>
-					{#if officialUrl}<a class="flex min-h-11 items-center gap-1 text-[13px]" href={officialUrl} target="_blank" rel="noopener noreferrer">공식 안내<AppIcon name="chevron" size={20} class="rotate-180" /></a>{/if}
+					{#if officialUrl}<a class="flex min-h-11 items-center gap-1 text-[13px]" href={officialUrl} target="_blank" rel="noopener noreferrer" onclick={() => trackAction('official_guide')}>공식 안내<AppIcon name="chevron" size={20} class="rotate-180" /></a>{/if}
 				</div>
 			{:else}
 				{#if view.query}<div class="flex items-center justify-between gap-3 pt-3 text-[13px]"><p class="m-0 break-all font-bold">‘{view.query}’ 검색 결과</p><button type="button" class="min-h-11 shrink-0 text-brand-muted" onclick={() => onChange({ query: '' })}>초기화</button></div>{/if}
