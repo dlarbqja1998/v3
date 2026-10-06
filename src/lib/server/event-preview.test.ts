@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-const mocks = vi.hoisted(() => ({ dev: true, candidate: vi.fn() }));
+const mocks = vi.hoisted(() => ({ dev: true, candidate: vi.fn(), publicEvent: vi.fn() }));
 vi.mock('$app/environment', () => ({ get dev() { return mocks.dev; } }));
 vi.mock('$env/dynamic/private', () => ({ env: { DATABASE_URL: 'test' } }));
 vi.mock('./event-candidates', () => ({ getEventCandidate: mocks.candidate }));
-vi.mock('./campus-events', () => ({ listPublicCampusEvents: async () => [], getPublicCampusEvent: async () => null }));
+vi.mock('./campus-events', () => ({ listPublicCampusEvents: async () => [], getPublicCampusEvent: mocks.publicEvent }));
 vi.mock('./festival-catalog', () => ({ readFestivalForPage: async () => null }));
 vi.mock('./db/queries', () => ({ getHomeData: async () => ({ places: [], cafeterias: [] }) }));
 vi.mock('./notices', () => ({ getHomeNotice: async () => null }));
@@ -25,12 +25,19 @@ function kusCandidate() {
 beforeEach(() => {
 	mocks.dev = true;
 	mocks.candidate.mockReset().mockResolvedValue(kusCandidate());
+	mocks.publicEvent.mockReset().mockResolvedValue(null);
 	vi.useFakeTimers();
 	vi.setSystemTime(new Date('2026-09-29T14:00:00+09:00'));
 });
 afterEach(() => vi.useRealTimers());
 
 describe('요청한 행사의 로컬 미리보기', () => {
+	it('이미 공개된 행사는 로컬 미리보기로 다시 합쳐 중복 표시하지 않는다', async () => {
+		vi.setSystemTime(new Date('2026-10-06T14:30:00+09:00'));
+		mocks.publicEvent.mockResolvedValue({ id: '30ac5cc8-7f19-44a0-bd14-faebf7cfe19a' });
+		expect(await readLocalEventPreviews('test', 'localhost', false)).toEqual([]);
+		expect(mocks.candidate).not.toHaveBeenCalled();
+	});
 	it('오늘 확인한 연구 페스타만 로컬에서 예정 행사로 보여주고 종료 후 숨긴다', async () => {
 		vi.setSystemTime(new Date('2026-10-06T14:30:00+09:00'));
 		const preview = await readLocalEventPreviews(undefined, 'localhost', false);

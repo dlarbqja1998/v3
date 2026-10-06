@@ -2,7 +2,7 @@ import { dev } from '$app/environment';
 import { getPublicCampusEvents } from '$lib/domain/campus-events';
 import { isEventCoordinate, parseCampusEventLocation } from '$lib/domain/event-locations';
 import { getEventCandidate } from './event-candidates';
-import type { CampusEventDto } from './campus-events';
+import { getPublicCampusEvent, type CampusEventDto } from './campus-events';
 import { readAutumnEventPreviews } from './autumn-events-2026';
 
 export const gbFestivalCandidateId = '56e12977-3473-41c8-ab45-84d3a82e9e64';
@@ -16,7 +16,11 @@ export function isLocalEventPreview(hostname: string) {
 export async function readLocalEventPreviews(databaseUrl: string | undefined, hostname: string, isAdmin: boolean, now = new Date()): Promise<CampusEventDto[]> {
 	if (!isLocalEventPreview(hostname)) return [];
 	// 이번 요청의 화면용 공지 자료는 로컬에서만 제공한다. 임의의 승인함 후보 조회는 관리자에게만 허용한다.
-	const requestedPreviews = readAutumnEventPreviews(now);
+	let requestedPreviews = readAutumnEventPreviews(now);
+	if (databaseUrl && requestedPreviews.length) {
+		const published = await Promise.all(requestedPreviews.map((event) => getPublicCampusEvent(databaseUrl, event.id, now)));
+		requestedPreviews = requestedPreviews.filter((_event, index) => !published[index]);
+	}
 	if (!databaseUrl || !isAdmin) return requestedPreviews;
 	const candidates = await Promise.all(localEventCandidateIds.map((id) => getEventCandidate(databaseUrl, id)));
 	const events: CampusEventDto[] = [];
