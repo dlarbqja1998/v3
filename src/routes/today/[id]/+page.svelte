@@ -5,11 +5,13 @@
 	import { track } from '$lib/analytics/posthog.client';
 	import { getCampusEventExternalLinkLabel, getCampusEventStatus } from '$lib/domain/campus-events';
 	import EventImageGallery from '$lib/events/EventImageGallery.svelte';
+	import { startVisibleClock } from '$lib/browser/visible-clock';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
 	const event = $derived(data.event);
-	const status = $derived(getCampusEventStatus(event, new Date()));
+	let now = $state(new Date());
+	const status = $derived(getCampusEventStatus(event, now));
 
 	onMount(() => {
 		track(analyticsEvents.viewEventDetail, {
@@ -17,6 +19,7 @@
 			category: event.category,
 			status
 		});
+		return startVisibleClock((value) => { now = value; });
 	});
 
 	function formatDateTime(value: Date) {
@@ -34,6 +37,9 @@
 			<a class="grid h-11 w-11 place-items-center" href="/" aria-label="행사 닫기"><X size={20} /></a>
 		</header>
 
+		{#if status === 'ended'}
+			<section class="px-5 py-8" aria-live="polite"><h2 class="m-0 text-[18px] font-bold">종료된 행사예요</h2><p class="mt-3 text-[13px] text-brand-muted">다른 진행 중이거나 예정된 행사를 확인해 주세요.</p><a class="inline-flex min-h-11 items-center text-[13px] text-brand" href="/today">행사 목록 보기</a></section>
+		{:else}
 		<EventImageGallery images={event.images} title={event.title} />
 		<div class="px-5 py-6 pb-[calc(32px+env(safe-area-inset-bottom))]">
 			<div class="flex items-center gap-2 text-[12px] font-black"><span class="text-brand">{event.category}</span><span class="text-brand-muted">{status === 'ongoing' ? '진행 중' : '진행 예정'}</span></div>
@@ -59,5 +65,6 @@
 				onclick={() => track(analyticsEvents.clickEventAction, { event_id: event.id, action: 'map', source: 'event_detail' })}><MapPin size={17} />지도에서 보기</a>
 			<p class="m-0 mt-3 flex items-center justify-center gap-1 text-[12px] text-brand-muted"><CalendarDays size={13} />행사는 종료 시 오늘 목록에서 자동으로 숨겨집니다.</p>
 		</div>
+		{/if}
 	</article>
 </main>

@@ -1,7 +1,10 @@
 import { render } from 'svelte/server';
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import TodayPage from './+page.svelte';
 import TodayDetailPage from './[id]/+page.svelte';
+
+beforeEach(() => { vi.useFakeTimers(); vi.setSystemTime(new Date('2026-08-30T03:00:00.000Z')); });
+afterEach(() => vi.useRealTimers());
 
 function event(overrides: Record<string, unknown> = {}) {
 	return {
@@ -29,8 +32,14 @@ function event(overrides: Record<string, unknown> = {}) {
 }
 
 describe('오늘 행사 목록', () => {
+	it('서버에서 받은 목록도 종료 뒤에는 현재 시각으로 다시 걸러낸다', () => {
+		const ended = event({ endsAt: new Date('2026-08-30T02:59:59.999Z') });
+		const body = render(TodayPage, { props: { data: { user: null, ongoingEvents: [ended], upcomingEvents: [], initialTab: 'ongoing' } } as never }).body;
+		expect(body).not.toContain(ended.title);
+		expect(body).toContain('지금 진행 중인 행사가 없어요');
+	});
 	it('축제는 별도 상세 페이지 대신 지도 바텀시트로 바로 연결한다', () => {
-		const body = render(TodayPage, { props: { data: { user: null, ongoingEvents: [], upcomingEvents: [], initialTab: 'upcoming', festival: { id: 'club-festival-preview', title: '2026 동연제 : POLARIS', status: 'upcoming', dateLabel: '9월 15일 (화)', location: '학생회관 일대', href: '/?panel=festival' } } } as never }).body;
+		const body = render(TodayPage, { props: { data: { user: null, ongoingEvents: [], upcomingEvents: [], initialTab: 'upcoming', festival: { id: 'club-festival-preview', title: '2026 동연제 : POLARIS', status: 'upcoming', startsAt: new Date('2026-09-15T12:00:00+09:00'), endsAt: new Date('2026-09-16T00:00:00+09:00'), dateLabel: '9월 15일 (화)', location: '학생회관 일대', href: '/?panel=festival' } } } as never }).body;
 		expect(body).toContain('2026 동연제 : POLARIS');
 		expect(body).toContain('href="/?panel=festival"');
 		expect(body).not.toContain('예정된 행사가 없어요');
@@ -73,6 +82,13 @@ describe('오늘 행사 목록', () => {
 });
 
 describe('행사 상세', () => {
+	it('열어 둔 상세의 일정이 종료되면 이미지와 지도 동작 대신 종료 안내를 표시한다', () => {
+		const ended = event({ endsAt: new Date('2026-08-30T02:59:59.999Z') });
+		const body = render(TodayDetailPage, { props: { data: { event: ended } } as never }).body;
+		expect(body).toContain('종료된 행사예요');
+		expect(body).not.toContain('지도에서 보기');
+		expect(body).not.toContain('/cover.webp');
+	});
 	it('이미지 갤러리와 지도 딥링크를 제공하고 신청 동작은 넣지 않는다', () => {
 		const detailEvent = event({
 			images: [

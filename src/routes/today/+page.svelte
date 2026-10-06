@@ -6,12 +6,16 @@
 	import { track } from '$lib/analytics/posthog.client';
 	import LifestylePageHeader from '$lib/navigation/LifestylePageHeader.svelte';
 	import AppIcon from '$lib/icon/AppIcon.svelte';
+	import { startVisibleClock } from '$lib/browser/visible-clock';
+	import { getCampusEventStatus, getPublicCampusEvents } from '$lib/domain/campus-events';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
 	let activeTab = $state<'ongoing' | 'upcoming'>(untrack(() => data.initialTab));
-	const activeEvents = $derived(activeTab === 'ongoing' ? data.ongoingEvents : data.upcomingEvents);
-	const activeFestival = $derived(data.festival?.status === activeTab ? data.festival : null);
+	let now = $state(new Date());
+	const visibleEvents = $derived(getPublicCampusEvents([...data.ongoingEvents, ...data.upcomingEvents], now));
+	const activeEvents = $derived(visibleEvents.filter((event) => getCampusEventStatus(event, now) === activeTab));
+	const activeFestival = $derived(data.festival && getCampusEventStatus(data.festival, now) === activeTab && now < data.festival.endsAt ? data.festival : null);
 
 	onMount(() => {
 		track(analyticsEvents.openToday, {
@@ -19,6 +23,7 @@
 			ongoing_count: data.ongoingEvents.length + Number(data.festival?.status === 'ongoing'),
 			upcoming_count: data.upcomingEvents.length + Number(data.festival?.status === 'upcoming')
 		});
+		return startVisibleClock((value) => { now = value; });
 	});
 
 	function selectTab(tab: 'ongoing' | 'upcoming') {

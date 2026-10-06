@@ -72,6 +72,8 @@
 	import WeatherWidget from '$lib/weather/WeatherWidget.svelte';
 	import ShuttleCountdown from '$lib/shuttle/ShuttleCountdown.svelte';
 	import FestivalPanel from '$lib/festival/FestivalPanel.svelte';
+	import { getVisibleFestival } from '$lib/domain/festival';
+	import { startVisibleClock } from '$lib/browser/visible-clock';
 	import type { CafeteriaPanelItem, DailyMenu, MenuDayKey, Place } from '$lib/domain/places';
 	import {
 		addAlwaysVisibleShuttleStops,
@@ -178,8 +180,10 @@
 	let shuttleScroller = $state<HTMLDivElement>();
 	let activeShuttleStopId = $state<ShuttleStopId>('campus');
 	let currentTime = $state(new Date());
+	const visibleFestival = $derived(getVisibleFestival(data.festival, currentTime));
+	$effect(() => { if (sheetMode === 'festival' && !visibleFestival) closePanel(); });
 	const visibleEvents = $derived(getPublicCampusEvents(data.campusEvents, currentTime));
-	const mappedEvents = $derived(visibleEvents.filter((event) => event.id !== data.festival?.eventId));
+	const mappedEvents = $derived(visibleEvents.filter((event) => event.id !== visibleFestival?.eventId));
 	const eventsBySpot = $derived(groupCampusEventsBySpot(mappedEvents, campusSpots));
 	const campusEventCounts = $derived(Object.fromEntries(Object.entries(eventsBySpot).map(([id, events]) => [id, events.length])));
 	const buildingEvents = $derived(eventsBySpot[activeCampusSpotId] ?? []);
@@ -421,9 +425,7 @@
 			}
 		}
 
-		const timer = window.setInterval(() => {
-			currentTime = new Date();
-		}, 30000);
+		const stopClock = startVisibleClock((now) => { currentTime = now; });
 		const handleViewportResize = () => syncSheetHeight();
 		const handleKeydown = (event: KeyboardEvent) => {
 			if (event.key === 'Escape' && shownRestaurant) {
@@ -439,7 +441,7 @@
 
 		return () => {
 			weatherAbortController.abort();
-			window.clearInterval(timer);
+			stopClock();
 			if (voteToastTimer) window.clearTimeout(voteToastTimer);
 			window.removeEventListener('resize', handleViewportResize);
 			window.visualViewport?.removeEventListener('resize', handleViewportResize);
@@ -574,7 +576,7 @@
 	}
 
 	function openEventPanel(eventId = '', source = eventId ? 'deep_link' : 'facility_filter') {
-		if (eventId && eventId === data.festival?.eventId) { openFestivalPanel(source); return; }
+		if (eventId && eventId === visibleFestival?.eventId) { openFestivalPanel(source); return; }
 		clearCampusDirectory();
 		areaMode = 'campus';
 		showCampusBoundaries = true;
@@ -611,8 +613,8 @@
 	}
 
 	function openFestivalPanel(source = 'deep_link') {
-		if (!data.festival) return;
-		track(analyticsEvents.openToday, { source, festival_id: data.festival.id, event_id: data.festival.eventId });
+		if (!visibleFestival) return;
+		track(analyticsEvents.openToday, { source, festival_id: visibleFestival.id, event_id: visibleFestival.eventId });
 		clearCampusDirectory();
 		areaMode = 'campus';
 		sheetMode = 'festival';
@@ -1441,13 +1443,13 @@
 			{campusEventCounts}
 			activeEventId={sheetMode === 'event' ? activeEventId : ''}
 			onEventMarkerClick={handleEventMarkerClick}
-			festival={areaMode === 'campus' && ['home','event','festival'].includes(sheetMode) ? data.festival : null}
+			festival={areaMode === 'campus' && ['home','event','festival'].includes(sheetMode) ? visibleFestival : null}
 			festivalSelected={sheetMode === 'festival'}
 			onFestivalClick={() => openFestivalPanel('home_map_marker')}
 		/>
 
-		{#if sheetMode === 'festival' && data.festival}
-			<div class="absolute inset-x-0 top-0 z-10 flex items-center justify-between bg-white/95 px-5 pt-[calc(12px+env(safe-area-inset-top))] pb-3 text-[12px] text-brand-muted"><span>{data.festival.area.label}{data.festival.area.approximate ? ' · 상세 위치 확인 중' : ''}</span>{#if data.user?.role === 'admin' && !data.festival.preview}<a class="min-h-8 content-center text-brand" href={data.festival.eventId ? `/admin/events/locations?event=${data.festival.eventId}` : '/admin/festival'}>구역 편집</a>{/if}</div>
+		{#if sheetMode === 'festival' && visibleFestival}
+			<div class="absolute inset-x-0 top-0 z-10 flex items-center justify-between bg-white/95 px-5 pt-[calc(12px+env(safe-area-inset-top))] pb-3 text-[12px] text-brand-muted"><span>{visibleFestival.area.label}{visibleFestival.area.approximate ? ' · 상세 위치 확인 중' : ''}</span>{#if data.user?.role === 'admin' && !visibleFestival.preview}<a class="min-h-8 content-center text-brand" href={visibleFestival.eventId ? `/admin/events/locations?event=${visibleFestival.eventId}` : '/admin/festival'}>구역 편집</a>{/if}</div>
 		{/if}
 
 		{#if sheetMode === 'home' || sheetMode === 'outside' || sheetMode === 'facility' || sheetMode === 'campus-facility' || sheetMode === 'event'}
@@ -1560,8 +1562,8 @@
 						</p>
 					</div>
 				{/if}
-			{:else if sheetMode === 'festival' && data.festival}
-				<FestivalPanel festival={data.festival} onClose={closePanel} onExpand={() => setSheetDetent('expanded')} collapsed={sheetDetent === 'collapsed'} />
+			{:else if sheetMode === 'festival' && visibleFestival}
+				<FestivalPanel festival={visibleFestival} onClose={closePanel} onExpand={() => setSheetDetent('expanded')} collapsed={sheetDetent === 'collapsed'} />
 			{:else if sheetMode === 'campus-facility' && campusDirectory && data.campusFacilities}
 				<CampusFacilityPanel facilities={data.campusFacilities} view={campusDirectory} spots={campusSpots}
 					onChange={changeCampusDirectory} onSelect={selectCampusFacility} onBack={() => window.history.back()}
@@ -1569,7 +1571,7 @@
 					collapsed={sheetDetent === 'collapsed'} />
 			{:else if sheetMode === 'event'}
 				<div class="flex min-h-0 flex-1 flex-col">
-					{#if data.festival}<button type="button" class="mb-3 flex w-full items-center justify-between border-b border-brand-border py-3 text-left" onclick={() => openFestivalPanel('event_list')}><span><strong class="block text-[15px] font-bold">{data.festival.name}</strong><span class="mt-1 block text-[12px] text-brand-muted">{data.festival.dates[0]?.label} · 부스와 공연 보기</span></span><ChevronRight size={20} /></button>{/if}
+					{#if visibleFestival}<button type="button" class="mb-3 flex w-full items-center justify-between border-b border-brand-border py-3 text-left" onclick={() => openFestivalPanel('event_list')}><span><strong class="block text-[15px] font-bold">{visibleFestival.name}</strong><span class="mt-1 block text-[12px] text-brand-muted">{visibleFestival.dates[0]?.label} · 부스와 공연 보기</span></span><ChevronRight size={20} /></button>{/if}
 					<div class="mb-2 flex items-start justify-between gap-3"><div class="min-w-0 flex-1"><p class="m-0 text-xs font-bold text-brand-muted">교내 행사 · {visibleEvents.length}개</p><h2 class="m-0 mt-0.5 break-keep text-[18px] font-black leading-6 [overflow-wrap:anywhere]">{activeEvent?.title ?? '행사'}</h2></div><button class="shrink-0 whitespace-nowrap px-1 py-2 text-[13px] font-bold text-brand-muted" type="button" onclick={closePanel}>닫기</button></div>
 					{#if visibleEvents.length > 0}
 						<div bind:this={eventScroller} class="-mx-[18px] flex snap-x snap-mandatory overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" onscroll={handleEventScroll}>

@@ -26,6 +26,7 @@
 	const nextPerformance = $derived(getNextFestivalPerformance(performances, now));
 	const nightPerformances = $derived(festival.performances.filter((item) => item.date === selectedDate?.date && item.session === 'night'));
 	const benefits = $derived(festival.benefits?.filter((item) => item.date === selectedDate?.date && item.sessions.includes(session)) ?? []);
+	const performanceLabel = $derived(festival.performanceLabel ?? '공연');
 	const checkedLabel = $derived(festival.checkedAt ? new Intl.DateTimeFormat('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Seoul' }).format(new Date(festival.checkedAt)) : '');
 	function selectSession(value: FestivalSession) {
 		track(analyticsEvents.selectFestivalSession, { festival_id: festival.id, session: value, date });
@@ -72,7 +73,7 @@
 			<span class="text-right text-[12px] text-brand-muted">{booth ? booth.number ? `${booth.number}번 부스` : '부스 안내' : festival.area.label}</span>
 		</div>
 		<div class="relative grid shrink-0 grid-cols-2 border-b border-brand-border" aria-label="낮과 밤 선택">
-			{#each [{ id: 'day', label: '낮 · 활동' }, { id: 'night', label: '밤 · 부스' }] as tab}
+			{#each [{ id: 'day', label: festival.sessionLabels?.day ?? '낮 · 활동' }, { id: 'night', label: festival.sessionLabels?.night ?? '밤 · 부스' }] as tab}
 				<button type="button" aria-label={tab.label} title={tab.label} aria-pressed={session === tab.id} disabled={Boolean(boothId) && !getFestivalBoothForSession(festival, boothId, tab.id as FestivalSession, selectedDate?.date)} class={`flex h-12 items-center justify-center gap-2 text-[13px] transition-colors duration-200 motion-reduce:transition-none disabled:opacity-30 ${session === tab.id ? 'font-bold text-brand' : 'text-brand-muted'}`} onclick={() => selectSession(tab.id as FestivalSession)}><AppIcon name={tab.id === 'day' ? 'sun' : 'moon'} size={20} />{tab.label}</button>
 			{/each}
 			<span aria-hidden="true" class="absolute bottom-[-1px] left-0 h-0.5 w-1/2 bg-brand transition-transform duration-[250ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none" style:transform={session === 'night' ? 'translateX(100%)' : 'translateX(0)'}></span>
@@ -96,17 +97,17 @@
 				{:else}<div class="py-5"><p class="m-0 text-[13px]">{session === 'night' ? content ? '메뉴와 가격을 준비하고 있어요.' : '밤 운영 여부와 메뉴를 기다리고 있어요.' : '활동 안내를 기다리고 있어요.'}</p><p class="m-0 mt-2 text-[12px] leading-5 text-brand-muted">안내가 확인되면 이곳에 추가할게요.</p></div>{/if}
 				{#if booth.sourceUrl}<a class="inline-flex min-h-11 items-center text-[13px] text-brand-muted underline underline-offset-4" href={booth.sourceUrl}>부스 원문 보기 · 에타</a>{/if}
 			{:else}
-				<p class="m-0 border-b border-brand-border py-3 text-[12px] text-brand-muted">{selectedDate?.hours[session] ?? `${session === 'day' ? '낮' : '밤'} 전체 운영시간 안내 준비 중`}</p>
+				<p class="m-0 border-b border-brand-border py-3 text-[12px] leading-5 text-brand-muted">{festival.hoursLabel ?? selectedDate?.hours[session] ?? `${session === 'day' ? '낮' : '밤'} 전체 운영시간 안내 준비 중`}</p>
 				{#if session === 'night' || performances.length > 0}
-					<section class="gb1-section" aria-label="공연 시간표">
-						<h3 class="m-0 text-[15px] font-bold">공연 시간표</h3>
+					<section class="gb1-section" aria-label={`${performanceLabel} 시간표`}>
+						<h3 class="gb1-section-title m-0">{performanceLabel} 시간표</h3>
 						<p class="m-0 mt-2 text-[12px] leading-5 text-brand-muted">공지된 시간 기준이에요. 현장 진행에 따라 달라질 수 있어요.</p>
 						{#if performances.length}
 							{#each performances as performance}
 								{@const status = getFestivalPerformanceStatus(performance, now)}
 								<div class="grid min-h-14 grid-cols-[7.5em_minmax(0,1fr)] items-start gap-x-4 border-b border-brand-border py-3 text-[13px] leading-5">
-									<strong class="whitespace-nowrap tabular-nums text-brand">{performance.time}{#if nextPerformance?.id === performance.id}<span class="mt-1 block text-[11px] font-normal">다음 공연</span>{:else if status !== 'upcoming'}<span class="mt-1 block text-[11px] font-normal text-brand-muted">{status === 'ongoing' ? '일정상 진행 중' : status === 'ended' ? '일정상 종료' : '시작 시각 지남'}</span>{/if}</strong>
-									<div class="min-w-0 break-keep"><span class="font-bold">{performance.name}</span>{#if performance.kind}<small class="ml-2 text-brand-muted">{performance.kind}</small>{/if}{#if performance.location}<p class="m-0 mt-1 text-[12px] text-brand-muted">{performance.location}</p>{/if}{#if performance.notice}<p class="m-0 mt-1 text-[12px] text-brand-muted">{performance.notice}</p>{/if}{#if performance.sourceUrl}<a class="inline-flex min-h-11 items-center text-[12px] text-brand-muted underline underline-offset-4" href={performance.sourceUrl}>{performance.name} 공연 공지</a>{/if}</div>
+									<strong class="whitespace-nowrap tabular-nums text-brand">{performance.time}{#if nextPerformance?.id === performance.id}<span class="mt-1 block text-[11px] font-normal">다음 일정</span>{:else if status !== 'upcoming'}<span class="mt-1 block text-[11px] font-normal text-brand-muted">{status === 'ongoing' ? '일정상 진행 중' : status === 'ended' ? '일정상 종료' : '시작 시각 지남'}</span>{/if}</strong>
+									<div class="min-w-0 break-keep"><span class="font-bold">{performance.name}</span>{#if performance.kind}<small class="ml-2 text-brand-muted">{performance.kind}</small>{/if}{#if performance.location}<p class="m-0 mt-1 text-[12px] text-brand-muted">{performance.location}</p>{/if}{#if performance.notice}<p class="m-0 mt-1 text-[12px] text-brand-muted">{performance.notice}</p>{/if}{#if performance.sourceUrl}<a class="inline-flex min-h-11 items-center text-[12px] text-brand-muted underline underline-offset-4" href={performance.sourceUrl}>{performance.name} 일정 공지</a>{/if}</div>
 								</div>
 							{/each}
 						{:else}
@@ -115,13 +116,13 @@
 					</section>
 				{/if}
 				<section class="gb1-section" aria-label="부스 목록">
-				<div class="flex items-center justify-between pb-2"><h3 class="m-0 text-[15px] font-bold">{session === 'day' ? '낮에 만나는 부스' : '밤에 만나는 부스'}</h3><span class="text-[12px] text-brand-muted">{booths.length}곳</span></div>
+				<div class="flex items-center justify-between pb-2"><h3 class="gb1-section-title m-0">{session === 'day' ? '낮에 만나는 부스' : '밤에 만나는 부스'}</h3><span class="text-[12px] text-brand-muted">{booths.length}곳</span></div>
 				{#each booths as item}
 					<button type="button" class="flex w-full items-center gap-3 border-b border-brand-border py-4 text-left" onclick={() => openBooth(item.id)}>
 						{#if item.number}<span class="w-7 shrink-0 text-[13px] font-bold tabular-nums text-brand-muted">{item.number}</span>{/if}
 						<span class="min-w-0 flex-1">
 							<strong class="block break-keep text-[15px] font-bold">{item.name}</strong>
-							{#if session === 'night' || item.subtitle}<span class="mt-1 block text-[13px] text-brand-muted">{session === 'day' ? item.subtitle : item.clubName || '운영 단체 확인 중'}</span>{/if}
+							{#if session === 'night' || item.subtitle}<span class="mt-1 block text-[13px] text-brand-muted">{session === 'day' ? item.subtitle : item.clubName || item.subtitle || '운영 단체 확인 중'}</span>{/if}
 							{#if item.location}<span class="mt-2 block break-keep text-[12px] leading-5 text-brand-muted">위치 · {item.location}</span>{/if}
 							{#if item.sessions[session]?.hours && item.sessions[session]?.hours !== selectedDate?.hours[session]}<span class="mt-2 block text-[12px] text-brand-muted">{item.sessions[session]?.hours}</span>{/if}
 						</span>
@@ -131,14 +132,15 @@
 				{#if booths.length === 0}<p class="m-0 py-4 text-[13px] text-brand-muted">이 시간대의 부스 안내를 확인하고 있어요.</p>{/if}
 				</section>
 				{#if session === 'day' && nightPerformances.length}
-					<button type="button" class="flex min-h-14 w-full items-center justify-between border-y border-brand-border py-3 text-left" onclick={() => selectSession('night')}><span><strong class="block text-[13px]">오늘 밤 공연 {nightPerformances.length}팀</strong><span class="mt-1 block text-[12px] text-brand-muted">{nightPerformances.map((item) => `${item.name} ${item.time}`).join(' · ')}</span></span><AppIcon name="chevron" size={20} class="shrink-0 rotate-180 text-brand-muted" /></button>
+					<button type="button" class="flex min-h-14 w-full items-center justify-between gap-3 border-y border-brand-border py-3 text-left" onclick={() => selectSession('night')}><span><strong class="block text-[13px]">오늘 밤 {performanceLabel} {nightPerformances.length}개</strong><span class="mt-1 block text-[12px] leading-5 text-brand-muted">{nightPerformances.map((item) => `${item.name} ${item.time}`).join(' · ')}</span></span><AppIcon name="chevron" size={20} class="shrink-0 rotate-180 text-brand-muted" /></button>
 				{/if}
 				{#if benefits.length}
-					<section class="gb1-section" aria-label="참여 혜택"><h3 class="m-0 text-[15px] font-bold">참여 혜택</h3>
+					<section class="gb1-section" aria-label="참여 혜택"><h3 class="gb1-section-title m-0">참여 혜택</h3>
 						{#each benefits as benefit}<div class="border-b border-brand-border py-4"><div class="flex items-start justify-between gap-3"><strong class="text-[13px]">{benefit.title}</strong>{#if benefit.timeLabel}<span class="shrink-0 text-[12px] font-bold text-brand">{benefit.timeLabel}</span>{/if}</div><p class="m-0 mt-2 text-[13px] leading-6">{benefit.description}</p>{#if benefit.notice}<p class="m-0 mt-2 text-[12px] leading-5 text-brand-muted">{benefit.notice}</p>{/if}{#if benefit.sourceUrl}<a class="inline-flex min-h-11 items-center text-[12px] text-brand-muted underline underline-offset-4" href={benefit.sourceUrl}>{benefit.title} 공지</a>{/if}</div>{/each}
 					</section>
 				{/if}
 				<p class="m-0 pt-5 text-[12px] leading-5 text-brand-muted">{festival.notice ?? (session === 'night' ? '메뉴와 가격은 확인되는 대로 추가할게요.' : '부스 안내는 확인되는 대로 추가할게요.')}</p>
+				{#if festival.posterUrl}<section class="gb1-section" aria-label="행사 포스터"><h3 class="gb1-section-title m-0 mb-4">행사 포스터</h3><img src={festival.posterUrl} alt={`${festival.name} 공식 포스터`} loading="lazy" class="h-auto w-full" /></section>{/if}
 				{#if festival.sourceUrl}<a class="inline-flex min-h-11 items-center text-[13px] text-brand-muted underline underline-offset-4" href={festival.sourceUrl}>축제 공식 공지 · 에타</a>{/if}
 			{/if}
 			{#if checkedLabel}<p class="m-0 mt-2 text-[11px] text-brand-muted">자료 확인 · {checkedLabel}</p>{/if}

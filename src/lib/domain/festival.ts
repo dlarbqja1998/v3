@@ -79,6 +79,10 @@ export type Festival = {
 	notice?: string;
 	preview?: boolean;
 	eventId?: string;
+	hoursLabel?: string;
+	sessionLabels?: Partial<Record<FestivalSession, string>>;
+	performanceLabel?: string;
+	posterUrl?: string;
 };
 
 /** 사용자 제공 행사 자료와 관리자가 확인·저장한 축제 구역. */
@@ -197,9 +201,15 @@ export function getFestivalTodayEntry(festival: Festival, now = new Date()) {
 	if (now.getTime() >= endsAt) return null;
 	return {
 		id: festival.id, title: festival.name, location: festival.area.label,
+		startsAt: new Date(startsAt), endsAt: new Date(endsAt),
 		dateLabel: festival.dates.map((date) => date.label).join(' · '),
-		hoursLabel: festival.dates.length === 1 ? Object.entries(festival.dates[0].hours).map(([session, hours]) => `${session === 'day' ? '낮' : '밤'} ${hours}`).join(' · ') : '',
+		hoursLabel: festival.hoursLabel ?? (festival.dates.length === 1 ? Object.entries(festival.dates[0].hours).map(([session, hours]) => `${session === 'day' ? '낮' : '밤'} ${hours}`).join(' · ') : ''),
 		status: now.getTime() < startsAt ? 'upcoming' as const : 'ongoing' as const,
 		href: '/?panel=festival'
 	};
+}
+
+/** 종료된 축제는 지도 핀·상세·목록에 함께 전달하지 않는다. */
+export function getVisibleFestival(festival: Festival | null | undefined, now = new Date()) {
+	return festival && getFestivalTodayEntry(festival, now) ? festival : null;
 }

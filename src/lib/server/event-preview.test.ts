@@ -31,6 +31,18 @@ beforeEach(() => {
 afterEach(() => vi.useRealTimers());
 
 describe('요청한 행사의 로컬 미리보기', () => {
+	it('오늘 확인한 연구 페스타만 로컬에서 예정 행사로 보여주고 종료 후 숨긴다', async () => {
+		vi.setSystemTime(new Date('2026-10-06T14:30:00+09:00'));
+		const preview = await readLocalEventPreviews(undefined, 'localhost', false);
+		expect(preview).toHaveLength(1);
+		expect(preview[0]).toMatchObject({ locationName: '중앙광장 에코업부스', startsAt: new Date('2026-10-07T10:00:00+09:00'), endsAt: new Date('2026-10-07T17:00:00+09:00') });
+		expect(mocks.candidate).not.toHaveBeenCalled();
+		expect(await readLocalEventPreviews('test', 'golabau.com', true)).toEqual([]);
+		mocks.dev = false;
+		expect(await readLocalEventPreviews(undefined, 'localhost', false)).toEqual([]);
+		mocks.dev = true;
+		expect(await readLocalEventPreviews(undefined, 'localhost', false, new Date('2026-10-07T17:00:01+09:00'))).toEqual([]);
+	});
 	it('홈 지도와 진행 예정, 상세 화면에 같은 일정·핀·대표 이미지를 전달한다', async () => {
 		const request = { url: new URL('http://127.0.0.1:5173/'), locals: { user: { id: 1, role: 'admin' } }, params: { id: candidateId } } as never;
 		const [home, today, detail] = await Promise.all([loadHome(request), loadToday(request), loadDetail(request)]);
