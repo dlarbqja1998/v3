@@ -20,6 +20,7 @@ Thumbs.db
 
 # 비공개 행사 수집 작업 자료
 /.local/event-inbox/
+/.local/dev-server/
 
 # Docs
 *.md
