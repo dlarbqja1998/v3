@@ -1439,7 +1439,7 @@
 	<section
 		bind:this={appShellElement}
 		data-home-app-shell
-		class="home-app-shell relative w-full overflow-hidden bg-brand-surface shadow-[0_24px_60px_rgba(103,16,43,0.18)] md:w-[min(100%,430px)] md:rounded-[28px] md:border md:border-brand-border-strong"
+		class="home-app-shell relative w-full overflow-hidden bg-brand-surface shadow-[0_24px_60px_rgba(103,16,43,0.18)] md:w-[min(100%,430px)] md:border md:border-brand-border-strong"
 		aria-label="골라바유 지도 홈"
 	>
 		<HomeMap

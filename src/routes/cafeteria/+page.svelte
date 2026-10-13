@@ -2,8 +2,8 @@
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import type { SubmitFunction } from '@sveltejs/kit';
-	import { onMount, untrack } from 'svelte';
-	import { ChevronDown, ChevronRight, ChevronUp, Clock3, MapPin, Pencil, Plus, Trash2 } from '@lucide/svelte';
+	import { onMount, tick, untrack } from 'svelte';
+	import { ChevronRight, Pencil, Plus, Trash2 } from '@lucide/svelte';
 	import {
 		createOfferingKey,
 		getWeeklyVoteAvailability,
@@ -13,7 +13,6 @@
 	} from '$lib/domain/cafeteria-feedback';
 
 	import {
-		getCafeteriaOperatingStatus,
 		mergeSavedCafeteriaOperatingHours,
 		type CafeteriaOperatingHour,
 		type ValidCafeteriaOperatingHoursInput
@@ -63,8 +62,10 @@
 		})
 	);
 	let expandedMealId = $state('');
-	let currentTime = $state(new Date());
 	let isOperatingHoursOpen = $state(false);
+	let operatingHoursButton = $state<HTMLButtonElement>();
+	let operatingHoursDialog = $state<HTMLDivElement>();
+	let operatingHoursController: AbortController | undefined;
 	let isEditingOperatingHours = $state(false);
 	let operatingHourDrafts = $state<OperatingHourDraft[]>([]);
 	let operatingHoursPayload = $state('');
@@ -93,15 +94,25 @@
 			null
 	);
 	const activeMeals = $derived(buildMealSections(activeCafeteria, selectedMenuDay));
+	const hasMenuItems = $derived(activeMeals.some((meal) => meal.items.length > 0));
 	const activeOperatingHours = $derived(
 		operatingHours.filter((row) => row.cafeteriaCode === activeCafeteria?.id)
 	);
-	const operatingStatus = $derived(getCafeteriaOperatingStatus(activeOperatingHours, currentTime));
-	const cafeteriaTabWidth = $derived(data.cafeterias.length > 0 ? 100 / data.cafeterias.length : 0);
+	const hasOnlyWeekdayHours = $derived(
+		activeOperatingHours.length > 0 &&
+			activeOperatingHours.every((row) => row.daysOfWeek.every((day) => day >= 1 && day <= 5))
+	);
 	const loginReturnUrl = $derived(
 		`/cafeteria?cafeteria=${encodeURIComponent(activeCafeteria?.id ?? 'jinri')}&day=${encodeURIComponent(activeDayKey)}`
 	);
 	const loginHref = $derived(`/login?next=${encodeURIComponent(loginReturnUrl)}`);
+
+	$effect(() => {
+		if (!isOperatingHoursOpen) return;
+		const previousOverflow = document.body.style.overflow;
+		document.body.style.overflow = 'hidden';
+		return () => { document.body.style.overflow = previousOverflow; };
+	});
 
 	onMount(() => {
 		void loadFeedback();
@@ -109,7 +120,6 @@
 			source: 'cafeteria_page',
 			cafeteria_id: activeCafeteria?.id
 		});
-		const timer = window.setInterval(() => (currentTime = new Date()), 30000);
 		const handleKeydown = (event: KeyboardEvent) => {
 			if (event.key === 'Escape') closeOperatingHours();
 			if (event.key === 'Escape') isLoginPromptOpen = false;
@@ -118,7 +128,7 @@
 		return () => {
 			feedbackController?.abort();
 			feedbackController = undefined;
-			window.clearInterval(timer);
+			operatingHoursController?.abort();
 			if (toastTimer) window.clearTimeout(toastTimer);
 			window.removeEventListener('keydown', handleKeydown);
 		};
@@ -177,31 +187,58 @@
 		isOperatingHoursOpen = true;
 		isEditingOperatingHours = false;
 		operatingHoursError = '';
-		if (!activeCafeteria || operatingHoursLoadedFor === activeCafeteria.id) return;
+		void tick().then(() => operatingHoursDialog?.focus({ preventScroll: true }));
+		const cafeteriaCode = activeCafeteria?.id;
+		if (!cafeteriaCode || operatingHoursLoadedFor === cafeteriaCode) return;
+		operatingHoursController?.abort();
+		const controller = new AbortController();
+		operatingHoursController = controller;
 
 		operatingHoursLoading = true;
 		try {
 			const response = await fetch(
-				`/api/cafeteria/operating-hours?cafeteria=${encodeURIComponent(activeCafeteria.id)}`
+				`/api/cafeteria/operating-hours?cafeteria=${encodeURIComponent(cafeteriaCode)}`,
+				{ signal: controller.signal }
 			);
 			if (!response.ok) throw new Error('운영시간 요청 실패');
 
 			const payload: unknown = await response.json();
 			if (!hasOperatingHours(payload)) throw new Error('운영시간 응답 형식 오류');
 
-			operatingHours = payload.operatingHours;
-			operatingHoursLoadedFor = activeCafeteria.id;
+			if (operatingHoursController === controller) {
+				operatingHours = payload.operatingHours;
+				operatingHoursLoadedFor = cafeteriaCode;
+			}
 		} catch (error) {
+			if (controller.signal.aborted || operatingHoursController !== controller) return;
 			console.error('학식 운영시간을 불러오지 못했습니다.', error);
 			operatingHoursError = '운영시간을 불러오지 못했습니다. 다시 시도해 주세요.';
 		} finally {
-			operatingHoursLoading = false;
+			if (operatingHoursController === controller) operatingHoursLoading = false;
 		}
 	}
 
 	function closeOperatingHours() {
+		if (!isOperatingHoursOpen) return;
 		isOperatingHoursOpen = false;
 		isEditingOperatingHours = false;
+		void tick().then(() => operatingHoursButton?.focus({ preventScroll: true }));
+	}
+
+	function handleOperatingHoursKeydown(event: KeyboardEvent) {
+		if (event.key !== 'Tab' || !operatingHoursDialog) return;
+		const controls = [...operatingHoursDialog.querySelectorAll<HTMLElement>(
+			'button:not(:disabled), input:not([type="hidden"]):not(:disabled), a[href]'
+		)].filter((element) => element.getClientRects().length > 0);
+		const first = controls[0];
+		const last = controls[controls.length - 1];
+		if (event.shiftKey && (document.activeElement === first || document.activeElement === operatingHoursDialog)) {
+			event.preventDefault();
+			last?.focus();
+		} else if (!event.shiftKey && document.activeElement === last) {
+			event.preventDefault();
+			first?.focus();
+		}
 	}
 
 	function startOperatingHoursEdit() {
@@ -382,9 +419,15 @@
 	}
 
 	function getCafeteriaSelectorLabel(cafeteria: CafeteriaPanelItem) {
-		if (cafeteria.id === 'jinri') return '진리관';
-		if (cafeteria.id === 'faculty') return '교직원';
-		return '푸드코트';
+		if (cafeteria.id === 'jinri') return '진리관 학생 식당';
+		if (cafeteria.id === 'faculty') return '미래관 교직원 식당';
+		return cafeteria.name;
+	}
+
+	function getCafeteriaDescription(cafeteria: CafeteriaPanelItem) {
+		if (cafeteria.id === 'jinri') return '진리관 학생 식당의 조식, 중식, 석식 메뉴를 확인할 수 있어요.';
+		if (cafeteria.id === 'faculty') return '미래관 교직원 식당의 중식 메뉴를 확인할 수 있어요.';
+		return cafeteria.description;
 	}
 
 	function hasOperatingHours(value: unknown): value is { operatingHours: CafeteriaOperatingHour[] } {
@@ -413,76 +456,68 @@
 	<meta name="description" content="고려대 세종캠퍼스 학식과 운영시간을 확인하세요." />
 </svelte:head>
 
-<main class="min-h-[100dvh] bg-brand-bg text-brand-text md:grid md:place-items-center md:p-6">
+<main class="cafeteria-screen min-h-[100dvh] bg-brand-bg md:grid md:place-items-center md:p-6" inert={isOperatingHoursOpen}>
 	<section
-		class="relative min-h-[100dvh] w-full bg-brand-surface pb-[calc(var(--bottom-navigation-height)+20px)] shadow-[0_24px_60px_rgba(103,16,43,0.18)] md:min-h-[min(860px,calc(100vh-48px))] md:w-[min(100%,430px)] md:rounded-[28px] md:border md:border-brand-border"
+		class="cafeteria-page relative w-full bg-brand-surface pb-[var(--bottom-navigation-height)] shadow-[0_24px_60px_rgba(103,16,43,0.18)] md:w-[min(100%,430px)] md:border md:border-brand-border"
 		aria-label="학식"
 	>
-		<LifestylePageHeader title="오늘, 학식" closeLabel="학식 닫기" />
-
-		<div class="px-5 py-5">
-			<div class="relative flex border-b border-brand-border" aria-label="식당 선택" data-cafeteria-tabs>
+		<div class="cafeteria-header sticky top-0 z-20 bg-white">
+			<LifestylePageHeader title="학식" closeLabel="학식 닫기" variant="figma" backIconSrc="/cafeteria/back.svg" closeIconSrc="/cafeteria/close.svg" />
+			<div class="flex" aria-label="식당 선택" data-cafeteria-tabs>
 				{#each data.cafeterias as cafeteria, index}
 					<button
-						class={`relative z-10 flex min-h-13 flex-1 items-center justify-center px-1 py-3 text-center text-[15px] outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-brand/25 ${
+						class={`cafeteria-selector flex min-w-0 flex-1 items-end justify-center px-1 text-center text-[14px] outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-brand/25 ${
 							activeCafeteriaIndex === index
-								? 'font-black text-brand'
-								: 'font-bold text-brand-muted'
+								? 'font-semibold text-[#8a1538]'
+								: 'font-medium text-[#9b989e]'
 						}`}
 						type="button"
 						aria-pressed={activeCafeteriaIndex === index}
 						onclick={() => selectCafeteria(index)}
 					>
-						{getCafeteriaSelectorLabel(cafeteria)}
+						<span class="flex max-w-full flex-col items-center gap-2 pt-3">
+							<span class="px-2 leading-[1.2]">{getCafeteriaSelectorLabel(cafeteria)}</span>
+							<span class="h-0.5 w-full rounded-sm bg-current transition-colors duration-300" data-cafeteria-tab-indicator aria-hidden="true"></span>
+						</span>
 					</button>
 				{/each}
-				<span
-					class="pointer-events-none absolute bottom-[-1px] left-0 h-0.5 bg-brand transition-[transform,width] duration-300 ease-out"
-					data-cafeteria-tab-indicator
-					aria-hidden="true"
-					style={`width: ${cafeteriaTabWidth}%; transform: translateX(${activeCafeteriaIndex * 100}%);`}
-				></span>
 			</div>
+		</div>
 
+		<div class="cafeteria-content px-5 py-6">
 			{#if activeCafeteria}
-				<div class="mt-4">
+				<div>
+					<div data-cafeteria-introduction>
+						<h2 class="m-0 py-0.5 text-[18px] font-bold leading-[1.2] text-[#19181a]">{getCafeteriaSelectorLabel(activeCafeteria)}</h2>
+						<p class="m-0 py-0.5 text-[12px] leading-[1.2] text-[#6c6a70]">{getCafeteriaDescription(activeCafeteria)}</p>
+					</div>
+					<div class="cafeteria-utility-row mt-4 flex flex-wrap items-center gap-x-6" data-cafeteria-utility-row>
+						<div class="flex flex-wrap items-center gap-x-6" role="group" aria-label="학식 동작" data-cafeteria-actions>
+							<button class="cafeteria-action flex min-h-11 items-center gap-2 whitespace-nowrap px-1 text-[12px] font-normal leading-[1.2] text-[#8a1538]" type="button" onclick={viewOnMap} data-cafeteria-map-action>
+								<span class="cafeteria-utility-icon cafeteria-map-icon" aria-hidden="true"></span>
+								지도에서 보기
+							</button>
+							<button class="cafeteria-action flex min-h-11 items-center gap-2 whitespace-nowrap px-1 text-[12px] font-normal leading-[1.2] text-[#6c6a70]" type="button" onclick={openOperatingHours} bind:this={operatingHoursButton} aria-haspopup="dialog" aria-expanded={isOperatingHoursOpen} aria-controls="cafeteria-operating-hours">
+								<span class="cafeteria-utility-icon cafeteria-info-icon text-[#9b989e]" aria-hidden="true"></span>
+								운영시간
+							</button>
+						</div>
+					</div>
 					{#if activeCafeteria.source === 'crawler' && activeWeeklyMenu}
-						<div class="grid grid-cols-5 gap-1 py-1" data-cafeteria-day-tabs>
+						<div class="cafeteria-day-tabs mt-4 grid grid-cols-5 gap-2" data-cafeteria-day-tabs>
 							{#each activeWeeklyMenu.days as day}
-								<button class={`grid min-h-12 place-items-center rounded-[10px] px-1 py-1 text-[11px] font-black ${activeDayKey === day.key ? 'text-brand' : 'text-brand-muted'}`} type="button" data-cafeteria-day-key={day.key} onclick={() => selectDay(day.key)}>
-									<span class={`grid h-9 w-9 place-items-center rounded-full text-s leading-none pt-px ${activeDayKey === day.key ? 'bg-brand text-white shadow-sm' : 'text-brand-muted'}`} data-cafeteria-day-label>{day.day}</span>
+								<button class="cafeteria-day-option" class:selected={activeDayKey === day.key} type="button" aria-pressed={activeDayKey === day.key} aria-label={`${formatShortDate(day.date)} (${day.day}) 식단`} data-cafeteria-day-key={day.key} onclick={() => selectDay(day.key)}>
+									<span data-cafeteria-day-label>{day.day}</span>
 								</button>
 							{/each}
 						</div>
 					{/if}
 
-					<div
-						class={`flex min-h-11 items-center ${
-							activeCafeteria.source === 'crawler' && selectedMenuDay
-								? 'justify-between'
-								: 'justify-end'
-						} border-b border-brand-border py-1`}
-						data-cafeteria-utility-row
-					>
 						{#if activeCafeteria.source === 'crawler' && selectedMenuDay}
-							<h2 class="m-0 text-[17px] font-black tracking-[-0.02em]" data-cafeteria-date>
+							<p class="sr-only" data-cafeteria-date>
 								{formatShortDate(selectedMenuDay.date)} ({selectedMenuDay.day})
-							</h2>
+							</p>
 						{/if}
-						<div class="flex shrink-0 items-center gap-1" role="group" aria-label="학식 동작" data-cafeteria-actions>
-							<button
-								class="flex min-h-11 items-center gap-1 whitespace-nowrap px-1.5 text-[13px] font-bold text-brand transition-colors hover:text-brand-deep"
-								type="button"
-								onclick={viewOnMap}
-								data-cafeteria-map-action
-							>
-								<MapPin size={13} strokeWidth={2.4} /> 지도에서 보기 <ChevronRight size={14} strokeWidth={2.4} />
-							</button>
-							<button class="flex min-h-11 items-center gap-1 whitespace-nowrap px-1.5 text-[13px] font-bold text-brand-muted/70" type="button" onclick={openOperatingHours}>
-								<Clock3 size={13} strokeWidth={2.8} /> 운영시간
-							</button>
-						</div>
-					</div>
 
 					{#if activeCafeteria.source === 'crawler' && activeWeeklyMenu}
 						{#if feedbackLoading}
@@ -490,30 +525,27 @@
 						{:else if feedbackError}
 							<p class="py-2 text-[13px] text-brand-muted" role="status">{feedbackError} <button class="underline" type="button" onclick={() => loadFeedback()}>다시 시도</button></p>
 						{/if}
-						<div class="divide-y divide-brand-border" data-cafeteria-meal-list>
+						{#if hasMenuItems}
+						<div class="cafeteria-meal-list mt-4" data-cafeteria-meal-list>
 							{#each activeMeals as meal}
 								{@const isExpanded = expandedMealId === meal.id}
-								<div class={`overflow-hidden transition-colors duration-200 ${isExpanded ? 'bg-brand-map' : ''}`}>
+								<div class="cafeteria-meal-item" class:expanded={isExpanded}>
 									<button
-										class="flex w-full items-center justify-between px-1 py-4 text-left"
+										class="cafeteria-meal-heading"
 										type="button"
 										aria-expanded={isExpanded}
 										aria-controls={`cafeteria-meal-${meal.id}`}
 										aria-label={`${meal.name} 메뉴 ${isExpanded ? '접기' : '펼치기'}`}
 										onclick={() => toggleMeal(meal.id)}
 									>
-										<span class="flex items-center gap-2.5">
-											<span class="h-[18px] w-1 shrink-0 rounded-full bg-brand" data-cafeteria-list-pin aria-hidden="true"></span>
-											<h3 class="m-0 text-[15px] font-bold tracking-[-0.015em]" data-cafeteria-meal-title>{meal.name}</h3>
-										</span>
-										<span class={`grid h-6 w-6 place-items-center rounded-full text-brand-muted transition-colors ${isExpanded ? 'bg-white text-brand' : ''}`} aria-hidden="true">
-											{#if isExpanded}<ChevronUp size={18} strokeWidth={2.8} />{:else}<ChevronDown size={18} strokeWidth={2.8} />{/if}
-										</span>
+										<span class="cafeteria-list-pin" data-cafeteria-list-pin aria-hidden="true"></span>
+										<h3 data-cafeteria-meal-title>{meal.name}</h3>
+										<span class="cafeteria-utility-icon cafeteria-meal-chevron" class:expanded={isExpanded} aria-hidden="true"></span>
 									</button>
 									{#if isExpanded}
-										<div id={`cafeteria-meal-${meal.id}`} class="px-7 pb-4" role="region" aria-label={`${meal.name} 메뉴`}>
+										<div id={`cafeteria-meal-${meal.id}`} role="region" aria-label={`${meal.name} 메뉴`}>
 											{#if meal.items.length > 0}
-												<div class="border-t border-brand-border">
+												<div>
 													{#each meal.items as item}
 														{@const feedbackKey = getMenuFeedbackKey(meal, item)}
 														{@const feedback = cafeteriaFeedback[feedbackKey]}
@@ -532,12 +564,15 @@
 														/>
 													{/each}
 												</div>
-											{:else}<p class="m-0 text-[13px] text-brand-muted">등록된 메뉴가 없습니다.</p>{/if}
+											{:else}<p class="cafeteria-meal-empty">등록된 메뉴가 없습니다.</p>{/if}
 										</div>
 									{/if}
 								</div>
 							{/each}
 						</div>
+						{:else}
+							<p class="cafeteria-empty" data-cafeteria-empty>{selectedMenuDay?.date === activeWeeklyMenu.todayDate ? '오늘은 학식 운영 정보가 없어요' : '선택한 날에는 학식 운영 정보가 없어요'}</p>
+						{/if}
 					{:else if activeCafeteria.source === 'static'}
 						<div class="divide-y divide-brand-border">
 							{#each activeCafeteria.staticVendors ?? [] as vendor}
@@ -553,6 +588,7 @@
 				</div>
 			{/if}
 
+			{#if activeCafeteria?.source === 'static'}
 			<a
 				class="mt-6 flex min-h-14 items-center justify-between border-y border-brand-border py-3 text-[13px] font-bold text-brand-muted transition-colors hover:text-brand"
 				href="/?panel=facility&category=restaurant"
@@ -560,6 +596,7 @@
 				<span>다른 교내 식당 찾기</span>
 				<ChevronRight size={16} strokeWidth={2.4} />
 			</a>
+			{/if}
 		</div>
 
 		<BottomNavigation activeKey="cafeteria" containerClass="fixed inset-x-0 bottom-0 z-40 md:left-1/2 md:w-[min(100%,430px)] md:-translate-x-1/2" isAuthenticated={Boolean(data.user)} />
@@ -602,16 +639,15 @@
 {/if}
 
 {#if isOperatingHoursOpen && activeCafeteria}
-	<div class="fixed inset-0 z-50 grid place-items-end p-0 md:place-items-center md:p-5">
-		<button class="absolute inset-0 bg-black/45" type="button" aria-label="운영시간 닫기" onclick={closeOperatingHours}></button>
-		<div class="relative max-h-[min(78dvh,680px)] w-full overflow-hidden rounded-t-[14px] border-t border-brand-border bg-white md:max-w-[430px] md:rounded-[14px] md:border" role="dialog" aria-modal="true" aria-label={`${activeCafeteria.name} 운영시간`}>
-			<div class="grid h-14 grid-cols-[48px_1fr_48px] items-center border-b border-brand-border px-3">
-				<span aria-hidden="true"></span>
-				<h2 class="m-0 text-center text-[18px] font-black tracking-[-0.02em]">운영시간</h2>
-				<button class="min-h-11 text-right text-[13px] font-bold text-brand-muted" type="button" onclick={closeOperatingHours}>닫기</button>
-			</div>
-			<div class="max-h-[calc(min(78dvh,680px)-56px)] overflow-y-auto px-5 pb-[max(20px,env(safe-area-inset-bottom))] pt-5">
-				<p class="m-0 pb-3 text-[16px] font-black tracking-[-0.015em]">{activeCafeteria.name}</p>
+	<div class="operating-hours-overlay fixed inset-x-0 top-0 z-50 grid place-items-end" data-operating-hours-overlay>
+		<button class="absolute inset-0 bg-[rgba(25,24,26,0.54)]" type="button" aria-label="운영시간 배경 닫기" tabindex="-1" onclick={closeOperatingHours}></button>
+		<div class="operating-hours-sheet relative flex max-h-full w-full flex-col overflow-hidden rounded-t-[20px] bg-white text-[#19181a] outline-none" id="cafeteria-operating-hours" bind:this={operatingHoursDialog} role="dialog" aria-modal="true" aria-labelledby="operating-hours-title" aria-describedby="operating-hours-cafeteria" tabindex="-1" onkeydown={handleOperatingHoursKeydown}>
+			<button class="relative flex h-5 w-full shrink-0 items-start justify-center pt-2 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand/25" type="button" aria-label="운영시간 닫기" onclick={closeOperatingHours} data-operating-hours-handle>
+				<span class="h-1 w-9 rounded-sm bg-[#f0efec]" aria-hidden="true"></span>
+			</button>
+			<div class="min-h-0 overflow-y-auto overscroll-contain px-5 pb-[45px] pt-4">
+				<h2 class="m-0 py-0.5 text-[18px] font-bold leading-[1.2]" id="operating-hours-title">운영 시간</h2>
+				<p class="sr-only" id="operating-hours-cafeteria">{getCafeteriaSelectorLabel(activeCafeteria)}</p>
 				{#if form?.operatingHoursError || operatingHoursError}
 					<p class="m-0 border-y border-[#ecc8cf] py-3 text-[13px] font-bold text-[#a4273f]">{form?.operatingHoursError ?? operatingHoursError}</p>
 				{/if}
@@ -620,10 +656,26 @@
 				{:else if operatingHoursError}
 					<button class="flex min-h-12 w-full items-center justify-between border-b border-brand-border text-left text-[13px] font-bold text-brand" type="button" onclick={openOperatingHours}><span>다시 시도</span><ChevronRight size={15} strokeWidth={2.4} /></button>
 				{:else if !isEditingOperatingHours}
-					<div class="flex min-h-14 items-center justify-between border-y border-brand-border"><span class="text-[13px] text-brand-muted">현재 상태</span><strong class={`text-[15px] ${operatingStatus.kind === 'open' ? 'text-brand' : 'text-brand-muted'}`}>{operatingStatus.label}</strong></div>
 					{#if activeOperatingHours.length > 0}
-						<div class="divide-y divide-brand-border">{#each activeOperatingHours as row}<div class="flex min-h-14 items-center justify-between gap-4"><div><p class="m-0 text-[15px] font-bold">{row.label}</p><p class="m-0 mt-0.5 text-[13px] text-brand-muted">{formatOperatingDays(row.daysOfWeek)}</p></div><strong class="shrink-0 text-[15px] font-bold tabular-nums">{row.opensAt} – {row.closesAt}</strong></div>{/each}</div>
-						<p class="m-0 border-t border-brand-border pt-3 text-[13px] text-brand-muted">학기와 운영 상황에 따라 달라질 수 있어요.</p>
+						<dl class="m-0 mt-4" data-operating-hours-rows>
+							{#each activeOperatingHours as row}
+								<div class="flex min-h-10 items-center justify-between gap-3 py-2.5">
+									<dt class="min-w-0 py-0.5 text-[14px] font-semibold leading-[1.2]">{row.label}
+										{#if !hasOnlyWeekdayHours || row.daysOfWeek.length !== 5}<span class="mt-1 block text-[12px] font-normal text-[#6c6a70]">{formatOperatingDays(row.daysOfWeek)}</span>{/if}
+									</dt>
+									<dd class="m-0 shrink-0 py-0.5 text-[12px] leading-[1.2] tabular-nums">{row.opensAt} – {row.closesAt}</dd>
+								</div>
+							{/each}
+						</dl>
+						<div class="mt-4 px-1">
+							<div class="flex items-center gap-2 rounded-[12px] border border-[#e7e5e7] bg-[#f8f8f6] px-6 py-[9px] text-[13px] leading-[1.4] text-[#9b989e]">
+								<span class="cafeteria-utility-icon cafeteria-info-icon" aria-hidden="true"></span>
+								<div>
+									{#if hasOnlyWeekdayHours}<p class="m-0 font-semibold">주말 및 공휴일 미운영</p>{/if}
+									<p class="m-0">식당 운영 시간은 변경될 수 있습니다</p>
+								</div>
+							</div>
+						</div>
 					{:else}
 						<p class="m-0 border-y border-brand-border py-5 text-[13px] text-brand-muted">운영시간 정보가 아직 없어요.</p>
 					{/if}
@@ -650,3 +702,47 @@
 		</div>
 	</div>
 {/if}
+
+<style>
+	.cafeteria-screen { color: #19181a; font-weight: 400; letter-spacing: 0; }
+	.cafeteria-page { display: flex; flex-direction: column; height: 100dvh; overflow: hidden; }
+	.cafeteria-header { flex-shrink: 0; margin-bottom: 2px; }
+	.cafeteria-content { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; }
+	.cafeteria-content::-webkit-scrollbar { display: none; }
+	/* 전역 입력 요소 리셋보다 피그마의 탭·안내 동작 글자 크기를 우선한다. */
+	.cafeteria-selector { font-size: 14px; }
+	.cafeteria-action { font-size: 12px; line-height: 1.2; }
+	.cafeteria-utility-row { height: 24px; flex-wrap: nowrap; }
+	.cafeteria-utility-row > div { height: 24px; flex-wrap: nowrap; }
+	.cafeteria-day-option { position: relative; display: grid; place-items: center; min-width: 0; height: 40px; padding: 8px; border: 0; border-radius: 20px; background: #f8f8f6; color: #9b989e; font-size: 14px; font-weight: 500; line-height: 24px; }
+	.cafeteria-day-option::before { content: ''; position: absolute; inset: -2px 0; }
+	.cafeteria-day-option.selected { color: white; background: #8a1538; }
+	.cafeteria-day-option:focus-visible, .cafeteria-meal-heading:focus-visible { outline: 2px solid #8a1538; outline-offset: 2px; }
+	.cafeteria-meal-item { overflow: hidden; border-bottom: 1px solid #f0efec; background: white; transition: background-color 200ms; }
+	.cafeteria-meal-item.expanded { background: #f8f8f6; }
+	.cafeteria-meal-heading { display: flex; align-items: center; gap: 16px; width: 100%; min-height: 49px; padding: 14px 18px; border: 0; background: transparent; color: #19181a; text-align: left; }
+	.cafeteria-list-pin { width: 3px; height: 21px; flex-shrink: 0; border-radius: 2px; background: #8a1538; }
+	.expanded .cafeteria-list-pin { background: #f0efec; }
+	.cafeteria-meal-heading h3 { flex: 1; min-width: 0; margin: 0; padding: 2px 0 2px 8px; font-size: 14px; font-weight: 600; line-height: 1.2; }
+	.cafeteria-meal-chevron { color: #9b989e; --cafeteria-icon: url('/cafeteria/chevron-down.svg'); }
+	.cafeteria-meal-chevron.expanded { --cafeteria-icon: url('/cafeteria/chevron-up.svg'); }
+	.cafeteria-meal-empty { margin: 0; padding: 10px 16px 10px 32px; color: #6c6a70; font-size: 14px; line-height: 1.2; }
+	.cafeteria-empty { margin: 0; padding: 40px 16px; color: #9b989e; font-size: 14px; line-height: 1.4; text-align: center; }
+	.cafeteria-utility-icon {
+		display: inline-block;
+		width: 20px;
+		height: 20px;
+		flex-shrink: 0;
+		background-color: currentColor;
+		mask: var(--cafeteria-icon) center / contain no-repeat;
+	}
+	.cafeteria-map-icon { --cafeteria-icon: url('/cafeteria/map.svg'); }
+	.cafeteria-info-icon { --cafeteria-icon: url('/cafeteria/info.svg'); }
+	.operating-hours-overlay { bottom: var(--bottom-navigation-height); }
+	.operating-hours-sheet { max-height: min(680px, calc(100dvh - var(--bottom-navigation-height) - 20px)); }
+	@media (prefers-reduced-motion: reduce) { .cafeteria-meal-item { transition: none; } }
+	@media (min-width: 768px) {
+		.cafeteria-page { height: min(860px, calc(100dvh - 48px)); }
+		.operating-hours-overlay { width: min(100%, 430px); margin-inline: auto; }
+	}
+</style>

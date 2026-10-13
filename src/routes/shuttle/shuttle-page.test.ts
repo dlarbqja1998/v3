@@ -29,7 +29,7 @@ describe('셔틀 페이지', () => {
 		expect(body).toContain('다음 셔틀까지');
 		expect(body).toContain('data-shuttle-timetable');
 		expect(body).toContain('배차 시간표');
-		expect(body).toContain('교통 상황에 따라 출발 시간이 달라질 수 있어요.');
+		expect(body).not.toContain('교통 상황에 따라 출발 시간이 달라질 수 있어요.');
 		expect(body).toContain('오송역 08:30 출발');
 		expect(body).toContain('6번 출구 · 조치원역 경유');
 		expect(body).not.toContain('평일 시간표');
@@ -38,8 +38,8 @@ describe('셔틀 페이지', () => {
 		expect(body).toContain('18:00');
 		expect(body).toContain('오송역 도착');
 		expect(body).toContain('지도에서 보기');
-		expect(body).toContain('h-[18px] w-1');
-		expect(body).toContain('mr-5');
+		expect(body).toContain('shuttle-schedule-indicator');
+		expect(body).toContain('다음 차');
 		expect(body).toContain('/?panel=shuttle&amp;shuttleStop=campus');
 	});
 
@@ -67,5 +67,31 @@ describe('셔틀 페이지', () => {
 		expect(body).toContain('18:00 고려대 출발');
 		expect(body).toContain('오송역 방향');
 		expect(body).not.toContain('18:20 오송역 도착');
+	});
+
+	it.each([
+		['campus', new Date(2026, 9, 14, 20, 40)],
+		['jochewon-station-back', new Date(2026, 9, 14, 20, 50)],
+		['campus', new Date(2026, 9, 16, 18, 40)],
+		['campus', new Date(2026, 9, 18, 21, 10)]
+	])('%s의 마지막 출발 시각부터 다음 날까지의 카운트다운 대신 운행 종료를 표시한다', (stopId, now) => {
+		vi.useFakeTimers();
+		try {
+			vi.setSystemTime(now);
+			const { body } = render(ShuttlePage, { props: { data: { user: null, initialShuttleStopId: stopId } } as never });
+			expect(body).toMatch(/data-shuttle-ended-label[^>]*>운행 종료<\/p>/);
+			expect(body).not.toMatch(/\d+시간(?: \d+분)? 후/);
+			expect(body).toContain('data-shuttle-timetable-list');
+		} finally { vi.useRealTimers(); }
+	});
+
+	it('운행하지 않는 토요일에는 긴 카운트다운 대신 운행 없음을 표시한다', () => {
+		vi.useFakeTimers();
+		try {
+			vi.setSystemTime(new Date(2026, 9, 17, 12, 0));
+			const { body } = render(ShuttlePage, { props: { data: { user: null } } as never });
+			expect(body).toMatch(/data-shuttle-ended-label[^>]*>운행 없음<\/p>/);
+			expect(body).not.toMatch(/\d+시간(?: \d+분)? 후/);
+		} finally { vi.useRealTimers(); }
 	});
 });

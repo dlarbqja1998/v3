@@ -141,10 +141,14 @@
 						{shuttleOperationStatus}
 					</span>
 				</div>
-				{#if nextShuttle}
+				{#if isServiceEnded || !serviceDay}
+					<p class="shuttle-ended-label" data-shuttle-ended-label>{isServiceEnded ? '운행 종료' : '운행 없음'}</p>
+				{:else if nextShuttle}
 					<p class="m-0 mt-2 text-[28px] font-black leading-none tracking-[-0.04em] text-brand">
 						{formatMinutesLeft(nextShuttle.minutesLeft)}
 					</p>
+				{/if}
+				{#if nextShuttle}
 					<p class="m-0 mt-2 text-[11px] font-bold text-brand-muted">
 						{nextShuttle.departureTime} {getStopShortName(nextShuttle.from)} 출발
 						<span class="px-1 text-brand-muted/60">|</span>
@@ -161,10 +165,7 @@
 			</section>
 
 			<section class="pt-5" aria-label="셔틀 배차 시간표" data-shuttle-timetable>
-				<h2 class="m-0 text-[17px] font-black tracking-[-0.02em]">배차 시간표</h2>
-				<p class="m-0 mt-1 text-xs font-bold text-brand-muted/80">
-					교통 상황에 따라 출발 시간이 달라질 수 있어요.
-				</p>
+				<h2 class="shuttle-timetable-title">배차 시간표</h2>
 
 				{#if getShuttleServiceDay(timetableDate) === 'weekday'}
 					{@const osongMorning = shuttleServiceNotices.find((notice) => notice.id === 'weekday-osong-0830')}
@@ -177,32 +178,32 @@
 				{/if}
 
 				{#if timelineSchedules.length > 0}
-					<ul class="m-0 mt-3 max-h-[42dvh] list-none divide-y divide-brand-border overflow-y-auto border-y border-brand-border p-0" data-shuttle-timetable-list>
+					<ul class="shuttle-timetable-list" data-shuttle-timetable-list>
 						{#each timelineSchedules as shuttle}
 							{@const isCurrent = currentShuttle?.id === shuttle.id && !isNextServiceDay}
 							{@const isNext = nextShuttle?.id === shuttle.id}
-							<li class="flex min-h-11 items-center gap-3 py-3 pr-0" data-shuttle-schedule-row>
+							<li class="shuttle-schedule-row" data-shuttle-schedule-row>
 								<span
-									class={`h-[18px] w-1 shrink-0 rounded-full ${
-										isNext ? 'bg-brand' : isCurrent ? 'bg-brand/30' : 'bg-transparent'
-									}`}
+									class="shuttle-schedule-indicator"
+									class:next={isNext}
+									class:current={isCurrent}
 									aria-hidden="true"
 								></span>
 								<div class="min-w-0 flex-1">
 									<div class="flex items-center justify-between gap-2">
 										<div class="flex items-center gap-2">
-											<p class={`m-0 text-[17px] font-black leading-none ${isNext ? 'text-brand' : ''}`}>
+											<p class="shuttle-departure-time">
 												{shuttle.departureTime}
 											</p>
 											{#if shuttle.vehicleCount && shuttle.vehicleCount > 1}
 												<span class="text-[11px] font-bold text-brand-muted" data-shuttle-vehicle-count>{shuttle.vehicleCount}대 운행</span>
 											{/if}
 										</div>
-										<div class="mr-5 shrink-0">
+										<div class="shrink-0">
 											{#if isNext}
-												<span class="text-xs font-black text-brand" data-shuttle-next-label>다음차</span>
+												<span class="shuttle-schedule-badge" data-shuttle-next-label>다음 차</span>
 											{:else if isCurrent}
-												<span class="text-xs font-black text-brand/65" data-shuttle-current-label>운행차</span>
+												<span class="shuttle-schedule-badge current" data-shuttle-current-label>운행차</span>
 											{/if}
 										</div>
 									</div>
@@ -229,3 +230,16 @@
 		/>
 	</section>
 </main>
+
+<style>
+	.shuttle-ended-label { margin: 8px 0 0; padding-block: 2px; color: #8a1538; font-size: 36px; font-weight: 700; line-height: 1.2; letter-spacing: -0.72px; }
+	.shuttle-timetable-title { margin: 0; color: #19181a; font-size: 14px; font-weight: 600; line-height: 1.2; letter-spacing: 0; }
+	.shuttle-timetable-list { max-height: 42dvh; margin: 0; padding: 0; overflow-y: auto; list-style: none; }
+	.shuttle-schedule-row { display: flex; align-items: center; gap: 32px; min-height: 56px; padding: 16px 8px; border-bottom: 1px solid #f0efec; }
+	.shuttle-schedule-indicator { flex-shrink: 0; width: 3px; height: 21px; border-radius: 2px; background: transparent; }
+	.shuttle-schedule-indicator.next { background: #8a1538; }
+	.shuttle-schedule-indicator.current { background: #e2b8c5; }
+	.shuttle-departure-time { margin: 0; padding-block: 2px; color: #19181a; font-size: 16px; font-weight: 600; line-height: 1.2; letter-spacing: 0; }
+	.shuttle-schedule-badge { display: block; padding: 4px 8px; border-radius: 12px; background: #f7eff2; color: #8a1538; font-size: 11px; font-weight: 700; line-height: 16px; }
+	.shuttle-schedule-badge.current { color: #9b989e; background: #f8f8f6; }
+</style>

@@ -54,9 +54,10 @@
 	}
 </script>
 
-<div class="flex min-h-14 items-center justify-between gap-3 border-b border-brand-border py-2.5 last:border-b-0" data-cafeteria-feedback>
-	<div class="min-w-0 flex-1">
-		<p class="m-0 text-[13px] font-bold leading-5 text-brand-text">{menuName}</p>
+<div class="cafeteria-menu-row flex items-center justify-between gap-2" data-cafeteria-feedback>
+	<span class="shrink-0 text-[14px] font-medium leading-[1.2] text-[#6c6a70]" aria-hidden="true">-</span>
+	<div class="min-w-0 flex-1 pl-3">
+		<p class="m-0 py-0.5 text-[14px] font-medium leading-[1.2] text-[#19181a]">{menuName}</p>
 		{#if showCumulative}
 			<p class="m-0 mt-0.5 text-[11px] font-bold leading-4 text-brand-muted">
 				누적 {cumulativeTotal}명 · {cumulativeLikeRate}%가 좋아했어요
@@ -89,3 +90,7 @@
 		</button>
 	</div>
 </div>
+
+<style>
+	.cafeteria-menu-row { min-height: 52px; padding: 10px 16px 10px 32px; }
+</style>

@@ -13,8 +13,8 @@ const weeklyMenu = {
 		key: key as 'mon' | 'tue' | 'wed' | 'thu' | 'fri',
 		date: `2026.08.${24 + index}`,
 		day: ['월', '화', '수', '목', '금'][index],
-		student: { breakfast: [], korean: [], special: [], snack: [], dinner: [] },
-		faculty: { lunch: [], dinner: [] }
+		student: { breakfast: ['쌀밥'], korean: [], special: [], snack: [], dinner: [] },
+		faculty: { lunch: ['교직원 중식'], dinner: [] }
 	}))
 };
 
@@ -26,7 +26,7 @@ describe('학식 식당 탭', () => {
 		expect(appCss).not.toMatch(/button,\s*input,\s*select\s*\{\s*font:\s*inherit;/);
 	});
 
-	it('선택된 식당에 굵은 크림슨 글자와 이동 가능한 밑줄을 표시한다', () => {
+	it('전체 식당 이름과 각 이름 너비의 밑줄로 선택 상태를 표시한다', () => {
 		const { body } = render(CafeteriaPage, {
 			props: {
 				data: {
@@ -42,14 +42,11 @@ describe('학식 식당 탭', () => {
 		});
 
 		expect(body).toContain('data-cafeteria-tabs');
-		expect(body).toContain('text-[15px]');
-		expect(body).toContain('font-black text-brand" type="button" aria-pressed="true">진리관');
-		expect(body).toContain('text-brand');
-		expect(body).toContain('text-brand-muted');
-		expect(body).toContain('font-bold text-brand-muted" type="button" aria-pressed="false">교직원');
+		expect(body).toMatch(/<button[^>]*text-\[14px\][^>]*font-semibold[^>]*aria-pressed="true">[\s\S]*?진리관 학생 식당[\s\S]*?<\/button>/);
+		expect(body).toMatch(/<button[^>]*font-medium[^>]*aria-pressed="false">[\s\S]*?미래관 교직원 식당[\s\S]*?<\/button>/);
 		expect(body).not.toContain('푸드코트');
-		expect(body).toContain('data-cafeteria-tab-indicator');
-		expect(body).toContain('transition-[transform,width] duration-300');
+		expect(body.match(/data-cafeteria-tab-indicator/g)).toHaveLength(2);
+		expect(body).not.toContain('translateX(');
 	});
 
 	it('교직원 식당 링크로 진입하면 교직원 탭을 초기 선택한다', () => {
@@ -68,9 +65,9 @@ describe('학식 식당 탭', () => {
 			} as never
 		});
 
-		expect(body).toContain('font-bold text-brand-muted" type="button" aria-pressed="false">진리관');
-		expect(body).toContain('font-black text-brand" type="button" aria-pressed="true">교직원');
-		expect(body).toContain('transform: translateX(100%);');
+		expect(body).toMatch(/<button[^>]*font-medium[^>]*aria-pressed="false">[\s\S]*?진리관 학생 식당[\s\S]*?<\/button>/);
+		expect(body).toMatch(/<button[^>]*font-semibold[^>]*aria-pressed="true">[\s\S]*?미래관 교직원 식당[\s\S]*?<\/button>/);
+		expect(body).toContain('미래관 교직원 식당의 중식 메뉴를 확인할 수 있어요.');
 	});
 
 	it('교직원 식당은 중식만 표시하고 석식은 표시하지 않는다', () => {
@@ -115,7 +112,8 @@ describe('학식 식당 탭', () => {
 		});
 
 		expect(body).toContain('data-cafeteria-day-key="wed"');
-		expect(body).toMatch(/<h2[^>]*data-cafeteria-date[^>]*>8\.26 \(수\)<\/h2>/);
+		expect(body).toMatch(/<p[^>]*sr-only[^>]*data-cafeteria-date[^>]*>8\.26 \(수\)<\/p>/);
+		expect(body).toMatch(/<button[^>]*selected[^>]*aria-pressed="true"[^>]*data-cafeteria-day-key="wed"/);
 	});
 
 	it('식당 탭은 마우스 선택 때 기본 검은 윤곽선 대신 키보드 포커스 표시만 사용한다', () => {
@@ -130,10 +128,10 @@ describe('학식 식당 탭', () => {
 			} as never
 		});
 
-		expect(body).toMatch(/<button class="[^"]*outline-none[^"]*focus-visible:ring-2[^"]*"[^>]*aria-pressed="true">진리관/);
+		expect(body).toMatch(/<button class="[^"]*outline-none[^"]*focus-visible:ring-2[^"]*"[^>]*aria-pressed="true">[\s\S]*?진리관 학생 식당/);
 	});
 
-	it('날짜 없이 선택한 요일을 작은 글자에 맞는 원의 중앙에 강조한다', () => {
+	it('요일 선택 상태를 알리고 숫자 날짜는 선택 버튼의 접근성 이름으로 제공한다', () => {
 		const { body } = render(CafeteriaPage, {
 			props: {
 				data: {
@@ -147,8 +145,7 @@ describe('학식 식당 탭', () => {
 
 		expect(body).toContain('data-cafeteria-day-tabs');
 		expect(body).toContain('data-cafeteria-day-label');
-		expect(body).toContain('h-9 w-9 place-items-center rounded-full text-s leading-none pt-px');
-		expect(body).toContain('bg-brand text-white shadow-sm" data-cafeteria-day-label');
+		expect(body).toMatch(/<button[^>]*selected[^>]*aria-pressed="true"[^>]*aria-label="8\.24 \(월\) 식단"/);
 		expect(body).not.toContain('data-cafeteria-day-number');
 	});
 
@@ -176,7 +173,7 @@ describe('학식 식당 탭', () => {
 		expect(body).not.toContain('특식 메뉴 펼치기');
 	});
 
-	it('날짜를 식사명보다 높은 문서 위계로 제공하고, 식사 행의 펼침 상태를 안내한다', () => {
+	it('날짜는 보조 안내로 남기고 식사 행의 펼침 상태를 안내한다', () => {
 		const { body } = render(CafeteriaPage, {
 			props: {
 				data: {
@@ -188,7 +185,7 @@ describe('학식 식당 탭', () => {
 			} as never
 		});
 
-		expect(body).toMatch(/<h2[^>]*data-cafeteria-date[^>]*>8\.24 \(월\)<\/h2>/);
+		expect(body).toMatch(/<p[^>]*sr-only[^>]*data-cafeteria-date[^>]*>8\.24 \(월\)<\/p>/);
 		expect(body).toMatch(/<h3[^>]*data-cafeteria-meal-title[^>]*>조식<\/h3>/);
 		expect(body).toContain('data-cafeteria-list-pin');
 		expect(body).toContain('aria-label="조식 메뉴 펼치기"');
@@ -207,11 +204,11 @@ describe('학식 식당 탭', () => {
 			} as never
 		});
 
-		expect(body).toContain('lucide-chevron-down');
+		expect(body).toContain('cafeteria-meal-chevron');
 		expect(body).not.toContain('lucide-plus');
 	});
 
-	it('식당별 메뉴 정보 행에서 지도와 운영시간 동작을 제공한다', () => {
+	it('식당 설명 다음에 지도와 운영시간 동작을 제공한다', () => {
 		const crawlerBody = render(CafeteriaPage, {
 			props: {
 				data: {
@@ -237,15 +234,14 @@ describe('학식 식당 탭', () => {
 			expect(body).toContain('data-cafeteria-utility-row');
 			expect(body).toContain('data-cafeteria-actions');
 			expect(body).toContain('data-cafeteria-map-action');
-			expect(body).toContain('text-[13px] font-bold text-brand');
 			expect(body).toContain('whitespace-nowrap');
-			expect(body).toContain('lucide-chevron-right');
-			expect(body.match(/width="13" height="13"/g)).toHaveLength(2);
+			expect(body).toContain('aria-haspopup="dialog"');
+			expect(body).toContain('aria-controls="cafeteria-operating-hours"');
+			expect(body.indexOf('data-cafeteria-introduction')).toBeLessThan(body.indexOf('data-cafeteria-utility-row'));
 			expect(body).toContain('지도에서 보기');
 			expect(body).toContain('운영시간');
 		}
-		expect(crawlerBody).toContain('items-center justify-between border-b border-brand-border');
-		expect(staticBody).toContain('items-center justify-end border-b border-brand-border');
+		expect(crawlerBody.indexOf('data-cafeteria-actions')).toBeLessThan(crawlerBody.indexOf('data-cafeteria-day-tabs'));
 		expect(crawlerBody).not.toContain('주간 식단');
 		expect(staticBody).not.toContain('상시 메뉴');
 		expect(crawlerBody).not.toContain('메뉴를 눌러 펼쳐보세요');
@@ -260,7 +256,7 @@ describe('학식 식당 탭', () => {
 		});
 
 		expect(body).toContain('data-lifestyle-page-header');
-		expect(body).toContain('오늘, 학식');
+		expect(body).toMatch(/<h1[^>]*>학식<\/h1>/);
 		expect(body).toContain('sticky top-0 z-20');
 	});
 
@@ -268,7 +264,7 @@ describe('학식 식당 탭', () => {
 		const { body } = render(CafeteriaPage, {
 			props: {
 				data: {
-					cafeterias: [{ id: 'jinri', name: '진리관', source: 'crawler', weeklyMenu }],
+					cafeterias: [{ id: 'foodcourt', name: '푸드코트', source: 'static', staticVendors: [] }],
 					canEditOperatingHours: false,
 					user: null
 				},
@@ -278,5 +274,19 @@ describe('학식 식당 탭', () => {
 
 		expect(body).toContain('다른 교내 식당 찾기');
 		expect(body).toContain('href="/?panel=facility&amp;category=restaurant"');
+	});
+
+	it('선택한 날의 메뉴가 모두 비어 있으면 빈 식사 목록 대신 안내를 표시한다', () => {
+		const emptyMenu = {
+			...weeklyMenu,
+			days: weeklyMenu.days.map((day) => ({ ...day, student: { breakfast: [], korean: [], special: [], snack: [], dinner: [] } }))
+		};
+		const { body } = render(CafeteriaPage, {
+			props: { data: { cafeterias: [{ id: 'jinri', name: '진리관', source: 'crawler', weeklyMenu: emptyMenu }], canEditOperatingHours: false, user: null }, form: null } as never
+		});
+		expect(body).toContain('오늘은 학식 운영 정보가 없어요');
+		expect(body).toContain('data-cafeteria-day-tabs');
+		expect(body).not.toContain('data-cafeteria-meal-list');
+		expect(body).not.toContain('다른 교내 식당 찾기');
 	});
 });
