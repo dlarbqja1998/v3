@@ -3,15 +3,18 @@
 	import { ArrowLeft, Plus, RotateCcw, Save } from '@lucide/svelte';
 	import type { CampusCoordinate } from '$lib/domain/campus-spots';
 	import { addBoundaryPoint } from '$lib/map/boundary-editor';
+	import { getCommercialPolygonStyle } from '$lib/map/commercial-polygon';
 	import type { ActionData, PageData } from './$types';
 
-	type EditorMode = 'campus' | 'zone';
+	type EditorMode = 'campus-area' | 'campus' | 'zone';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
 	let editorMode = $state<EditorMode>('campus');
 	let selectedCampusId = $state('');
 	let campusBoundary = $state<CampusCoordinate[]>([]);
+	let campusAreaBoundary = $state<CampusCoordinate[]>([]);
+	let selectedVertex = $state('');
 	let selectedZoneId = $state('');
 	let isCreatingZone = $state(false);
 	let zoneName = $state('');
@@ -26,7 +29,7 @@
 		data.spots.find((spot) => spot.id === selectedCampusId) ?? null
 	);
 	const selectedZone = $derived(data.zones.find((zone) => zone.id === selectedZoneId) ?? null);
-	const boundary = $derived(editorMode === 'campus' ? campusBoundary : zoneBoundary);
+	const boundary = $derived(editorMode === 'campus-area' ? campusAreaBoundary : editorMode === 'campus' ? campusBoundary : zoneBoundary);
 	let appliedServerState = '';
 
 	$effect(() => {
@@ -34,6 +37,7 @@
 			mode: data.initialEditorMode,
 			zoneId: data.initialZoneId,
 			zoneIds: data.zones.map((zone) => zone.id),
+			campusAreaBoundary: data.campusAreaBoundary,
 			form
 		});
 		if (serverState === appliedServerState) return;
@@ -43,7 +47,9 @@
 		const initialZoneId = form?.zoneId ?? data.initialZoneId;
 		const initialZone = data.zones.find((zone) => zone.id === initialZoneId) ?? null;
 
-		editorMode = form?.editorMode === 'zone' ? 'zone' : data.initialEditorMode;
+		editorMode = form?.editorMode ?? data.initialEditorMode;
+		campusAreaBoundary = form?.campusAreaBoundary
+			? parseBoundaryDraft(form.campusAreaBoundary) : data.campusAreaBoundary;
 		selectedCampusId = initialCampusSpot?.id ?? '';
 		campusBoundary = initialCampusSpot?.boundary ?? [];
 		selectedZoneId = formStartsNewZone ? '' : initialZoneId;
@@ -72,6 +78,7 @@
 
 	function switchEditorMode(mode: EditorMode) {
 		editorMode = mode;
+		selectedVertex = '';
 		if (mode === 'zone' && !isCreatingZone && !selectedZoneId && data.zones[0]) {
 			chooseZone(data.zones[0].id);
 			return;
@@ -80,6 +87,7 @@
 	}
 
 	function chooseCampusSpot(event: Event) {
+		selectedVertex = '';
 		selectedCampusId = (event.currentTarget as HTMLSelectElement).value;
 		campusBoundary =
 			data.spots.find((spot) => spot.id === selectedCampusId)?.boundary ?? [];
@@ -87,6 +95,7 @@
 	}
 
 	function chooseZone(id: string) {
+		selectedVertex = '';
 		const zone = data.zones.find((item) => item.id === id);
 		if (!zone) return;
 		isCreatingZone = false;
@@ -97,6 +106,7 @@
 	}
 
 	function startNewZone() {
+		selectedVertex = '';
 		editorMode = 'zone';
 		isCreatingZone = true;
 		selectedZoneId = '';
@@ -106,7 +116,10 @@
 	}
 
 	function resetBoundary() {
-		if (editorMode === 'campus') {
+		selectedVertex = '';
+		if (editorMode === 'campus-area') {
+			campusAreaBoundary = data.campusAreaBoundary;
+		} else if (editorMode === 'campus') {
 			campusBoundary = selectedCampusSpot?.boundary ?? [];
 		} else if (isCreatingZone) {
 			zoneName = '';
@@ -119,8 +132,23 @@
 	}
 
 	function updateBoundary(nextBoundary: CampusCoordinate[]) {
-		if (editorMode === 'campus') campusBoundary = nextBoundary;
+		if (editorMode === 'campus-area') campusAreaBoundary = nextBoundary;
+		else if (editorMode === 'campus') campusBoundary = nextBoundary;
 		else zoneBoundary = nextBoundary;
+	}
+
+	function chooseVertex(event: Event) {
+		selectedVertex = (event.currentTarget as HTMLSelectElement).value;
+		const point = selectedVertex === '' ? undefined : boundary[Number(selectedVertex)];
+		if (point && map && window.naver) {
+			map.panTo(new (window.naver as any).maps.LatLng(point.latitude, point.longitude));
+		}
+	}
+
+	function removeVertex(index: number) {
+		updateBoundary(boundary.filter((_, itemIndex) => itemIndex !== index));
+		selectedVertex = '';
+		renderDrawing(false);
 	}
 
 	async function initializeMap() {
@@ -174,7 +202,8 @@
 				fillOpacity: 0.18,
 				strokeColor: '#8a1538',
 				strokeOpacity: 0.9,
-				strokeWeight: 2
+				strokeWeight: 2,
+				...(editorMode === 'campus-area' ? getCommercialPolygonStyle(true) : {})
 			});
 		}
 		vertexMarkers = boundary.map((point, index) => {
@@ -198,13 +227,18 @@
 					renderDrawing(false);
 				}
 			);
-			naver.maps.Event.addListener(marker, 'rightclick', () => {
-				updateBoundary(boundary.filter((_, itemIndex) => itemIndex !== index));
-				renderDrawing(false);
-			});
+			naver.maps.Event.addListener(marker, 'click', () => { selectedVertex = String(index); });
+			naver.maps.Event.addListener(marker, 'rightclick', () => removeVertex(index));
 			return marker;
 		});
 
+		if (shouldFocus && editorMode === 'campus-area' && boundary.length >= 3) {
+			map.fitBounds(new naver.maps.LatLngBounds(
+				new naver.maps.LatLng(Math.min(...boundary.map(point => point.latitude)), Math.min(...boundary.map(point => point.longitude))),
+				new naver.maps.LatLng(Math.max(...boundary.map(point => point.latitude)), Math.max(...boundary.map(point => point.longitude)))
+			), { top: 56, right: 40, bottom: 40, left: 40 });
+			return;
+		}
 		const focusTarget = editorMode === 'campus' ? selectedCampusSpot?.center : selectedZone?.center;
 		if (shouldFocus && focusTarget) {
 			map.panTo(new naver.maps.LatLng(focusTarget.latitude, focusTarget.longitude));
@@ -266,24 +300,24 @@
 				<h1 class="m-0 mt-1 text-xl font-black">지도 데이터 편집</h1>
 			</div>
 
-			<div class="grid grid-cols-2 gap-2 rounded-[8px] bg-brand-bg p-1">
-				<button
-					class={editorMode === 'campus'
-						? 'rounded-[6px] bg-white px-3 py-2 text-sm font-black text-brand shadow-sm'
-						: 'rounded-[6px] px-3 py-2 text-sm font-bold text-brand-muted'}
-					type="button"
-					onclick={() => switchEditorMode('campus')}>캠퍼스 장소</button
-				>
-				<button
-					class={editorMode === 'zone'
-						? 'rounded-[6px] bg-white px-3 py-2 text-sm font-black text-brand shadow-sm'
-						: 'rounded-[6px] px-3 py-2 text-sm font-bold text-brand-muted'}
-					type="button"
-					onclick={() => switchEditorMode('zone')}>상권 구역</button
-				>
+			<div class="grid grid-cols-3 border-b border-brand-border" aria-label="편집할 구역 종류">
+				{#each [{ id: 'campus-area', label: '캠퍼스 전체' }, { id: 'campus', label: '교내 장소' }, { id: 'zone', label: '교외 구역' }] as mode}
+					<button
+						class="min-h-11 border-b-2 px-1 text-[13px] {editorMode === mode.id ? 'border-brand font-bold text-brand' : 'border-transparent text-brand-muted'}"
+						type="button"
+						aria-pressed={editorMode === mode.id}
+						onclick={() => switchEditorMode(mode.id as EditorMode)}>{mode.label}</button>
+				{/each}
 			</div>
 
-			{#if editorMode === 'campus'}
+			{#if editorMode === 'campus-area'}
+				<div>
+					<h2 class="m-0 text-[16px] font-bold">캠퍼스 전체 경계</h2>
+					<p class="m-0 mt-2 text-[13px] leading-5 text-brand-muted">
+						{data.campusAreaIsDraft ? '건물과 야외 공간을 감싼 자동 초안이에요. 실제 범위에 맞게 점을 조정해 주세요.' : '저장한 경계가 지도 점선과 교내 구역 전환에 적용돼요.'}
+					</p>
+				</div>
+			{:else if editorMode === 'campus'}
 				<label class="grid gap-2 text-sm font-bold">
 					캠퍼스 장소
 					<select
@@ -336,9 +370,16 @@
 			{/if}
 
 			<p class="m-0 text-sm font-bold leading-6 text-brand-muted">
-				지도를 눌러 꼭짓점을 추가하고, 점을 드래그해 조정하세요. 점을 오른쪽 클릭하면 삭제합니다.
+				지도를 눌러 점을 추가하고, 점을 드래그해 조정하세요. 점을 선택해 삭제하거나 오른쪽 클릭으로 지울 수 있어요.
 			</p>
 			<p class="m-0 text-sm font-black text-brand">꼭짓점 {boundary.length}개</p>
+			<div class="flex gap-2">
+				<select class="min-h-11 min-w-0 flex-1 rounded-[8px] border border-brand-border px-3 text-[13px]" aria-label="삭제할 꼭짓점" value={selectedVertex} onchange={chooseVertex}>
+					<option value="">꼭짓점 선택</option>
+					{#each boundary as _, index}<option value={String(index)}>{index + 1}번째 점</option>{/each}
+				</select>
+				<button class="min-h-11 px-3 text-[13px] font-bold text-brand disabled:text-brand-muted disabled:opacity-50" type="button" disabled={selectedVertex === ''} onclick={() => removeVertex(Number(selectedVertex))}>선택 점 삭제</button>
+			</div>
 
 			<button
 				class="flex items-center justify-center gap-2 rounded-[8px] border border-brand-border px-3 py-2.5 text-sm font-black"
@@ -347,10 +388,19 @@
 			>
 				<RotateCcw size={16} />{editorMode === 'zone' && isCreatingZone
 					? '입력 지우기'
-					: '저장된 경계로 되돌리기'}
+					: editorMode === 'campus-area' && data.campusAreaIsDraft ? '자동 초안으로 되돌리기' : '저장된 경계로 되돌리기'}
 			</button>
 
-			{#if editorMode === 'campus'}
+			{#if editorMode === 'campus-area'}
+				<form method="POST" action="?/saveCampusArea" class="grid gap-2">
+					<input type="hidden" name="boundary" value={JSON.stringify(campusAreaBoundary)} />
+					<button class="flex min-h-11 items-center justify-center gap-2 rounded-[8px] bg-brand px-3 py-3 text-[13px] font-bold text-white disabled:opacity-50" type="submit" disabled={campusAreaBoundary.length < 3}>
+						<Save size={16} />캠퍼스 경계 저장
+					</button>
+				</form>
+				{#if form?.campusAreaError}<p class="m-0 text-[13px] text-red-700" role="alert">{form.campusAreaError}</p>{/if}
+				{#if data.campusAreaSaved}<p class="m-0 text-[13px] text-emerald-700" role="status">저장했어요. 홈 지도를 다시 열면 적용돼요.</p>{/if}
+			{:else if editorMode === 'campus'}
 				<form method="POST" action="?/saveCampusSpot" class="grid gap-2">
 					<input type="hidden" name="id" value={selectedCampusId} />
 					<input type="hidden" name="boundary" value={JSON.stringify(campusBoundary)} />

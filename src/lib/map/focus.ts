@@ -81,8 +81,8 @@ export function getAvailableMapMarkerTargetRatio({
 	return Math.min(1, (top + availableMapHeight) / (safeMapHeight * 2));
 }
 
-export function shouldFocusMapArea(activePlaceId: string) {
-	return !activePlaceId;
+export function shouldFocusMapArea(activePlaceId: string, focusCampusSpotId = '', activeEventId = '') {
+	return !activePlaceId && !focusCampusSpotId && !activeEventId;
 }
 
 /** 첫 구역 선택 시 공통 상단과 시트가 가리지 않는 지도 영역을 기준으로 맞춘다. */

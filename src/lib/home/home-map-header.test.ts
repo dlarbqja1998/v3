@@ -18,7 +18,6 @@ const zones = [
 ];
 
 const handlers = {
-	onAreaChange: () => undefined,
 	onSearchOpenChange: () => undefined,
 	onSearchQueryChange: () => undefined
 };
@@ -77,7 +76,7 @@ describe('메인 지도 헤더', () => {
 		expect(body).toContain('aria-label="시설 검색"');
 		expect(body).toContain('/20 icon/search.svg');
 		expect(body).toContain('고려대학교 세종캠퍼스');
-		expect(body).toContain('-rotate-90');
+		expect(body).not.toContain('/20 icon/chevron.svg');
 		expect(body).not.toContain('고대앞');
 	});
 
@@ -122,7 +121,7 @@ describe('메인 지도 헤더', () => {
 		expect(body).toContain('aria-label="지도 구역: 고려대학교 세종캠퍼스"');
 	});
 
-	it('생활권 선택을 기본 select가 아닌 접근 가능한 커스텀 버튼으로 제공한다', () => {
+	it('현재 지도 구역을 드롭다운 없이 접근 가능한 상태 문구로 제공한다', () => {
 		const { body } = render(HomeMapHeader, {
 			props: {
 				zones,
@@ -131,8 +130,10 @@ describe('메인 지도 헤더', () => {
 			}
 		});
 
-		expect(body).toContain('aria-haspopup="listbox"');
-		expect(body).toContain('aria-expanded="false"');
+		expect(body).toContain('role="status"');
+		expect(body).toContain('aria-live="polite"');
+		expect(body).not.toContain('aria-haspopup');
+		expect(body).not.toContain('role="listbox"');
 		expect(body).not.toContain('<select');
 	});
 
@@ -149,7 +150,7 @@ describe('메인 지도 헤더', () => {
 		expect(body).not.toContain('고대앞');
 	});
 
-	it('드롭다운 레이어를 학교 밖 필터칩보다 위에 배치한다', () => {
+	it('상단 헤더를 지도 필터칩보다 위에 배치한다', () => {
 		const { body } = render(HomeMapHeader, {
 			props: {
 				zones,

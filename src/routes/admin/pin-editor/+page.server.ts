@@ -6,6 +6,7 @@ import { createDb } from '$lib/server/db';
 import { placeCategories, places, zones } from '$lib/server/db/schema';
 import { parseFacilityPinInput } from '$lib/server/facility-pin';
 import { toEditableZone } from '$lib/server/zone-editor';
+import { isCampusAreaZone } from '$lib/server/campus-area-boundary';
 import type { Actions, PageServerLoad } from './$types';
 
 function requireAdmin(user: App.Locals['user']) {
@@ -59,7 +60,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 			...category,
 			id: categoryBySlug.get(category.slug)?.id ?? ''
 		})),
-		zones: zoneRows.map(toEditableZone),
+		zones: zoneRows.filter(zone => !isCampusAreaZone(zone)).map(toEditableZone),
 		naverMapClientId: env.NAVER_MAP_CLIENT_ID ?? '',
 		saved: url.searchParams.get('saved') === '1',
 		selectedPinId: url.searchParams.get('pin') ?? ''
@@ -82,7 +83,7 @@ export const actions: Actions = {
 			const zone = await db.query.zones.findFirst({
 				where: eq(zones.id, parsed.value.zoneId!)
 			});
-			if (!zone) return fail(400, { saveError: '선택한 상권 구역을 찾지 못했습니다.' });
+			if (!zone || isCampusAreaZone(zone)) return fail(400, { saveError: '선택한 상권 구역을 찾지 못했습니다.' });
 		}
 
 		const values = {

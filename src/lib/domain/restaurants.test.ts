@@ -78,6 +78,15 @@ describe('한국 날짜와 영업 안내', () => {
 });
 
 describe('교외 미리보기 공개 범위', () => {
+	it('팀 개발 환경과 지정된 개발 도메인이 모두 일치할 때만 배포 미리보기를 연다', () => {
+		expect(isOutsidePreview(false, 'dev.golabau.com', 'development')).toBe(true);
+		for (const appEnv of [undefined, 'production']) {
+			expect(isOutsidePreview(false, 'dev.golabau.com', appEnv)).toBe(false);
+		}
+		for (const host of ['golabau.com', 'dev.golabau.com.example.com', '192.168.0.10']) {
+			expect(isOutsidePreview(false, host, 'development')).toBe(false);
+		}
+	});
 	it('개발 서버의 루프백 주소에서만 열고 배포 환경과 외부 주소에서는 닫는다', () => {
 		for (const host of ['localhost', '127.0.0.1', '[::1]', '::1']) {
 			expect(isOutsidePreview(true, host)).toBe(true);

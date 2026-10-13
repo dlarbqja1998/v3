@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { onMount, tick } from 'svelte';
-	import { fly } from 'svelte/transition';
 	import {
 		buildMapAreaOptions,
 		type CommercialZone
@@ -11,7 +10,6 @@
 	let {
 		zones,
 		selectedAreaId,
-		onAreaChange,
 		searchOpen = false,
 		searchQuery = '',
 		campusDirectorySearch = false,
@@ -21,7 +19,6 @@
 	}: {
 		zones: CommercialZone[];
 		selectedAreaId: string;
-		onAreaChange: (areaId: string) => void;
 		searchOpen?: boolean;
 		searchQuery?: string;
 		campusDirectorySearch?: boolean;
@@ -30,9 +27,6 @@
 		onSearchQueryChange?: (query: string) => void;
 	} = $props();
 
-	let menuOpen = $state(false);
-	let dropdownElement = $state<HTMLDivElement>();
-	let triggerElement = $state<HTMLButtonElement>();
 	let searchInput = $state<HTMLInputElement>();
 	let areaOptions = $derived(buildMapAreaOptions(zones, { outsideEnabled, includeOutsideAll: true }));
 	let selectedArea = $derived(
@@ -56,102 +50,23 @@
 		onSearchOpenChange(false);
 	}
 
-	function getOptionElements() {
-		return Array.from(
-			dropdownElement?.querySelectorAll<HTMLButtonElement>('[role="option"]:not(:disabled)') ?? []
-		);
-	}
-
-	async function openMenu(focus: 'selected' | 'first' | 'last' = 'selected') {
-		menuOpen = true;
-		await tick();
-
-		const options = getOptionElements();
-		const focusTarget =
-			focus === 'first'
-				? options[0]
-				: focus === 'last'
-					? options.at(-1)
-					: options.find((option) => option.getAttribute('aria-selected') === 'true');
-
-		focusTarget?.focus();
-	}
-
-	function closeMenu(restoreFocus = false) {
-		menuOpen = false;
-		if (restoreFocus) triggerElement?.focus();
-	}
-
-	function toggleMenu() {
-		if (menuOpen) {
-			closeMenu();
-			return;
-		}
-
-		void openMenu();
-	}
-
-	function selectArea(areaId: string) {
-		const option = areaOptions.find((candidate) => candidate.id === areaId);
-		if (!option || option.disabled) return;
-		if (areaId !== selectedAreaId) onAreaChange(areaId);
-		closeMenu(true);
-	}
-
-	function handleTriggerKeydown(event: KeyboardEvent) {
-		if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
-
-		event.preventDefault();
-		void openMenu(event.key === 'ArrowDown' ? 'first' : 'last');
-	}
-
-	function handleMenuKeydown(event: KeyboardEvent) {
-		const options = getOptionElements();
-		const currentIndex = options.indexOf(document.activeElement as HTMLButtonElement);
-
-		if (event.key === 'Tab') {
-			closeMenu();
-			return;
-		}
-
-		let nextIndex: number | null = null;
-		if (event.key === 'ArrowDown') nextIndex = (currentIndex + 1) % options.length;
-		if (event.key === 'ArrowUp') nextIndex = (currentIndex - 1 + options.length) % options.length;
-		if (event.key === 'Home') nextIndex = 0;
-		if (event.key === 'End') nextIndex = options.length - 1;
-
-		if (nextIndex === null) return;
-		event.preventDefault();
-		options[nextIndex]?.focus();
-	}
-
 	onMount(() => {
-		function handlePointerDown(event: PointerEvent) {
-			if (menuOpen && dropdownElement && !dropdownElement.contains(event.target as Node)) closeMenu();
-		}
-
 		function handleDocumentKeydown(event: KeyboardEvent) {
-			if (menuOpen && event.key === 'Escape') {
-				event.preventDefault();
-				closeMenu(true);
-			}
 			if (searchOpen && event.key === 'Escape') {
 				event.preventDefault();
 				closeSearch();
 			}
 		}
 
-		document.addEventListener('pointerdown', handlePointerDown);
 		document.addEventListener('keydown', handleDocumentKeydown);
 
 		return () => {
-			document.removeEventListener('pointerdown', handlePointerDown);
 			document.removeEventListener('keydown', handleDocumentKeydown);
 		};
 	});
 </script>
 
-	<header class="pointer-events-auto relative z-30 pt-[env(safe-area-inset-top)]">
+<header class="pointer-events-auto relative z-30 pt-[env(safe-area-inset-top)]">
 	<div class="flex h-14 items-center gap-2 px-5 py-2.5">
 		<img
 			class="h-9 w-9 shrink-0 object-contain"
@@ -189,80 +104,19 @@
 				</button>
 			</div>
 		{:else}
-			<div class="relative min-w-0 flex-1" bind:this={dropdownElement}>
-				<button
-					bind:this={triggerElement}
-					type="button"
-					class="relative z-20 flex h-9 w-full items-center gap-2 rounded-[18px] bg-white px-4 text-center text-[13px] font-medium tracking-[-0.01em] text-brand-text shadow-[0_1px_2px_rgba(25,24,26,0.05)] outline-none transition-colors duration-150 hover:text-brand focus-visible:ring-2 focus-visible:ring-brand/25"
-					aria-label={`지도 구역: ${selectedAreaLabel}`}
-					aria-haspopup="listbox"
-					aria-expanded={menuOpen}
-					aria-controls="home-map-area-listbox"
-					onclick={toggleMenu}
-					onkeydown={handleTriggerKeydown}
-				>
-					<span class="block min-w-0 flex-1 truncate text-center">
-						<span class="min-[390px]:hidden">{selectedAreaShortLabel}</span>
-						<span class="hidden min-[390px]:inline">{selectedAreaLabel}</span>
-					</span>
-					<AppIcon
-						name="chevron"
-						size={20}
-						class={`shrink-0 text-brand-muted transition-transform duration-150 ${menuOpen ? 'rotate-90' : '-rotate-90'}`}
-					/>
-				</button>
-
-				{#if menuOpen}
-					<div
-						id="home-map-area-listbox"
-						class="absolute left-0 top-7 z-10 w-[min(260px,calc(100vw-80px))] max-h-[min(360px,58dvh)] overflow-y-auto rounded-b-[18px] bg-white pt-2 shadow-[0_8px_18px_rgba(25,24,26,0.08)]"
-						role="listbox"
-						tabindex="-1"
-						aria-label="지도 구역 선택"
-						onkeydown={handleMenuKeydown}
-						transition:fly={{ y: -6, duration: 140 }}
-					>
-						{#each areaOptions as option}
-							<button
-								type="button"
-								class={`grid min-h-10 w-full items-center px-4 py-2 text-[13px] tracking-[-0.01em] outline-none transition-colors duration-150 focus-visible:bg-brand-soft focus-visible:ring-inset focus-visible:ring-2 focus-visible:ring-brand/25 ${
-									option.disabled
-										? 'grid-cols-[minmax(0,1fr)_auto] gap-3 text-left'
-										: 'grid-cols-[1fr_auto_1fr] text-center'
-								} ${
-									selectedAreaId === option.id
-										? 'font-medium text-brand'
-										: option.disabled
-											? 'cursor-not-allowed font-medium text-brand-muted'
-											: 'font-medium text-brand-text hover:bg-brand-surface'
-								}`}
-								role="option"
-								aria-selected={selectedAreaId === option.id}
-								aria-disabled={option.disabled}
-								disabled={option.disabled}
-								onclick={() => selectArea(option.id)}
-							>
-								{#if option.disabled}
-									<span class="min-w-0">
-										<span class="block font-medium text-brand-text">{option.name}</span>
-										{#if option.description}
-											<span class="mt-0.5 block break-keep text-[11px] leading-4 text-brand-muted">
-												{option.description}
-											</span>
-										{/if}
-									</span>
-									<span class="shrink-0 justify-self-end rounded-full bg-brand-map px-2 py-1 text-[10px] font-bold text-brand-muted">
-										{option.badge}
-									</span>
-								{:else}
-									<span aria-hidden="true"></span>
-									<span>{option.name}</span>
-									<span aria-hidden="true"></span>
-								{/if}
-							</button>
-						{/each}
-					</div>
-				{/if}
+			<div
+				class="flex h-9 min-w-0 flex-1 items-center justify-center px-1 text-[16px] font-bold tracking-[-0.03em] text-brand-text"
+				role="status"
+				aria-live="polite"
+				aria-atomic="true"
+				aria-label={`지도 구역: ${selectedAreaLabel}`}
+			>
+				{#key selectedAreaId}
+				<span class="area-label min-w-0 truncate">
+					<span class="min-[390px]:hidden">{selectedAreaShortLabel}</span>
+					<span class="hidden min-[390px]:inline">{selectedAreaLabel}</span>
+				</span>
+				{/key}
 			</div>
 
 			<div class="flex shrink-0 items-center gap-2">
@@ -285,3 +139,14 @@
 		{/if}
 	</div>
 </header>
+
+<style>
+	.area-label { animation: area-label-enter 160ms ease-out; }
+	@keyframes area-label-enter {
+		from { opacity: 0; transform: translateY(2px); }
+		to { opacity: 1; transform: translateY(0); }
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.area-label { animation: none; }
+	}
+</style>

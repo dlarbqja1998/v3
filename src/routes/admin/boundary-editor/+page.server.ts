@@ -3,6 +3,9 @@ import { fail, redirect } from '@sveltejs/kit';
 import { asc, eq } from 'drizzle-orm';
 import { createDb } from '$lib/server/db';
 import { campusSpots, zones } from '$lib/server/db/schema';
+import { CAMPUS_AREA_NAME } from '$lib/domain/commercial-zones';
+import { getCampusAreaBoundary } from '$lib/map/campus-area-boundary';
+import { isCampusAreaZone, saveCampusAreaBoundary } from '$lib/server/campus-area-boundary';
 import {
 	getCampusSpotCenter,
 	normalizeCampusBoundary,
@@ -12,6 +15,7 @@ import {
 import {
 	createZoneSlug,
 	isZoneNameTaken,
+	normalizeZoneBoundary,
 	parseZoneEditorInput,
 	toEditableZone
 } from '$lib/server/zone-editor';
@@ -29,14 +33,21 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		db.select().from(campusSpots),
 		db.select().from(zones).orderBy(asc(zones.displayOrder), asc(zones.name))
 	]);
-	const editableZones = zoneRows.map(toEditableZone);
+	const spots = spotRows.map(toCampusSpot);
+	const savedCampusBoundary = normalizeZoneBoundary(zoneRows.find(isCampusAreaZone)?.polygon);
+	const editableZones = zoneRows.filter(zone => !isCampusAreaZone(zone)).map(toEditableZone);
 	const requestedZoneId = url.searchParams.get('zone') ?? '';
+	const requestedMode = url.searchParams.get('mode');
 
 	return {
-		spots: spotRows.map(toCampusSpot),
+		spots,
+		campusAreaBoundary: savedCampusBoundary.length >= 3 ? savedCampusBoundary : getCampusAreaBoundary(spots),
+		campusAreaIsDraft: savedCampusBoundary.length < 3,
+		campusAreaSaved: url.searchParams.get('saved') === 'campus-area',
 		zones: editableZones,
 		naverMapClientId: env.NAVER_MAP_CLIENT_ID ?? '',
-		initialEditorMode: url.searchParams.get('mode') === 'zone' ? ('zone' as const) : ('campus' as const),
+		initialEditorMode: requestedMode === 'campus-area' ? ('campus-area' as const)
+			: requestedMode === 'zone' ? ('zone' as const) : ('campus' as const),
 		initialZoneId: editableZones.some((zone) => zone.id === requestedZoneId)
 			? requestedZoneId
 			: (editableZones[0]?.id ?? ''),
@@ -45,6 +56,27 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 };
 
 export const actions: Actions = {
+	saveCampusArea: async ({ request, locals }) => {
+		requireAdmin(locals.user);
+		const formData = await request.formData();
+		const rawBoundary = formData.get('boundary');
+		const draft = {
+			editorMode: 'campus-area' as const,
+			campusAreaBoundary: typeof rawBoundary === 'string' ? rawBoundary : '[]'
+		};
+		const input = parseZoneEditorInput(CAMPUS_AREA_NAME, rawBoundary);
+		if (!input.ok) return fail(400, { ...draft, campusAreaError: input.message });
+		if (getCampusAreaBoundary([{ boundary: input.boundary }]).length < 3) {
+			return fail(400, { ...draft, campusAreaError: '겹치거나 일직선인 점만으로는 경계를 만들 수 없습니다.' });
+		}
+		try {
+			await saveCampusAreaBoundary(env.DATABASE_URL, input.boundary);
+		} catch (error) {
+			console.error('캠퍼스 전체 경계 저장 실패:', error);
+			return fail(500, { ...draft, campusAreaError: '경계를 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.' });
+		}
+		throw redirect(303, '/admin/boundary-editor?mode=campus-area&saved=campus-area');
+	},
 	saveCampusSpot: async ({ request, locals, platform }) => {
 		requireAdmin(locals.user);
 		const formData = await request.formData();
@@ -137,8 +169,8 @@ export const actions: Actions = {
 		if (!input.ok) return fail(400, { ...draft, zoneError: input.message });
 
 		const db = createDb(env.DATABASE_URL);
-		const existingZones = await db.select({ id: zones.id, name: zones.name }).from(zones);
-		if (!existingZones.some((zone) => zone.id === id)) {
+		const existingZones = await db.select({ id: zones.id, name: zones.name, slug: zones.slug }).from(zones);
+		if (!existingZones.some((zone) => zone.id === id && !isCampusAreaZone(zone))) {
 			return fail(404, { ...draft, zoneError: '수정할 구역을 찾지 못했습니다.' });
 		}
 		if (isZoneNameTaken(existingZones, input.name, id)) {

@@ -3,8 +3,11 @@
 </script>
 
 <script lang="ts">
-	import { onDestroy, onMount } from 'svelte';
-	import type { CampusSpot } from '$lib/domain/campus-spots';
+	import { onDestroy, onMount, untrack } from 'svelte';
+	import type { MapViewport } from './viewport-area';
+	import { createViewportSettler } from './viewport-settler';
+	import { createViewportAnchor } from './viewport-anchor';
+	import type { CampusCoordinate, CampusSpot } from '$lib/domain/campus-spots';
 	import { getStandaloneCampusEvents, type LocatedCampusEvent } from '$lib/domain/event-locations';
 	import { createCampusEventBadge } from './event-marker';
 	import {
@@ -58,6 +61,7 @@
 		focusZoom?: number;
 		focusTargetRatio?: number;
 		campusSpots?: CampusSpot[];
+		campusAreaBoundary?: CampusCoordinate[];
 		activeCampusSpotId?: string;
 		focusCampusSpotId?: string;
 		showCampusBoundaries?: boolean;
@@ -80,6 +84,9 @@
 		selectedOutsidePlaceIds?: string[];
 		topOverlayHeight?: number;
 		bottomOverlayHeight?: number;
+		viewportNavigation?: boolean;
+		followViewport?: boolean;
+		onViewportChange?: (viewport: MapViewport) => void;
 	};
 
 	let {
@@ -92,6 +99,7 @@
 		focusZoom,
 		focusTargetRatio,
 		campusSpots = [],
+		campusAreaBoundary = [],
 		activeCampusSpotId = '',
 		focusCampusSpotId = '',
 		showCampusBoundaries = false,
@@ -113,7 +121,10 @@
 		onOutsideClusterClick,
 		selectedOutsidePlaceIds = [],
 		topOverlayHeight = 108,
-		bottomOverlayHeight = 177
+		bottomOverlayHeight = 177,
+		viewportNavigation = false,
+		followViewport = false,
+		onViewportChange
 	}: Props = $props();
 
 	let mapElement: HTMLDivElement;
@@ -135,6 +146,15 @@
 	let mapInstanceId = $state(0);
 	let loadError = $state('');
 	let lastFocusRequestId = -1;
+	let lastFocusTargetKey = '';
+	let viewportGesture = false;
+	let viewportGestureSequence = 0;
+	const viewportAnchor = createViewportAnchor();
+	let gestureTargetRatio = 0.5;
+	const viewportSettler = createViewportSettler<MapViewport>((viewport) => {
+		viewportGesture = false;
+		if (active && viewportNavigation) onViewportChange?.(viewport);
+	});
 	let mounted = $state(false);
 	let destroyed = false;
 	let initializing = false;
@@ -179,6 +199,7 @@
 
 	$effect(() => {
 		if (!mounted || !active) {
+			cancelViewportChange();
 			if (map) cancelMapMotion(map);
 			return;
 		}
@@ -188,6 +209,7 @@
 
 	onDestroy(() => {
 		destroyed = true;
+		cancelViewportChange();
 		if (map) cancelMapMotion(map);
 		clearMapResize();
 		clearMapListeners();
@@ -203,24 +225,43 @@
 
 	$effect(() => {
 		if (!active || !isReady || !map) return;
-		if (focusRequestId !== lastFocusRequestId) {
-			lastFocusRequestId = focusRequestId;
-			if (focusZoom !== undefined) map.setZoom(focusZoom);
-		}
 		syncMarkers(areaMode === 'outside' ? [] : places, activePlaceId);
 		syncEventMarkers(events, activeEventId);
 		syncCampusSpots(campusSpots, activeCampusSpotId, showCampusBoundaries, areaMode === 'campus' ? campusEventCounts : {});
-		focusActivePlace(places, activePlaceId, focusMode, focusTargetRatio);
-		focusActiveEvent(events, activeEventId, focusMode, focusTargetRatio);
-		focusActiveCampusSpot(campusSpots, focusCampusSpotId, activeCampusSpotId, focusMode);
-		const festivalPoint = festival ? getFestivalMapPoint(festival.area) : null;
-		if (festivalPoint && festivalSelected) {
-			const baseRatio = focusTargetRatio ?? 0.25;
-			const height = mapElement.clientHeight || 844;
-			// 축제 핀 위 제목과 상단 안내가 겹치지 않도록 아래 여백을 확보한다.
-			const ratio = Math.max(0, Math.min(baseRatio * 2 - 16 / height, baseRatio + 44 / height));
-			focusCoordinate(festivalPoint.latitude, festivalPoint.longitude, 'default', ratio);
+	});
+
+	$effect(() => {
+		if (!active || !isReady || !map) return;
+		const targetPlace = places.find(place => place.id === activePlaceId);
+		const targetEvent = events.find(event => event.id === activeEventId);
+		const targetSpot = campusSpots.find(spot => spot.id === focusCampusSpotId);
+		const festivalPoint = festival && festivalSelected ? getFestivalMapPoint(festival.area) : null;
+		const targetKey = JSON.stringify([
+			targetPlace && [targetPlace.id, targetPlace.latitude, targetPlace.longitude],
+			targetEvent && [targetEvent.id, targetEvent.latitude, targetEvent.longitude],
+			targetSpot && [targetSpot.id, targetSpot.center, activeCampusSpotId],
+			festivalPoint, focusMode, focusTargetRatio
+		]);
+		if (focusRequestId === lastFocusRequestId && targetKey === lastFocusTargetKey) return;
+		lastFocusTargetKey = targetKey;
+		if (focusRequestId !== lastFocusRequestId) {
+			lastFocusRequestId = focusRequestId;
+			cancelViewportChange(true);
+			if (focusZoom !== undefined) map.setZoom(focusZoom);
 		}
+		// 구역/마커 목록 갱신은 카메라 이동 요청이 아니다.
+		untrack(() => {
+			focusActivePlace(places, activePlaceId, focusMode, focusTargetRatio);
+			focusActiveEvent(events, activeEventId, focusMode, focusTargetRatio);
+			focusActiveCampusSpot(campusSpots, focusCampusSpotId, activeCampusSpotId, focusMode);
+			if (festivalPoint && festivalSelected) {
+				const baseRatio = focusTargetRatio ?? 0.25;
+				const height = mapElement.clientHeight || 844;
+				// 축제 핀 위 제목과 상단 안내가 겹치지 않도록 아래 여백을 확보한다.
+				const ratio = Math.max(0, Math.min(baseRatio * 2 - 16 / height, baseRatio + 44 / height));
+				focusCoordinate(festivalPoint.latitude, festivalPoint.longitude, 'default', ratio);
+			}
+		});
 	});
 
 	$effect(() => {
@@ -246,17 +287,23 @@
 		if (!active || !isReady || !map) return;
 		syncCommercialZones(areaMode, commercialZones, selectedCommercialZoneId);
 		if (festivalSelected) return;
-		if (!shouldFocusMapArea(activePlaceId)) return;
+		if (!shouldFocusMapArea(activePlaceId, focusCampusSpotId, activeEventId)) return;
 		const areaKey = JSON.stringify([areaMode, selectedCommercialZoneId,
 			commercialZones.map((zone) => [zone.id, zone.center, zone.boundary])]);
+		if (followViewport) {
+			lastAreaKey = areaKey;
+			return;
+		}
 		if (lastAreaKey === areaKey) return;
 		// ResizeObserver가 새 상단 높이를 전달한 다음 첫 위치를 맞춘다.
 		const nextMode = areaMode, nextZones = commercialZones, nextZone = selectedCommercialZoneId;
 		const nextTop = topOverlayHeight, nextBottom = bottomOverlayHeight;
+		const gestureSequence = viewportGestureSequence;
 		let layoutFrame: number | undefined;
 		const frame = requestAnimationFrame(() => {
 			layoutFrame = requestAnimationFrame(() => {
 				lastAreaKey = areaKey;
+				if (gestureSequence !== viewportGestureSequence) return;
 				focusMapArea(nextMode, nextZones, nextZone, nextTop, nextBottom);
 			});
 		});
@@ -361,27 +408,61 @@
 		if (!naver || !map) return;
 
 		mapListeners = [
-			naver.maps.Event.addListener(map, 'idle', keepMapInServiceArea),
-			naver.maps.Event.addListener(map, 'mousedown', () => cancelMapMotion(map)),
-			naver.maps.Event.addListener(map, 'touchstart', () => cancelMapMotion(map)),
-			naver.maps.Event.addListener(map, 'dragstart', () => cancelMapMotion(map)),
+			naver.maps.Event.addListener(map, 'idle', () => {
+				keepMapInServiceArea();
+				// SDK의 확대 애니메이션 도중에는 마커 묶음을 다시 만들지 않는다.
+				mapZoom = Math.round(map.getZoom());
+				if (!active || !viewportNavigation || !viewportGesture) return;
+				const center = map.getCenter();
+				const height = Math.max(1, mapElement.clientHeight);
+				const offset = getSheetAwareLatitudeOffset({ latitude: center.lat(), zoom: map.getZoom(), mapHeight: height, focusMode: 'default', markerTargetRatio: gestureTargetRatio });
+				viewportSettler.schedule({ latitude: center.lat() + offset, longitude: center.lng(), zoom: map.getZoom() });
+			}),
+			naver.maps.Event.addListener(map, 'mousedown', beginViewportGesture),
+			naver.maps.Event.addListener(map, 'touchstart', beginViewportGesture),
+			naver.maps.Event.addListener(map, 'dragstart', markViewportGesture),
+			naver.maps.Event.addListener(map, 'dblclick', markViewportGesture),
 			naver.maps.Event.addListener(map, 'dragend', keepMapInServiceArea),
-			naver.maps.Event.addListener(map, 'zoom_changed', () => { keepZoomInServiceArea(); mapZoom = map.getZoom(); })
+			naver.maps.Event.addListener(map, 'zoom_changed', keepZoomInServiceArea)
 		];
+	}
+
+	function beginViewportGesture() {
+		if (!active || !map) return;
+		cancelViewportChange();
+		cancelMapMotion(map);
+		markViewportGesture();
+	}
+
+	function markViewportGesture() {
+		if (!active || !map) return;
+		viewportGestureSequence += 1;
+		if (!viewportGesture) {
+			gestureTargetRatio = viewportAnchor.resolve({ mapHeight: mapElement.clientHeight, topOverlayHeight, bottomOverlayHeight });
+		}
+		// 휠 이벤트마다 stop()을 호출하면 네이버 지도의 확대·관성 이동까지 끊긴다.
+		viewportSettler.cancel();
+		viewportGesture = true;
+	}
+
+	function cancelViewportChange(resetAnchor = false) {
+		viewportGesture = false;
+		viewportSettler.cancel();
+		if (resetAnchor) viewportAnchor.reset();
 	}
 
 	function keepZoomInServiceArea() {
 		if (!active || !map) return;
 
 		const zoom = map.getZoom();
-		const activeMinZoom = areaMode === 'outside' ? outsideMinZoom : minZoom;
+		const activeMinZoom = viewportNavigation || areaMode === 'outside' ? outsideMinZoom : minZoom;
 		if (zoom < activeMinZoom) map.setZoom(activeMinZoom);
 		if (zoom > maxZoom) map.setZoom(maxZoom);
 		keepMapInServiceArea();
 	}
 
 	function keepMapInServiceArea() {
-		if (!active || areaMode === 'outside') return;
+		if (!active || viewportNavigation || areaMode === 'outside') return;
 		const naver = window.naver;
 		if (!naver || !map) return;
 
@@ -499,26 +580,28 @@
 		nextZones: CommercialZone[],
 		nextSelectedZoneId: string
 	) {
-		const key = JSON.stringify([nextAreaMode, nextZones, nextSelectedZoneId]);
+		const boundary = nextAreaMode === 'campus'
+			? campusAreaBoundary
+			: nextZones.find(zone => zone.id === nextSelectedZoneId)?.boundary ?? [];
+		const key = JSON.stringify(boundary);
 		if (lastCommercialKey === key) return;
 		clearCommercialZones();
 		lastCommercialKey = key;
-		if (nextAreaMode !== 'outside' || !map) return;
+		if (!map || boundary.length < 3) return;
 
 		const naver = window.naver;
 		if (!naver) return;
 
-		for (const zone of nextZones.filter(zone => zone.id === nextSelectedZoneId)) {
-			if (zone.boundary.length < 3) continue;
-			const polygon = new naver.maps.Polygon({
-				map,
-				paths: zone.boundary.map(
-					({ latitude, longitude }) => new naver.maps.LatLng(latitude, longitude)
-				),
-				...getCommercialPolygonStyle(nextSelectedZoneId === zone.id)
-			});
-			commercialPolygons.push(polygon);
-		}
+		const polygon = new naver.maps.Polygon({
+			map,
+			paths: boundary.map(
+				({ latitude, longitude }) => new naver.maps.LatLng(latitude, longitude)
+			),
+			...getCommercialPolygonStyle(true),
+			clickable: false,
+			zIndex: 1
+		});
+		commercialPolygons.push(polygon);
 	}
 
 	function focusMapArea(
@@ -530,6 +613,7 @@
 	) {
 		const naver = window.naver;
 		if (!naver || !map) return;
+		cancelViewportChange(true);
 
 		if (nextAreaMode === 'campus') {
 			map.setCenter(new naver.maps.LatLng(initialCenter.latitude, initialCenter.longitude));
@@ -683,6 +767,7 @@
 	) {
 		const naver = window.naver;
 		if (!naver || !map) return;
+		cancelViewportChange(true);
 
 		const sheetAwareLatitudeOffset = getSheetAwareLatitudeOffset({
 			// 상단 필터의 높이도 화면 중앙 계산에 포함한다.
@@ -803,7 +888,7 @@
 	data-map-attribution-bottom-offset={attributionBottomOffset}
 	style="isolation: isolate; z-index: 0;"
 >
-	<div bind:this={mapElement} class="map-surface h-full w-full"></div>
+	<div bind:this={mapElement} class="map-surface h-full w-full" onwheel={markViewportGesture}></div>
 
 	{#if !clientId || loadError}
 		<div
@@ -828,5 +913,20 @@
 
 	.outside-map :global(img[src*="/styles/basic/"]) {
 		filter: saturate(0.24) brightness(1.035);
+	}
+
+	.map-surface :global([data-outside-cluster]),
+	.map-surface :global(path[style*="stroke-dasharray"]) {
+		animation: map-layer-enter 160ms ease-out;
+	}
+
+	@keyframes map-layer-enter {
+		from { opacity: 0; }
+		to { opacity: 1; }
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.map-surface :global([data-outside-cluster]),
+		.map-surface :global(path[style*="stroke-dasharray"]) { animation: none; }
 	}
 </style>

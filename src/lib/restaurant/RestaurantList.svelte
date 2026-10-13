@@ -1,24 +1,27 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import AppIcon from '$lib/icon/AppIcon.svelte';
 	import { membershipIsActive, type RestaurantSummary } from '$lib/domain/restaurants';
 	import { getOutsideCuisineLabel, outsidePlaceCategoryOptions, type OutsideCuisine, type OutsidePlaceCategory } from '$lib/domain/outside-place-filters';
 	let {
 		restaurants, zoneName, category, cuisine, membershipOnly, query, collapsed,
 		clusterSelected = false, onCollapse, onOpen, onWarm, onReset, onClearCluster,
-		initialScroll = 0
+		initialScroll = 0, resetKey = ''
 	}: {
 		restaurants: RestaurantSummary[]; zoneName: string; category: OutsidePlaceCategory; cuisine: OutsideCuisine;
 		membershipOnly: boolean; query: string; collapsed: boolean; clusterSelected?: boolean;
 		onCollapse: () => void; onOpen: (id: string, scroll: number) => void; onWarm: (id: string) => void; onReset: () => void;
-		onClearCluster: () => void; initialScroll?: number;
+		onClearCluster: () => void; initialScroll?: number; resetKey?: string;
 	} = $props();
 	let scroller = $state<HTMLDivElement>();
 	const heading = $derived(clusterSelected ? '선택 위치 가게' : query ? `‘${query}’ 검색 결과` :
 		category === 'restaurant' && cuisine !== 'all' ? `${getOutsideCuisineLabel(cuisine)}${membershipOnly ? ' · KU멤버십' : ''}` :
 		membershipOnly ? 'KU멤버십 가게' : category === 'all' ? '전체 가게' : outsidePlaceCategoryOptions.find(option => option.value === category)?.label ?? '가게');
-	onMount(()=>{ if(scroller) scroller.scrollTop=initialScroll; });
 	$effect(() => {
+		resetKey;
+		if (scroller) scroller.scrollTop = initialScroll;
+	});
+	$effect(() => {
+		restaurants;
 		if (!scroller || collapsed) return;
 		const rows = scroller.querySelectorAll<HTMLAnchorElement>('[data-restaurant-id]');
 		if (typeof IntersectionObserver === 'undefined') {

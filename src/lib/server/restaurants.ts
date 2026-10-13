@@ -46,7 +46,7 @@ function toSummary(row:SummaryRow,memberships:Record<string,KuMembership>): Rest
 		roadAddress:row.roadAddress??'',todayHours:restaurantTodayHours(row.openingHours as RestaurantOpeningHours|null),membership:memberships[row.id]??null
 	};
 }
-// 공개 조회는 장소와 제휴의 공개 상태를 각각 지킨다. 미공개 검토는 로컬 전용이다.
+// 공개 조회는 장소와 제휴의 공개 상태를 각각 지킨다. 미공개 검토는 로컬·인증된 팀 개발 서버에서만 허용한다.
 export async function readOutsideCatalog(databaseUrl:string, mode: RestaurantReadMode = 'public') {
 	if (!databaseUrl) return { restaurants: [] as RestaurantSummary[], memberships: {} as Record<string, KuMembership> };
 	const db=createDb(databaseUrl);

@@ -39,6 +39,7 @@
 				<a class="menu-row pl-3 pr-1" data-menu-row href="/admin/events"><span>행사 관리</span><ChevronRight size={18} /></a>
 				<a class="menu-row pl-3 pr-1" data-menu-row href="/admin/events/inbox"><span class="flex items-center gap-2">행사 승인함{#if data.pendingEventCount > 0}<span class="text-[12px] font-bold text-brand">새 후보 {data.pendingEventCount}개</span>{/if}</span><ChevronRight size={18} /></a>
 				<a class="menu-row pl-3 pr-1" data-menu-row href="/admin/pin-editor"><span>핀 수정하기</span><ChevronRight size={18} /></a>
+				<a class="menu-row pl-3 pr-1" data-menu-row href="/admin/boundary-editor?mode=campus-area"><span>구역 수정하기</span><ChevronRight size={18} /></a>
 				<a class="menu-row pl-3 pr-1" data-menu-row href="/admin/onboarding-preview"><span>온보딩 미리보기</span><ChevronRight size={18} /></a>
 				<a class="menu-row pl-3 pr-1" data-menu-row href="/admin/notices"><span>공지 관리</span><ChevronRight size={18} /></a>
 				<a class="menu-row pl-3 pr-1" data-menu-row href="/admin/inquiries"><span>문의 관리</span><ChevronRight size={18} /></a>

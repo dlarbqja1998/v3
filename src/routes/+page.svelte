@@ -36,7 +36,6 @@
 	import { formatHomeDate } from '$lib/home/home-date';
 	import {
 		CAMPUS_AREA_ID,
-		changeSelectedMapArea,
 		type MapAreaMode
 	} from '$lib/domain/commercial-zones';
 	import type {
@@ -65,9 +64,11 @@
 	import { track } from '$lib/analytics/posthog.client';
 	import { createSearchTracker } from '$lib/analytics/search-tracker';
 	import { isWeatherSnapshot, type WeatherSnapshot } from '$lib/domain/weather';
-	import { getCampusSpotPanelPresentation, type CampusSpot } from '$lib/domain/campus-spots';
+	import { getCampusSpotPanelPresentation, type CampusCoordinate, type CampusSpot } from '$lib/domain/campus-spots';
 	import { getAvailableMapMarkerTargetRatio, getPlaceFocusZoom } from '$lib/map/focus';
 	import HomeMap from '$lib/map/HomeMap.svelte';
+	import { resolveViewportArea, type MapViewport } from '$lib/map/viewport-area';
+	import { getCampusAreaBoundary } from '$lib/map/campus-area-boundary';
 	import { HOME_MAP_SESSION, type HomeMapSession } from '$lib/map/home-map-session.svelte';
 	import WeatherWidget from '$lib/weather/WeatherWidget.svelte';
 	import ShuttleCountdown from '$lib/shuttle/ShuttleCountdown.svelte';
@@ -152,6 +153,7 @@
 	let selectedZone = $state('all');
 	let areaMode = $state<MapAreaMode>('campus');
 	let selectedMapAreaId = $state(CAMPUS_AREA_ID);
+	let mapAreaFollowsViewport = $state(false);
 	let selectedCommercialZoneId = $state('all');
 	let selectedOutsideCategory = $state<OutsidePlaceCategory>('all');
 	let selectedOutsideCuisine = $state<OutsideCuisine>('all');
@@ -167,6 +169,8 @@
 	let homeFocusRequestId = $state(0);
 	let showCampusBoundaries = $state(DEFAULT_CAMPUS_BOUNDARIES_VISIBLE);
 	let campusSpots = $state<CampusSpot[]>([]);
+	let savedCampusAreaBoundary = $state<CampusCoordinate[]>([]);
+	const campusAreaBoundary = $derived(savedCampusAreaBoundary.length >= 3 ? savedCampusAreaBoundary : getCampusAreaBoundary(campusSpots));
 	let campusSpotsLoading = $state(false);
 	let campusSpotsError = $state('');
 	let campusSpotsRequest: Promise<void> | null = null;
@@ -299,11 +303,24 @@
 	});
 
 	const outsideDirectory = $derived(data.outsideRestaurants ? page.state.outsideDirectory : undefined);
-	const outsideResults = $derived(filterRestaurants(data.outsideRestaurants??[],outsideDirectory??EMPTY_OUTSIDE_VIEW));
-	const outsideMapResults = $derived(filterRestaurants(data.outsideRestaurants ?? [], { ...(outsideDirectory ?? EMPTY_OUTSIDE_VIEW), clusterPlaceIds: undefined }));
+	const outsideCategory = $derived(outsideDirectory?.category ?? 'all');
+	const outsideCuisine = $derived(outsideDirectory?.cuisine ?? 'all');
+	const outsideQuery = $derived(outsideDirectory?.query ?? '');
+	const outsideMembershipOnly = $derived(outsideDirectory?.membershipOnly ?? false);
+	// 구역만 바뀌면 전체 가게의 분류·정렬은 재사용하고 구역 필터만 적용한다.
+	const outsideFilteredRestaurants = $derived(filterRestaurants(data.outsideRestaurants ?? [], {
+		zone: 'all', category: outsideCategory, cuisine: outsideCuisine,
+		query: outsideQuery, membershipOnly: outsideMembershipOnly
+	}));
+	const outsideMapResults = $derived(outsideDirectory?.zone && outsideDirectory.zone !== 'all'
+		? outsideFilteredRestaurants.filter(restaurant => restaurant.place.zoneId === outsideDirectory.zone)
+		: outsideFilteredRestaurants);
+	const outsideResults = $derived(outsideDirectory?.clusterPlaceIds
+		? outsideMapResults.filter(restaurant => outsideDirectory.clusterPlaceIds!.includes(restaurant.place.id))
+		: outsideMapResults);
 	const outsideZoneCounts = $derived.by(() => {
 		const counts: Record<string, number> = {};
-		for (const restaurant of filterRestaurants(data.outsideRestaurants ?? [], { ...(outsideDirectory ?? EMPTY_OUTSIDE_VIEW), zone: 'all', clusterPlaceIds: undefined })) {
+		for (const restaurant of outsideFilteredRestaurants) {
 			if (restaurant.place.zoneId) counts[restaurant.place.zoneId] = (counts[restaurant.place.zoneId] ?? 0) + 1;
 		}
 		return counts;
@@ -318,7 +335,7 @@
 				selectedMapAreaId=view.zone==='all'?'outside-all':view.zone;
 				selectedOutsideCategory=view.category;selectedOutsideCuisine=view.cuisine;facilitySearchQuery=view.query;
 				activePlaceId='';activeCampusSpotId='';focusCampusSpotId='';showCampusBoundaries=false;
-				if(!previousOutside||previousOutside.zone!==view.zone) setSheetDetent(view.expanded?'expanded':view.zone==='all'?'collapsed':'medium');
+				if(!mapAreaFollowsViewport && (!previousOutside||previousOutside.zone!==view.zone)) setSheetDetent(view.expanded?'expanded':view.zone==='all'?'collapsed':'medium');
 			}else if(previousOutside&&sheetMode==='outside'){resetHomeMapArea();closePanel();}
 			previousOutside=view;
 		});
@@ -404,7 +421,7 @@
 		const weatherAbortController = new AbortController();
 		void loadWeather(weatherAbortController.signal);
 
-		if (showCampusBoundaries) void loadCampusSpots();
+		if (showCampusBoundaries || data.outsideRestaurants) void loadCampusSpots();
 
 		if (data.initialFestival) {
 			openFestivalPanel();
@@ -664,6 +681,7 @@
 
 	function openOutsideDirectory(change: Partial<OutsideDirectoryView>={}){
 		if(!data.outsideRestaurants)return;
+		mapAreaFollowsViewport = false;
 		const hadView=Boolean(outsideDirectory);
 		const view={...(outsideDirectory??EMPTY_OUTSIDE_VIEW),...change};
 		if (change.zone && change.zone !== outsideDirectory?.zone && !change.focusPlaceId) view.focusPlaceId = undefined;
@@ -799,8 +817,9 @@
 		try {
 			const response = await fetch('/api/map/campus-spots');
 			if (!response.ok) throw new Error('campus spots request failed');
-			const payload = (await response.json()) as { spots?: CampusSpot[] };
+			const payload = (await response.json()) as { spots?: CampusSpot[]; campusAreaBoundary?: CampusCoordinate[] };
 			campusSpots = Array.isArray(payload.spots) ? payload.spots : [];
+			savedCampusAreaBoundary = Array.isArray(payload.campusAreaBoundary) ? payload.campusAreaBoundary : [];
 			if (campusSpots.length === 0) throw new Error('empty campus spots');
 		} catch {
 			campusSpotsError = '캠퍼스 구역 정보를 불러오지 못했습니다.';
@@ -945,31 +964,46 @@
 		focusCampusSpotId = showCampusBoundaries ? DEFAULT_HOME_CAMPUS_SPOT_ID : '';
 	}
 
-	function selectMapArea(areaId: string) {
-		track(analyticsEvents.selectZone, { area_id: areaId });
-		if(data.outsideRestaurants&&areaId!=='campus'){
-			facilitySearchOpen=false;
-			openOutsideDirectory({zone:areaId==='outside-all'?'all':areaId,clusterPlaceIds:undefined,expanded:false,scrollTop:0});
+	function followMapViewport(viewport: MapViewport) {
+		if (!data.outsideRestaurants || shownRestaurant) return;
+		const areaId = resolveViewportArea(viewport, data.commercialZones, campusSpots, selectedMapAreaId,
+			savedCampusAreaBoundary.length >= 3 ? savedCampusAreaBoundary : undefined);
+		// 지도 이동으로 구역이 바뀌어도 저장된 첫 진입 구도를 다시 적용하지 않는다.
+		mapAreaFollowsViewport = true;
+		focusCampusSpotId = '';
+		if (areaId === selectedMapAreaId) return;
+		selectedMapAreaId = areaId;
+		facilitySearchOpen = false;
+		activePlaceId = '';
+		activeEventId = '';
+		activeCampusSpotId = '';
+		hasSelectedPinFilter = false;
+		if (areaId === CAMPUS_AREA_ID) {
+			sheetMode = 'home';
+			areaMode = 'campus';
+			selectedCommercialZoneId = 'all';
+			selectedFacilityCategory = 'all';
+			facilitySearchQuery = '';
+			showCampusBoundaries = true;
+			clearCampusDirectory();
+			void loadCampusSpots();
 			return;
 		}
-		if(sheetMode==='outside')closePanel();
-		if (sheetMode === 'campus-facility') closePanel();
-		const nextState = changeSelectedMapArea(areaId);
-		selectedMapAreaId = areaId;
-		areaMode = nextState.mode;
-		selectedCommercialZoneId = nextState.selectedZoneId;
-		selectedOutsideCategory = 'all';
-		selectedOutsideCuisine = 'all';
-		if (sheetMode === 'facility') {
-			requestAnimationFrame(() => {
-				activePlaceId = getNextActivePlaceId(facilityPlaces, '');
-				facilityScroller?.scrollTo({ left: 0, behavior: 'instant' });
-				homeFocusRequestId += 1;
-			});
-		}
+		const zone = areaId === 'outside-all' ? 'all' : areaId;
+		sheetMode = 'outside';
+		areaMode = 'outside';
+		selectedCommercialZoneId = zone;
+		showCampusBoundaries = false;
+		// 지도를 끌 때마다 뒤로 가기 기록을 쌓거나 시트를 다시 펼치지 않는다.
+		replaceState('', { ...page.state, campusDirectory: undefined, outsideDirectory: {
+			...(outsideDirectory ?? EMPTY_OUTSIDE_VIEW), zone,
+			clusterPlaceIds: undefined, focusPlaceId: undefined, scrollTop: 0,
+			expanded: sheetDetent === 'expanded'
+		} });
 	}
 
 	function resetHomeMapArea() {
+		mapAreaFollowsViewport = false;
 		const resetState = getHomeMapResetState();
 		selectedMapAreaId = resetState.selectedMapAreaId;
 		areaMode = resetState.areaMode;
@@ -1424,12 +1458,16 @@
 			}
 			focusTargetRatio={placeFocusTargetRatio}
 			campusSpots={campusSpots}
+			{campusAreaBoundary}
 			activeCampusSpotId={activeCampusSpotId}
 			focusCampusSpotId={focusCampusSpotId}
 			showCampusBoundaries={showCampusBoundaries}
 			attributionBottomOffset={areaMode === 'outside' ? bottomNavigationHeight + sheetHeight : mapAttributionBottom}
 			{areaMode}
 			commercialZones={data.commercialZones}
+			viewportNavigation={Boolean(data.outsideRestaurants)}
+			followViewport={mapAreaFollowsViewport}
+			onViewportChange={followMapViewport}
 			{selectedCommercialZoneId}
 			commercialZoneCounts={outsideZoneCounts}
 				onCommercialZoneClick={(zone) => { track(analyticsEvents.selectZone, { zone_id: zone, area_mode: 'outside', source: 'home_map' }); openOutsideDirectory({zone, clusterPlaceIds: undefined, focusPlaceId: undefined, expanded: false, scrollTop: 0}); }}
@@ -1463,7 +1501,6 @@
 			<HomeMapHeader
 				zones={data.commercialZones}
 				selectedAreaId={selectedMapAreaId}
-				onAreaChange={selectMapArea}
 				searchOpen={facilitySearchOpen}
 				searchQuery={facilitySearchQuery}
 				campusDirectorySearch={Boolean(data.campusFacilities) && areaMode === 'campus'}
@@ -1539,12 +1576,11 @@
 				</button>
 
 			{#if sheetMode === 'outside' && outsideDirectory}
-				{#key `${outsideDirectory.zone}|${outsideDirectory.category}|${outsideDirectory.cuisine}|${outsideDirectory.membershipOnly}|${outsideDirectory.query}|${outsideDirectory.clusterPlaceIds?.join(',') ?? ''}`}
 				<RestaurantList restaurants={outsideResults} zoneName={outsideZoneName} membershipOnly={outsideDirectory.membershipOnly} query={outsideDirectory.query}
+					resetKey={JSON.stringify([outsideDirectory.zone, outsideDirectory.category, outsideDirectory.cuisine, outsideDirectory.membershipOnly, outsideDirectory.query, outsideDirectory.clusterPlaceIds])}
 					category={outsideDirectory.category} cuisine={outsideDirectory.cuisine} clusterSelected={Boolean(outsideDirectory.clusterPlaceIds)}
 					collapsed={sheetDetent==='collapsed'} onCollapse={()=>setSheetDetent('collapsed')} onClearCluster={()=>changeOutsideDirectory({clusterPlaceIds:undefined})} onOpen={openRestaurant} onWarm={restaurantCache.warm}
 					onReset={()=>changeOutsideDirectory({...EMPTY_OUTSIDE_VIEW,zone:outsideDirectory.zone})} initialScroll={outsideDirectory.scrollTop??0}/>
-				{/key}
 			{:else if sheetMode === 'home'}
 				<div class="mb-2 flex items-center justify-between gap-4">
 					<h2 class="m-0 text-left text-[18px] font-black leading-5 tracking-[-0.01em]">지금, 고려대학교</h2>

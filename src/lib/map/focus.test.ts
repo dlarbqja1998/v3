@@ -84,4 +84,10 @@ describe('지도 핀 포커스 위치', () => {
 
 		expect(getMapCenterBounds().south).toBeLessThanOrEqual(requiredCenterLatitude);
 	});
+
+	it('교내 장소나 행사 위치를 맞춘 뒤 구역 기본 구도가 다시 덮어쓰지 않는다', () => {
+		expect(mapFocus.shouldFocusMapArea('', 'building-학술정보원')).toBe(false);
+		expect(mapFocus.shouldFocusMapArea('', '', 'campus-event')).toBe(false);
+		expect(mapFocus.shouldFocusMapArea('')).toBe(true);
+	});
 });

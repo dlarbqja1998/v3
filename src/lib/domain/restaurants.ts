@@ -59,6 +59,7 @@ export function filterRestaurants(rows: RestaurantSummary[], view: OutsideDirect
 }
 
 /** 검토 중인 교외 정보는 개발 서버의 루프백 주소에서만 열어 둔다. */
-export function isOutsidePreview(isDev: boolean, hostname: string) {
-	return isDev && ['localhost', '127.0.0.1', '[::1]', '::1'].includes(hostname);
+export function isOutsidePreview(isDev: boolean, hostname: string, appEnv?: string) {
+	return (isDev && ['localhost', '127.0.0.1', '[::1]', '::1'].includes(hostname)) ||
+		(appEnv === 'development' && hostname === 'dev.golabau.com');
 }

@@ -42,7 +42,7 @@ export async function load({ platform, locals, url }) {
 	}
 
 	const databaseUrl = env.DATABASE_URL ?? '';
-	const restaurantMode = isOutsidePreview(dev, url.hostname) ? 'preview' : 'public';
+	const restaurantMode = isOutsidePreview(dev, url.hostname, env.APP_ENV) ? 'preview' : 'public';
 	const [homeData, publicEvents, homeNotice, outsideCatalog, festival, previewEvents] = await Promise.all([
 		// 메뉴가 있는 구형 학식 딥링크는 주간 메뉴가 섞인 결과를 공용 캐시에 넣지 않는다.
 		weeklyMenu ? getHomeData(databaseUrl, weeklyMenu) : readPublicHome(databaseUrl, () => getHomeData(databaseUrl)),
