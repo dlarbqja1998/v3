@@ -9,7 +9,8 @@ describe('공통 온보딩 화면', () => {
 		expect(body).toContain('method="POST"');
 		expect(body).toContain('action="?/checkNickname"');
 		expect(body).toContain('중복 확인');
-		expect(body).toContain('2~10자, 한글/영문/숫자/밑줄(_)만 사용 가능, 공백 및 특수문자 불가합니다.');
+		expect(body).toContain('2~10자의 한글, 영문, 숫자를 사용할 수 있어요');
+		expect(body).toContain('닉네임 중복 확인이 필요해요');
 		expect(body).not.toContain('미리보기 나가기');
 	});
 
@@ -59,6 +60,40 @@ describe('공통 온보딩 화면', () => {
 		});
 
 		expect(body).toContain('value="골라바유"');
-		expect(body).toContain('사용 가능한 닉네임입니다.');
+		expect(body).toContain('사용 가능한 닉네임이에요');
+		expect(body).toContain('닉네임 지우기');
+		expect(body).toMatch(/<button[^>]*nickname-check[^>]*disabled[^>]*>중복 확인/);
+		expect(body).not.toMatch(/<button[^>]*next-button[^>]*disabled/);
+	});
+
+	it('중복 닉네임은 입력값을 유지하면서 재확인과 수정은 허용하고 다음 단계는 막는다', () => {
+		const { body } = render(OnboardingFlow, {
+			props: {
+				mode: 'register',
+				submittedValues: { nickname: '홍길동', college: '', department: '', studentYear: '', gender: '' },
+				nicknameCheck: { nickname: '홍길동', status: 'duplicate', message: '이미 사용 중인 닉네임입니다.' }
+			}
+		});
+		expect(body).toContain('value="홍길동"');
+		expect(body).toContain('이미 사용 중인 닉네임이에요');
+		expect(body).toContain('aria-invalid="true"');
+		expect(body).not.toMatch(/<button[^>]*nickname-check[^>]*disabled/);
+		expect(body).toMatch(/<button[^>]*next-button[^>]*disabled/);
+	});
+
+	it.each([
+		['ㅇㄹㅇㄹ', '완성된 한글'],
+		['가', '2자 이상 10자 이하']
+	])('형식이 맞지 않는 닉네임 %s의 버튼 비활성 이유를 표시한다', (nickname, reason) => {
+		const { body } = render(OnboardingFlow, {
+			props: {
+				mode: 'preview',
+				submittedValues: { nickname, college: '', department: '', studentYear: '', gender: '' }
+			}
+		});
+		expect(body).toContain(reason);
+		expect(body).toContain('aria-invalid="true"');
+		expect(body).toMatch(/<button[^>]*nickname-check[^>]*disabled/);
+		expect(body).toMatch(/<button[^>]*next-button[^>]*disabled/);
 	});
 });

@@ -95,7 +95,7 @@ export function validateNickname(nickname: string) {
 	}
 
 	if (!/^[가-힣A-Za-z0-9_]+$/.test(nickname)) {
-		return '닉네임은 한글, 영문, 숫자, 밑줄(_)만 사용할 수 있어요.';
+		return '닉네임은 완성된 한글, 영문, 숫자, 밑줄(_)만 사용할 수 있어요.';
 	}
 
 	return null;

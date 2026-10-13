@@ -26,6 +26,6 @@ describe('관리자 온보딩 미리보기 화면', () => {
 		});
 
 		expect(body).toContain('value="골라바유"');
-		expect(body).toContain('사용 가능한 닉네임입니다.');
+		expect(body).toContain('사용 가능한 닉네임이에요');
 	});
 });

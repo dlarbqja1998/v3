@@ -46,6 +46,9 @@ describe('하이브리드 온보딩', () => {
 		expect(validateOnboardingInput({ ...baseInput, nickname: ' 골라바유' }).ok).toBe(false);
 		expect(validateOnboardingInput({ ...baseInput, nickname: '골라 바유' }).ok).toBe(false);
 		expect(validateOnboardingInput({ ...baseInput, nickname: '골라바유!' }).ok).toBe(false);
+		const jamoNickname = validateOnboardingInput({ ...baseInput, nickname: 'ㅇㄹㅇㄹ' });
+		expect(jamoNickname.ok).toBe(false);
+		if (!jamoNickname.ok) expect(jamoNickname.message).toContain('완성된 한글');
 	});
 
 	it('단과대에 맞는 학과 목록을 반환하고 그 외 항목을 지원한다', () => {

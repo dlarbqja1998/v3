@@ -3,16 +3,10 @@
 @source './lib/**/*.{svelte,ts}';
 
 @font-face {
-	font-family: 'LineSeed';
-	src: url('/fonts/LINESeedKR-Rg.woff2') format('woff2');
-	font-weight: 400;
-	font-display: swap;
-}
-
-@font-face {
-	font-family: 'LineSeed';
-	src: url('/fonts/LINESeedKR-Bd.woff2') format('woff2');
-	font-weight: 700;
+	font-family: 'Pretendard';
+	src: url('/fonts/PretendardVariable.woff2') format('woff2');
+	font-weight: 100 900;
+	font-style: normal;
 	font-display: swap;
 }
 
@@ -33,7 +27,7 @@
 
 :root {
 	font-family:
-		'LineSeed', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif;
+		'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif;
 	color: var(--color-brand-text);
 	background: var(--color-brand-bg);
 	--bottom-navigation-height: calc(65px + max(8px, env(safe-area-inset-bottom)));
