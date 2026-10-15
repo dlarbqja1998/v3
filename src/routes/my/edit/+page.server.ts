@@ -2,7 +2,7 @@ import { env } from '$env/dynamic/private';
 import { fail, redirect } from '@sveltejs/kit';
 import { and, eq, ne } from 'drizzle-orm';
 import type { Actions, PageServerLoad } from './$types';
-import { validateOnboardingInput } from '$lib/domain/onboarding';
+import { normalizeOnboardingInput, validateOnboardingInput } from '$lib/domain/onboarding';
 import { createDb } from '$lib/server/db';
 import { users } from '$lib/server/db/schema';
 
@@ -13,13 +13,13 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 	return {
 		user: locals.user,
-		values: {
+		values: normalizeOnboardingInput({
 			nickname: locals.user.nickname ?? '',
 			college: locals.user.college ?? '',
 			department: locals.user.department ?? '',
 			studentYear: locals.user.grade ?? '',
 			gender: locals.user.gender ?? ''
-		}
+		})
 	};
 };
 
@@ -35,13 +35,16 @@ export const actions: Actions = {
 		}
 
 		const data = await request.formData();
-		const result = validateOnboardingInput({
-			nickname: data.get('nickname')?.toString() ?? '',
-			college: data.get('college')?.toString() ?? '',
-			department: data.get('department')?.toString() ?? '',
-			studentYear: data.get('studentYear')?.toString() ?? '',
-			gender: data.get('gender')?.toString() ?? ''
-		});
+		const result = validateOnboardingInput(
+			{
+				nickname: data.get('nickname')?.toString() ?? '',
+				college: data.get('college')?.toString() ?? '',
+				department: data.get('department')?.toString() ?? '',
+				studentYear: data.get('studentYear')?.toString() ?? '',
+				gender: data.get('gender')?.toString() ?? ''
+			},
+			{ college: locals.user.college ?? '', department: locals.user.department ?? '' }
+		);
 
 		if (!result.ok) {
 			return fail(400, { message: result.message, values: result.value });

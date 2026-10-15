@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+	buildCollegeOptions,
 	buildDepartmentOptions,
 	normalizeOnboardingInput,
 	validateOnboardingInput
@@ -54,5 +55,37 @@ describe('하이브리드 온보딩', () => {
 	it('단과대에 맞는 학과 목록을 반환하고 그 외 항목을 지원한다', () => {
 		expect(buildDepartmentOptions('과학기술대학')).toContain('컴퓨터소프트웨어학과');
 		expect(buildDepartmentOptions('그 외')).toEqual(['그 외']);
+	});
+
+	it('기존 오타로 저장된 학과도 정정한 선택지와 일치하고 중복 항목을 만들지 않는다', () => {
+		const saved = { college: '문화스포츠대학', department: '국제스포츠학부 문화유산융합학부' };
+		const input = { nickname: '참살이', ...saved, studentYear: '26학번', gender: 'unknown' };
+		const result = validateOnboardingInput(input, saved);
+
+		expect(result).toMatchObject({ ok: true, value: { department: '문화유산융합학부' } });
+		expect(buildDepartmentOptions(saved.college, saved)).toEqual(buildDepartmentOptions(saved.college));
+	});
+
+	it.each([
+		{ college: '글로벌비즈니스대학', department: '글로벌학부 독일학전공' },
+		{ college: '문화스포츠대학', department: '국제스포츠학부' },
+		{ college: '크림슨산학융합원(관)', department: '크림슨산학융합원' }
+	])('기존 회원의 $department 소속은 유지하되 신규 선택으로는 허용하지 않는다', (saved) => {
+		const input = { nickname: '참살이', ...saved, studentYear: '26학번', gender: 'unknown' };
+
+		expect(validateOnboardingInput(input).ok).toBe(false);
+		expect(validateOnboardingInput(input, saved)).toEqual({ ok: true, value: input });
+		expect(buildCollegeOptions(saved)).toContain(saved.college);
+		expect(buildDepartmentOptions(saved.college, saved)).toContain(saved.department);
+		expect(buildDepartmentOptions(saved.college)).not.toContain(saved.department);
+	});
+
+	it('기존 소속 보존으로 다른 단과대나 임의 학과를 선택할 수는 없다', () => {
+		const saved = { college: '글로벌비즈니스대학', department: '글로벌학부 독일학전공' };
+		const input = { nickname: '참살이', ...saved, studentYear: '26학번', gender: 'unknown' };
+
+		expect(validateOnboardingInput({ ...input, college: '문화스포츠대학' }, saved).ok).toBe(false);
+		expect(validateOnboardingInput({ ...input, department: '임의학과' }, saved).ok).toBe(false);
+		expect(buildDepartmentOptions('문화스포츠대학', saved)).not.toContain(saved.department);
 	});
 });

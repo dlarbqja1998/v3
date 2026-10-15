@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { Check, ChevronLeft } from '@lucide/svelte';
 	import {
+		buildCollegeOptions,
 		buildDepartmentOptions,
-		collegeOptions,
 		genderOptions,
 		studentYearOptions,
 		type OnboardingInput
@@ -20,7 +20,8 @@
 	let department = $state('');
 	let studentYear = $state('');
 	let gender = $state('');
-	let departments = $derived(college ? buildDepartmentOptions(college) : []);
+	let colleges = $derived(buildCollegeOptions(data.values));
+	let departments = $derived(college ? buildDepartmentOptions(college, data.values) : []);
 
 	$effect(() => {
 		nickname = submittedValues.nickname;
@@ -94,7 +95,7 @@
 						name="college"
 					>
 						<option value="">선택</option>
-						{#each collegeOptions as option}
+						{#each colleges as option}
 							<option value={option}>{option}</option>
 						{/each}
 					</select>

@@ -1,8 +1,8 @@
 export const universityData: Record<string, string[]> = {
 	공공정책대학: [
 		'경제통계학부 경제정책학전공',
-		'공공사회통일외교학부 공공사회학전공',
-		'공공사회통일외교학부 통일외교안보전공',
+		'공공사회·통일외교학부 공공사회학전공',
+		'공공사회·통일외교학부 통일외교안보전공',
 		'빅데이터사이언스학부',
 		'정부행정학부'
 	],
@@ -14,9 +14,9 @@ export const universityData: Record<string, string[]> = {
 		'스마트에코시티 융합전공',
 		'식품생명공학과',
 		'신소재화학과',
-		'응용수리과학부 데이터계산학과전공',
+		'응용수리과학부 데이터계산과학전공',
 		'인공지능사이버보안학과',
-		'전자기계융합공학과',
+		'전자·기계융합공학과',
 		'전자및정보공학과',
 		'지능형반도체공학과',
 		'첨단반도체공정장비 융합전공',
@@ -24,25 +24,23 @@ export const universityData: Record<string, string[]> = {
 		'환경시스템공학과'
 	],
 	글로벌비즈니스대학: [
-		'글로벌학부 독일학전공',
 		'글로벌학부 영미학전공',
 		'글로벌학부 중국학전공',
 		'글로벌학부 한국학전공',
 		'융합경영학부 글로벌경영전공',
 		'융합경영학부 디지털경영전공',
-		'표준지식학과'
+		'표준·지식학과'
 	],
 	문화스포츠대학: [
-		'국제스포츠학부',
 		'국제스포츠학부 스포츠과학전공',
 		'국제스포츠학부 스포츠비즈니스전공',
-		'국제스포츠학부 문화유산융합학부',
+		'문화유산융합학부',
 		'문화창의학부 문화콘텐츠전공',
 		'문화창의학부 미디어문예창작전공'
 	],
 	스마트도시학부: ['스마트도시학부'],
 	약학대학: ['약학과', '첨단융합신약학과'],
-	'크림슨산학융합원(관)': ['크림슨산학융합원'],
+	'취창업지원센터(관)': ['취창업지원센터'],
 	'그 외': ['그 외']
 };
 
@@ -81,8 +79,43 @@ export type OnboardingValidationResult =
 	| { ok: true; value: OnboardingInput }
 	| { ok: false; message: string; value: OnboardingInput };
 
-export function buildDepartmentOptions(college: string) {
-	return universityData[college] ?? [];
+type AcademicAffiliation = Pick<OnboardingInput, 'college' | 'department'>;
+
+// 기존 저장값의 오타만 정정한다. 없어진 소속을 다른 학과나 기관으로 바꾸지 않는다.
+const departmentCorrections: Record<string, Record<string, string>> = {
+	공공정책대학: {
+		'공공사회통일외교학부 공공사회학전공': '공공사회·통일외교학부 공공사회학전공',
+		'공공사회통일외교학부 통일외교안보전공': '공공사회·통일외교학부 통일외교안보전공'
+	},
+	과학기술대학: {
+		'응용수리과학부 데이터계산학과전공': '응용수리과학부 데이터계산과학전공',
+		전자기계융합공학과: '전자·기계융합공학과'
+	},
+	글로벌비즈니스대학: { 표준지식학과: '표준·지식학과' },
+	문화스포츠대학: { '국제스포츠학부 문화유산융합학부': '문화유산융합학부' }
+};
+
+function normalizeAcademicAffiliation(input: AcademicAffiliation): AcademicAffiliation {
+	const college = input.college.trim();
+	const department = college === '그 외' ? '그 외' : input.department.trim();
+	const correctedDepartment = departmentCorrections[college]?.[department];
+	return { college, department: typeof correctedDepartment === 'string' ? correctedDepartment : department };
+}
+
+export function buildCollegeOptions(savedAffiliation?: AcademicAffiliation) {
+	const savedCollege = savedAffiliation?.college.trim();
+	return savedCollege && !collegeOptions.includes(savedCollege)
+		? [...collegeOptions, savedCollege]
+		: collegeOptions;
+}
+
+export function buildDepartmentOptions(college: string, savedAffiliation?: AcademicAffiliation) {
+	const options = Object.hasOwn(universityData, college) ? universityData[college] : [];
+	const saved = savedAffiliation && normalizeAcademicAffiliation(savedAffiliation);
+	// 프로필 수정에서는 본인이 이미 저장한 옛 소속만 추가로 유지할 수 있다.
+	return saved?.college === college && saved.department && !options.includes(saved.department)
+		? [...options, saved.department]
+		: options;
 }
 
 export function validateNickname(nickname: string) {
@@ -103,10 +136,9 @@ export function validateNickname(nickname: string) {
 
 export function normalizeOnboardingInput(input: OnboardingInput): OnboardingInput {
 	const nickname = input.nickname;
-	const college = input.college.trim();
+	const { college, department } = normalizeAcademicAffiliation(input);
 	const studentYear = input.studentYear.trim();
 	const gender = input.gender.trim();
-	const department = college === '그 외' ? '그 외' : input.department.trim();
 
 	return {
 		nickname,
@@ -117,7 +149,10 @@ export function normalizeOnboardingInput(input: OnboardingInput): OnboardingInpu
 	};
 }
 
-export function validateOnboardingInput(input: OnboardingInput): OnboardingValidationResult {
+export function validateOnboardingInput(
+	input: OnboardingInput,
+	savedAffiliation?: AcademicAffiliation
+): OnboardingValidationResult {
 	const value = normalizeOnboardingInput(input);
 
 	const nicknameError = validateNickname(value.nickname);
@@ -125,11 +160,11 @@ export function validateOnboardingInput(input: OnboardingInput): OnboardingValid
 		return { ok: false, message: nicknameError, value };
 	}
 
-	if (!collegeOptions.includes(value.college)) {
+	if (!buildCollegeOptions(savedAffiliation).includes(value.college)) {
 		return { ok: false, message: '단과대를 선택해 주세요.', value };
 	}
 
-	if (!buildDepartmentOptions(value.college).includes(value.department)) {
+	if (!buildDepartmentOptions(value.college, savedAffiliation).includes(value.department)) {
 		return { ok: false, message: '학과를 선택해 주세요.', value };
 	}
 
