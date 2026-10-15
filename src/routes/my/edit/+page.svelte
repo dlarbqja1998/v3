@@ -102,7 +102,7 @@
 				</label>
 
 				<label class="grid gap-2">
-					<span class="text-sm font-black">학과</span>
+					<span class="text-sm font-black">학부·학과/전공</span>
 					<select
 						bind:value={department}
 						class="h-13 rounded-[14px] border border-brand-border-strong bg-white px-4 text-sm font-bold outline-none focus:border-brand focus:ring-4 focus:ring-brand/15 disabled:bg-brand-map"

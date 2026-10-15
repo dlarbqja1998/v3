@@ -19,8 +19,8 @@ import { actions, load } from './+page.server';
 const savedUser = {
 	id: 1,
 	nickname: '참살이',
-	college: '글로벌비즈니스대학',
-	department: '글로벌학부 독일학전공',
+	college: '과학기술대학',
+	department: '스마트에코시티 융합전공',
 	grade: '21학번',
 	gender: 'unknown'
 };
@@ -54,23 +54,33 @@ describe('학과 목록 변경 후 내 정보 수정', () => {
 		expect(setValues).not.toHaveBeenCalled();
 	});
 
-	it('기존 학과를 유지한 채 닉네임만 바꿔도 저장할 수 있다', async () => {
+	it.each([
+		{ college: '취창업지원센터(관)', department: '취창업지원센터' },
+		{ college: '과학기술대학', department: '스마트에코시티 융합전공' },
+		{ college: '과학기술대학', department: '첨단반도체공정장비 융합전공' },
+		{ college: '문화스포츠대학', department: '국제스포츠학부' }
+	])('기존 $department 소속을 유지한 채 닉네임만 바꿔도 저장할 수 있다', async (affiliation) => {
+		const user = { ...savedUser, ...affiliation };
+		const loaded = await load({ locals: { user } } as never);
+		expect(loaded).toMatchObject({ values: affiliation });
+		expect(setValues).not.toHaveBeenCalled();
+
 		await expect(actions.default!({
-			request: createRequest(), locals: { user: savedUser }
+			request: createRequest(user.college, user.department), locals: { user }
 		} as never)).rejects.toMatchObject({ status: 303, location: '/my' });
 
 		expect(setValues).toHaveBeenCalledWith(expect.objectContaining({
-			nickname: '새닉네임', college: savedUser.college, department: savedUser.department
+			nickname: '새닉네임', college: user.college, department: user.department
 		}));
 	});
 
 	it('다른 회원이 삭제된 선택지를 직접 제출해도 기존 소속으로 인정하지 않는다', async () => {
 		const result = await actions.default!({
 			request: createRequest(),
-			locals: { user: { ...savedUser, department: '글로벌학부 영미학전공' } }
+			locals: { user: { ...savedUser, department: '컴퓨터소프트웨어학과' } }
 		} as never);
 
-		expect(result).toMatchObject({ status: 400, data: { message: '학과를 선택해 주세요.' } });
+		expect(result).toMatchObject({ status: 400, data: { message: '학부·학과/전공을 선택해 주세요.' } });
 		expect(setValues).not.toHaveBeenCalled();
 	});
 });

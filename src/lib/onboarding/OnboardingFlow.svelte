@@ -35,7 +35,7 @@
 	} = $props();
 
 	const isPreview = $derived(mode === 'preview');
-	const steps = ['닉네임', '단과대', '학과', '학번', '성별'];
+	const steps = ['닉네임', '단과대', '학부·학과/전공', '학번', '성별'];
 
 	let step = $state(0);
 	let nickname = $state('');
@@ -238,7 +238,7 @@
 				</div>
 			{:else if step === 2}
 				<div class="field-section">
-					<h2 class="field-label" id="onboarding-field-label">학과를 선택하세요</h2>
+					<h2 class="field-label" id="onboarding-field-label">학부·학과/전공을 선택하세요</h2>
 					{#if !college}
 						<p class="field-empty">먼저 단과대를 선택해 주세요.</p>
 					{:else}
