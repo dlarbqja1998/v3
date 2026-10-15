@@ -8,7 +8,7 @@
 
 <main class="min-h-dvh bg-brand-bg text-brand-text md:grid md:place-items-center md:p-6">
 	<section
-		class="flex min-h-dvh w-full flex-col bg-brand-surface px-5 pb-[max(24px,env(safe-area-inset-bottom))] pt-[max(24px,env(safe-area-inset-top))] shadow-[0_24px_60px_rgba(72,12,31,0.14)] md:min-h-[min(860px,calc(100vh-48px))] md:w-[min(100%,430px)] md:rounded-[28px] md:border md:border-brand-border-strong"
+		class="flex min-h-dvh w-full flex-col bg-brand-surface px-5 pb-[max(24px,env(safe-area-inset-bottom))] pt-[max(24px,env(safe-area-inset-top))] shadow-[0_24px_60px_rgba(72,12,31,0.14)] md:min-h-[min(860px,calc(100vh-48px))] md:w-[min(100%,430px)] app-page-frame md:border md:border-brand-border-strong"
 		aria-label="상점"
 	>
 		<header class="flex items-center gap-3">

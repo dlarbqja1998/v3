@@ -458,7 +458,7 @@
 
 <main class="cafeteria-screen min-h-[100dvh] bg-brand-bg md:grid md:place-items-center md:p-6" inert={isOperatingHoursOpen}>
 	<section
-		class="cafeteria-page relative w-full bg-brand-surface pb-[var(--bottom-navigation-height)] shadow-[0_24px_60px_rgba(103,16,43,0.18)] md:w-[min(100%,430px)] md:border md:border-brand-border"
+		class="cafeteria-page app-page-frame relative w-full bg-brand-surface pb-[var(--bottom-navigation-height)] shadow-[0_24px_60px_rgba(103,16,43,0.18)] md:w-[min(100%,430px)] md:border md:border-brand-border"
 		aria-label="학식"
 	>
 		<div class="cafeteria-header sticky top-0 z-20 bg-white">
@@ -599,7 +599,7 @@
 			{/if}
 		</div>
 
-		<BottomNavigation activeKey="cafeteria" containerClass="fixed inset-x-0 bottom-0 z-40 md:left-1/2 md:w-[min(100%,430px)] md:-translate-x-1/2" isAuthenticated={Boolean(data.user)} />
+		<BottomNavigation activeKey="cafeteria" containerClass="fixed inset-x-0 bottom-0 z-40 md:absolute" isAuthenticated={Boolean(data.user)} />
 	</section>
 </main>
 

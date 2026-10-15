@@ -9,7 +9,7 @@
 <svelte:head><title>마이 | 골라바유</title></svelte:head>
 
 <main class="min-h-dvh bg-brand-bg text-brand-text md:grid md:place-items-center md:p-6">
-	<section class="relative min-h-dvh w-full overflow-hidden bg-white md:min-h-[min(860px,calc(100vh-48px))] md:w-[min(100%,430px)] md:rounded-[28px] md:border md:border-brand-border-strong" aria-label="마이페이지">
+	<section class="relative min-h-dvh w-full overflow-hidden bg-white md:min-h-[min(860px,calc(100vh-48px))] md:w-[min(100%,430px)] app-page-frame md:border md:border-brand-border-strong" aria-label="마이페이지">
 		<header class="sticky top-0 z-10 grid h-14 place-items-center border-b border-brand-border bg-white"><h1 class="m-0 text-lg font-black">마이</h1></header>
 		<div class="h-[calc(100dvh-56px)] overflow-y-auto px-5 pb-[calc(96px+env(safe-area-inset-bottom))] md:h-[calc(min(860px,100vh-48px)-56px)]">
 			<section class="pt-5" aria-labelledby="profile-title"><h2 id="profile-title" data-section-heading class="m-0 border-b border-brand-border pb-3 text-[15px] font-black tracking-[-0.01em]">프로필</h2>

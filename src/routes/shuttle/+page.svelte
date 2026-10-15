@@ -98,11 +98,11 @@
 
 <main class="min-h-[100dvh] bg-brand-bg text-brand-text md:grid md:place-items-center md:p-6">
 	<section
-		class="relative min-h-[100dvh] w-full bg-brand-surface pb-[calc(var(--bottom-navigation-height)+20px)] shadow-[0_24px_60px_rgba(103,16,43,0.18)] md:min-h-[min(860px,calc(100vh-48px))] md:w-[min(100%,430px)] md:rounded-[28px] md:border md:border-brand-border"
+		class="relative min-h-[100dvh] w-full bg-brand-surface pb-[calc(var(--bottom-navigation-height)+20px)] shadow-[0_24px_60px_rgba(103,16,43,0.18)] md:min-h-[min(860px,calc(100vh-48px))] md:w-[min(100%,430px)] app-page-frame md:border md:border-brand-border"
 		aria-label="셔틀"
 		data-shuttle-page
 	>
-		<LifestylePageHeader title="오늘, 셔틀" closeLabel="셔틀 닫기" />
+		<LifestylePageHeader title="셔틀" closeLabel="셔틀 닫기" />
 
 		<div class="px-5 py-4">
 			<div class="relative flex border-b border-brand-border" aria-label="방향 선택" data-shuttle-tabs>
@@ -225,7 +225,7 @@
 
 		<BottomNavigation
 			activeKey="shuttle"
-			containerClass="fixed inset-x-0 bottom-0 z-40 md:left-1/2 md:w-[min(100%,430px)] md:-translate-x-1/2"
+			containerClass="fixed inset-x-0 bottom-0 z-40 md:absolute"
 			isAuthenticated={Boolean(data.user)}
 		/>
 	</section>

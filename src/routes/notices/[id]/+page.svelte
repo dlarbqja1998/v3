@@ -13,7 +13,7 @@
 <svelte:head><title>{data.notice.title} | 골라바유</title></svelte:head>
 
 <main class="min-h-dvh bg-brand-bg text-brand-text md:grid md:place-items-center md:p-6">
-	<article class="min-h-dvh w-full bg-white md:min-h-[min(860px,calc(100vh-48px))] md:w-[min(100%,430px)] md:overflow-hidden md:rounded-[28px] md:border md:border-brand-border-strong">
+	<article class="min-h-dvh w-full bg-white md:min-h-[min(860px,calc(100vh-48px))] md:w-[min(100%,430px)] md:overflow-hidden app-page-frame md:border md:border-brand-border-strong">
 		<header class="sticky top-0 z-10 grid h-14 grid-cols-[44px_1fr_44px] items-center border-b border-brand-border bg-white px-2">
 			<a class="grid h-11 w-11 place-items-center" href="/notices" aria-label="공지사항 목록으로 돌아가기"><ChevronLeft size={22} /></a>
 			<h1 class="m-0 text-center text-lg font-black">공지사항</h1>

@@ -19,7 +19,7 @@
 >
 	<section
 		class={isMyEntry
-			? 'relative min-h-dvh w-full overflow-hidden bg-white md:min-h-[min(860px,calc(100vh-48px))] md:w-[min(100%,430px)] md:rounded-[28px] md:border md:border-brand-border-strong'
+			? 'relative min-h-dvh w-full overflow-hidden bg-white md:min-h-[min(860px,calc(100vh-48px))] md:w-[min(100%,430px)] app-page-frame md:border md:border-brand-border-strong'
 			: 'w-full max-w-[430px]'}
 		aria-label={isMyEntry ? '마이 로그인' : undefined}
 	>

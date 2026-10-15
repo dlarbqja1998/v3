@@ -31,6 +31,7 @@
 	color: var(--color-brand-text);
 	background: var(--color-brand-bg);
 	--bottom-navigation-height: calc(65px + max(8px, env(safe-area-inset-bottom)));
+	--app-frame-radius: 24px;
 }
 
 body {
@@ -74,6 +75,16 @@ body {
 	.home-app-shell {
 		height: min(860px, calc(100vh - 48px));
 		height: min(860px, calc(100dvh - 48px));
+	}
+}
+
+/* 온보딩과 같은 바깥 프레임. 스크롤이 필요한 페이지는 기존 overflow 유틸리티를 유지한다. */
+@layer components {
+	@media (min-width: 768px) {
+		.app-page-frame {
+			border-radius: var(--app-frame-radius);
+			overflow: clip;
+		}
 	}
 }
 

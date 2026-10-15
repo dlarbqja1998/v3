@@ -42,7 +42,7 @@
 </script>
 
 <main class="min-h-dvh bg-brand-bg text-brand-text md:py-6">
-	<div class="relative mx-auto min-h-dvh w-full max-w-[430px] bg-white pb-[calc(var(--bottom-navigation-height)+env(safe-area-inset-bottom)+24px)] md:min-h-[844px]">
+	<div class="app-page-frame relative mx-auto min-h-dvh w-full max-w-[430px] bg-white pb-[calc(var(--bottom-navigation-height)+env(safe-area-inset-bottom)+24px)] md:min-h-[844px]">
 		<header class="sticky top-0 z-20 border-b border-brand-border bg-white pt-[env(safe-area-inset-top)]">
 			<div class="relative flex h-14 items-center justify-center px-5">
 				<button type="button" class="absolute left-4 flex min-h-11 items-center text-[13px] text-brand-muted" onclick={onBack} aria-label="이전 화면으로 돌아가기"><AppIcon name="chevron" size={20} />뒤로</button>
@@ -115,6 +115,6 @@
 			</section>
 			{#if detail?.checkedOn}<p class="m-0 pt-3 text-[12px] leading-5 text-brand-muted">{detail.checkedOn.replaceAll('-', '.')} 매장 기본정보 확인 · 네이버 플레이스</p>{/if}
 		</div>
-		<BottomNavigation activeKey="home" {isAuthenticated} onNavigate={onHome ? () => onHome?.() : undefined} containerClass="fixed inset-x-0 bottom-0 z-30 mx-auto w-full max-w-[430px]" />
+		<BottomNavigation activeKey="home" {isAuthenticated} onNavigate={onHome ? () => onHome?.() : undefined} containerClass="fixed inset-x-0 bottom-0 z-30 mx-auto w-full max-w-[430px] md:absolute" />
 	</div>
 </main>

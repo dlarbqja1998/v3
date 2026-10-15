@@ -30,7 +30,7 @@
 <svelte:head><title>{event.title} | 골라바유</title></svelte:head>
 
 <main class="min-h-dvh bg-brand-bg text-brand-text md:grid md:place-items-center md:p-6">
-	<article class="min-h-dvh w-full bg-white md:min-h-[min(860px,calc(100vh-48px))] md:w-[min(100%,430px)] md:overflow-y-auto md:rounded-[28px] md:border md:border-brand-border-strong">
+	<article class="min-h-dvh w-full bg-white md:min-h-[min(860px,calc(100vh-48px))] md:w-[min(100%,430px)] md:overflow-y-auto app-page-frame md:border md:border-brand-border-strong">
 		<header class="sticky top-0 z-20 grid h-[calc(56px+env(safe-area-inset-top))] grid-cols-[44px_1fr_44px] items-end border-b border-brand-border bg-white px-3 pb-1 pt-[env(safe-area-inset-top)]">
 			<a class="grid h-11 w-11 place-items-center" href="/today" aria-label="행사 목록으로"><ArrowLeft size={20} /></a>
 			<h1 class="m-0 truncate self-center text-center text-lg font-black">행사 상세</h1>

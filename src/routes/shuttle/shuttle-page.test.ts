@@ -14,7 +14,7 @@ describe('셔틀 페이지', () => {
 		vi.useRealTimers();
 
 		expect(body).toContain('data-shuttle-page');
-		expect(body).toContain('오늘, 셔틀');
+		expect(body).toMatch(/<h1[^>]*>셔틀<\/h1>/);
 		expect(body).toContain('data-lifestyle-page-header');
 		expect(body).toContain('aria-label="뒤로 가기"');
 		expect(body).toContain('aria-label="셔틀 닫기"');

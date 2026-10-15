@@ -46,7 +46,7 @@
 
 <main class="min-h-dvh bg-brand-bg text-brand-text md:grid md:place-items-center md:p-6">
 	<section
-		class="relative min-h-dvh w-full overflow-hidden bg-brand-surface shadow-[0_24px_60px_rgba(103,16,43,0.18)] md:min-h-[min(860px,calc(100vh-48px))] md:w-[min(100%,430px)] md:rounded-[28px] md:border md:border-brand-border-strong"
+		class="relative min-h-dvh w-full overflow-hidden bg-brand-surface shadow-[0_24px_60px_rgba(103,16,43,0.18)] md:min-h-[min(860px,calc(100vh-48px))] md:w-[min(100%,430px)] app-page-frame md:border md:border-brand-border-strong"
 		aria-label="내 정보 수정"
 	>
 		<form

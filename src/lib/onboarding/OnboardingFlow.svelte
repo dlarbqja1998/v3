@@ -173,7 +173,7 @@
 </script>
 
 <main class="onboarding-screen" style:--onboarding-viewport-height={viewportHeight ? viewportHeight + 'px' : undefined}>
-	<form method="POST" action="?/checkNickname" class="onboarding-form" class:compact-viewport={viewportHeight !== null && viewportHeight < 480} use:enhance={enhanceOnboarding} aria-busy={isSubmitting}>
+	<form method="POST" action="?/checkNickname" class="onboarding-form app-page-frame" class:compact-viewport={viewportHeight !== null && viewportHeight < 480} use:enhance={enhanceOnboarding} aria-busy={isSubmitting}>
 		<input type="hidden" name="nickname" value={nickname} />
 		<input type="hidden" name="college" value={college} />
 		<input type="hidden" name="department" value={department} />
@@ -368,7 +368,7 @@
 	.compact-viewport .onboarding-fields { margin-top: 24px; }
 	@media (min-width: 768px) {
 		.onboarding-screen { display: grid; place-items: center; padding: 24px; background: var(--onboarding-page); }
-		.onboarding-form { height: min(844px, calc(var(--onboarding-viewport-height, 100dvh) - 48px)); border-radius: 24px; }
+		.onboarding-form { height: min(844px, calc(var(--onboarding-viewport-height, 100dvh) - 48px)); }
 	}
 	@media (prefers-reduced-motion: reduce) {
 		.onboarding-progress span, .selection-option { transition: none; }

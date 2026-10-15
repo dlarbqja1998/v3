@@ -52,8 +52,8 @@
 <svelte:head><title>오늘 | 골라바유</title></svelte:head>
 
 <main class="min-h-dvh bg-brand-bg text-brand-text md:grid md:place-items-center md:p-6">
-	<section class="relative min-h-dvh w-full bg-white md:min-h-[min(860px,calc(100vh-48px))] md:w-[min(100%,430px)] md:rounded-[28px] md:border md:border-brand-border-strong" aria-label="오늘 행사">
-		<LifestylePageHeader title="오늘, 고려대학교" closeLabel="오늘 닫기" />
+	<section class="relative min-h-dvh w-full bg-white md:min-h-[min(860px,calc(100vh-48px))] md:w-[min(100%,430px)] app-page-frame md:border md:border-brand-border-strong" aria-label="오늘 행사">
+		<LifestylePageHeader title="오늘" closeLabel="오늘 닫기" />
 
 		<div class="h-[calc(100dvh-56px)] overflow-y-auto px-5 pb-[calc(96px+env(safe-area-inset-bottom))] md:h-[calc(min(860px,100vh-48px)-56px)]">
 			<div class="relative grid grid-cols-2 border-b border-brand-border" aria-label="행사 상태" data-today-tabs>

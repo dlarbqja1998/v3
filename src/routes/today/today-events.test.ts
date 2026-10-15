@@ -44,7 +44,7 @@ describe('오늘 행사 목록', () => {
 		expect(body).toContain('href="/?panel=festival"');
 		expect(body).not.toContain('예정된 행사가 없어요');
 	});
-	it('학식·셔틀처럼 바깥 화면의 모서리를 강제로 자르지 않는다', () => {
+	it('페이지 스크롤을 막는 overflow-hidden을 바깥 프레임에 추가하지 않는다', () => {
 		const body = render(TodayPage, {
 			props: { data: { user: null, ongoingEvents: [], upcomingEvents: [], initialTab: 'upcoming' } } as never
 		}).body;
