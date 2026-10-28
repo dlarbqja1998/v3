@@ -1,10 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { findFirst } = vi.hoisted(() => ({ findFirst: vi.fn() }));
+const { findFirst, setValues, updateWhere } = vi.hoisted(() => ({
+	findFirst: vi.fn(), setValues: vi.fn(), updateWhere: vi.fn()
+}));
 
 vi.mock('$env/dynamic/private', () => ({ env: { DATABASE_URL: 'postgresql://test' } }));
 vi.mock('$lib/server/db', () => ({
-	createDb: () => ({ query: { users: { findFirst } } })
+	createDb: () => ({ query: { users: { findFirst } }, update: () => ({ set: setValues }) })
 }));
 
 import { actions } from './+page.server';
@@ -19,6 +21,36 @@ function createNicknameCheckRequest(nickname: string) {
 describe('온보딩 닉네임 중복 확인', () => {
 	beforeEach(() => {
 		findFirst.mockReset();
+		setValues.mockReset().mockReturnValue({ where: updateWhere });
+		updateWhere.mockReset().mockResolvedValue(undefined);
+	});
+
+	it.each(['대학원생', '졸업생', '교직원', '기타 외부인'])('%s 가입 시 구분을 저장하고 학번은 요구하지 않는다', async (department) => {
+		findFirst.mockResolvedValue(undefined);
+		const request = new Request('http://localhost/register', {
+			method: 'POST',
+			body: new URLSearchParams({
+				nickname: '새회원', college: '그 외', department, studentYear: '', gender: 'female', next: '/my'
+			})
+		});
+		await expect(actions.complete!({
+			request, locals: { user: { id: 1 } }, url: new URL(request.url)
+		} as never)).rejects.toMatchObject({ status: 303, location: '/my' });
+		expect(setValues).toHaveBeenCalledWith({
+			nickname: '새회원', college: '그 외', department, grade: '', gender: 'female', isOnboarded: true
+		});
+	});
+
+	it('비학부생 구분 없이 완료 요청을 보내면 저장하지 않는다', async () => {
+		const request = new Request('http://localhost/register', {
+			method: 'POST',
+			body: new URLSearchParams({ nickname: '새회원', college: '그 외', gender: 'female' })
+		});
+		const result = await actions.complete!({
+			request, locals: { user: { id: 1 } }, url: new URL(request.url)
+		} as never);
+		expect(result).toMatchObject({ status: 400, data: { message: '현재 신분을 선택해 주세요.' } });
+		expect(setValues).not.toHaveBeenCalled();
 	});
 
 	it('이미 사용 중인 닉네임은 재입력 안내를 반환한다', async () => {

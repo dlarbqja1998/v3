@@ -7,6 +7,8 @@
 		buildDepartmentOptions,
 		collegeOptions,
 		genderOptions,
+		getCollegeLabel,
+		nonUndergraduateCollege,
 		studentYearOptions,
 		validateNickname,
 		type OnboardingInput
@@ -64,6 +66,7 @@
 	}
 
 	let departments = $derived(college ? buildDepartmentOptions(college) : []);
+	const isNonUndergraduate = $derived(college === nonUndergraduateCollege);
 	let previewNoticeVisible = $state(false);
 	let previewNoticeTimer: ReturnType<typeof setTimeout> | undefined;
 	let nicknameCheckInvalidated = $state(false);
@@ -89,11 +92,10 @@
 	});
 
 	$effect(() => {
-		if (college === '그 외') {
-			department = '그 외';
-		} else if (department && !departments.includes(department)) {
+		if (department && !departments.includes(department)) {
 			department = '';
 		}
+		if (isNonUndergraduate) studentYear = '';
 	});
 
 	function canGoNext() {
@@ -106,14 +108,14 @@
 
 	function nextStep() {
 		if (step < steps.length - 1 && canGoNext()) {
-			step += 1;
+			step = step === 2 && isNonUndergraduate ? 4 : step + 1;
 			if (optionsSection) optionsSection.scrollTop = 0;
 		}
 	}
 
 	function prevStep() {
 		if (step > 0) {
-			step -= 1;
+			step = step === 4 && isNonUndergraduate ? 2 : step - 1;
 			if (optionsSection) optionsSection.scrollTop = 0;
 		}
 	}
@@ -232,13 +234,13 @@
 					<h2 class="field-label" id="onboarding-field-label">단과대를 선택하세요</h2>
 					<div class="selection-options" role="group" aria-labelledby="onboarding-field-label">
 						{#each collegeOptions as option}
-							<button class="selection-option" class:selected={college === option} type="button" aria-pressed={college === option} onclick={() => (college = option)}>{option}</button>
+							<button class="selection-option" class:selected={college === option} type="button" aria-pressed={college === option} onclick={() => (college = option)}>{getCollegeLabel(option)}</button>
 						{/each}
 					</div>
 				</div>
 			{:else if step === 2}
 				<div class="field-section">
-					<h2 class="field-label" id="onboarding-field-label">학부·학과/전공을 선택하세요</h2>
+					<h2 class="field-label" id="onboarding-field-label">{isNonUndergraduate ? '현재 신분을 선택하세요' : '학부·학과/전공을 선택하세요'}</h2>
 					{#if !college}
 						<p class="field-empty">먼저 단과대를 선택해 주세요.</p>
 					{:else}

@@ -54,6 +54,19 @@ describe('학과 목록 변경 후 내 정보 수정', () => {
 		expect(setValues).not.toHaveBeenCalled();
 	});
 
+	it('비학부생 회원의 신분을 불러오고 학번 없이 수정 내용을 저장한다', async () => {
+		const user = { ...savedUser, college: '그 외', department: '대학원생', grade: '' };
+		await expect(load({ locals: { user } } as never)).resolves.toMatchObject({
+			values: { college: '그 외', department: '대학원생', studentYear: '' }
+		});
+		await expect(actions.default!({
+			request: createRequest('그 외', '대학원생'), locals: { user }
+		} as never)).rejects.toMatchObject({ status: 303, location: '/my' });
+		expect(setValues).toHaveBeenCalledWith(expect.objectContaining({
+			college: '그 외', department: '대학원생', grade: ''
+		}));
+	});
+
 	it.each([
 		{ college: '취창업지원센터(관)', department: '취창업지원센터' },
 		{ college: '과학기술대학', department: '스마트에코시티 융합전공' },

@@ -1,3 +1,15 @@
+// 기존 소속 저장값을 유지하고, 비학부생의 구분은 department에 저장한다.
+export const nonUndergraduateCollege = '그 외';
+export const nonUndergraduateOptions = ['대학원생', '졸업생', '교직원', '기타 외부인'];
+
+export function getCollegeLabel(college: string) {
+	return college === nonUndergraduateCollege ? '현재 학부생이 아니에요' : college;
+}
+
+export function isNonUndergraduateAffiliation(affiliation: { college: string; department: string }) {
+	return affiliation.college === nonUndergraduateCollege && nonUndergraduateOptions.includes(affiliation.department);
+}
+
 // 2026학년도 2학기 주 소속 기준. 모집 중단 여부와 별개로 재학생 소속도 선택할 수 있다.
 export const universityData: Record<string, string[]> = {
 	공공정책대학: [
@@ -50,7 +62,7 @@ export const universityData: Record<string, string[]> = {
 	],
 	스마트도시학부: ['스마트도시학부'],
 	약학대학: ['약학과', '첨단융합신약학과'],
-	'그 외': ['그 외']
+	[nonUndergraduateCollege]: nonUndergraduateOptions
 };
 
 export const collegeOptions = Object.keys(universityData);
@@ -106,7 +118,7 @@ const departmentCorrections: Record<string, Record<string, string>> = {
 
 function normalizeAcademicAffiliation(input: AcademicAffiliation): AcademicAffiliation {
 	const college = input.college.trim();
-	const department = college === '그 외' ? '그 외' : input.department.trim();
+	const department = input.department.trim();
 	const correctedDepartment = departmentCorrections[college]?.[department];
 	return { college, department: typeof correctedDepartment === 'string' ? correctedDepartment : department };
 }
@@ -146,7 +158,7 @@ export function validateNickname(nickname: string) {
 export function normalizeOnboardingInput(input: OnboardingInput): OnboardingInput {
 	const nickname = input.nickname;
 	const { college, department } = normalizeAcademicAffiliation(input);
-	const studentYear = input.studentYear.trim();
+	const studentYear = isNonUndergraduateAffiliation({ college, department }) ? '' : input.studentYear.trim();
 	const gender = input.gender.trim();
 
 	return {
@@ -174,10 +186,14 @@ export function validateOnboardingInput(
 	}
 
 	if (!buildDepartmentOptions(value.college, savedAffiliation).includes(value.department)) {
-		return { ok: false, message: '학부·학과/전공을 선택해 주세요.', value };
+		return {
+			ok: false,
+			message: value.college === nonUndergraduateCollege ? '현재 신분을 선택해 주세요.' : '학부·학과/전공을 선택해 주세요.',
+			value
+		};
 	}
 
-	if (!studentYearOptions.includes(value.studentYear)) {
+	if (!isNonUndergraduateAffiliation(value) && !studentYearOptions.includes(value.studentYear)) {
 		return { ok: false, message: '학번을 선택해 주세요.', value };
 	}
 

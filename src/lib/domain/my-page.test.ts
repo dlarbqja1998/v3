@@ -29,4 +29,10 @@ describe('마이페이지 표시 정보', () => {
 	it('관리자 역할은 관리자 로그인으로 표시한다', () => {
 		expect(getLoginMethodLabel({ ...user, role: 'admin' })).toBe('관리자 로그인');
 	});
+
+	it('비학부생은 선택한 신분을 보여주고 학과·학번 미입력을 표시하지 않는다', () => {
+		const rows = buildMyPageRows({ ...user, college: '그 외', department: '대학원생', grade: '' });
+		expect(rows).toContainEqual({ label: '현재 신분', value: '대학원생' });
+		expect(rows.some((row) => ['단과대', '학과', '학번'].includes(row.label))).toBe(false);
+	});
 });

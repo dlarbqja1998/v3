@@ -4,6 +4,9 @@
 		buildCollegeOptions,
 		buildDepartmentOptions,
 		genderOptions,
+		getCollegeLabel,
+		isNonUndergraduateAffiliation,
+		nonUndergraduateCollege,
 		studentYearOptions,
 		type OnboardingInput
 	} from '$lib/domain/onboarding';
@@ -21,6 +24,7 @@
 	let gender = $state('');
 	let colleges = $derived(buildCollegeOptions(data.values));
 	let departments = $derived(college ? buildDepartmentOptions(college, data.values) : []);
+	const isNonUndergraduate = $derived(isNonUndergraduateAffiliation({ college, department }));
 
 	$effect(() => {
 		nickname = submittedValues.nickname;
@@ -31,11 +35,10 @@
 	});
 
 	$effect(() => {
-		if (college === '그 외') {
-			department = '그 외';
-		} else if (department && !departments.includes(department)) {
+		if (department && !departments.includes(department)) {
 			department = '';
 		}
+		if (isNonUndergraduate) studentYear = '';
 	});
 </script>
 
@@ -95,17 +98,17 @@
 					>
 						<option value="">선택</option>
 						{#each colleges as option}
-							<option value={option}>{option}</option>
+							<option value={option}>{getCollegeLabel(option)}</option>
 						{/each}
 					</select>
 				</label>
 
 				<label class="grid gap-2">
-					<span class="text-sm font-black">학부·학과/전공</span>
+					<span class="text-sm font-black">{college === nonUndergraduateCollege ? '현재 신분' : '학부·학과/전공'}</span>
 					<select
 						bind:value={department}
 						class="h-13 rounded-[14px] border border-brand-border-strong bg-white px-4 text-sm font-bold outline-none focus:border-brand focus:ring-4 focus:ring-brand/15 disabled:bg-brand-map"
-						disabled={!college || college === '그 외'}
+						disabled={!college}
 					>
 						<option value="">선택</option>
 						{#each departments as option}
@@ -114,19 +117,21 @@
 					</select>
 				</label>
 
-				<label class="grid gap-2">
-					<span class="text-sm font-black">학번</span>
-					<select
-						bind:value={studentYear}
-						class="h-13 rounded-[14px] border border-brand-border-strong bg-white px-4 text-sm font-bold outline-none focus:border-brand focus:ring-4 focus:ring-brand/15"
-						name="studentYear"
-					>
-						<option value="">선택</option>
-						{#each studentYearOptions as option}
-							<option value={option}>{option}</option>
-						{/each}
-					</select>
-				</label>
+				{#if !isNonUndergraduate}
+					<label class="grid gap-2">
+						<span class="text-sm font-black">학번</span>
+						<select
+							bind:value={studentYear}
+							class="h-13 rounded-[14px] border border-brand-border-strong bg-white px-4 text-sm font-bold outline-none focus:border-brand focus:ring-4 focus:ring-brand/15"
+							name="studentYear"
+						>
+							<option value="">선택</option>
+							{#each studentYearOptions as option}
+								<option value={option}>{option}</option>
+							{/each}
+						</select>
+					</label>
+				{/if}
 
 				<label class="grid gap-2">
 					<span class="text-sm font-black">성별</span>
