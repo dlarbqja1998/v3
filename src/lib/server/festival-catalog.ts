@@ -3,12 +3,17 @@ import { gbFestivalPreview } from './festival-gb-2026';
 import { getEventCandidate } from './event-candidates';
 import { gbFestivalCandidateId, isLocalEventPreview } from './event-preview';
 import { isEventCoordinate } from '$lib/domain/event-locations';
-import { getPublicCampusEvent } from './campus-events';
+import { getPublicCampusEvent, type CampusEventDto } from './campus-events';
 import { autumnCheckedAt, jansasaCandidateId, jansasaFestivalPreview } from './autumn-events-2026';
 import { getVisibleFestival } from '$lib/domain/festival';
 
 /** 로컬에서는 새 축제를 검토하고, 운영에서는 승인·공개된 행사에만 상세 안내를 연결한다. */
-export async function readFestivalForPage(hostname: string, store?: Parameters<typeof readPublicFestival>[0], databaseUrl?: string) {
+export async function readFestivalForPage(
+	hostname: string,
+	store?: Parameters<typeof readPublicFestival>[0],
+	databaseUrl?: string,
+	publicEvents?: CampusEventDto[]
+) {
 	if (isLocalEventPreview(hostname)) {
 		const isAutumn = new Date() >= new Date(autumnCheckedAt);
 		const festival = structuredClone(isAutumn ? jansasaFestivalPreview : gbFestivalPreview);
@@ -22,7 +27,10 @@ export async function readFestivalForPage(hostname: string, store?: Parameters<t
 		return getVisibleFestival(festival);
 	}
 	for (const [id, source] of [[jansasaCandidateId, jansasaFestivalPreview], [gbFestivalCandidateId, gbFestivalPreview]] as const) {
-		const event = databaseUrl ? await getPublicCampusEvent(databaseUrl, id) : null;
+		// 홈에서 이미 읽은 공개 행사 목록이 있으면 같은 DB를 다시 왕복하지 않는다.
+		const event = publicEvents
+			? publicEvents.find((item) => item.id === id)
+			: databaseUrl ? await getPublicCampusEvent(databaseUrl, id) : null;
 		if (!event) continue;
 		const festival = structuredClone(source);
 		festival.preview = false;

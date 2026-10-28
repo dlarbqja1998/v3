@@ -8,11 +8,34 @@ vi.mock('./campus-events', () => ({ getPublicCampusEvent: publicEventLookup }));
 import { readFestivalForPage } from './festival-catalog';
 import { festivalPreview } from '$lib/domain/festival';
 import { eventCandidateFixture } from './event-candidate-fixtures';
+import type { CampusEventDto } from './campus-events';
 
 beforeEach(() => { vi.useFakeTimers(); vi.setSystemTime(new Date('2026-09-29T14:00:00+09:00')); });
 afterEach(() => { vi.useRealTimers(); environment.dev = true; candidateLookup.mockReset(); publicEventLookup.mockReset(); });
 
 describe('축제 로컬 미리보기와 공개 데이터 분리', () => {
+	it('홈에서 읽은 공개 목록이 비어 있으면 축제를 찾으려고 DB를 다시 조회하지 않는다', async () => {
+		environment.dev = false;
+		expect(await readFestivalForPage('dev.golabau.com', undefined, 'test', [])).toBeNull();
+		expect(publicEventLookup).not.toHaveBeenCalled();
+		expect(candidateLookup).not.toHaveBeenCalled();
+	});
+	it('홈의 공개 행사 목록에서 축제 위치와 이미지를 연결하고 종료 시각을 지킨다', async () => {
+		environment.dev = false;
+		vi.setSystemTime(new Date('2026-10-06T23:59:59+09:00'));
+		const events = [{
+			id: '67c5d5db-ba3e-4c7b-ae4c-aadf18effa3f', title: '잔사사',
+			latitude: 36.60998, longitude: 127.2885, locationName: '잔디광장',
+			location: { type: 'pin' }, images: [{ isCover: true, url: '/api/events/approved/image' }]
+		}] as CampusEventDto[];
+		expect(await readFestivalForPage('dev.golabau.com', undefined, 'test', events)).toMatchObject({
+			id: 'jansasa-2026', preview: false, eventId: events[0].id,
+			posterUrl: '/api/events/approved/image', area: { label: '잔디광장' }
+		});
+		vi.setSystemTime(new Date('2026-10-07T00:00:00+09:00'));
+		expect(await readFestivalForPage('dev.golabau.com', undefined, 'test', events)).toBeNull();
+		expect(publicEventLookup).not.toHaveBeenCalled();
+	});
 	it('현재 로컬 미리보기는 잔사사를 보여주고 운영에는 미승인 축제를 전달하지 않는다', async () => {
 		vi.setSystemTime(new Date('2026-10-06T14:30:00+09:00'));
 		const local = await readFestivalForPage('localhost');

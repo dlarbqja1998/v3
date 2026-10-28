@@ -12,16 +12,17 @@ export const load: PageServerLoad = async ({ locals }) => {
 		throw redirect(303, '/login?next=/my');
 	}
 
-	let unreadInquiryCount = 0;
-	if (env.DATABASE_URL) {
-		try {
-			unreadInquiryCount = await countUnreadInquiryAnswers(env.DATABASE_URL, locals.user.id);
-		} catch (error) {
-			console.error('읽지 않은 문의 답변 수 조회 실패:', error);
-		}
-	}
-
-	const pendingEventCount = locals.user.role === 'admin' ? await countPendingEventCandidates(env.DATABASE_URL).catch(() => 0) : 0;
+	const [unreadInquiryCount, pendingEventCount] = await Promise.all([
+		env.DATABASE_URL
+			? countUnreadInquiryAnswers(env.DATABASE_URL, locals.user.id).catch((error) => {
+				console.error('읽지 않은 문의 답변 수 조회 실패:', error);
+				return 0;
+			})
+			: Promise.resolve(0),
+		locals.user.role === 'admin'
+			? countPendingEventCandidates(env.DATABASE_URL).catch(() => 0)
+			: Promise.resolve(0)
+	]);
 	return {
 		user: locals.user,
 		rows: buildMyPageRows(locals.user),

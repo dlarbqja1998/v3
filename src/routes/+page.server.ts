@@ -43,19 +43,22 @@ export async function load({ platform, locals, url }) {
 
 	const databaseUrl = env.DATABASE_URL ?? '';
 	const restaurantMode = isOutsidePreview(dev, url.hostname, env.APP_ENV) ? 'preview' : 'public';
+	const publicEventsPromise = databaseUrl
+		? readPublicEvents(databaseUrl, () => listPublicCampusEvents(databaseUrl)).catch((error) => {
+			console.error('메인 행사 조회 실패:', error);
+			return [];
+		})
+		: Promise.resolve([]);
 	const [homeData, publicEvents, homeNotice, outsideCatalog, festival, previewEvents] = await Promise.all([
 		// 메뉴가 있는 구형 학식 딥링크는 주간 메뉴가 섞인 결과를 공용 캐시에 넣지 않는다.
 		weeklyMenu ? getHomeData(databaseUrl, weeklyMenu) : readPublicHome(databaseUrl, () => getHomeData(databaseUrl)),
-		databaseUrl ? readPublicEvents(databaseUrl, () => listPublicCampusEvents(databaseUrl)).catch((error) => {
-			console.error('메인 행사 조회 실패:', error);
-			return [];
-		}) : Promise.resolve([]),
+		publicEventsPromise,
 		databaseUrl ? readPublicNotice(databaseUrl, () => getHomeNotice(databaseUrl)).catch((error) => {
 			console.error('메인 공지 조회 실패:', error);
 			return null;
 		}) : Promise.resolve(null),
 		readRestaurants(`${databaseUrl}|${restaurantMode}|${koreanDate()}`, () => readOutsideCatalog(databaseUrl, restaurantMode)),
-		readFestivalForPage(url.hostname, platform?.env?.GOLABAU_CACHE, databaseUrl),
+		publicEventsPromise.then((events) => readFestivalForPage(url.hostname, platform?.env?.GOLABAU_CACHE, databaseUrl, events)),
 		readLocalEventPreviews(databaseUrl, url.hostname, locals.user?.role === 'admin')
 	]);
 	// 승인 전 개별 미리보기는 공용 캐시 밖에서 합친다.

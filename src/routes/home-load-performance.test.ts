@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 
-const mocks = vi.hoisted(() => ({ home: vi.fn(), events: vi.fn(), notice: vi.fn(), restaurants: vi.fn() }));
+const mocks = vi.hoisted(() => ({ home: vi.fn(), events: vi.fn(), notice: vi.fn(), restaurants: vi.fn(), event: vi.fn() }));
 vi.mock('$env/dynamic/private', () => ({ env: { DATABASE_URL: 'test' } }));
 vi.mock('$lib/server/db/queries', () => ({ getHomeData: mocks.home }));
-vi.mock('$lib/server/campus-events', () => ({ listPublicCampusEvents: mocks.events, getPublicCampusEvent: async () => null }));
+vi.mock('$lib/server/campus-events', () => ({ listPublicCampusEvents: mocks.events, getPublicCampusEvent: mocks.event }));
 vi.mock('$lib/server/notices', () => ({ getHomeNotice: mocks.notice }));
 vi.mock('$lib/server/restaurants', () => ({ readOutsideCatalog: mocks.restaurants }));
 import { load } from './+page.server';
@@ -30,5 +30,6 @@ describe('홈 데이터 조회 대기', () => {
 		expect(mocks.events).toHaveBeenCalledTimes(1);
 		expect(mocks.notice).toHaveBeenCalledTimes(1);
 		expect(mocks.restaurants).toHaveBeenCalledTimes(1);
+		expect(mocks.event).not.toHaveBeenCalled();
 	});
 });

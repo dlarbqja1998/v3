@@ -13,5 +13,6 @@ describe('생활 페이지 공통 헤더', () => {
 		expect(body.match(/h-11 w-11/g)).toHaveLength(2);
 		expect(body).toContain('aria-label="뒤로 가기"');
 		expect(body).toContain('aria-label="오늘 닫기"');
+		expect(body).toMatch(/<a\b[^>]*href="\/"[^>]*aria-label="오늘 닫기"/);
 	});
 });

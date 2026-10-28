@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { goto, preloadData } from '$app/navigation';
+	import { onMount } from 'svelte';
 	import { ArrowLeft, X } from '@lucide/svelte';
 
 	let {
@@ -16,6 +17,13 @@
 		closeIconSrc?: string;
 	} = $props();
 
+	// 화면을 보는 동안 홈을 준비해, 닫을 때 서버 조회를 처음 시작하지 않는다.
+	onMount(() => {
+		void preloadData('/').catch(() => {
+			// 미리 불러오기에 실패해도 닫기 링크에서 정상 이동을 다시 시도한다.
+		});
+	});
+
 	function goBack() {
 		if (window.history.length > 1) {
 			window.history.back();
@@ -30,14 +38,14 @@
 		{#if backIconSrc}<span class="figma-page-icon" style:mask-image={'url("' + backIconSrc + '")'} aria-hidden="true"></span>{:else}<ArrowLeft size={20} />{/if}
 	</button>
 	<h1 class={variant === 'figma' ? 'figma-page-title' : 'm-0 self-center truncate text-center text-lg font-black tracking-[-0.01em]'}>{title}</h1>
-	<button class="grid h-11 w-11 place-items-center text-brand-text outline-none focus-visible:ring-2 focus-visible:ring-brand/25" type="button" aria-label={closeLabel} onclick={() => goto('/')}>
+	<a class="grid h-11 w-11 place-items-center text-brand-text outline-none focus-visible:ring-2 focus-visible:ring-brand/25" href="/" aria-label={closeLabel} data-sveltekit-preload-data="hover">
 		{#if closeIconSrc}<span class="figma-page-icon" style:mask-image={'url("' + closeIconSrc + '")'} aria-hidden="true"></span>{:else}<X size={20} />{/if}
-	</button>
+	</a>
 </header>
 
 <style>
 	.figma-page-header { display: grid; grid-template-columns: 40px minmax(0, 1fr) 40px; grid-template-rows: minmax(0, 1fr); align-items: center; justify-items: center; height: calc(42px + env(safe-area-inset-top)); padding-top: env(safe-area-inset-top); background: white; }
-	.figma-page-header button { color: #19181a; }
+	.figma-page-header button, .figma-page-header a { color: #19181a; }
 	.figma-page-title { margin: 0; color: #19181a; font-size: 18px; font-weight: 700; line-height: 1.2; letter-spacing: 0; text-align: center; }
 	.figma-page-icon { display: block; width: 24px; height: 24px; background: currentColor; mask-position: center; mask-size: contain; mask-repeat: no-repeat; }
 </style>
