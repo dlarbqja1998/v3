@@ -1,8 +1,7 @@
 <script lang="ts">
-	import { onMount, untrack } from 'svelte';
+	import { untrack } from 'svelte';
 	import { ChevronRight, MapPin } from '@lucide/svelte';
 
-	import BottomNavigation from '$lib/navigation/BottomNavigation.svelte';
 	import { analyticsEvents } from '$lib/analytics/events';
 	import { track } from '$lib/analytics/posthog.client';
 	import LifestylePageHeader from '$lib/navigation/LifestylePageHeader.svelte';
@@ -20,7 +19,7 @@
 	} from '$lib/domain/shuttle';
 	import type { PageData } from './$types';
 
-	let { data }: { data: PageData } = $props();
+	let { data, embedded = false, active = true, onMap }: { data: PageData; embedded?: boolean; active?: boolean; onMap?: (href: string) => void } = $props();
 	let activeStopId = $state<ShuttleStopId>(untrack(() => getInitialShuttleStopId(data)));
 	let currentTime = $state(new Date());
 
@@ -46,7 +45,9 @@
 	);
 	const shuttleTabWidth = 100 / shuttleStops.length;
 
-	onMount(() => {
+	$effect(() => {
+		if (!active) return;
+		currentTime = new Date();
 		const timer = window.setInterval(() => (currentTime = new Date()), 30000);
 		return () => window.clearInterval(timer);
 	});
@@ -91,18 +92,18 @@
 	}
 </script>
 
-<svelte:head>
+<svelte:head>{#if active && !embedded}
 	<title>셔틀 | 골라바유</title>
 	<meta name="description" content="고려대학교 세종캠퍼스 셔틀 시간표를 확인하세요." />
-</svelte:head>
+{/if}</svelte:head>
 
-<main class="min-h-[100dvh] bg-brand-bg text-brand-text md:grid md:place-items-center md:p-6">
+<main class:embedded class="min-h-[100dvh] bg-brand-bg text-brand-text md:grid md:place-items-center md:p-6">
 	<section
 		class="relative min-h-[100dvh] w-full bg-brand-surface pb-[calc(var(--bottom-navigation-height)+20px)] shadow-[0_24px_60px_rgba(103,16,43,0.18)] md:min-h-[min(860px,calc(100vh-48px))] md:w-[min(100%,430px)] app-page-frame md:border md:border-brand-border"
 		aria-label="셔틀"
 		data-shuttle-page
 	>
-		<LifestylePageHeader title="셔틀" closeLabel="셔틀 닫기" />
+		{#if !embedded}<LifestylePageHeader title="셔틀" closeLabel="셔틀 닫기" />{/if}
 
 		<div class="px-5 py-4">
 			<div class="relative flex border-b border-brand-border" aria-label="방향 선택" data-shuttle-tabs>
@@ -158,7 +159,7 @@
 				<a
 					class="mt-3 inline-flex items-center gap-1 text-[13px] font-bold text-brand transition-colors hover:text-brand-deep"
 					href={`/?panel=shuttle&shuttleStop=${activeStopId}`}
-					onclick={trackShuttleMapOpen}
+					onclick={(event) => { trackShuttleMapOpen(); if (onMap) { event.preventDefault(); onMap(`/?panel=shuttle&shuttleStop=${activeStopId}`); } }}
 				>
 					<MapPin size={13} strokeWidth={2.4} /> 지도에서 보기 <ChevronRight size={14} strokeWidth={2.4} />
 				</a>
@@ -222,16 +223,13 @@
 			</section>
 
 		</div>
-
-		<BottomNavigation
-			activeKey="shuttle"
-			containerClass="fixed inset-x-0 bottom-0 z-40 md:absolute"
-			isAuthenticated={Boolean(data.user)}
-		/>
 	</section>
 </main>
 
 <style>
+	main.embedded { display: block; min-height: 0; height: 100%; padding: 0; background: white; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; }
+	.embedded > section { min-height: 0; width: 100%; padding-bottom: 24px; border: 0; border-radius: 0; box-shadow: none; }
+	.embedded .shuttle-timetable-list { max-height: none; overflow: visible; }
 	.shuttle-ended-label { margin: 8px 0 0; padding-block: 2px; color: #8a1538; font-size: 36px; font-weight: 700; line-height: 1.2; letter-spacing: -0.72px; }
 	.shuttle-timetable-title { margin: 0; color: #19181a; font-size: 14px; font-weight: 600; line-height: 1.2; letter-spacing: 0; }
 	.shuttle-timetable-list { max-height: 42dvh; margin: 0; padding: 0; overflow-y: auto; list-style: none; }

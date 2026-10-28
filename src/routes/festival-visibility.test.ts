@@ -21,6 +21,6 @@ describe('축제 공개 중단', () => {
 	it('행사 당일에도 오늘 탭에 축제를 전달하지 않는다', async () => {
 		vi.useFakeTimers();
 		vi.setSystemTime(new Date('2026-09-15T14:00:00+09:00'));
-		expect(await loadToday({} as never)).toMatchObject({ festival: null });
+		expect(await loadToday({ url: new URL('https://example.com/today?embedded=1'), locals: { user: null } } as never)).toMatchObject({ festival: null });
 	});
 });

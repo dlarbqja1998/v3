@@ -14,6 +14,7 @@
 		searchQuery = '',
 		campusDirectorySearch = false,
 		outsideEnabled = false,
+		onHome,
 		onSearchOpenChange = () => undefined,
 		onSearchQueryChange = () => undefined
 	}: {
@@ -23,6 +24,7 @@
 		searchQuery?: string;
 		campusDirectorySearch?: boolean;
 		outsideEnabled?: boolean;
+		onHome?: () => void;
 		onSearchOpenChange?: (open: boolean) => void;
 		onSearchQueryChange?: (query: string) => void;
 	} = $props();
@@ -68,11 +70,11 @@
 
 <header class="pointer-events-auto relative z-30 pt-[env(safe-area-inset-top)]">
 	<div class="flex h-14 items-center gap-2 px-5 py-2.5">
-		<img
+		<button type="button" class="grid h-11 w-11 shrink-0 place-items-center" aria-label="지도 홈" onclick={onHome}><img
 			class="h-9 w-9 shrink-0 object-contain"
 			src="/icon.png"
 			alt="골라바유"
-		/>
+		/></button>
 
 		{#if searchOpen}
 			<div
@@ -119,7 +121,8 @@
 				{/key}
 			</div>
 
-			<div class="flex shrink-0 items-center gap-2">
+			<div class="flex shrink-0 items-center gap-1">
+				<a class="grid h-11 w-11 place-items-center text-brand-text" href="/my" aria-label="마이페이지"><AppIcon name="my" size={20} /></a>
 				<a
 					class="grid h-9 w-9 place-items-center rounded-full bg-white text-brand-text shadow-[0_1px_2px_rgba(25,24,26,0.05)] transition-colors hover:text-brand focus-visible:ring-2 focus-visible:ring-brand/25"
 					href="/shops"

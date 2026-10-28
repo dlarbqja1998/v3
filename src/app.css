@@ -30,7 +30,7 @@
 		'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif;
 	color: var(--color-brand-text);
 	background: var(--color-brand-bg);
-	--bottom-navigation-height: calc(65px + max(8px, env(safe-area-inset-bottom)));
+	--bottom-navigation-height: env(safe-area-inset-bottom, 0px);
 	--app-frame-radius: 24px;
 }
 
@@ -67,6 +67,7 @@ body {
 }
 
 .home-app-shell {
+	--home-safe-bottom: env(safe-area-inset-bottom, 0px);
 	height: 100%;
 	min-height: 0;
 }

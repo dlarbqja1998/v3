@@ -1,5 +1,6 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { render } from 'svelte/server';
+vi.mock('$app/state', () => ({ page: { url: new URL('https://example.com/'), state: {} } }));
 import HomePage from './+page.svelte';
 
 const data = {
@@ -50,22 +51,27 @@ describe('메인 첫 바텀시트', () => {
 		expect(body).not.toContain('min-h-screen');
 	});
 
-	it('첫 진입 시 맥락 헤더만 보이는 104px 높이로 접힌다', () => {
+	it('첫 진입 시 서비스 선택이 보이는 104px 높이로 접힌다', () => {
 		const { body } = render(HomePage, { props: { data } as never });
 
 		expect(body).toContain('height: 104px;');
 	});
 
-	it('현재 학교 맥락을 왼쪽 상단 제목으로 보여준다', () => {
+	it('하단 네비게이션 대신 기본 시트에서 생활 기능을 연다', () => {
 		const { body } = render(HomePage, { props: { data } as never });
 
-		expect(body).toContain('지금, 고려대학교');
+		expect(body).toContain('data-lifestyle-shortcuts');
+		expect(body).toContain('href="/?view=shuttle"');
+		expect(body).toContain('href="/?view=cafeteria"');
+		expect(body).toContain('href="/?view=today"');
+		expect(body).not.toContain('data-bottom-navigation');
 	});
 
-	it('오늘 날짜를 제목 오른쪽에 보여준다', () => {
+	it('하단 메뉴 제거 후에도 상단에서 마이페이지에 접근할 수 있다', () => {
 		const { body } = render(HomePage, { props: { data } as never });
 
-		expect(body).toMatch(/data-home-date[^>]*>[A-Z]{3} · \d{2} [A-Z]{3}</);
+		expect(body).toContain('aria-label="마이페이지"');
+		expect(body).toContain('href="/my"');
 	});
 
 	it('첫 진입에서는 학식·셔틀·행사 콘텐츠를 중복 노출하지 않는다', () => {

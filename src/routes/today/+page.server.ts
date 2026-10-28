@@ -1,3 +1,4 @@
+import { redirect } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
 
 import { getFestivalTodayEntry } from '$lib/domain/festival';
@@ -8,6 +9,10 @@ import { readLocalEventPreviews } from '$lib/server/event-preview';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ platform, url, locals }) => {
+	if (url.searchParams.get('embedded') !== '1') {
+		const params = new URLSearchParams(url.searchParams); params.set('view', 'today');
+		redirect(307, `/?${params}`);
+	}
 	const now = new Date();
 	const hostname = url?.hostname ?? '';
 	const [publicEvents, previewEvents, publicFestival] = await Promise.all([

@@ -10,7 +10,9 @@
 		ChevronUp,
 		MapPin
 	} from '@lucide/svelte';
-	import BottomNavigation from '$lib/navigation/BottomNavigation.svelte';
+	import MapBottomSheet from '$lib/lifestyle/MapBottomSheet.svelte';
+	import LifestyleContent from '$lib/lifestyle/LifestyleContent.svelte';
+	import { lifestyleItems, getLifestyleUrl, readLifestyleView, withoutLifestyle, type LifestyleView } from '$lib/lifestyle/navigation';
 	import FacilityFilterChips from '$lib/home/FacilityFilterChips.svelte';
 	import CampusFacilityPanel from '$lib/home/CampusFacilityPanel.svelte';
 	import AppIcon from '$lib/icon/AppIcon.svelte';
@@ -47,7 +49,6 @@
 		DEFAULT_HOME_CAMPUS_SPOT_ID,
 		DEFAULT_HOME_MAP_ZOOM
 	} from '$lib/domain/campus-boundary-visibility';
-	import type { BottomNavigationKey } from '$lib/domain/bottom-navigation';
 	import {
 		COLLAPSED_HEIGHT,
 		clampBottomSheetHeight,
@@ -118,6 +119,66 @@
 	const homeDateLabel = formatHomeDate(new Date());
 
 	let { data }: { data: PageData } = $props();
+	// SvelteKit의 얕은 이동은 page.url 대신 page.state만 갱신한다.
+	const lifestyleUrl = $derived(getLifestyleUrl(page.url, page.state.lifestyleHref));
+	const lifestyleView = $derived(readLifestyleView(lifestyleUrl));
+	const lifestyleTitle = $derived(lifestyleUrl.searchParams.get('detail') && lifestyleView === 'today' ? '행사 상세' : lifestyleItems.find(item => item.id === lifestyleView)?.title ?? '생활 정보');
+	let lifestyleHeight = $state(0);
+	let lifestyleExpanded = $state(false);
+	function interceptLifestyleLink(event: MouseEvent) {
+		if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+		if (!(event.target instanceof Element) || !appShellElement?.contains(event.target)) return;
+		const link = event.target.closest<HTMLAnchorElement>('a[href]');
+		if (!link || link.target === '_blank' || link.hasAttribute('download')) return;
+		const url = new URL(link.href);
+		if (url.origin !== page.url.origin) return;
+		const match = url.pathname.match(/^\/(cafeteria|shuttle|today)(?:\/([^/]+))?\/?$/);
+		if (!match) return;
+		event.preventDefault();
+		const params = Object.fromEntries(url.searchParams);
+		if (match[1] === 'today' && match[2]) params.detail = match[2];
+		openLifestyle(match[1] as LifestyleView, params);
+	}
+
+	function openLifestyle(view: LifestyleView, params: Record<string, string> = {}) {
+		const url = new URL(lifestyleUrl);
+		url.searchParams.set('view', view);
+		url.searchParams.delete('detail');
+		for (const [key, value] of Object.entries(params)) url.searchParams.set(key, value);
+		pushState(url, { ...page.state, lifestyleHref: url.href, lifestyleDepth: (page.state.lifestyleDepth ?? 0) + 1 });
+	}
+	function closeLifestyle() {
+		const depth = page.state.lifestyleDepth ?? 0;
+		if (depth > 0) window.history.go(-depth);
+		else replaceState(withoutLifestyle(lifestyleUrl), { ...page.state, lifestyleHref: withoutLifestyle(lifestyleUrl), lifestyleDepth: undefined });
+	}
+	function backLifestyle() {
+		if (lifestyleUrl.searchParams.has('detail') && (page.state.lifestyleDepth ?? 0) <= 1) {
+			const url = new URL(lifestyleUrl); url.searchParams.delete('detail');
+			replaceState(url, { ...page.state, lifestyleHref: url.href });
+		} else if ((page.state.lifestyleDepth ?? 0) > 0) window.history.back();
+		else closeLifestyle();
+	}
+	function openLifestyleEvent(id: string) {
+		if (!id) { backLifestyle(); return; }
+		const url = new URL(lifestyleUrl); url.searchParams.set('view', 'today'); url.searchParams.set('detail', id);
+		pushState(url, { ...page.state, lifestyleHref: url.href, lifestyleDepth: (page.state.lifestyleDepth ?? 0) + 1 });
+	}
+	function showLifestyleMap(href: string) {
+		const target = new URL(href, page.url);
+		replaceState(withoutLifestyle(lifestyleUrl), { ...page.state, lifestyleHref: withoutLifestyle(lifestyleUrl), lifestyleDepth: undefined });
+		areaMode = 'campus';
+		if (target.searchParams.get('panel') === 'shuttle') openShuttlePanel(target.searchParams.get('shuttleStop') === 'jochewon-station-back' ? 'jochewon-station-back' : 'campus', 'home_map');
+		else if (target.searchParams.get('panel') === 'festival') openFestivalPanel('today_sheet');
+		else if (target.searchParams.get('panel') === 'event') openEventPanel(target.searchParams.get('eventId') ?? '', 'today_sheet');
+		else {
+			clearCampusDirectory();
+			selectedFacilityCategory = 'restaurant'; selectedCategory = 'restaurant'; sheetMode = 'facility';
+			activePlaceId = target.searchParams.get('place') ?? ''; focusCampusSpotId = ''; activeCampusSpotId = '';
+			setSheetDetent('collapsed'); homeFocusRequestId += 1;
+		}
+	}
+
 	const mapSession = getContext<HomeMapSession | undefined>(HOME_MAP_SESSION);
 	const shownRestaurant = $derived(data.outsideRestaurants ? page.state.restaurantDetail ?? page.state.restaurantPreview : undefined);
 	const restaurantCache = createRestaurantDetailCache((...args) => fetch(...args));
@@ -203,7 +264,7 @@
 	let sheetDetent = $state<BottomSheetDetent>('collapsed');
 	let sheetHeight = $state(COLLAPSED_HEIGHT);
 	let mapViewportHeight = $state(844);
-	let bottomNavigationHeight = $state(73);
+	let bottomNavigationHeight = $state(0);
 	let weatherWidgetBottom = $state(getWeatherWidgetBottomOffset(844, 73, WEATHER_WIDGET_GAP));
 	let mapAttributionBottom = $state(getMapAttributionBottomOffset(844, 73));
 	let weather = $state<WeatherSnapshot | null>(null);
@@ -399,6 +460,18 @@
 	const nextShuttle = $derived(getNextAvailableShuttle(currentTime));
 
 	let initialDirectoryOpened = false;
+	let lifestyleEntryHandled = false;
+	afterNavigate(async (navigation) => {
+		if (lifestyleEntryHandled) return;
+		lifestyleEntryHandled = true;
+		if (!readLifestyleView(page.url) || page.state.lifestyleHref) return;
+		await navigation.complete;
+		const target = new URL(page.url);
+		const base = withoutLifestyle(target);
+		replaceState(base, { ...page.state, lifestyleHref: base, lifestyleDepth: undefined });
+		pushState(target, { ...page.state, lifestyleHref: target.href, lifestyleDepth: 1 });
+	});
+
 	let initialOutsideOpened = false;
 	afterNavigate(async navigation=>{
 		if(initialOutsideOpened||!data.outsideRestaurants||!data.initialOutsideZone||page.state.outsideDirectory)return;
@@ -965,6 +1038,7 @@
 	}
 
 	function followMapViewport(viewport: MapViewport) {
+		if (lifestyleView) return;
 		if (!data.outsideRestaurants || shownRestaurant) return;
 		const areaId = resolveViewportArea(viewport, data.commercialZones, campusSpots, selectedMapAreaId,
 			savedCampusAreaBoundary.length >= 3 ? savedCampusAreaBoundary : undefined);
@@ -1096,9 +1170,10 @@
 
 	function getCurrentLayoutMetrics() {
 		const viewportHeight = appShellElement?.getBoundingClientRect().height ?? window.innerHeight;
-		const navigationHeight =
-			document.querySelector<HTMLElement>('[data-bottom-navigation]')?.getBoundingClientRect().height ?? 73;
+		const navigationHeight = 0;
+		const safeBottom = appShellElement ? parseFloat(getComputedStyle(appShellElement).getPropertyValue('--home-safe-bottom')) || 0 : 0;
 		const sheetHeights = getBottomSheetHeights(viewportHeight, navigationHeight);
+		sheetHeights.collapsed = Math.min(viewportHeight, sheetHeights.collapsed + safeBottom);
 		// 날짜·세션 탭 아래 첫 부스까지 한 번에 보이도록 축제 중간 높이를 확보한다.
 		if (sheetMode === 'festival') sheetHeights.medium = Math.min(sheetHeights.expanded, Math.max(sheetHeights.medium, 410));
 		if (sheetMode === 'outside') {
@@ -1110,6 +1185,7 @@
 		return {
 			viewportHeight,
 			navigationHeight,
+			safeBottom,
 			sheetHeights
 		};
 	}
@@ -1137,16 +1213,16 @@
 
 	function syncSheetHeight() {
 		if (typeof window === 'undefined') return;
-		const { viewportHeight, navigationHeight, sheetHeights } = getCurrentLayoutMetrics();
+		const { viewportHeight, navigationHeight, safeBottom, sheetHeights } = getCurrentLayoutMetrics();
 		mapViewportHeight = viewportHeight;
 		bottomNavigationHeight = navigationHeight;
 		sheetHeight = sheetHeights[sheetDetent];
 		weatherWidgetBottom = getWeatherWidgetBottomOffset(
 			viewportHeight,
 			navigationHeight,
-			WEATHER_WIDGET_GAP
+			WEATHER_WIDGET_GAP + safeBottom
 		);
-		mapAttributionBottom = getMapAttributionBottomOffset(viewportHeight, navigationHeight);
+		mapAttributionBottom = getMapAttributionBottomOffset(viewportHeight, navigationHeight) + safeBottom;
 	}
 
 	function setSheetDetent(detent: BottomSheetDetent) {
@@ -1248,20 +1324,6 @@
 		if (sheetDetent === 'collapsed') return '최소 높이';
 		if (sheetDetent === 'medium') return '중간 높이';
 		return '최대 높이';
-	}
-
-	function getActiveNavigationKey(): BottomNavigationKey {
-		if (sheetMode === 'shuttle') return 'shuttle';
-		if (sheetMode === 'cafeteria') return 'cafeteria';
-		return 'home';
-	}
-
-	function handleBottomNavigation(key: BottomNavigationKey) {
-		if (key === 'home') {
-			resetHomeMapArea();
-			closePanel();
-		}
-		if (key === 'cafeteria') openCafeteriaPanel();
 	}
 
 	function formatShortDate(dateStr?: string) {
@@ -1382,6 +1444,8 @@
 	}
 </script>
 
+<svelte:window onclick={interceptLifestyleLink} />
+
 <svelte:head>
 	<title>{shownRestaurant ? `${shownRestaurant.place.name} · 골라바유` : '골라바유'}</title>
 	<meta
@@ -1442,8 +1506,9 @@
 		class="home-app-shell app-page-frame relative w-full overflow-hidden bg-brand-surface shadow-[0_24px_60px_rgba(103,16,43,0.18)] md:w-[min(100%,430px)] md:border md:border-brand-border-strong"
 		aria-label="골라바유 지도 홈"
 	>
+		<div class="absolute inset-0" inert={lifestyleExpanded} aria-hidden={lifestyleExpanded ? "true" : undefined}>
 		<HomeMap
-			active={!shownRestaurant}
+			active={!shownRestaurant && !lifestyleExpanded}
 			clientId={data.naverMapClientId}
 			places={mapPlaces}
 			activePlaceId={activeMapPlaceId}
@@ -1462,7 +1527,7 @@
 			activeCampusSpotId={activeCampusSpotId}
 			focusCampusSpotId={focusCampusSpotId}
 			showCampusBoundaries={showCampusBoundaries}
-			attributionBottomOffset={areaMode === 'outside' ? bottomNavigationHeight + sheetHeight : mapAttributionBottom}
+			attributionBottomOffset={lifestyleView ? lifestyleHeight : areaMode === 'outside' ? bottomNavigationHeight + sheetHeight : mapAttributionBottom}
 			{areaMode}
 			commercialZones={data.commercialZones}
 			viewportNavigation={Boolean(data.outsideRestaurants)}
@@ -1474,7 +1539,7 @@
 			onOutsideClusterClick={(clusterPlaceIds) => { track(analyticsEvents.clickPlaceMarker, { marker_type: 'restaurant_cluster', place_ids: clusterPlaceIds, place_count: clusterPlaceIds.length, area_mode: 'outside' }); changeOutsideDirectory({clusterPlaceIds}); }}
 			selectedOutsidePlaceIds={outsideDirectory?.clusterPlaceIds ?? []}
 			topOverlayHeight={mapControlsHeight}
-			bottomOverlayHeight={bottomNavigationHeight + sheetHeight}
+			bottomOverlayHeight={lifestyleView ? lifestyleHeight : bottomNavigationHeight + sheetHeight}
 			onMarkerClick={handleMarkerClick}
 			onCampusSpotClick={selectCampusSpot}
 			events={areaMode === 'campus' ? mappedEvents : []}
@@ -1485,6 +1550,8 @@
 			festivalSelected={sheetMode === 'festival'}
 			onFestivalClick={() => openFestivalPanel('home_map_marker')}
 		/>
+
+		</div>
 
 		{#if sheetMode === 'festival' && visibleFestival}
 			<div class="absolute inset-x-0 top-0 z-10 flex items-center justify-between bg-white/95 px-5 pt-[calc(12px+env(safe-area-inset-top))] pb-3 text-[12px] text-brand-muted"><span>{visibleFestival.area.label}{visibleFestival.area.approximate ? ' · 상세 위치 확인 중' : ''}</span>{#if data.user?.role === 'admin' && !visibleFestival.preview}<a class="min-h-8 content-center text-brand" href={visibleFestival.eventId ? `/admin/events/locations?event=${visibleFestival.eventId}` : '/admin/festival'}>구역 편집</a>{/if}</div>
@@ -1497,8 +1564,9 @@
 				data-home-map-top-gradient
 				aria-hidden="true"
 			></div>
-			<div bind:this={mapControlsElement} class="relative z-30" data-home-map-controls>
+			<div bind:this={mapControlsElement} class="relative z-30" inert={Boolean(lifestyleView)} aria-hidden={lifestyleView ? "true" : undefined} data-home-map-controls>
 			<HomeMapHeader
+				onHome={() => { closePanel(); setSheetDetent('collapsed'); }}
 				zones={data.commercialZones}
 				selectedAreaId={selectedMapAreaId}
 				searchOpen={facilitySearchOpen}
@@ -1538,7 +1606,7 @@
 			</div>
 		{/if}
 
-		{#if areaMode === 'campus'}
+		{#if areaMode === 'campus' && !lifestyleExpanded}
 		<WeatherWidget
 			{weather}
 			loading={weatherLoading}
@@ -1549,10 +1617,12 @@
 
 		<section
 			bind:this={sheetElement}
-			class={`pointer-events-auto absolute inset-x-0 z-20 flex overflow-hidden rounded-t-[26px] border-t border-brand-border bg-white px-[18px] shadow-[0_-6px_20px_rgba(36,19,24,0.04)] ${sheetMode === 'outside' ? 'pb-[14px]' : 'pb-5'} ${
+			inert={Boolean(lifestyleView)}
+			style:visibility={lifestyleView ? 'hidden' : undefined}
+			class={`pointer-events-auto absolute inset-x-0 z-20 flex overflow-hidden rounded-t-[26px] border-t border-brand-border bg-white px-[18px] shadow-[0_-6px_20px_rgba(36,19,24,0.04)] ${sheetMode === 'outside' ? 'pb-[calc(14px+env(safe-area-inset-bottom))]' : 'pb-[calc(20px+env(safe-area-inset-bottom))]'} ${
 				isSheetDragging ? '' : 'transition-[height] duration-300 ease-out motion-reduce:transition-none'
 			}`}
-			style={`bottom: var(--bottom-navigation-height); height: ${sheetHeight}px;`}
+			style={`bottom: 0; height: ${sheetHeight}px;`}
 			aria-label="오늘의 생활 정보"
 		>
 			<div class="flex min-h-0 w-full flex-col">
@@ -1582,20 +1652,15 @@
 					collapsed={sheetDetent==='collapsed'} onCollapse={()=>setSheetDetent('collapsed')} onClearCluster={()=>changeOutsideDirectory({clusterPlaceIds:undefined})} onOpen={openRestaurant} onWarm={restaurantCache.warm}
 					onReset={()=>changeOutsideDirectory({...EMPTY_OUTSIDE_VIEW,zone:outsideDirectory.zone})} initialScroll={outsideDirectory.scrollTop??0}/>
 			{:else if sheetMode === 'home'}
-				<div class="mb-2 flex items-center justify-between gap-4">
-					<h2 class="m-0 text-left text-[18px] font-black leading-5 tracking-[-0.01em]">지금, 고려대학교</h2>
-					<span
-						class="shrink-0 text-[12px] leading-5 tracking-[0.04em] text-brand"
-						data-home-date
-						style="font-weight: 500;"
-					>{homeDateLabel}</span>
-				</div>
+                <nav class="grid h-12 shrink-0 grid-cols-3 divide-x divide-brand-border" aria-label="생활 정보" data-lifestyle-shortcuts>
+					{#each lifestyleItems as item}
+						<a class="flex min-h-11 items-center justify-center gap-2 text-[15px] font-bold text-brand-text hover:text-brand" href={`/?view=${item.id}`} onclick={(event) => { event.preventDefault(); openLifestyle(item.id); }}><AppIcon name={item.icon} size={24} />{item.title}</a>
+					{/each}
+				</nav>
 				{#if sheetDetent !== 'collapsed'}
-					<div class="mt-3 border-t border-brand-border pt-5" data-home-sheet-guidance>
-						<h3 class="m-0 text-[15px] font-bold text-brand-text">찾고 싶은 곳이 있나요?</h3>
-						<p class="m-0 mt-2 max-w-[290px] text-[13px] leading-5 text-brand-muted">
-							상단의 필터를 선택하거나 검색하면 원하는 교내 시설을 지도에서 바로 확인할 수 있어요.
-						</p>
+					<div class="mt-6 border-t border-brand-border pt-5" data-home-sheet-guidance>
+						<div class="flex items-center justify-between gap-3"><h2 class="m-0 text-[18px] font-bold">지금, 고려대학교</h2><span class="text-[12px] text-brand-muted" data-home-date>{homeDateLabel}</span></div>
+						<p class="mt-3 text-[13px] leading-6 text-brand-muted">지도에서 장소를 선택하거나 상단 필터로 필요한 시설을 찾아보세요.</p>
 					</div>
 				{/if}
 			{:else if sheetMode === 'festival' && visibleFestival}
@@ -1665,8 +1730,9 @@
 												<a
 													class="mt-2 inline-flex min-h-9 items-center gap-1 text-[13px] font-bold text-brand"
 													href={cafeteriaHref}
+													onclick={(event) => { event.preventDefault(); openLifestyle('cafeteria', { cafeteria: new URL(cafeteriaHref, page.url).searchParams.get('cafeteria') ?? 'jinri' }); }}
 												>
-													학식 페이지에서 보기
+													학식 보기
 													<ChevronRight size={14} strokeWidth={2.4} />
 												</a>
 											{/if}
@@ -2018,13 +2084,9 @@
 			{/if}
 			</div>
 		</section>
-
-		<BottomNavigation
-			activeKey={getActiveNavigationKey()}
-			containerClass="absolute inset-x-0 bottom-0 z-30"
-			isAuthenticated={Boolean(data.user)}
-			onNavigate={handleBottomNavigation}
-		/>
+		<MapBottomSheet open={Boolean(lifestyleView)} title={lifestyleTitle} onBack={backLifestyle} onClose={closeLifestyle} onHeightChange={(height) => lifestyleHeight = height} onExpandedChange={(expanded) => lifestyleExpanded = expanded}>
+			<LifestyleContent view={lifestyleView} url={lifestyleUrl} onEvent={openLifestyleEvent} onMap={showLifestyleMap} />
+		</MapBottomSheet>
 	</section>
 </main>
 

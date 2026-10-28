@@ -8,6 +8,16 @@ export const COLLAPSED_HEIGHT = 104;
 const EXPANDED_VIEWPORT_RATIO = 5 / 6;
 const SWIPE_VELOCITY_THRESHOLD = 0.45;
 
+/** 하단 내비게이션이 없는 지도 시트는 최대 높이에서 화면 전체를 채운다. */
+export function getFullscreenSheetHeights(viewportHeight: number): BottomSheetHeights {
+	const available = Math.max(0, viewportHeight);
+	return {
+		collapsed: Math.min(112, available),
+		medium: Math.min(available, Math.max(320, available * .62)),
+		expanded: available
+	};
+}
+
 export function getResultPanelInitialDetent(_kind: ResultPanelKind): BottomSheetDetent {
 	return 'medium';
 }

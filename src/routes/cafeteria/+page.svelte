@@ -19,7 +19,6 @@
 	} from '$lib/domain/cafeteria-operating-hours';
 	import { getCafeteriaMapHref, getInitialCafeteriaIndex } from '$lib/domain/cafeterias';
 	import type { CafeteriaPanelItem, DailyMenu, MenuDayKey } from '$lib/domain/places';
-	import BottomNavigation from '$lib/navigation/BottomNavigation.svelte';
 	import { analyticsEvents } from '$lib/analytics/events';
 	import { track } from '$lib/analytics/posthog.client';
 	import LifestylePageHeader from '$lib/navigation/LifestylePageHeader.svelte';
@@ -47,7 +46,8 @@
 		{ value: 0, label: '일' }
 	];
 
-	let { data, form }: { data: PageData; form: ActionData } = $props();
+	let { data, form, embedded = false, active = true, onMap }: { data: PageData; form: ActionData; embedded?: boolean; active?: boolean; onMap?: (href: string) => void } = $props();
+	$effect(() => { if (!active) { isOperatingHoursOpen = false; isLoginPromptOpen = false; } });
 	const initialCafeteriaIndex = untrack(() =>
 		getInitialCafeteriaIndex(data.cafeterias, data.initialCafeteriaId)
 	);
@@ -81,6 +81,7 @@
 	let feedbackLoading = $state(false);
 	let feedbackError = $state('');
 	let feedbackController: AbortController | undefined;
+	let feedbackLoadedAt = 0;
 	let isLoginPromptOpen = $state(false);
 	let toastMessage = $state('');
 	let toastTimer: number | undefined;
@@ -114,8 +115,11 @@
 		return () => { document.body.style.overflow = previousOverflow; };
 	});
 
+	$effect(() => {
+		if (active) untrack(() => { if (Date.now() - feedbackLoadedAt >= 60_000) void loadFeedback(); });
+	});
+
 	onMount(() => {
-		void loadFeedback();
 		track(analyticsEvents.openCafeteria, {
 			source: 'cafeteria_page',
 			cafeteria_id: activeCafeteria?.id
@@ -147,7 +151,7 @@
 			if (!response.ok || !payload.feedback || typeof payload.feedback !== 'object') {
 				throw new Error('평가 응답 오류');
 			}
-			if (feedbackController === controller) cafeteriaFeedback = payload.feedback;
+			if (feedbackController === controller) { cafeteriaFeedback = payload.feedback; feedbackLoadedAt = Date.now(); }
 		} catch {
 			if (feedbackController === controller) feedbackError = '평가를 불러오지 못했어요.';
 		} finally {
@@ -298,7 +302,8 @@
 		isSavingOperatingHours = true;
 		return async ({ result, update }) => {
 			try {
-				await update({ reset: false, invalidateAll: false });
+				if (embedded && (result.type === 'success' || result.type === 'failure')) form = result.data as ActionData;
+				else await update({ reset: false, invalidateAll: false });
 				if (result.type === 'success' && hasOperatingHoursSaveResult(result.data)) {
 					operatingHours = mergeSavedCafeteriaOperatingHours(
 						operatingHours,
@@ -340,7 +345,8 @@
 			cafeteria_id: activeCafeteria.id,
 			action: 'view_on_map'
 		});
-		void goto(getCafeteriaMapHref({ id: activeCafeteria.placeId }));
+		const href = getCafeteriaMapHref({ id: activeCafeteria.placeId });
+		if (onMap) onMap(href); else void goto(href);
 	}
 
 	function showToast(message: string) {
@@ -451,18 +457,18 @@
 	}
 </script>
 
-<svelte:head>
+<svelte:head>{#if active && !embedded}
 	<title>학식 | 골라바유</title>
 	<meta name="description" content="고려대 세종캠퍼스 학식과 운영시간을 확인하세요." />
-</svelte:head>
+{/if}</svelte:head>
 
-<main class="cafeteria-screen min-h-[100dvh] bg-brand-bg md:grid md:place-items-center md:p-6" inert={isOperatingHoursOpen}>
+<main class:embedded class="cafeteria-screen min-h-[100dvh] bg-brand-bg md:grid md:place-items-center md:p-6" inert={isOperatingHoursOpen}>
 	<section
 		class="cafeteria-page app-page-frame relative w-full bg-brand-surface pb-[var(--bottom-navigation-height)] shadow-[0_24px_60px_rgba(103,16,43,0.18)] md:w-[min(100%,430px)] md:border md:border-brand-border"
 		aria-label="학식"
 	>
 		<div class="cafeteria-header sticky top-0 z-20 bg-white">
-			<LifestylePageHeader title="학식" closeLabel="학식 닫기" variant="figma" backIconSrc="/cafeteria/back.svg" closeIconSrc="/cafeteria/close.svg" />
+			{#if !embedded}<LifestylePageHeader title="학식" closeLabel="학식 닫기" variant="figma" backIconSrc="/cafeteria/back.svg" closeIconSrc="/cafeteria/close.svg" />{/if}
 			<div class="flex" aria-label="식당 선택" data-cafeteria-tabs>
 				{#each data.cafeterias as cafeteria, index}
 					<button
@@ -598,8 +604,6 @@
 			</a>
 			{/if}
 		</div>
-
-		<BottomNavigation activeKey="cafeteria" containerClass="fixed inset-x-0 bottom-0 z-40 md:absolute" isAuthenticated={Boolean(data.user)} />
 	</section>
 </main>
 
@@ -683,7 +687,7 @@
 						<button class="mt-3 flex min-h-11 w-full items-center justify-end gap-1.5 text-[13px] font-bold text-brand-muted" type="button" onclick={startOperatingHoursEdit}><Pencil size={14} strokeWidth={2.4} /> 운영시간 수정</button>
 					{/if}
 				{:else}
-					<form method="POST" action="?/saveOperatingHours" use:enhance={enhanceOperatingHours} onsubmit={prepareOperatingHoursSubmit}>
+					<form method="POST" action="/cafeteria?/saveOperatingHours" use:enhance={enhanceOperatingHours} onsubmit={prepareOperatingHoursSubmit}>
 						<input type="hidden" name="operatingHours" bind:value={operatingHoursPayload} />
 						<div class="border-t border-brand-border">
 							{#each operatingHourDrafts as draft, index}
@@ -704,6 +708,8 @@
 {/if}
 
 <style>
+	.cafeteria-screen.embedded { display: block; min-height: 0; height: 100%; padding: 0; background: white; --bottom-navigation-height: 0px; }
+	.embedded .cafeteria-page { height: 100%; min-height: 0; width: 100%; padding-bottom: 0; border: 0; border-radius: 0; box-shadow: none; }
 	.cafeteria-screen { color: #19181a; font-weight: 400; letter-spacing: 0; }
 	.cafeteria-page { display: flex; flex-direction: column; height: 100dvh; overflow: hidden; }
 	.cafeteria-header { flex-shrink: 0; margin-bottom: 2px; }

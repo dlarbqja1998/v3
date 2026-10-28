@@ -1,5 +1,5 @@
 import { env } from '$env/dynamic/private';
-import { fail } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 
 import {
 	canEditCafeteriaOperatingHours,
@@ -13,6 +13,10 @@ import { replaceCafeteriaOperatingHours } from '$lib/server/cafeteria-operating-
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ platform, locals, url }) => {
+	if (url.searchParams.get('embedded') !== '1') {
+		const params = new URLSearchParams(url.searchParams); params.set('view', 'cafeteria');
+		redirect(307, `/?${params}`);
+	}
 	const weeklyMenu = await getTodayMenuWithRefresh(platform);
 	const requestedDay = url.searchParams.get('day');
 	const initialDayKey = ['mon', 'tue', 'wed', 'thu', 'fri'].includes(requestedDay ?? '')

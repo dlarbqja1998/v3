@@ -12,9 +12,12 @@ describe('학식 화면 전환', () => {
 		mocks.menu.mockResolvedValue({ weekStartDate: '2026.09.07', todayKey: 'mon', todayDate: '2026.09.07', todayDay: '월', days: [] });
 		mocks.sync.mockReturnValue(new Promise(() => {}));
 		mocks.feedback.mockReturnValue(new Promise(() => {}));
-		const result = await load({ locals: { user: null }, url: new URL('https://example.com/cafeteria?cafeteria=faculty&day=tue') } as never);
+		const result = await load({ locals: { user: null }, url: new URL('https://example.com/cafeteria?embedded=1&cafeteria=faculty&day=tue') } as never);
 		expect(result).toMatchObject({ initialCafeteriaId: 'faculty', initialDayKey: 'tue', cafeteriaFeedback: {} });
 		expect(mocks.sync).not.toHaveBeenCalled();
 		expect(mocks.feedback).not.toHaveBeenCalled();
+	});
+	it('기존 학식 링크는 식당과 요일을 보존해 지도 시트로 연결한다', async () => {
+		await expect(load({ url: new URL('https://example.com/cafeteria?cafeteria=faculty&day=tue') } as never)).rejects.toMatchObject({ status: 307, location: '/?cafeteria=faculty&day=tue&view=cafeteria' });
 	});
 });

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { ChevronRight, LogOut } from '@lucide/svelte';
-	import BottomNavigation from '$lib/navigation/BottomNavigation.svelte';
+	import LifestylePageHeader from '$lib/navigation/LifestylePageHeader.svelte';
 	import type { PageData } from './$types';
 	let { data }: { data: PageData } = $props();
 	const isAdmin = $derived(data.user.role === 'admin');
@@ -10,8 +10,8 @@
 
 <main class="min-h-dvh bg-brand-bg text-brand-text md:grid md:place-items-center md:p-6">
 	<section class="relative min-h-dvh w-full overflow-hidden bg-white md:min-h-[min(860px,calc(100vh-48px))] md:w-[min(100%,430px)] app-page-frame md:border md:border-brand-border-strong" aria-label="마이페이지">
-		<header class="sticky top-0 z-10 grid h-14 place-items-center border-b border-brand-border bg-white"><h1 class="m-0 text-lg font-black">마이</h1></header>
-		<div class="h-[calc(100dvh-56px)] overflow-y-auto px-5 pb-[calc(96px+env(safe-area-inset-bottom))] md:h-[calc(min(860px,100vh-48px)-56px)]">
+		<LifestylePageHeader title="마이" closeLabel="마이페이지 닫기" />
+		<div class="h-[calc(100dvh-56px-env(safe-area-inset-top))] overflow-y-auto px-5 pb-[calc(24px+env(safe-area-inset-bottom))] md:h-[calc(min(860px,100vh-48px)-56px)]">
 			<section class="pt-5" aria-labelledby="profile-title"><h2 id="profile-title" data-section-heading class="m-0 border-b border-brand-border pb-3 text-[15px] font-black tracking-[-0.01em]">프로필</h2>
 				<a class="flex min-h-[72px] items-center gap-3 py-3 pl-3 pr-1" href="/my/edit">
 					{#if data.user.profileImg}<img class="h-12 w-12 shrink-0 rounded-full object-cover" src={data.user.profileImg} alt="" referrerpolicy="no-referrer" />{:else}<span class="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-brand-map text-base font-black text-brand">{(data.user.nickname ?? '골').slice(0, 1)}</span>{/if}
@@ -45,7 +45,6 @@
 				<a class="menu-row pl-3 pr-1" data-menu-row href="/admin/inquiries"><span>문의 관리</span><ChevronRight size={18} /></a>
 			</section>{/if}
 		</div>
-		<BottomNavigation activeKey="my" containerClass="absolute inset-x-0 bottom-0 z-30" isAuthenticated={true} />
 	</section>
 </main>
 

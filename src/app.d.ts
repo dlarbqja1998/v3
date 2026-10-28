@@ -53,6 +53,8 @@ declare global {
 		}
 		// interface PageData {}
 		interface PageState {
+			lifestyleDepth?: number;
+			lifestyleHref?: string;
 			festivalBooth?: string;
 			campusDirectory?: import('$lib/domain/campus-facilities').CampusDirectoryView;
 			outsideDirectory?: import('$lib/domain/restaurants').OutsideDirectoryView;

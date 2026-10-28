@@ -7,7 +7,6 @@
 		studentYearOptions,
 		type OnboardingInput
 	} from '$lib/domain/onboarding';
-	import BottomNavigation from '$lib/navigation/BottomNavigation.svelte';
 	import type { ActionData, PageData } from './$types';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
@@ -152,11 +151,5 @@
 				저장하기
 			</button>
 		</form>
-
-		<BottomNavigation
-			activeKey="my"
-			containerClass="absolute inset-x-0 bottom-0 z-30"
-			isAuthenticated={true}
-		/>
 	</section>
 </main>

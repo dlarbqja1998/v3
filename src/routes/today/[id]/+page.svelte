@@ -8,7 +8,7 @@
 	import { startVisibleClock } from '$lib/browser/visible-clock';
 	import type { PageData } from './$types';
 
-	let { data }: { data: PageData } = $props();
+	let { data, embedded = false, active = true, onMap, onBack }: { data: PageData; embedded?: boolean; active?: boolean; onMap?: (href: string) => void; onBack?: () => void } = $props();
 	const event = $derived(data.event);
 	let now = $state(new Date());
 	const status = $derived(getCampusEventStatus(event, now));
@@ -19,6 +19,10 @@
 			category: event.category,
 			status
 		});
+		});
+
+	$effect(() => {
+		if (!active) return;
 		return startVisibleClock((value) => { now = value; });
 	});
 
@@ -27,18 +31,18 @@
 	}
 </script>
 
-<svelte:head><title>{event.title} | 골라바유</title></svelte:head>
+<svelte:head>{#if active && !embedded}<title>{event.title} | 골라바유</title>{/if}</svelte:head>
 
-<main class="min-h-dvh bg-brand-bg text-brand-text md:grid md:place-items-center md:p-6">
+<main class:embedded class="min-h-dvh bg-brand-bg text-brand-text md:grid md:place-items-center md:p-6">
 	<article class="min-h-dvh w-full bg-white md:min-h-[min(860px,calc(100vh-48px))] md:w-[min(100%,430px)] md:overflow-y-auto app-page-frame md:border md:border-brand-border-strong">
-		<header class="sticky top-0 z-20 grid h-[calc(56px+env(safe-area-inset-top))] grid-cols-[44px_1fr_44px] items-end border-b border-brand-border bg-white px-3 pb-1 pt-[env(safe-area-inset-top)]">
+		{#if !embedded}<header class="sticky top-0 z-20 grid h-[calc(56px+env(safe-area-inset-top))] grid-cols-[44px_1fr_44px] items-end border-b border-brand-border bg-white px-3 pb-1 pt-[env(safe-area-inset-top)]">
 			<a class="grid h-11 w-11 place-items-center" href="/today" aria-label="행사 목록으로"><ArrowLeft size={20} /></a>
 			<h1 class="m-0 truncate self-center text-center text-lg font-black">행사 상세</h1>
 			<a class="grid h-11 w-11 place-items-center" href="/" aria-label="행사 닫기"><X size={20} /></a>
-		</header>
+		</header>{/if}
 
 		{#if status === 'ended'}
-			<section class="px-5 py-8" aria-live="polite"><h2 class="m-0 text-[18px] font-bold">종료된 행사예요</h2><p class="mt-3 text-[13px] text-brand-muted">다른 진행 중이거나 예정된 행사를 확인해 주세요.</p><a class="inline-flex min-h-11 items-center text-[13px] text-brand" href="/today">행사 목록 보기</a></section>
+			<section class="px-5 py-8" aria-live="polite"><h2 class="m-0 text-[18px] font-bold">종료된 행사예요</h2><p class="mt-3 text-[13px] text-brand-muted">다른 진행 중이거나 예정된 행사를 확인해 주세요.</p><a class="inline-flex min-h-11 items-center text-[13px] text-brand" href="/today" onclick={(event) => { if (onBack) { event.preventDefault(); onBack(); } }}>행사 목록 보기</a></section>
 		{:else}
 		<EventImageGallery images={event.images} title={event.title} />
 		<div class="px-5 py-6 pb-[calc(32px+env(safe-area-inset-bottom))]">
@@ -62,9 +66,14 @@
 				{/if}
 			</section>
 			<a class="mt-8 flex h-12 items-center justify-center gap-2 rounded-xl bg-brand text-sm font-black text-white" href={`/?panel=event&eventId=${event.id}`}
-				onclick={() => track(analyticsEvents.clickEventAction, { event_id: event.id, action: 'map', source: 'event_detail' })}><MapPin size={17} />지도에서 보기</a>
+				onclick={(click) => { track(analyticsEvents.clickEventAction, { event_id: event.id, action: 'map', source: 'event_detail' }); if (onMap) { click.preventDefault(); onMap(`/?panel=event&eventId=${event.id}`); } }}><MapPin size={17} />지도에서 보기</a>
 			<p class="m-0 mt-3 flex items-center justify-center gap-1 text-[12px] text-brand-muted"><CalendarDays size={13} />행사는 종료 시 오늘 목록에서 자동으로 숨겨집니다.</p>
 		</div>
 		{/if}
 	</article>
 </main>
+
+<style>
+	main.embedded { display: block; min-height: 0; height: 100%; padding: 0; background: white; overflow-y: auto; overscroll-behavior: contain; }
+	.embedded > article { min-height: 0; width: 100%; border: 0; border-radius: 0; overflow: visible; }
+</style>

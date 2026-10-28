@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { CalendarDays, ChevronRight, MapPin } from '@lucide/svelte';
 	import { onMount, untrack } from 'svelte';
-	import BottomNavigation from '$lib/navigation/BottomNavigation.svelte';
 	import { analyticsEvents } from '$lib/analytics/events';
 	import { track } from '$lib/analytics/posthog.client';
 	import LifestylePageHeader from '$lib/navigation/LifestylePageHeader.svelte';
@@ -10,7 +9,7 @@
 	import { getCampusEventStatus, getPublicCampusEvents } from '$lib/domain/campus-events';
 	import type { PageData } from './$types';
 
-	let { data }: { data: PageData } = $props();
+	let { data, embedded = false, active = true, onEvent, onMap }: { data: PageData; embedded?: boolean; active?: boolean; onEvent?: (id: string) => void; onMap?: (href: string) => void } = $props();
 	let activeTab = $state<'ongoing' | 'upcoming'>(untrack(() => data.initialTab));
 	let now = $state(new Date());
 	const visibleEvents = $derived(getPublicCampusEvents([...data.ongoingEvents, ...data.upcomingEvents], now));
@@ -23,6 +22,10 @@
 			ongoing_count: data.ongoingEvents.length + Number(data.festival?.status === 'ongoing'),
 			upcoming_count: data.upcomingEvents.length + Number(data.festival?.status === 'upcoming')
 		});
+		});
+
+	$effect(() => {
+		if (!active) return;
 		return startVisibleClock((value) => { now = value; });
 	});
 
@@ -49,11 +52,11 @@
 	}
 </script>
 
-<svelte:head><title>오늘 | 골라바유</title></svelte:head>
+<svelte:head>{#if active && !embedded}<title>오늘 | 골라바유</title>{/if}</svelte:head>
 
-<main class="min-h-dvh bg-brand-bg text-brand-text md:grid md:place-items-center md:p-6">
+<main class:embedded class="min-h-dvh bg-brand-bg text-brand-text md:grid md:place-items-center md:p-6">
 	<section class="relative min-h-dvh w-full bg-white md:min-h-[min(860px,calc(100vh-48px))] md:w-[min(100%,430px)] app-page-frame md:border md:border-brand-border-strong" aria-label="오늘 행사">
-		<LifestylePageHeader title="오늘" closeLabel="오늘 닫기" />
+		{#if !embedded}<LifestylePageHeader title="오늘" closeLabel="오늘 닫기" />{/if}
 
 		<div class="h-[calc(100dvh-56px)] overflow-y-auto px-5 pb-[calc(96px+env(safe-area-inset-bottom))] md:h-[calc(min(860px,100vh-48px)-56px)]">
 			<div class="relative grid grid-cols-2 border-b border-brand-border" aria-label="행사 상태" data-today-tabs>
@@ -63,7 +66,7 @@
 			</div>
 
 			{#if activeFestival}
-				<a class="flex min-h-28 items-center gap-3 border-b border-brand-border py-4" href={activeFestival.href} onclick={() => selectEvent(activeFestival.id, 1)}>
+				<a class="flex min-h-28 items-center gap-3 border-b border-brand-border py-4" href={activeFestival.href} onclick={(event) => { if (!activeFestival) return; selectEvent(activeFestival.id, 1); if (onMap) { event.preventDefault(); onMap(activeFestival.href); } }}>
 					<span class="grid h-12 w-12 shrink-0 place-items-center text-brand"><AppIcon name="today" size={24} /></span>
 					<span class="min-w-0 flex-1"><span class="block text-[12px] font-bold text-brand">{activeFestival.status === 'ongoing' ? '오늘의 축제' : '다가오는 축제'}</span><strong class="mt-1 block break-keep text-[16px]">{activeFestival.title}</strong><span class="mt-1.5 block text-[13px]">{activeFestival.dateLabel} · {activeFestival.location}</span>{#if activeFestival.hoursLabel}<span class="mt-1 block text-[12px] leading-5 text-brand-muted">{activeFestival.hoursLabel}</span>{/if}<span class="mt-2 block text-[12px] text-brand-muted">부스 · 공연 · 참여 혜택 보기</span></span>
 					<AppIcon name="chevron" size={20} class="rotate-180 text-brand-muted" />
@@ -76,7 +79,7 @@
 			{:else if activeEvents.length > 0}
 				<div class="divide-y divide-brand-border border-b border-brand-border">
 					{#each activeEvents as event, index (event.id)}
-						<a class="flex min-h-28 items-center gap-3 py-4" href={`/today/${event.id}`} onclick={() => selectEvent(event.id, index + 1)}>
+						<a class="flex min-h-28 items-center gap-3 py-4" href={`/today/${event.id}`} onclick={(click) => { selectEvent(event.id, index + 1); if (onEvent) { click.preventDefault(); onEvent(event.id); } }}>
 							{#if event.images[0]}
 								<img class="h-20 w-20 shrink-0 rounded-xl object-cover" src={event.images[0].url} alt="" />
 							{:else}
@@ -89,7 +92,11 @@
 				</div>
 			{/if}
 		</div>
-
-		<BottomNavigation activeKey="today" containerClass="absolute inset-x-0 bottom-0 z-30" isAuthenticated={Boolean(data.user)} />
 	</section>
 </main>
+
+<style>
+	main.embedded { display: block; min-height: 0; height: 100%; padding: 0; background: white; }
+	.embedded > section { min-height: 0; height: 100%; width: 100%; border: 0; border-radius: 0; }
+	.embedded > section > div { height: 100%; padding-bottom: 24px; overscroll-behavior: contain; }
+</style>
